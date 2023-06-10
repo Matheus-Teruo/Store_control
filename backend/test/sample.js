@@ -31,3 +31,16 @@ describe("API /", () => {
       });
   });
 });
+
+describe("API /db", () => {
+  it("it should return all tables", done => {
+    chai
+      .request(app)
+      .get("/db")
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.should.to.be.html;
+        done();
+      });
+  });
+});

@@ -33,4 +33,10 @@ app.get("/healthz", function(req, res) {
   res.send("I am happy and healthy\n");
 });
 
+app.get("/db", function(req, res, next) {
+  database.raw('show databases')
+    .then((tables) => res.json({ message: `Database have ${tables}` }))
+    .catch(next);
+});
+
 module.exports = app;

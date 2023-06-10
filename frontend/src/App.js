@@ -1,33 +1,32 @@
 import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
+//import { Menu } from "react-feather";
+import ShizuokaLogo from "./midia/Shizuoka.png";
 import "./App.css";
 
 function App() {
-  const [message, setMessage] = useState();
-  useEffect(() => {
-    fetch("/api/")
-      .then(res => res.json())
-      .then(res => setMessage(res.message))
-      .catch(console.error);
-  }, [setMessage]);
+  const [Itens, setItens] = useState([]);
+  // useEffect(() => {
+  //   fetch("/api/")
+  //     .then(res => res.json())
+  //     .then(res => setMessage(res.message))
+  //     .catch(console.error);
+  // }, [setMessage]);
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>{message || "Loading..."}</p>
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <img src={ShizuokaLogo} className="App-logo"/>
+        <a>Login</a>
       </header>
+      <div className="App-body">
+        <div className="App-menu">
+          Itens{}
+        </div>
+        {}
+        <div className="App-itens">
+          Comida
+        </div>
+      </div>
     </div>
   );
 }
