@@ -34,8 +34,9 @@ app.get("/healthz", function(req, res) {
 });
 
 app.get("/db", function(req, res, next) {
-  database.raw('show databases')
-    .then((tables) => res.json({ message: `Database have ${tables}` }))
+  database.raw('show tables')
+    .then(([a, b]) => a)
+    .then((tables) => res.json({ message: `tables array: ${tables}` }) )
     .catch(next);
 });
 

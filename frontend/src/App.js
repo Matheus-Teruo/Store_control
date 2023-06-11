@@ -1,10 +1,29 @@
 import React, { useEffect, useState } from "react";
-//import { Menu } from "react-feather";
-import ShizuokaLogo from "./midia/Shizuoka.png";
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import "./App.css";
 
+import Home from "./pages/Home";
+import Seller from "./pages/Seller";
+import ConfirmPurchase from "./pages/ConfirmPurchase";
+import Cashier from "./pages/Cashier";
+import ConfirmRecharge from "./pages/ConfirmRecharge";
+import Login from "./pages/Login";
+import Signin from "./pages/Signin";
+import Database from "./pages/Database";
+
+const router = createBrowserRouter([
+  { path: '/', element: <Home/>},
+  { path: '/vendedor', element: <Seller/>},
+  { path: '/confirmar-compra', element: <ConfirmPurchase/>},
+  { path: '/caixa', element: <Cashier/>},
+  { path: '/confirmar-recarga', element: <ConfirmRecharge/>},
+  { path: '/login', element: <Login/>},
+  { path: '/signin', element: <Signin/>},
+  { path: '/database', element: <Database/>}
+])
+
 function App() {
-  const [Itens, setItens] = useState([]);
+  //const [Itens, setItens] = useState([]);
   // useEffect(() => {
   //   fetch("/api/")
   //     .then(res => res.json())
@@ -13,21 +32,9 @@ function App() {
   // }, [setMessage]);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={ShizuokaLogo} className="App-logo"/>
-        <a>Login</a>
-      </header>
-      <div className="App-body">
-        <div className="App-menu">
-          Itens{}
-        </div>
-        {}
-        <div className="App-itens">
-          Comida
-        </div>
-      </div>
-    </div>
+    <>
+      <RouterProvider router={router} />
+    </>
   );
 }
 
