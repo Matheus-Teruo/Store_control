@@ -1,66 +1,69 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
-import ShizuokaLogo from "./../midia/Shizuoka.png";
+import React, { useState, useEffect } from 'react'
+import { Form, redirect } from 'react-router-dom';
+import bcrypt from 'bcryptjs';
 
 function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitvalid, setSubmitvalid] = useState(false);
+  const [usernameValidation, setUsernameValidation] = useState(
+    {minChar: false, noSpace: true});
+  const [passwordValidation, setPasswordValidation] = useState(
+    {minChar: false, noSpace: true, needletter: false, neednumber: false});
+  
+  useEffect(() => {
+    if (usernameValidation.minChar &&
+        usernameValidation.noSpace &&
+        passwordValidation.minChar &&
+        passwordValidation.noSpace &&
+        passwordValidation.needletter &&
+        passwordValidation.neednumber){
+          setSubmitvalid(true);
+        } else {
+          setSubmitvalid(false);
+        }
+  }, [usernameValidation, passwordValidation])
+  
   const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
+    setUsername(event.target.value)
   };
 
   const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
+    setPassword(event.target.value)
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  var salt = bcrypt.genSaltSync(10);
+  var hash = bcrypt.hashSync("password", salt);
 
-    // You can perform login authentication here
-    // using the email and password values
+  async function SubmitSingUp(event) {
+    event.preventDefault()
+    await fetch("/api/prelogin", {
+      method: "POST",
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        "username": username,
+      })
+    })
+      .then(res => res.json())
+      .then(res => console.log(res.message))
+      .catch(console.error)
+  }
 
-    // Example: Printing the login details
-    console.log('Username:', username);
-    console.log('Password:', password);
-
-    // Reset the form
-    setUsername('');
-    setPassword('');
-  };
   return (
-    <>
-    <header>
-        <Link to="/">
-          <img src={ShizuokaLogo} alt="Shizuoka Logo"/>
-        </Link>
-        <div>Welcome, John Doe!</div> {/* Replace "John Doe" with the username */}
-    </header>
     <div>
       <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
+      <Form method="post">
         <div>
           <label>Usuário:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={handleUsernameChange}
-            required
-          />
+          <input value={username} onChange={handleUsernameChange} id="username" type="text" name="username" required/>
         </div>
         <div>
-          <label>Senha:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={handlePasswordChange}
-            required
-          />
+          <label htmlFor="password">Senha:</label>
+          <input value={password} onChange={handlePasswordChange} id="password" type="password" name="password" required/>
         </div>
-        <button type="submit">Login</button>
-      </form>
+        <button type="submit" disabled={false}>Login</button>
+      </Form>
     </div>
-    </>
   )
 }
 

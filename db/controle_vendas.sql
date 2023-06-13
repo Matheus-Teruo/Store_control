@@ -39,6 +39,33 @@ LOCK TABLES `cartoes` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `clientes`
+--
+
+DROP TABLE IF EXISTS `clientes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `clientes` (
+  `IDcliente` int NOT NULL AUTO_INCREMENT,
+  `IDcartao` int NOT NULL,
+  `h_cliente` datetime NOT NULL,
+  `uso` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`IDcliente`),
+  KEY `IDcartao` (`IDcartao`),
+  CONSTRAINT `clientes_ibfk_1` FOREIGN KEY (`IDcartao`) REFERENCES `cartoes` (`IDcartao`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `clientes`
+--
+
+LOCK TABLES `clientes` WRITE;
+/*!40000 ALTER TABLE `clientes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `clientes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `doacoes`
 --
 
@@ -50,9 +77,12 @@ CREATE TABLE `doacoes` (
   `valor` int NOT NULL,
   `h_doacao` datetime NOT NULL,
   `IDcartao` int NOT NULL,
+  `IDusuario` int NOT NULL,
   PRIMARY KEY (`IDdoacao`),
   KEY `IDcartao` (`IDcartao`),
-  CONSTRAINT `doacoes_ibfk_1` FOREIGN KEY (`IDcartao`) REFERENCES `cartoes` (`IDcartao`)
+  KEY `IDusuario` (`IDusuario`),
+  CONSTRAINT `doacoes_ibfk_1` FOREIGN KEY (`IDcartao`) REFERENCES `cartoes` (`IDcartao`),
+  CONSTRAINT `doacoes_ibfk_2` FOREIGN KEY (`IDusuario`) REFERENCES `usuarios` (`IDusuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -100,11 +130,12 @@ DROP TABLE IF EXISTS `itens`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `itens` (
   `IDitem` int NOT NULL AUTO_INCREMENT,
-  `nomeItem` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `item` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `preco` int NOT NULL,
   `estoque` int NOT NULL,
   `IDestande` int NOT NULL,
   PRIMARY KEY (`IDitem`),
+  UNIQUE KEY `item` (`item`),
   KEY `IDestande` (`IDestande`),
   CONSTRAINT `itens_ibfk_1` FOREIGN KEY (`IDestande`) REFERENCES `estandes` (`IDestande`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -130,7 +161,8 @@ CREATE TABLE `kenjinkais` (
   `IDkenjinkai` int NOT NULL AUTO_INCREMENT,
   `kenjinkai` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `diretoria` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`IDkenjinkai`)
+  PRIMARY KEY (`IDkenjinkai`),
+  UNIQUE KEY `kenjinkai` (`kenjinkai`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -141,6 +173,34 @@ CREATE TABLE `kenjinkais` (
 LOCK TABLES `kenjinkais` WRITE;
 /*!40000 ALTER TABLE `kenjinkais` DISABLE KEYS */;
 /*!40000 ALTER TABLE `kenjinkais` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `objetos`
+--
+
+DROP TABLE IF EXISTS `objetos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `objetos` (
+  `IDitem` int NOT NULL,
+  `IDvenda` int NOT NULL,
+  `quantidade` int NOT NULL,
+  `p_unidade` int NOT NULL,
+  PRIMARY KEY (`IDitem`,`IDvenda`),
+  KEY `IDvenda` (`IDvenda`),
+  CONSTRAINT `objetos_ibfk_1` FOREIGN KEY (`IDitem`) REFERENCES `itens` (`IDitem`),
+  CONSTRAINT `objetos_ibfk_2` FOREIGN KEY (`IDvenda`) REFERENCES `vendas` (`IDvenda`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `objetos`
+--
+
+LOCK TABLES `objetos` WRITE;
+/*!40000 ALTER TABLE `objetos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `objetos` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -155,9 +215,12 @@ CREATE TABLE `recargas` (
   `recarga` int NOT NULL,
   `h_recarga` datetime NOT NULL,
   `IDcartao` int NOT NULL,
+  `IDusuario` int NOT NULL,
   PRIMARY KEY (`IDrecarga`),
   KEY `IDcartao` (`IDcartao`),
-  CONSTRAINT `recargas_ibfk_1` FOREIGN KEY (`IDcartao`) REFERENCES `cartoes` (`IDcartao`)
+  KEY `IDusuario` (`IDusuario`),
+  CONSTRAINT `recargas_ibfk_1` FOREIGN KEY (`IDcartao`) REFERENCES `cartoes` (`IDcartao`),
+  CONSTRAINT `recargas_ibfk_2` FOREIGN KEY (`IDusuario`) REFERENCES `usuarios` (`IDusuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -171,31 +234,34 @@ LOCK TABLES `recargas` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `sacolas`
+-- Table structure for table `usuarios`
 --
 
-DROP TABLE IF EXISTS `sacolas`;
+DROP TABLE IF EXISTS `usuarios`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `sacolas` (
-  `IDitem` int NOT NULL,
-  `IDvenda` int NOT NULL,
-  `quantidade` int NOT NULL DEFAULT '1',
-  `p_unidade` int NOT NULL,
-  PRIMARY KEY (`IDitem`,`IDvenda`),
-  KEY `IDvenda` (`IDvenda`),
-  CONSTRAINT `sacolas_ibfk_1` FOREIGN KEY (`IDitem`) REFERENCES `itens` (`IDitem`),
-  CONSTRAINT `sacolas_ibfk_2` FOREIGN KEY (`IDvenda`) REFERENCES `vendas` (`IDvenda`)
+CREATE TABLE `usuarios` (
+  `IDusuario` int NOT NULL AUTO_INCREMENT,
+  `usuario` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `senha` char(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `salt` char(29) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nome` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `IDestande` int DEFAULT NULL,
+  PRIMARY KEY (`IDusuario`),
+  UNIQUE KEY `usuario` (`usuario`),
+  UNIQUE KEY `nome` (`nome`),
+  KEY `IDestande` (`IDestande`),
+  CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`IDestande`) REFERENCES `estandes` (`IDestande`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `sacolas`
+-- Dumping data for table `usuarios`
 --
 
-LOCK TABLES `sacolas` WRITE;
-/*!40000 ALTER TABLE `sacolas` DISABLE KEYS */;
-/*!40000 ALTER TABLE `sacolas` ENABLE KEYS */;
+LOCK TABLES `usuarios` WRITE;
+/*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
+/*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -207,15 +273,15 @@ DROP TABLE IF EXISTS `vendas`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `vendas` (
   `IDvenda` int NOT NULL AUTO_INCREMENT,
-  `IDvendedor` int NOT NULL,
+  `IDusuario` int NOT NULL,
   `IDestande` int NOT NULL,
-  `h_venda` datetime NOT NULL,
   `IDcartao` int NOT NULL,
+  `h_venda` datetime NOT NULL,
   PRIMARY KEY (`IDvenda`),
-  KEY `IDvendedor` (`IDvendedor`),
+  KEY `IDusuario` (`IDusuario`),
   KEY `IDestande` (`IDestande`),
   KEY `IDcartao` (`IDcartao`),
-  CONSTRAINT `vendas_ibfk_1` FOREIGN KEY (`IDvendedor`) REFERENCES `vendedores` (`IDvendedor`),
+  CONSTRAINT `vendas_ibfk_1` FOREIGN KEY (`IDusuario`) REFERENCES `usuarios` (`IDusuario`),
   CONSTRAINT `vendas_ibfk_2` FOREIGN KEY (`IDestande`) REFERENCES `estandes` (`IDestande`),
   CONSTRAINT `vendas_ibfk_3` FOREIGN KEY (`IDcartao`) REFERENCES `cartoes` (`IDcartao`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -229,33 +295,6 @@ LOCK TABLES `vendas` WRITE;
 /*!40000 ALTER TABLE `vendas` DISABLE KEYS */;
 /*!40000 ALTER TABLE `vendas` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `vendedores`
---
-
-DROP TABLE IF EXISTS `vendedores`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `vendedores` (
-  `IDvendedor` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `IDestande` int DEFAULT NULL,
-  PRIMARY KEY (`IDvendedor`),
-  KEY `IDestande` (`IDestande`),
-  CONSTRAINT `vendedores_ibfk_1` FOREIGN KEY (`IDestande`) REFERENCES `estandes` (`IDestande`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `vendedores`
---
-
-LOCK TABLES `vendedores` WRITE;
-/*!40000 ALTER TABLE `vendedores` DISABLE KEYS */;
-/*!40000 ALTER TABLE `vendedores` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -266,4 +305,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-10 22:28:17
+-- Dump completed on 2023-06-12 18:39:44

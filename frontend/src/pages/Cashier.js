@@ -1,6 +1,4 @@
-import React, { useState, useEffect} from 'react'
-import { Link } from 'react-router-dom';
-import ShizuokaLogo from "./../midia/Shizuoka.png";
+import React, { useState } from 'react'
 
 function Cashier() {
   const [helper,setHelper] = useState(false)
@@ -51,13 +49,6 @@ function Cashier() {
   };
 
   return (
-    <>
-    <header>
-        <Link to="/">
-          <img src={ShizuokaLogo} alt="Shizuoka Logo"/>
-        </Link>
-        <div>Welcome, John Doe!</div> {/* Replace "John Doe" with the username */}
-    </header>
     <div>
       <button onClick={() => setHelper(!helper)}>
         Auxiliar
@@ -105,7 +96,6 @@ function Cashier() {
         />
       </div>
     </div>
-    </>
   )
 }
 

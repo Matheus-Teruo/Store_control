@@ -19,6 +19,8 @@ const app = express();
 
 app.use(morgan("common"));
 
+// GET
+
 app.get("/", function(req, res, next) {
   database.raw('select VERSION() version')
     .then(([rows, columns]) => rows[0])
@@ -39,5 +41,59 @@ app.get("/db", function(req, res, next) {
     .then((tables) => res.json({ message: `tables array: ${tables}` }) )
     .catch(next);
 });
+
+// POST
+
+app.use(express.json());
+
+app.post("/signup", (req, res) => {
+  const data = req.body;
+  // console.log(data)
+  database('usuarios')
+    .insert({ usuario: data.username,
+              senha: data.password,
+              salt: data.salt,
+              nome: data.fullname})
+    .then(() => {
+      console.log("successful user register")
+      res.status(201).json({ message: `successful sing-up as user: ${data.username}`});
+    })
+    .catch(error => {
+      console.error(error)
+      if (error.errno === 1062){
+        const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
+        if (column === "usuario"){
+          res.status(409).json({ error: `error on sing-up user: ${data.username}`, column: column});
+        } else {
+          res.status(409).json({ error: `error on sing-up user: ${data.username}`, column: column});
+        }
+      } else{
+        res.status(501).json({ error: {error}});
+      }
+    })
+})
+
+app.post("/prelogin", (req, res) => {
+  const data = req.body;
+  // console.log(data)
+  database(data.username)
+    .select('salt')
+    .where({ usuario: data.username })
+    .then(rows => {
+      if (rows.length !== 0) {
+        console.log(row)
+        const [ salt ] = rows[0];
+        console.log('Salt:', salt);
+        res.json({ salt: salt })
+      } else {
+        console.log('User not found.');
+        res.status(401).json({})
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      res.status(501).json({ error: {error}});
+    })
+})
 
 module.exports = app;

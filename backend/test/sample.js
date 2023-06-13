@@ -44,3 +44,15 @@ describe("API /db", () => {
       });
   });
 });
+
+describe("API /signup", () => {
+  it("it should return a success sign up", done => {
+    chai
+      .request(app)
+      .post("/signup")
+      .end((err, res) => {
+        res.should.have.status(200);
+        done();
+      });
+  });
+});
