@@ -11,6 +11,7 @@ services:
       - DATABASE_USER=root
       - DATABASE_PASSWORD=/run/secrets/db-password
       - DATABASE_HOST=db
+      - SECRET_TOKEN=jashduwqekckweasd
       - NODE_ENV=development
     ports:
       - 80:80

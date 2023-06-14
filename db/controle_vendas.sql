@@ -16,139 +16,96 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `cartoes`
+-- Table structure for table `cards`
 --
 
-DROP TABLE IF EXISTS `cartoes`;
+DROP TABLE IF EXISTS `cards`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `cartoes` (
-  `IDcartao` int NOT NULL,
-  `credito` int NOT NULL,
-  PRIMARY KEY (`IDcartao`)
+CREATE TABLE `cards` (
+  `cardID` int NOT NULL,
+  `debit` int NOT NULL,
+  PRIMARY KEY (`cardID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `cartoes`
+-- Table structure for table `customers`
 --
 
-LOCK TABLES `cartoes` WRITE;
-/*!40000 ALTER TABLE `cartoes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cartoes` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `clientes`
---
-
-DROP TABLE IF EXISTS `clientes`;
+DROP TABLE IF EXISTS `customers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `clientes` (
-  `IDcliente` int NOT NULL AUTO_INCREMENT,
-  `IDcartao` int NOT NULL,
-  `h_cliente` datetime NOT NULL,
-  `uso` tinyint(1) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`IDcliente`),
-  KEY `IDcartao` (`IDcartao`),
-  CONSTRAINT `clientes_ibfk_1` FOREIGN KEY (`IDcartao`) REFERENCES `cartoes` (`IDcartao`)
+CREATE TABLE `customers` (
+  `customerID` int NOT NULL AUTO_INCREMENT,
+  `cardID` int NOT NULL,
+  `control_t` datetime NOT NULL,
+  `in_use` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`customerID`),
+  KEY `cardID` (`cardID`),
+  CONSTRAINT `customers_ibfk_1` FOREIGN KEY (`cardID`) REFERENCES `cards` (`cardID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `clientes`
+-- Table structure for table `donations`
 --
 
-LOCK TABLES `clientes` WRITE;
-/*!40000 ALTER TABLE `clientes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `clientes` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `doacoes`
---
-
-DROP TABLE IF EXISTS `doacoes`;
+DROP TABLE IF EXISTS `donations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `doacoes` (
-  `IDdoacao` int NOT NULL AUTO_INCREMENT,
-  `valor` int NOT NULL,
-  `h_doacao` datetime NOT NULL,
-  `IDcartao` int NOT NULL,
-  `IDusuario` int NOT NULL,
-  PRIMARY KEY (`IDdoacao`),
-  KEY `IDcartao` (`IDcartao`),
-  KEY `IDusuario` (`IDusuario`),
-  CONSTRAINT `doacoes_ibfk_1` FOREIGN KEY (`IDcartao`) REFERENCES `cartoes` (`IDcartao`),
-  CONSTRAINT `doacoes_ibfk_2` FOREIGN KEY (`IDusuario`) REFERENCES `usuarios` (`IDusuario`)
+CREATE TABLE `donations` (
+  `donationID` int NOT NULL AUTO_INCREMENT,
+  `value` int NOT NULL,
+  `donation_t` datetime NOT NULL,
+  `cardID` int NOT NULL,
+  `userID` int NOT NULL,
+  PRIMARY KEY (`donationID`),
+  KEY `cardID` (`cardID`),
+  KEY `userID` (`userID`),
+  CONSTRAINT `donations_ibfk_1` FOREIGN KEY (`cardID`) REFERENCES `cards` (`cardID`),
+  CONSTRAINT `donations_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `doacoes`
+-- Table structure for table `goods`
 --
 
-LOCK TABLES `doacoes` WRITE;
-/*!40000 ALTER TABLE `doacoes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `doacoes` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `estandes`
---
-
-DROP TABLE IF EXISTS `estandes`;
+DROP TABLE IF EXISTS `goods`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `estandes` (
-  `IDestande` int NOT NULL AUTO_INCREMENT,
-  `observacao` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `IDkenjinkai` int NOT NULL,
-  PRIMARY KEY (`IDestande`),
-  KEY `IDkenjinkai` (`IDkenjinkai`),
-  CONSTRAINT `estandes_ibfk_1` FOREIGN KEY (`IDkenjinkai`) REFERENCES `kenjinkais` (`IDkenjinkai`)
+CREATE TABLE `goods` (
+  `itemID` int NOT NULL,
+  `saleID` int NOT NULL,
+  `quantity` int NOT NULL,
+  `unit_p` int NOT NULL,
+  PRIMARY KEY (`itemID`,`saleID`),
+  KEY `saleID` (`saleID`),
+  CONSTRAINT `goods_ibfk_1` FOREIGN KEY (`itemID`) REFERENCES `items` (`itemID`),
+  CONSTRAINT `goods_ibfk_2` FOREIGN KEY (`saleID`) REFERENCES `sales` (`saleID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `estandes`
+-- Table structure for table `items`
 --
 
-LOCK TABLES `estandes` WRITE;
-/*!40000 ALTER TABLE `estandes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `estandes` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `itens`
---
-
-DROP TABLE IF EXISTS `itens`;
+DROP TABLE IF EXISTS `items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `itens` (
-  `IDitem` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `items` (
+  `itemID` int NOT NULL AUTO_INCREMENT,
   `item` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `preco` int NOT NULL,
-  `estoque` int NOT NULL,
-  `IDestande` int NOT NULL,
-  PRIMARY KEY (`IDitem`),
+  `price` int NOT NULL,
+  `stock` int NOT NULL,
+  `standID` int NOT NULL,
+  PRIMARY KEY (`itemID`),
   UNIQUE KEY `item` (`item`),
-  KEY `IDestande` (`IDestande`),
-  CONSTRAINT `itens_ibfk_1` FOREIGN KEY (`IDestande`) REFERENCES `estandes` (`IDestande`)
+  KEY `standID` (`standID`),
+  CONSTRAINT `items_ibfk_1` FOREIGN KEY (`standID`) REFERENCES `stands` (`standID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `itens`
---
-
-LOCK TABLES `itens` WRITE;
-/*!40000 ALTER TABLE `itens` DISABLE KEYS */;
-/*!40000 ALTER TABLE `itens` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `kenjinkais`
@@ -158,143 +115,97 @@ DROP TABLE IF EXISTS `kenjinkais`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `kenjinkais` (
-  `IDkenjinkai` int NOT NULL AUTO_INCREMENT,
+  `kenjinkaiID` int NOT NULL AUTO_INCREMENT,
   `kenjinkai` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `diretoria` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`IDkenjinkai`),
+  `principal` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`kenjinkaiID`),
   UNIQUE KEY `kenjinkai` (`kenjinkai`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `kenjinkais`
+-- Table structure for table `recharges`
 --
 
-LOCK TABLES `kenjinkais` WRITE;
-/*!40000 ALTER TABLE `kenjinkais` DISABLE KEYS */;
-/*!40000 ALTER TABLE `kenjinkais` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `objetos`
---
-
-DROP TABLE IF EXISTS `objetos`;
+DROP TABLE IF EXISTS `recharges`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `objetos` (
-  `IDitem` int NOT NULL,
-  `IDvenda` int NOT NULL,
-  `quantidade` int NOT NULL,
-  `p_unidade` int NOT NULL,
-  PRIMARY KEY (`IDitem`,`IDvenda`),
-  KEY `IDvenda` (`IDvenda`),
-  CONSTRAINT `objetos_ibfk_1` FOREIGN KEY (`IDitem`) REFERENCES `itens` (`IDitem`),
-  CONSTRAINT `objetos_ibfk_2` FOREIGN KEY (`IDvenda`) REFERENCES `vendas` (`IDvenda`)
+CREATE TABLE `recharges` (
+  `rechargeID` int NOT NULL AUTO_INCREMENT,
+  `recharge` int NOT NULL,
+  `recharge_t` datetime NOT NULL,
+  `cardID` int NOT NULL,
+  `userID` int NOT NULL,
+  PRIMARY KEY (`rechargeID`),
+  KEY `cardID` (`cardID`),
+  KEY `userID` (`userID`),
+  CONSTRAINT `recharges_ibfk_1` FOREIGN KEY (`cardID`) REFERENCES `cards` (`cardID`),
+  CONSTRAINT `recharges_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `objetos`
+-- Table structure for table `sales`
 --
 
-LOCK TABLES `objetos` WRITE;
-/*!40000 ALTER TABLE `objetos` DISABLE KEYS */;
-/*!40000 ALTER TABLE `objetos` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `recargas`
---
-
-DROP TABLE IF EXISTS `recargas`;
+DROP TABLE IF EXISTS `sales`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `recargas` (
-  `IDrecarga` int NOT NULL AUTO_INCREMENT,
-  `recarga` int NOT NULL,
-  `h_recarga` datetime NOT NULL,
-  `IDcartao` int NOT NULL,
-  `IDusuario` int NOT NULL,
-  PRIMARY KEY (`IDrecarga`),
-  KEY `IDcartao` (`IDcartao`),
-  KEY `IDusuario` (`IDusuario`),
-  CONSTRAINT `recargas_ibfk_1` FOREIGN KEY (`IDcartao`) REFERENCES `cartoes` (`IDcartao`),
-  CONSTRAINT `recargas_ibfk_2` FOREIGN KEY (`IDusuario`) REFERENCES `usuarios` (`IDusuario`)
+CREATE TABLE `sales` (
+  `saleID` int NOT NULL AUTO_INCREMENT,
+  `userID` int NOT NULL,
+  `standID` int NOT NULL,
+  `cardID` int NOT NULL,
+  `sale_t` datetime NOT NULL,
+  PRIMARY KEY (`saleID`),
+  KEY `userID` (`userID`),
+  KEY `standID` (`standID`),
+  KEY `cardID` (`cardID`),
+  CONSTRAINT `sales_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`),
+  CONSTRAINT `sales_ibfk_2` FOREIGN KEY (`standID`) REFERENCES `stands` (`standID`),
+  CONSTRAINT `sales_ibfk_3` FOREIGN KEY (`cardID`) REFERENCES `cards` (`cardID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `recargas`
+-- Table structure for table `stands`
 --
 
-LOCK TABLES `recargas` WRITE;
-/*!40000 ALTER TABLE `recargas` DISABLE KEYS */;
-/*!40000 ALTER TABLE `recargas` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `usuarios`
---
-
-DROP TABLE IF EXISTS `usuarios`;
+DROP TABLE IF EXISTS `stands`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `usuarios` (
-  `IDusuario` int NOT NULL AUTO_INCREMENT,
-  `usuario` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `senha` char(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+CREATE TABLE `stands` (
+  `standID` int NOT NULL AUTO_INCREMENT,
+  `observation` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `kenjinkaiID` int NOT NULL,
+  PRIMARY KEY (`standID`),
+  KEY `kenjinkaiID` (`kenjinkaiID`),
+  CONSTRAINT `stands_ibfk_1` FOREIGN KEY (`kenjinkaiID`) REFERENCES `kenjinkais` (`kenjinkaiID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `userID` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` char(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `salt` char(29) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nome` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `IDestande` int DEFAULT NULL,
-  PRIMARY KEY (`IDusuario`),
-  UNIQUE KEY `usuario` (`usuario`),
-  UNIQUE KEY `nome` (`nome`),
-  KEY `IDestande` (`IDestande`),
-  CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`IDestande`) REFERENCES `estandes` (`IDestande`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `fullname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `standID` int DEFAULT NULL,
+  `superuser` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`userID`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `fullname` (`fullname`),
+  KEY `standID` (`standID`),
+  CONSTRAINT `users_ibfk_1` FOREIGN KEY (`standID`) REFERENCES `stands` (`standID`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `usuarios`
---
-
-LOCK TABLES `usuarios` WRITE;
-/*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-/*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `vendas`
---
-
-DROP TABLE IF EXISTS `vendas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `vendas` (
-  `IDvenda` int NOT NULL AUTO_INCREMENT,
-  `IDusuario` int NOT NULL,
-  `IDestande` int NOT NULL,
-  `IDcartao` int NOT NULL,
-  `h_venda` datetime NOT NULL,
-  PRIMARY KEY (`IDvenda`),
-  KEY `IDusuario` (`IDusuario`),
-  KEY `IDestande` (`IDestande`),
-  KEY `IDcartao` (`IDcartao`),
-  CONSTRAINT `vendas_ibfk_1` FOREIGN KEY (`IDusuario`) REFERENCES `usuarios` (`IDusuario`),
-  CONSTRAINT `vendas_ibfk_2` FOREIGN KEY (`IDestande`) REFERENCES `estandes` (`IDestande`),
-  CONSTRAINT `vendas_ibfk_3` FOREIGN KEY (`IDcartao`) REFERENCES `cartoes` (`IDcartao`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `vendas`
---
-
-LOCK TABLES `vendas` WRITE;
-/*!40000 ALTER TABLE `vendas` DISABLE KEYS */;
-/*!40000 ALTER TABLE `vendas` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -305,4 +216,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-12 18:39:44
+-- Dump completed on 2023-06-14  6:11:51

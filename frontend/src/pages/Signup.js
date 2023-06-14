@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, redirect  } from 'react-router-dom';
+import { Form, useNavigate  } from 'react-router-dom';
 import bcrypt from 'bcryptjs';
 
 const regexnumber = /[0-9]/
@@ -8,168 +8,158 @@ const regexspace = /\s/
 const regexspecial = /["]|[']|[\\]|[/]|[.]/
 
 function Signup() {
-  const [username, setUsername] = useState("")
-  const [fullname, setFullname] = useState("")
-  const [password, setPassword] = useState("")
+  const [username, setUsername] = useState("");
+  const [fullname, setFullname] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordC, setPasswordC] = useState("");
   const [submitvalid, setSubmitvalid] = useState(false);
-  const [usernameValidation, setUsernameValidation] = useState({haveMinChar: false, noSpace: true, noSpecialChar: true, noUsed: true})
-  const [fullnameValidation, setFullnameValidation] = useState({haveMinChar: false, noSpecialChar: true, noUsed: true})
-  const [passwordValidation, setPasswordValidation] = useState({haveMinChar: false, noSpace: true, haveLetter: false, haveNumber: false})
+  const [alreadyUsed, setAlreadyUsed] = useState({username: "", U_noUsed: true, fullname: "", F_noUsed: true});
+  const [UN_Check, setUN_Check] = useState(
+    {haveMinChar: false,
+     noSpace: true, 
+     noSpecialChar: true});
+  const [FN_Check, setFN_Check] = useState(
+    {haveMinChar: false, 
+     noSpecialChar: true});
+  const [PW_Check, setPW_Check] = useState(
+    {haveMinChar: false,
+     noSpace: true,
+     haveLetter: false,
+     haveNumber: false});
+  const [PW_D_Check, setPW_D_Check] = useState(true);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (usernameValidation.haveMinChar &&
-        usernameValidation.noSpace &&
-        usernameValidation.noSpecialChar &&
-        usernameValidation.noUsed &&
-        fullnameValidation.haveMinChar &&
-        fullnameValidation.noSpecialChar &&
-        fullnameValidation.noUsed &&
-        passwordValidation.haveMinChar &&
-        passwordValidation.noSpace &&
-        passwordValidation.haveLetter &&
-        passwordValidation.haveNumber){
+  useEffect(() => {  // Check all conditions
+    if (UN_Check.haveMinChar &&
+        UN_Check.noSpace &&
+        UN_Check.noSpecialChar &&
+        alreadyUsed.username !== username &&
+        FN_Check.haveMinChar &&
+        FN_Check.noSpecialChar &&
+        alreadyUsed.fullname !== fullname &&
+        PW_Check.haveMinChar &&
+        PW_Check.noSpace &&
+        PW_Check.haveLetter &&
+        PW_Check.haveNumber &&
+        PW_D_Check){
           setSubmitvalid(true);
         } else {
           setSubmitvalid(false);
         }
-  }, [usernameValidation, fullnameValidation, passwordValidation])
+  }, [UN_Check, FN_Check, PW_Check, PW_D_Check])
 
-  async function SubmitSingUp(event) {
+  async function SubmitSingUp(event) {  // Submit POST request sign-up
     event.preventDefault()
+
+    // encrypt password
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
-    var resStatus = ""
-    fetch("/api/signup", {
+    var resStatus;
+
+    fetch("/api/signup", {  // Post form
       method: "POST",
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         "username": username,
-        "fullname": fullname,
         "password": hash,
-        "salt": salt
+        "salt": salt,
+        "fullname": fullname
       })
     })
       .then(res => {
-        resStatus = res.status
+        resStatus = res.status;
         return res.json()})
       .then(data => {
-        if (resStatus=== 201){
-          // Redirect
-          return redirect('/');
-        } else if (resStatus === 409) {
-          // Duplicado
-          if (data.column === "usuario") {
-            setUsernameValidation((usernameValidation) => {
-              return {...usernameValidation, noUsed: false};}
-            )
-          } else if (data.column === "nome") {
-            setFullnameValidation((fullnameValidation) => {
-              return {...fullnameValidation, noUsed: false}}
-            )
+        if (resStatus=== 201){  // Successful sign up
+          // pass fullname to Global
+          return navigate('/');
+        } else if (resStatus === 409) {  // Duplicate 
+          if (data.column === "username") {
+            setAlreadyUsed(alreadyUsed => ({...alreadyUsed, username: data.value, U_noUsed: false}))
+          } else if (data.column === "fullname") {
+            setAlreadyUsed(alreadyUsed => ({...alreadyUsed, fullname: data.value, F_noUsed: false}))
           }
         }
       })
       .catch(console.error)
   }
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value)
-    setUsernameValidation((usernameValidation) => {
-      return {...usernameValidation, noUsed: true};
-    })
-
-    // Verificando tamanho mínimo
-    if (event.target.value.trim().length >= 4) {
-      setUsernameValidation((usernameValidation) => {
-        return {...usernameValidation, haveMinChar: true};
-    })} else {
-      setUsernameValidation((usernameValidation) => {
-        return {...usernameValidation, haveMinChar: false};
-    })};
-
-    // Verificando tamanho mínimo se possui spaces
-    if (!regexspace.test(event.target.value)) {
-      setUsernameValidation((usernameValidation) => {
-        return {...usernameValidation, noSpace: true};
-    })} else {
-      setUsernameValidation((usernameValidation) => {
-        return {...usernameValidation, noSpace: false};
-    })};
-
-    // Verificando caracter especial
-    if (!regexspecial.test(event.target.value)) {
-      setUsernameValidation((usernameValidation) => {
-        return {...usernameValidation, noSpecialChar: true};
-    })} else {
-      setUsernameValidation((usernameValidation) => {
-        return {...usernameValidation, noSpecialChar: false};
-    })};
-  };
-
-  const handleFullnameChange = (event) => {
-    setFullname(event.target.value);
-    setFullnameValidation((fullnameValidation) => {
-      return {...fullnameValidation, noUsed: true}
-    })
-
-    // Verificando tamanho mínimo
-    if (event.target.value.trim().length >= 6) {
-      setFullnameValidation((fullnameValidation) => {
-        return {...fullnameValidation, haveMinChar: true}
-      })
+  useEffect(() => {  // Check password confirmation
+    if (password === passwordC) {
+      setPW_D_Check(true)
     } else {
-      setFullnameValidation((fullnameValidation) => {
-        return {...fullnameValidation, haveMinChar: false}
-      })
+      setPW_D_Check(false)
     }
+  }, [password, passwordC])
 
-    // Verificando caracter especial
-    if (!regexspecial.test(event.target.value)) {
-      setFullnameValidation((fullnameValidation) => {
-        return {...fullnameValidation, noSpecialChar: true};
-    })} else {
-      setFullnameValidation((fullnameValidation) => {
-        return {...fullnameValidation, noSpecialChar: false};
-    })};
+  const handleUsernameChange = (event) => {  // Username conditions
+    setUsername(event.target.value)
+
+    if (event.target.value.trim().length >= 4) {  // Check min number of char
+      setUN_Check(UN_Check => ({...UN_Check, haveMinChar: true})
+    )} else {
+      setUN_Check(UN_Check => ({...UN_Check, haveMinChar: false})
+    )};
+
+    if (!regexspace.test(event.target.value)) {  // Check use of space
+      setUN_Check(UN_Check => ({...UN_Check, noSpace: true})
+    )} else {
+      setUN_Check(UN_Check => ({...UN_Check, noSpace: false})
+    )};
+
+    if (!regexspecial.test(event.target.value)) {  // Check use of special char
+      setUN_Check(UN_Check => ({...UN_Check, noSpecialChar: true})
+    )} else {
+      setUN_Check(UN_Check => ({...UN_Check, noSpecialChar: false})
+    )};
   };
 
-  const handlePasswordChange = (event) => {
+  const handleFullnameChange = (event) => {  // Fullname conditions
+    setFullname(event.target.value);
+
+    if (event.target.value.trim().length >= 6) {  // Check min number of char
+      setFN_Check(FN_Check => ({...FN_Check, haveMinChar: true})
+    )} else {
+      setFN_Check(FN_Check => ({...FN_Check, haveMinChar: false})
+    )}
+
+    if (!regexspecial.test(event.target.value)) {  // Check use of special char
+      setFN_Check(FN_Check => ({...FN_Check, noSpecialChar: true})
+    )} else {
+      setFN_Check(FN_Check => ({...FN_Check, noSpecialChar: false})
+    )};
+  };
+
+  const handlePasswordChange = (event) => {  // Password conditions
     setPassword(event.target.value)
-    // Verificando tamanho mínimo
-    if (event.target.value.trim().length >= 6) {
-      setPasswordValidation((passwordValidation) => {
-        return {...passwordValidation, haveMinChar: true};
-    })} else {
-      setPasswordValidation((passwordValidation) => {
-        return {...passwordValidation, haveMinChar: false};
-    })};
 
-    // Verificando se possui letras
-    if (regexletter.test(event.target.value)) {
-      setPasswordValidation((passwordValidation) => {
-        return {...passwordValidation, haveLetter: true};
-    })} else {
-      setPasswordValidation((passwordValidation) => {
-        return {...passwordValidation, haveLetter: false};
-    })};
+    if (event.target.value.trim().length >= 6) {  // Check min number of char
+      setPW_Check(PW_Check => ({...PW_Check, haveMinChar: true})
+    )} else {
+      setPW_Check((PW_Check) => ({...PW_Check, haveMinChar: false})
+    )};
 
-    // Verificando se possui numero
-    if (regexnumber.test(event.target.value)) {
-      setPasswordValidation((passwordValidation) => {
-        return {...passwordValidation, haveNumber: true};
-    })} else {
-      setPasswordValidation((passwordValidation) => {
-        return {...passwordValidation, haveNumber: false};
-    })};
+    if (regexletter.test(event.target.value)) {  // Check letter in password
+      setPW_Check((PW_Check) => ({...PW_Check, haveLetter: true})
+    )} else {
+      setPW_Check((PW_Check) => ({...PW_Check, haveLetter: false})
+    )};
 
-    // Verificando tamanho mínimo se possui spaces
-    if (!regexspace.test(event.target.value)) {
-      setPasswordValidation((passwordValidation) => {
-        return {...passwordValidation, noSpace: true};
-    })} else {
-      setPasswordValidation((passwordValidation) => {
-        return {...passwordValidation, noSpace: false};
-    })};
+    if (regexnumber.test(event.target.value)) {  // Check number in password
+      setPW_Check(PW_Check => ({...PW_Check, haveNumber: true})
+    )} else {
+      setPW_Check(PW_Check => ({...PW_Check, haveNumber: false})
+    )};
+
+    if (!regexspace.test(event.target.value)) {  // Check use of space
+      setPW_Check(PW_Check => ({...PW_Check, noSpace: true})
+    )} else {
+      setPW_Check((PW_Check) => ({...PW_Check, noSpace: false})
+    )};
+  };
+
+  const handlePasswordChangeC = (event) => {  // Password confirmation set
+    setPasswordC(event.target.value)
   };
 
   return (
@@ -178,44 +168,33 @@ function Signup() {
       <Form method="post">
         <div>
           <label>Usuário:</label>
-          <input 
-            value={username} 
-            onChange={handleUsernameChange} 
-            id="username" 
-            type="text" 
-            name="username" 
-          />
-          {!usernameValidation.haveMinChar && <div>minChar</div>}
-          {!usernameValidation.noSpace && <div>noSpace</div>}
-          {!usernameValidation.noSpecialChar && <div>noCharEspecial</div>}
-          {!usernameValidation.noUsed && <div>noUsed</div>}
+          <input value={username} onChange={handleUsernameChange} id="username" type="text" name="username" />
+          {!UN_Check.haveMinChar && <div>minChar</div>}
+          {!UN_Check.noSpace && <div>noSpace</div>}
+          {!UN_Check.noSpecialChar && <div>noCharEspecial</div>}
+          {(!alreadyUsed.U_noUsed && (alreadyUsed.username === username)) && <div>noUsed</div>}
+          <div>{alreadyUsed.username}</div>
         </div>
         <div>
           <label htmlFor="fullname">Nome Completo:</label>
-          <input 
-            value={fullname} 
-            onChange={handleFullnameChange} 
-            id="Fullname" 
-            type="text" 
-            name="Fullname" 
-          />
-          {!fullnameValidation.haveMinChar && <div>minChar</div>}
-          {!fullnameValidation.noSpecialChar && <div>noCharEspecial</div>}
-          {!fullnameValidation.noUsed && <div>noUsed</div>}
+          <input value={fullname} onChange={handleFullnameChange} id="fullname" type="text" name="fullname" />
+          {!FN_Check.haveMinChar && <div>minChar</div>}
+          {!FN_Check.noSpecialChar && <div>noCharEspecial</div>}
+          {(!alreadyUsed.F_noUsed && (alreadyUsed.fullname === fullname)) && <div>noUsed</div>}
+          <div>{alreadyUsed.fullname}</div>
         </div>
         <div>
           <label htmlFor="password">Senha:</label>
-          <input 
-            value={password} 
-            onChange={handlePasswordChange} 
-            id="password" 
-            type="password" 
-            name="password" 
-          />
-          {!passwordValidation.haveMinChar && <div>minChar</div>}
-          {!passwordValidation.haveLetter && <div>haveletter</div>}
-          {!passwordValidation.haveNumber && <div>havenumber</div>}
-          {!passwordValidation.noSpace && <div>noSpace</div>}
+          <input value={password} onChange={handlePasswordChange} id="password" type="password" name="password" />
+          {!PW_Check.haveMinChar && <div>minChar</div>}
+          {!PW_Check.haveLetter && <div>haveletter</div>}
+          {!PW_Check.haveNumber && <div>havenumber</div>}
+          {!PW_Check.noSpace && <div>noSpace</div>}
+        </div>
+        <div>
+          <label htmlFor="PW_D_Check">Senha:</label>
+          <input value={passwordC} onChange={handlePasswordChangeC} id="PW_D_Check" type="password" name="PW_D_Check" />
+          {!PW_D_Check && <div>noMatch</div>}
         </div>
         <button onClick={SubmitSingUp} type="submit" disabled={submitvalid ? false : true}>Sign up</button>
       </Form>

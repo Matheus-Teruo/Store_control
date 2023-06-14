@@ -50,8 +50,50 @@ describe("API /signup", () => {
     chai
       .request(app)
       .post("/signup")
+      .set("Content-Type", "application/json")
+      .send({
+        username: "username",
+        password: "hashhashhashhashhashhashhashhashhashhashhashhashhashhashhash",
+        salt: "saltsaltsaltsaltsaltsaltsalts",
+        fullname: "fullname"
+      })
+      .end((err, res) => {
+        res.should.have.status(201);
+        done();
+      });
+  });
+});
+
+describe("API /prelogin", () => {
+  it("it should return the salt of user", done => {
+    chai
+      .request(app)
+      .post("/prelogin")
+      .set("Content-Type", "application/json")
+      .send({
+        username: "username"
+      })
       .end((err, res) => {
         res.should.have.status(200);
+        res.text.should.be.equal("User found: username\n");
+        done();
+      });
+  });
+});
+
+describe("API /login", () => {
+  it("it should return a successful login the user", done => {
+    chai
+      .request(app)
+      .post("/login")
+      .set("Content-Type", "application/json")
+      .send({
+        username: "username",
+        password: "hashhashhashhashhashhashhashhashhashhashhashhashhashhashhash",
+      })
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.text.should.be.equal("successful user log-in as: username\n");
         done();
       });
   });
