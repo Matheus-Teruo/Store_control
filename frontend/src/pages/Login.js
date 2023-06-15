@@ -132,12 +132,12 @@ function Login() {
       .then(data => {
         if (resStatus === 200) {
           setProcessing((processing) => ({...processing, password: true, PW_Confimed: true}));
-          // fullname passed to put in a Global
           return navigate('/');
         } else if (resStatus === 401) {
           return setProcessing((processing) => ({...processing, password: true, PW_Confimed: false}));
         }
       })
+      .catch(console.error)
   }
 
   return (

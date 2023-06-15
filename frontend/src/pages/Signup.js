@@ -71,7 +71,6 @@ function Signup() {
         return res.json()})
       .then(data => {
         if (resStatus=== 201){  // Successful sign up
-          // pass fullname to Global
           return navigate('/');
         } else if (resStatus === 409) {  // Duplicate 
           if (data.column === "username") {

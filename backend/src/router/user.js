@@ -15,13 +15,33 @@ const createToken = (payload) => {
   return jwt.sign({payload}, process.env.SECRET_TOKEN, {expiresIn: maxAge})
 }
 
+router.get("/checkuser", (req, res) => {  // Check user
+  try {
+    const token = req.cookies.jwt;
+    var decoded = jwt.verify(token, process.env.SECRET_TOKEN);
+    res.json({authenticated: true, firstname: decoded.payload.firstname, standID: decoded.payload.standID, superuser: decoded.payload.superuser,});
+  } catch(err) {
+    res.json({authenticated: false});
+  }
+})
+
+router.post("/logout", (req, res) => {  // Log out user
+  try {
+    res.clearCookie('jwt')
+    res.status(200).end()
+  } catch(err) {
+    res.status(501).json(error);
+  }
+})
+
 router.post("/signup", (req, res) => {  // Sign up request
   const data = req.body;
+  const firstname = data.fullname.split(' ')[0];
   database('users')
     .insert(data)
     .then(() => {
       console.log(`successful user register as: ${data.username}`);
-      res.cookie("jwt", createToken({ID: data.username, fullname: data.fullname, superuser: false}), { httpOnly: true, maxAge: maxAge * 1000 });
+      res.cookie("jwt", createToken({ID: data.username, firstname: firstname, standID: null, superuser: false}), { httpOnly: true, maxAge: maxAge * 1000 });
       res.status(201).json({ message: `successful sing-up as user: ${data.username}`});
     })
     .catch(error => {
@@ -44,7 +64,7 @@ router.post("/signup", (req, res) => {  // Sign up request
 router.post("/prelogin", (req, res) => {  // Username check
   const data = req.body;
   database('users')
-    .select('salt')
+    .select('salt', 'standID')
     .where(data)
     .then(rows => {
       if (rows.length !== 0) {
@@ -64,15 +84,18 @@ router.post("/prelogin", (req, res) => {  // Username check
 router.post("/login", (req, res) => {  // Log in request
   const data = req.body;
   database('users')
-    .select('password', 'fullname', 'superuser')
+    .select('password', 'fullname', 'superuser', 'standID')
     .where({ username: data.username })
     .then(rows => {
       const row  = rows[0];
+      console.log(row.standID)
       if (row.password === data.password) {
+        const firstname = row.fullname.split(' ')[0];
         console.log(`successful user log-in as: ${data.username}`);
-        res.cookie("jwt", createToken({ID: data.username, fullname: row.fullname, superuser: row.superuser}), { httpOnly: true, maxAge: maxAge * 1000 });
-        res.status(200).json({message: `successful log-in as user: ${data.username}`, fullname: row.fullname});
+        res.cookie("jwt", createToken({ID: data.username, firstname: firstname, standID: row.standID, superuser: row.superuser}), { httpOnly: true, maxAge: maxAge * 1000 });
+        res.status(200).json({message: `successful log-in as user: ${data.username}`});
       } else {
+        console.log(`Password incorrect from user: ${data.username}`);
         res.status(401).json({message: "password incorrect"})
       }
     })

@@ -12,6 +12,7 @@ import Inventory from "./pages/Inventory";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Database from "./pages/Database";
+import { AuthContextProvider } from "./store/auth_context";
 
 const router = createBrowserRouter([
   {
@@ -26,13 +27,18 @@ const router = createBrowserRouter([
       { path: '/inventario', element: <Inventory/>},
       { path: '/login', element: <Login/>},
       { path: '/signup', element: <Signup/>},
-      { path: '/database', element: <Database/>}
+      { path: '/admin/config', element: <Database/>},
+      { path: '/admin/tabelas', element: <Database/>}
     ],
   },
 ])
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <AuthContextProvider>
+      <RouterProvider router={router} />
+    </AuthContextProvider>
+  );
 }
 
 export default App;
