@@ -13,6 +13,10 @@ function Cashier() {
     // Generate and update new items for the body based on the window clicked
     const newItems = generateItems(IDstand);
     setItems(newItems);
+    setStands([
+      {id: 1, name: 'stand1'},
+      {id: 2, name: 'stand2'},
+      {id: 3, name: 'stand3'}])
   };
 
   const generateItems = (IDstand) => {

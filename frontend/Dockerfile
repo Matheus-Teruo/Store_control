@@ -5,11 +5,15 @@ FROM node:lts AS development
 ENV CI=true
 ENV PORT=3000
 
+RUN apt-get update && apt-get install -y jq
+
 WORKDIR /code
 COPY package.json /code/package.json
 COPY package-lock.json /code/package-lock.json
 RUN npm ci
 COPY . /code
+
+RUN jq '.browser = {"bin": "dist/bcrypt.js", "crypto": false}' /code/node_modules/bcryptjs/package.json > temp.json && mv temp.json /code/node_modules/bcryptjs/package.json
 
 CMD [ "npm", "start" ]
 

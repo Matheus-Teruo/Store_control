@@ -7,7 +7,7 @@ services:
       target: development
     command: npm run start-watch
     environment:
-      - DATABASE_DB=controle_vendas
+      - DATABASE_DB=store_control
       - DATABASE_USER=root
       - DATABASE_PASSWORD=/run/secrets/db-password
       - DATABASE_HOST=db
@@ -43,12 +43,12 @@ services:
       - db-password
     volumes:
       - db-data:/var/lib/mysql
-      - ./db/controle_vendas.sql:/docker-entrypoint-initdb.d/controle_vendas.sql:ro
+      - ./db/store_control.sql:/docker-entrypoint-initdb.d/store_control.sql:ro
       - ./db/export:/var/lib/export
     networks:
       - private
     environment:
-      - MYSQL_DATABASE=controle_vendas
+      - MYSQL_DATABASE=store_control
       - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db-password
   frontend:
     build:

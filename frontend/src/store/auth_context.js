@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 
 const AuthContext = React.createContext({
-  user: {authenticated: false, firstname: "", secret: false},
+  user: {authenticated: false, firstname: ""},
   onLogin: () => {},
   onLogout: () => {},
 });
 
 export const AuthContextProvider = (props) => {
-  const [user, setUser] = useState({authenticated: false, firstname: "", secret: false});
+  const [user, setUser] = useState({authenticated: false, firstname: ""});
 
   async function loginHandler() {
     fetch("/api/checkuser")
       .then(res => res.json())
       .then(data => {
         if (data.authenticated === true) {
-          return setUser({authenticated: true, firstname: data.firstname, secret: data.superuser});
+          return setUser({authenticated: true, firstname: data.firstname});
         } else {
-          return setUser({authenticated: false, firstname: "", secret: false});
+          return setUser({authenticated: false, firstname: ""});
         }
       })
   }
@@ -24,8 +24,12 @@ export const AuthContextProvider = (props) => {
   async function logoutHandler() {
     fetch("/api/logout", {
       method: "POST"})
-      .then(setUser({authenticated: false, firstname: "", secret: false}))
-      .catch(console.error)
+      .then(() => {
+        return setUser({authenticated: false, firstname: ""});
+      })
+      .catch(() => {
+        return console.error
+      })
   }
 
   return (

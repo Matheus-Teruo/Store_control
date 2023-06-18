@@ -46,7 +46,7 @@ function Signup() {
         } else {
           setSubmitvalid(false);
         }
-  }, [UN_Check, FN_Check, PW_Check, PW_D_Check])
+  }, [UN_Check, username, FN_Check, fullname, alreadyUsed, PW_Check, PW_D_Check])
 
   async function SubmitSingUp(event) {  // Submit POST request sign-up
     event.preventDefault()
@@ -54,6 +54,8 @@ function Signup() {
     // encrypt password
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
+    
+    
     var resStatus;
 
     fetch("/api/signup", {  // Post form
@@ -61,8 +63,8 @@ function Signup() {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         "username": username,
-        "password": hash,
-        "salt": salt,
+        "password": hash,  // using password for now (right is hash)
+        "salt": salt,  // ussing a randow value for now
         "fullname": fullname
       })
     })

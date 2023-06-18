@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Form, useNavigate } from 'react-router-dom';
+import { Link, Form, useNavigate } from 'react-router-dom';
 import bcrypt from 'bcryptjs';
 
 const regexnumber = /[0-9]/
@@ -158,6 +158,9 @@ function Login() {
         </div>
         <button onClick={SubmitPreLogin} type="submit" disabled={submitvalid ? false : true}>Login</button>
       </Form>
+      <div>
+        <Link to="/signup">Sign up</Link>
+      </div>
     </div>
   )
 }

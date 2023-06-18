@@ -1,22 +1,13 @@
-import React, { useState, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import AuthContext from '../store/auth_context';
 
-function Root() {
-  const [showUser, setShowUser] = useState(false);
-  const [logoutDoble, setLogoutDoble] = useState(false);
+function Navbar() {
   const auth = useContext(AuthContext);
 
-  const handleClick = () => {
-    setShowUser(showUser => !showUser)
-  };
-  const handleDobleCheck = (value) => {
-    setLogoutDoble(value)
-  };
-  const handleLogout = () => {
-    setLogoutDoble(false)
-    auth.onLogout()
-  };
+  useEffect(() => {
+    return auth.onLogin()
+  }, [auth])
 
   return (
     <>
@@ -50,20 +41,7 @@ function Root() {
           </ul>
           {auth.user.authenticated ?
             <div>
-              <p onClick={handleClick}>{auth.user.firstname}</p>
-              {showUser && 
-                <div>
-                  <p>a</p>
-                  {!logoutDoble ?
-                    <buttom onClick={() => handleDobleCheck(true)}>Logout</buttom>
-                  :
-                    <div>
-                      <buttom onClick={() => handleLogout()}> Sim </buttom>
-                      <buttom onClick={() => handleDobleCheck(false)}> Não </buttom>
-                    </div>
-                  }
-                </div>
-              }
+              <NavLink to="/user">{auth.user.firstname}</NavLink>
             </div>
             :
             <div>
@@ -78,4 +56,4 @@ function Root() {
   )
 }
 
-export default Root
+export default Navbar

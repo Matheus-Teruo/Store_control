@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.33, for Linux (x86_64)
 --
--- Host: localhost    Database: controle_vendas
+-- Host: localhost    Database: store_control
 -- ------------------------------------------------------
 -- Server version	8.0.33
 
@@ -204,7 +204,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `fullname` (`fullname`),
   KEY `standID` (`standID`),
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`standID`) REFERENCES `stands` (`standID`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -216,4 +216,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-14  6:11:51
+-- Dump completed on 2023-06-18  5:32:22

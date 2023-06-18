@@ -7,7 +7,7 @@ services:
       target: dev-envs
     command: npm run start-watch
     environment:
-      - DATABASE_DB=controle_vendas
+      - DATABASE_DB=store_control
       - DATABASE_USER=root
       - DATABASE_PASSWORD=/run/secrets/db-password
       - DATABASE_HOST=db
@@ -42,7 +42,7 @@ services:
     networks:
       - private
     environment:
-      - MYSQL_DATABASE=controle_vendas
+      - MYSQL_DATABASE=store_control
       - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db-password
   frontend:
     build:

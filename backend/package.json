@@ -14,7 +14,6 @@
     "test-wait-debuger": "cross-env NODE_ENV=test PORT=8081 mocha --no-timeouts --exit --inspect-brk=0.0.0.0:9230"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "express": "^4.17.1",
     "jsonwebtoken": "^9.0.0",

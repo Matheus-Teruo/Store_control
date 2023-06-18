@@ -30,11 +30,6 @@ function Seller() {
     setItems(updatedItems);
   };
 
-  const handleAddCardNumber = () => {
-    // Implement the logic for adding card number here
-    console.log('Add Card Number clicked');
-  };
-
   return (
     <div>
       <h1>Item Page</h1>
@@ -57,7 +52,7 @@ function Seller() {
                 <strong>Price:</strong> ${item.price}
               </div>
             </div>
-            {item.count!=0 && (
+            {item.count !== 0 && (
               <div>
                 <div onClick={() => handleSubtractItem(item.id)}>
                   menos
