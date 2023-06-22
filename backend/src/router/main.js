@@ -11,10 +11,10 @@ router.use(cookieParser());
 
 router.get("/main", (req, res) => {  // Get home info
   try {
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN);
+    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     database('users')
       .select('standID', 'superuser')
-      .where({user: decoded.payload.userID})
+      .where({userID: decoded.userID})
       .then(rows => {
         const row  = rows[0];
         res.json(row)
@@ -23,3 +23,5 @@ router.get("/main", (req, res) => {  // Get home info
     res.status(401).json({authenticated: false});
   }
   })
+
+  module.exports = router;

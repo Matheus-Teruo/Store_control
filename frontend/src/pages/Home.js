@@ -8,10 +8,12 @@ function Home() {
     standID: 0,
     superuser: false,
   })
+  const [debug, setDebug] = useState(true)
   const auth = useContext(AuthContext);
 
   useEffect(() => {
-    if (auth.user.authenticated) {
+    if (auth.user.authenticated && user.standID === 0 && debug) {
+      setDebug(false)
       var resStatus;
       fetch("/api/main")
         .then(res => {
@@ -78,7 +80,7 @@ function Home() {
             </div>
             <div className="frame">
               {user.superuser ? 
-              <Link to="/admin/database">
+              <Link to="/admin/config">
                 <Database alt="Database"/>
                 <p>Database</p>
               </Link>

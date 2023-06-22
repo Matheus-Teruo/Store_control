@@ -7,7 +7,7 @@ const AuthContext = React.createContext({
 });
 
 export const AuthContextProvider = (props) => {
-  const [user, setUser] = useState({authenticated: false, firstname: ""});
+  const [user, setUser] = useState({authenticated: 2, firstname: ""});
 
   async function loginHandler() {
     fetch("/api/checkuser")
@@ -16,7 +16,7 @@ export const AuthContextProvider = (props) => {
         if (data.authenticated === true) {
           return setUser({authenticated: true, firstname: data.firstname});
         } else {
-          return setUser({authenticated: false, firstname: ""});
+          return setUser({authenticated: false, firstname: "", superuser: false});
         }
       })
   }

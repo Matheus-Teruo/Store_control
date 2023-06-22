@@ -1,13 +1,22 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import AuthContext from '../store/auth_context';
 
 function Navbar() {
+  const [user, setUser] = useState({
+    firstname: "",
+    firstTime: true
+  })
   const auth = useContext(AuthContext);
 
   useEffect(() => {
-    return auth.onLogin()
-  }, [auth])
+    if (!auth.user.authenticated || auth.user.authenticated === 2 && user.firstTime){
+      setUser((user) => ({...user, firstTime: false}))
+      return auth.onLogin()
+    } else if (auth.user.authenticated && !user.firstTime){
+      setUser((user) => ({...user, firstTime: true}))
+    }
+  }, [])
 
   return (
     <>
@@ -32,7 +41,7 @@ function Navbar() {
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/inventario">
+                <NavLink to="/admin/inventario">
                   Inventário
                 </NavLink>
               </li>

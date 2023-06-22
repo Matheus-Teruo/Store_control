@@ -9,7 +9,7 @@ const rl = readline.createInterface({
 
 rl.question('Escolha um usuario para dar permissão super user: ', (answer) => {
   database('users')
-    .where({'user': answer})
+    .where({'username': answer})
     .update({ superuser: 1 })
     .then(() => {
       console.log('Superuser value updated successfully');
