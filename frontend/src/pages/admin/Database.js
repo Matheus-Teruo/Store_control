@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate  } from 'react-router-dom';
 import AuthContext from '../../store/auth_context';
 import Kenjinkai from './inputs/Kenjinkai';
+import Stands from './inputs/Stands';
 
 function Database() {
   const [kenjinkais, setKenjinkais] = useState([])
@@ -9,12 +10,14 @@ function Database() {
   const [showKenjinkai, setShowKenjinkai] = useState(false)
   const [newKenjinkai, setNewKenjinkai] = useState("")
   const [newPrincipal, setNewPrincipal] = useState("")
-  const [check, setCheck] = useState({
-    kenjinkai: false,
-    observation: false})
   const [alreadyUsedK, setAlreadyUsedK] = useState({kenjinkai: "", K_noUsed: true});
   const [showStand, setShowStand] = useState(false)
-  const [observation, setObservation] = useState("")
+  const [newStand, setNewStand] = useState("")
+  const [kenjinkaiID, setKenjinkaiID] = useState(1)
+  const [alreadyUsedS, setAlreadyUsedS] = useState({stand: "", S_noUsed: true});
+  const [check, setCheck] = useState({
+    kenjinkai: false,
+    stand: false})
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -68,6 +71,32 @@ async function handleNewKenjinkai() {
   }
 }
 
+async function handleNewStand() {
+  if (auth.user.authenticated) {
+    var resStatus;
+    fetch("/api/newstand", {  // Post form
+      method: "POST",
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        "stand": newStand,
+        "kenjinkaiID": kenjinkaiID
+      })
+    })
+      .then(res => {
+        resStatus = res.status;
+        return res.json()})
+      .then(data => {
+        if (resStatus === 200){
+          RequestLists()
+          setShowStand(false)
+        } else if (resStatus === 409) {
+          setAlreadyUsedS({stand: data.value, S_noUsed: false});
+        }
+      })
+      .catch(console.error)
+  }
+}
+
 function h_KChange(value) {  // Username conditions
   setNewKenjinkai(value)
 };
@@ -78,23 +107,40 @@ function h_KValid(value) {
   setCheck(check => ({...check, kenjinkai:value}))
 };
 
+function h_SChange(value) {  // Fullname conditions
+  setNewStand(value);
+};
+function h_K_IDChange(value) {  // Fullname conditions
+  setKenjinkaiID(value);
+};
+function h_SValid(value) {
+  setCheck(check => ({...check, stand:value}))
+};
+
   return (
     <div>
-      {!showKenjinkai?
       <div>
-        <button onClick={() => {setShowKenjinkai(true)}}>Novo Kenjinkai</button>
+        {!showKenjinkai?
+        <div>
+          <button onClick={() => {setShowKenjinkai(true)}}>Registrar kenjinkai</button>
+        </div>
+        :
+        <div>
+          <Kenjinkai
+            output_K={h_KChange}
+            output_P={h_PChange}
+            valid={h_KValid}
+            dupliValue={alreadyUsedK.kenjinkai}
+            dupliCheck={alreadyUsedK.K_noUsed}/>
+          <button onClick={() => {handleNewKenjinkai()}} disabled={check.kenjinkai ? false : true}>Registrar</button>
+        </div>
+        }
+        {
+        <div>
+          <button onClick={() => {setShowStand(true)}}>Novo estande</button>
+        </div>
+        }
       </div>
-      :
-      <div>
-        <Kenjinkai
-          output_K={h_KChange}
-          output_P={h_PChange}
-          valid={h_KValid}
-          dupliValue={alreadyUsedK.kenjinkai}
-          dupliCheck={alreadyUsedK.K_noUsed}/>
-        <button onClick={() => {handleNewKenjinkai()}} disabled={check.kenjinkai ? false : true}>Registrar</button>
-      </div>
-      }
       <ul>
         <li><p>kenjinkaiID</p><p>kenjinkai</p><p>diretoria</p><p>stands</p></li>
         {kenjinkais.length !== 0 && kenjinkais.map((kenjinkai) => (
@@ -102,27 +148,33 @@ function h_KValid(value) {
             <p>{kenjinkai.kenjinkaiID}</p>
             <p>{kenjinkai.kenjinkai}</p>
             <p>{kenjinkai.principal}</p>
-
+            {stands.filter(item => item.kenjinkaiID === kenjinkai.kenjinkaiID).length !== 0 ?
+              <ul>
+                {stands.filter(item => item.kenjinkaiID === kenjinkai.kenjinkaiID).map((stand) => (
+                  <li>{stand.stand}</li>
+                ))}
+              </ul>
+              :
+              <button onClick={() => {setKenjinkaiID(kenjinkai.kenjinkaiID); setShowStand(true)}}>Novo estande</button>
+            }       
           </li>  
-        ))}
-      </ul>
-      <ul>
-        <li><p>observaiton</p><p>kenjinkaiID</p></li>
-        {stands.length !== 0 && stands.map((stand) => (
-          <li><p>{stand.observaiton}</p><p>{stand.kenjinkaiID}</p></li>
         ))}
       </ul>
       {showStand &&
         <div>
-          window for create stand
+          <Stands
+            output={h_SChange}
+            outputID={h_K_IDChange}
+            valid={h_SValid}
+            kenjinkais={kenjinkais}
+            kenjinkaiID={kenjinkaiID}
+            dupliValue={alreadyUsedS.stand}
+            dupliCheck={alreadyUsedS.S_noUsed}/>
+          <button onClick={() => (handleNewStand())} disabled={check.stand ? false : true}>Criar Estande</button>
         </div>
       }
     </div>
   )
 }
-// && kenjinkais.map((kenjinkai) => {
-// <p>{kenjinkai.kenjinkaiID}</p>
-// <p>{kenjinkai.kenjinkai}</p>
-// <p>{kenjinkai.principal}</p>
 
 export default Database

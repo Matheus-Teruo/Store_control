@@ -10,7 +10,6 @@ router.use(morgan("common"));
 router.use(cookieParser());
 
 router.get("/listallstands", (req, res) => {  // Check user
-  console.log('lista')
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     if (decoded.superuser) {
@@ -20,7 +19,7 @@ router.get("/listallstands", (req, res) => {  // Check user
         .then(kenjinkais => {
           if (kenjinkais.length > 0) {
             database('stands')
-              .select('standID', 'observation', 'kenjinkaiID')
+              .select('standID', 'stand', 'kenjinkaiID')
               .orderBy('kenjinkaiID', 'asc')
               .then(stands => {
                 if (stands.length > 0){
@@ -70,13 +69,24 @@ router.post("/newkenjinkai", (req, res) => {  // Check user
 router.post("/newstand", (req, res) => {  // Check user
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
-    if (decoded.suerperuser) {
+    if (decoded.superuser) {
       const data = req.body;
       database('stands')
         .insert(data)
         .then(() => {
-          console.log(`successful created stand: ${data.observation}`);
-          res.json({message: `successful created kenjinkai: ${data.observation}`});
+          console.log(`successful created stand: ${data.stand}`);
+          res.json({message: `successful created kenjinkai: ${data.stand}`});
+        })
+        .catch(error => {
+          console.error(error)
+          if (error.errno === 1062){  // Duplication error
+            const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
+            if (column === "stand"){
+              return res.status(409).json({error: `error on sing-up stand '${data.stand}'. Stand '${data.stand}' already exist`, column: column, value: data.stand});
+            }
+          } else {
+            return res.status(501).json({ error: {error}});
+          }
         })
     }
   } catch(err) {

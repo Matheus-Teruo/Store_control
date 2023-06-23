@@ -51,12 +51,12 @@ function StandID(prop) {
   return (
     <div>
       <label htmlFor="kenjinkai">Estande</label>
-        <select id="kenjinkai" name="observation">
+        <select id="kenjinkai" name="kenjinkai">
           <option value="option1">Option 1</option>
           <option value="option2">Option 2</option>
           <option value="option3">Option 3</option>
         </select>
-        <select id="observation" name="observation">
+        <select id="stand" name="stand">
           <option value="option1">Option 1</option>
           <option value="option2">Option 2</option>
           <option value="option3">Option 3</option>

@@ -28,7 +28,6 @@ function Kenjinkai(prop) {
         P_Check.noNumber &&
         P_Check.noSpace &&
         P_Check.noSpecialChar &&
-        prop.defaultValue !== kenjinkai &&
         prop.dupliValue !== kenjinkai){
       setSubmitvalid(true);
       prop.valid(true)
@@ -36,13 +35,13 @@ function Kenjinkai(prop) {
       setSubmitvalid(false);
       prop.valid(false)
     }
-  }, [K_Check, P_Check, kenjinkai, prop.dupliValue, prop.defaultValue])
+  }, [K_Check, P_Check, kenjinkai, prop.dupliValue])
 
   const handleKenjinkaiChange = (event) => {  // Username conditions
     setKenjinkai(event.target.value);
     prop.output_K(event.target.value);
 
-    if (event.target.value.trim().length > 4) {  // Check min number of char
+    if (event.target.value.trim().length >= 3) {  // Check min number of char
       setK_Check(K_Check => ({...K_Check, haveMinChar: true})
     )} else {
       setK_Check(K_Check => ({...K_Check, haveMinChar: false})
@@ -71,7 +70,7 @@ function Kenjinkai(prop) {
     setPrincipal(event.target.value);
     prop.output_P(event.target.value);
 
-    if (event.target.value.trim().length > 4) {  // Check min number of char
+    if (event.target.value.trim().length >= 3) {  // Check min number of char
       setP_Check(P_Check => ({...P_Check, haveMinChar: true})
     )} else {
       setP_Check(P_Check => ({...P_Check, haveMinChar: false})

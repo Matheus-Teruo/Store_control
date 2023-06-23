@@ -56,7 +56,7 @@ router.get("/liststand", (req, res) => {  // Check user
           console.log("kenjinkais")
           console.log(kenjinkais)
           database('stands')
-            .select('standID', 'observation', 'kenjinkaiID')
+            .select('standID', 'stand', 'kenjinkaiID')
             .orderBy('kenjinkaiID', 'asc')
             .then(stands => {
               if (stands.length > 0){
@@ -67,7 +67,7 @@ router.get("/liststand", (req, res) => {  // Check user
                     const aux1 = [];
                     for (const y of stands) {
                         if (x.kenjinkaiID === y.kenjinkaiID) {
-                            aux1.push({"observation": y.observation, "standID": y.standID});
+                            aux1.push({"stand": y.stand, "standID": y.standID});
                         }
                     }
                     kens.push({"kenjinkai": x.kenjinkai, "stands": aux1});

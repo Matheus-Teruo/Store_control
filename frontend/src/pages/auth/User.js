@@ -47,7 +47,7 @@ function User() {
             setNewFullname(data.fullname)
             setNewStand({
               kenjinkai: data.kenjinkai,
-              observation: data.observation
+              stand: data.stand
             })
             return setUser(data)
           } else if (resStatus === 401){
@@ -95,8 +95,8 @@ function User() {
   function handleNewKenjinkai(event) {  // Manage NewKenjinkai State
     if (event.target.id === "kenjinkai") {
       setNewStand((newStand) => ({...newStand, kenjinkai: event.target.value}))
-    } else  if(event.target.id === "observation") {
-      setNewStand((newStand) => ({...newStand, observation: event.target.value}))
+    } else  if(event.target.id === "stand") {
+      setNewStand((newStand) => ({...newStand, stand: event.target.value}))
     }
   }
   function h_STValid(value) {
@@ -266,7 +266,7 @@ function User() {
             <>
               <p onClick={() => {handleChange("kenjinkai")}}>Estande</p>
               <p>{user.kenjinkai}</p>
-              <p>{user.observation}</p>
+              <p>{user.stand}</p>
             </>
           :
             <>

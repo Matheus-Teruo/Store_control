@@ -176,9 +176,10 @@ DROP TABLE IF EXISTS `stands`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `stands` (
   `standID` int NOT NULL AUTO_INCREMENT,
-  `observation` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `stand` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
   `kenjinkaiID` int NOT NULL,
   PRIMARY KEY (`standID`),
+  UNIQUE KEY `stand` (`stand`),
   KEY `kenjinkaiID` (`kenjinkaiID`),
   CONSTRAINT `stands_ibfk_1` FOREIGN KEY (`kenjinkaiID`) REFERENCES `kenjinkais` (`kenjinkaiID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -216,4 +217,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-18  5:32:22
+-- Dump completed on 2023-06-23  2:51:40
