@@ -103,7 +103,7 @@ CREATE TABLE `items` (
   PRIMARY KEY (`itemID`),
   UNIQUE KEY `item` (`item`),
   KEY `standID` (`standID`),
-  CONSTRAINT `items_ibfk_1` FOREIGN KEY (`standID`) REFERENCES `stands` (`standID`)
+  CONSTRAINT `items_ibfk_1` FOREIGN KEY (`standID`) REFERENCES `stands` (`standID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -120,7 +120,7 @@ CREATE TABLE `kenjinkais` (
   `principal` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`kenjinkaiID`),
   UNIQUE KEY `kenjinkai` (`kenjinkai`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -166,6 +166,23 @@ CREATE TABLE `sales` (
   CONSTRAINT `sales_ibfk_3` FOREIGN KEY (`cardID`) REFERENCES `cards` (`cardID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = latin1 */ ;
+/*!50003 SET character_set_results = latin1 */ ;
+/*!50003 SET collation_connection  = latin1_swedish_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `delete_goods_on_sales_delete` BEFORE DELETE ON `sales` FOR EACH ROW BEGIN
+DELETE FROM goods WHERE saleID = OLD.saleID;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `stands`
@@ -179,10 +196,10 @@ CREATE TABLE `stands` (
   `stand` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
   `kenjinkaiID` int NOT NULL,
   PRIMARY KEY (`standID`),
-  UNIQUE KEY `stand` (`stand`),
+  UNIQUE KEY `observation` (`stand`),
   KEY `kenjinkaiID` (`kenjinkaiID`),
-  CONSTRAINT `stands_ibfk_1` FOREIGN KEY (`kenjinkaiID`) REFERENCES `kenjinkais` (`kenjinkaiID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `stands_ibfk_1` FOREIGN KEY (`kenjinkaiID`) REFERENCES `kenjinkais` (`kenjinkaiID`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -205,7 +222,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `fullname` (`fullname`),
   KEY `standID` (`standID`),
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`standID`) REFERENCES `stands` (`standID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -217,4 +234,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-23  2:51:40
+-- Dump completed on 2023-06-23  5:37:33

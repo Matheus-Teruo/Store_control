@@ -18,9 +18,9 @@ const createToken = (payload) => {
 router.get("/checkuser", (req, res) => {  // Check user
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
-    res.json({authenticated: true, firstname: decoded.firstname});
+    return res.json({authenticated: true, firstname: decoded.firstname});
   } catch(err) {
-    res.json({authenticated: false});
+    return res.json({authenticated: false});
   }
 })
 
@@ -33,9 +33,9 @@ router.get("/user", (req, res) => {  // Check user
       .then(rows => {
         const row  = rows[0];
         if (row.standID !== null){
-          res.json({username: row.username, fullname: row.fullname, superuser: decoded.superuser, standID: row.standID});
+          return res.json({username: row.username, fullname: row.fullname, superuser: decoded.superuser, standID: row.standID});
         } else {
-          res.json({username: row.username, fullname: row.fullname, superuser: decoded.superuser, standID: null});
+          return res.json({username: row.username, fullname: row.fullname, superuser: decoded.superuser, standID: null});
         }
       })
   } catch(err) {
@@ -78,15 +78,15 @@ router.get("/liststand", (req, res) => {  // Check user
                 for (const x of kenjinkais) {
                     kens.push({"kenjinkai": x.kenjinkai, "stands": []});
                 }
-                res.json(kens);
+                return res.json(kens);
               }
             })
         } else {
-          res.json([]);
+          return res.json([]);
         }
       })
   } catch(err) {
-    res.status(401).json({authenticated: false});
+    return res.status(401).json({authenticated: false});
   }
 })
 
@@ -103,7 +103,7 @@ router.post("/signup", (req, res) => {  // Sign up request
         .then(rows => {
           const row  = rows[0];
           res.cookie("jwt", createToken({userID: row.userID, firstname: firstname, superuser: 0}), { httpOnly: true, maxAge: maxAge * 1000 });
-          res.status(201).json({ message: `successful sing-up as user: ${data.username}`});
+          return res.status(201).json({ message: `successful sing-up as user: ${data.username}`});
     })
     })
     .catch(error => {
@@ -129,15 +129,15 @@ router.post("/prelogin", (req, res) => {  // Username check
     .then(rows => {
       if (rows.length !== 0) {
         const row  = rows[0];
-        res.json({ salt: row.salt })
+        return res.json({ salt: row.salt })
       } else {
         console.log(`User not found: ${data.username}`);
-        res.status(401).json({message: "user not found"});
+        return res.status(401).json({message: "user not found"});
       }
     })
     .catch(error => {
       console.error(error);
-      res.status(501).json(error);
+      return res.status(501).json(error);
     })
 })
 
@@ -152,24 +152,24 @@ router.post("/login", (req, res) => {  // Log in request
         const firstname = row.fullname.split(' ')[0];
         console.log(`successful user log-in as: ${data.username}`);
         res.cookie("jwt", createToken({userID: row.userID, firstname: firstname, superuser: row.superuser}), { httpOnly: true, maxAge: maxAge * 1000 });
-        res.status(200).json({message: `successful log-in as user: ${data.username}`});
+        return res.status(200).json({message: `successful log-in as user: ${data.username}`});
       } else {
         console.log(`Password incorrect from user: ${data.username}`);
-        res.status(401).json({message: "password incorrect"})
+        return res.status(401).json({message: "password incorrect"})
       }
     })
     .catch(error => {
       console.error(error);
-      res.status(501).json(error);
+      return res.status(501).json(error);
     })
 })
 
 router.post("/logout", (req, res) => {  // Log out user
   try {
     res.clearCookie('jwt')
-    res.status(200).end()
+    return res.status(200).end()
   } catch(err) {
-    res.status(501).json(error);
+    return res.status(501).json(error);
   }
 })
 
@@ -181,10 +181,10 @@ router.post("/newusername", (req, res) => {  // Log in request
       .where({userID: decoded.userID})
       .update({username: data.username })
       .then(() => {
-        res.json({message: `username successfull update to: ${data.username}`, username:data.username});
+        return res.json({message: `username successfull update to: ${data.username}`, username:data.username});
       })
   } catch(err) {
-    res.status(401).json({message: `change error`});
+    return res.status(401).json({message: `change error`});
   }
 })
 
@@ -198,10 +198,10 @@ router.post("/newfullname", (req, res) => {  // Log in request
       .then(() => {
         const firstname = data.fullname.split(' ')[0];
         res.cookie("jwt", createToken({userID: decoded.userID, firstname: firstname, superuser: decoded.superuser}), { httpOnly: true, maxAge: maxAge * 1000 });
-        res.json({message: `fullname successfull update to: ${data.fullname}`, fullname: data.fullname});
+        return res.json({message: `fullname successfull update to: ${data.fullname}`, fullname: data.fullname});
       })
   } catch(err) {
-    res.status(401).json({message: `change error`});
+    return res.status(401).json({message: `change error`});
   }
 })
 
@@ -213,10 +213,10 @@ router.post("/changestandid", (req, res) => {  // Log in request
       .where({userID: decoded.userID})
       .update({standID: data.standID})
       .then(() => {
-        res.json({message: `standID successfull update to: ${data.standID}`, standID: data.standID});
+        return res.json({message: `standID successfull update to: ${data.standID}`, standID: data.standID});
       })
   } catch(err) {
-    res.status(401).json({message: `change error`});
+    return res.status(401).json({message: `change error`});
   }
 })
 
@@ -230,14 +230,14 @@ router.post("/prenewpassword", (req, res) => {  // Log in request
       .then(rows => {
         if (rows.length !== 0) {
           const row  = rows[0];
-          res.json({ salt: row.salt })
+          return res.json({ salt: row.salt })
         } else {
           console.log(`Server error`);
-          res.status(401).json({message: "user not found"});
+          return res.status(401).json({message: "user not found"});
         }
       })
   } catch(err) {
-    res.status(401).json({message: `change error`});
+    return res.status(401).json({message: `change error`});
   }
 })
 
@@ -256,15 +256,15 @@ router.post("/newpassword", (req, res) => {  // Log in request
               .where({userID: decoded.userID})
               .update({password: data.newpassword, salt: data.salt})
               .then(() => {
-                res.json({message: `password successfull update`})});
+                return res.json({message: `password successfull update`})});
           } else {
             console.log(`Password incorrect`);
-            res.status(401).json({message: "password incorrect"})
+            return res.status(401).json({message: "password incorrect"})
           }
         }
       })
   } catch(err) {
-    res.status(401).json({message: `change error`});
+    return res.status(401).json({message: `change error`});
   }
 })
 

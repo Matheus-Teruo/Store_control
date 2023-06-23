@@ -13,11 +13,14 @@ function Database() {
   const [alreadyUsedK, setAlreadyUsedK] = useState({kenjinkai: "", K_noUsed: true});
   const [showStand, setShowStand] = useState(false)
   const [newStand, setNewStand] = useState("")
-  const [kenjinkaiID, setKenjinkaiID] = useState(1)
+  const [kenjinkaiID, setKenjinkaiID] = useState(0)
   const [alreadyUsedS, setAlreadyUsedS] = useState({stand: "", S_noUsed: true});
   const [check, setCheck] = useState({
     kenjinkai: false,
     stand: false})
+  const [standID, setStandID] = useState(0)
+  const [edit, setEdit] = useState("")
+  const [confirmDel, setConfirmDel] = useState(false)
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -63,9 +66,61 @@ async function handleNewKenjinkai() {
         if (resStatus === 200) {
           RequestLists()
           setShowKenjinkai(false)
+          setCheck(check => ({...check, kenjinkai:false}))
         } else if (resStatus === 409) {
           setAlreadyUsedK({kenjinkai: data.value, K_noUsed: false});
         }
+      })
+      .catch(console.error)
+  }
+}
+
+async function handleEditKenjinkai() {
+  if (auth.user.authenticated) {
+    var resStatus;
+    fetch("/api/editkenjinkai", {  // Post form
+      method: "POST",
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        "kenjinkaiID": kenjinkaiID,
+        "kenjinkai": newKenjinkai,
+        "principal": newPrincipal
+      })
+    })
+      .then(res => {
+        resStatus = res.status;
+        return res.json()})
+      .then(data => {
+        if (resStatus === 200) {
+          RequestLists()
+          setShowKenjinkai(false)
+          setCheck(check => ({...check, kenjinkai:false}))
+          setEdit("")
+        } else if (resStatus === 409) {
+          setAlreadyUsedK({kenjinkai: data.value, K_noUsed: false});
+        }
+      })
+      .catch(console.error)
+  }
+}
+
+async function handleDelKenjinkai() {
+  if (auth.user.authenticated) {
+    var resStatus;
+    fetch("/api/delkenjinkai", {  // Post form
+      method: "POST",
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({"kenjinkaiID": kenjinkaiID,})
+    })
+      .then(res => {
+        resStatus = res.status;
+        return res.json()})
+      .then(data => {
+        RequestLists()
+        setShowKenjinkai(false)
+        setCheck(check => ({...check, kenjinkai:false}))
+        setEdit("")
+        setConfirmDel(false)
       })
       .catch(console.error)
   }
@@ -89,9 +144,61 @@ async function handleNewStand() {
         if (resStatus === 200){
           RequestLists()
           setShowStand(false)
+          setCheck(check => ({...check, stand:false}))
         } else if (resStatus === 409) {
           setAlreadyUsedS({stand: data.value, S_noUsed: false});
         }
+      })
+      .catch(console.error)
+  }
+}
+
+async function handleEditStand() {
+  if (auth.user.authenticated) {
+    var resStatus;
+    fetch("/api/editstand", {  // Post form
+      method: "POST",
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        "standID": standID,
+        "stand": newStand,
+        "kenjinkaiID": kenjinkaiID
+      })
+    })
+      .then(res => {
+        resStatus = res.status;
+        return res.json()})
+      .then(data => {
+        if (resStatus === 200){
+          RequestLists()
+          setShowStand(false)
+          setCheck(check => ({...check, stand:false}))
+          setEdit("")
+        } else if (resStatus === 409) {
+          setAlreadyUsedS({stand: data.value, S_noUsed: false});
+        }
+      })
+      .catch(console.error)
+  }
+}
+
+async function handleDelStand() {
+  if (auth.user.authenticated) {
+    var resStatus;
+    fetch("/api/delstand", {  // Post form
+      method: "POST",
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({"standID": standID})
+    })
+      .then(res => {
+        resStatus = res.status;
+        return res.json()})
+      .then(data => {
+          RequestLists()
+          setShowStand(false)
+          setCheck(check => ({...check, stand:false}))
+          setEdit("")
+          setConfirmDel(false)
       })
       .catch(console.error)
   }
@@ -119,20 +226,12 @@ function h_SValid(value) {
 
   return (
     <div>
+      <h1>Kenjinkais e estandes</h1>
       <div>
-        {!showKenjinkai?
+        <h2>Menu</h2>
+        {!showKenjinkai &&
         <div>
           <button onClick={() => {setShowKenjinkai(true)}}>Registrar kenjinkai</button>
-        </div>
-        :
-        <div>
-          <Kenjinkai
-            output_K={h_KChange}
-            output_P={h_PChange}
-            valid={h_KValid}
-            dupliValue={alreadyUsedK.kenjinkai}
-            dupliCheck={alreadyUsedK.K_noUsed}/>
-          <button onClick={() => {handleNewKenjinkai()}} disabled={check.kenjinkai ? false : true}>Registrar</button>
         </div>
         }
         {
@@ -146,22 +245,58 @@ function h_SValid(value) {
         {kenjinkais.length !== 0 && kenjinkais.map((kenjinkai) => (
           <li key={kenjinkai.kenjinkaiID}>
             <p>{kenjinkai.kenjinkaiID}</p>
-            <p>{kenjinkai.kenjinkai}</p>
+            <p onClick={() => {setKenjinkaiID(kenjinkai.kenjinkaiID); setEdit("kenjinkai"); setShowKenjinkai(true)}}
+            >{kenjinkai.kenjinkai}</p>
             <p>{kenjinkai.principal}</p>
             {stands.filter(item => item.kenjinkaiID === kenjinkai.kenjinkaiID).length !== 0 ?
               <ul>
                 {stands.filter(item => item.kenjinkaiID === kenjinkai.kenjinkaiID).map((stand) => (
-                  <li>{stand.stand}</li>
+                  <li key={stand.standID} onClick={() => {setStandID(stand.standID); setEdit("stand"); setShowStand(true); setKenjinkaiID(kenjinkai.kenjinkaiID)}}>{stand.stand}</li>
                 ))}
               </ul>
               :
-              <button onClick={() => {setKenjinkaiID(kenjinkai.kenjinkaiID); setShowStand(true)}}>Novo estande</button>
+              <button onClick={() => {setKenjinkaiID(kenjinkai.kenjinkaiID); setShowStand(true)}}>Criar estande</button>
             }       
           </li>  
         ))}
       </ul>
-      {showStand &&
+      {showKenjinkai &&
+      <div>
         <div>
+          {edit === "kenjinkai" &&
+            <div>
+            <h1>Editar kenjinkai:</h1>
+            <h2>{kenjinkais.filter(item => item.kenjinkaiID === kenjinkaiID)[0].kenjinkai}</h2>
+          </div>
+          }
+          <Kenjinkai
+            output_K={h_KChange}
+            output_P={h_PChange}
+            valid={h_KValid}
+            dupliValue={alreadyUsedK.kenjinkai}
+            dupliCheck={alreadyUsedK.K_noUsed}/>
+          {edit === "kenjinkai" ?
+            <div>
+              <button onClick={() => (setConfirmDel(true))}>Excluir Kenjinkai</button>
+              <button onClick={() => (handleEditKenjinkai())} disabled={check.kenjinkai ? false : true}>Editar Kenjinkai</button>
+            </div>
+          :
+            <div>
+              <button onClick={() => {handleNewKenjinkai()}} disabled={check.kenjinkai ? false : true}>Registrar</button>
+            </div>
+          }
+        </div>
+      </div>
+      }
+      {showStand &&
+      <div>
+        <div>
+          {edit === "stand" &&
+            <div>
+              <h1>Editar estande:</h1>
+              <h2>{stands.filter(item => item.standID === standID)[0].stand}</h2>
+            </div>
+          }
           <Stands
             output={h_SChange}
             outputID={h_K_IDChange}
@@ -170,8 +305,38 @@ function h_SValid(value) {
             kenjinkaiID={kenjinkaiID}
             dupliValue={alreadyUsedS.stand}
             dupliCheck={alreadyUsedS.S_noUsed}/>
-          <button onClick={() => (handleNewStand())} disabled={check.stand ? false : true}>Criar Estande</button>
+          {edit === "stand" ?
+            <div>
+              <button onClick={() => (setConfirmDel(true))}>Excluir Estande</button>
+              <button onClick={() => (handleEditStand())} disabled={check.stand ? false : true}>Editar Estande</button>
+            </div>
+          :
+            <div>
+              <button onClick={() => (handleNewStand())} disabled={check.stand ? false : true}>Criar Estande</button>
+            </div>
+          }
         </div>
+      </div>
+      }
+      {confirmDel &&
+      <div>
+        <div>
+          <h2>Excluir: {edit === "kenjinkai" ?
+          <>kenjinkai {kenjinkais.filter(item => item.kenjinkaiID === kenjinkaiID)[0].kenjinkai}</>
+          :
+          edit === "stand" &&
+          <>estande {stands.filter(item => item.standID === standID)[0].stand}</>}</h2>
+          <div>
+            <button onClick={() => (setConfirmDel(false))}>Cancelar</button>
+            {edit === "kenjinkai" ?
+            <button onClick={() => (handleDelKenjinkai())}>Excluir Kenjinkai</button>
+            :
+            edit === "stand" &&
+            <button onClick={() => (handleDelStand())}>Excluir Estande</button>
+            }
+          </div>
+        </div>
+      </div>
       }
     </div>
   )
