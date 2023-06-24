@@ -25,10 +25,12 @@ function Database() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (auth.user.authenticated) {
+    if (auth.user.authenticated && auth.user.superuser) {
       RequestLists()
     } else if (!auth.user.authenticated) {
       navigate('/login');
+    } else if (auth.user.superuser){
+      navigate('/')
     }
   }, [])
 

@@ -120,7 +120,7 @@ CREATE TABLE `kenjinkais` (
   `principal` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`kenjinkaiID`),
   UNIQUE KEY `kenjinkai` (`kenjinkai`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,7 +199,7 @@ CREATE TABLE `stands` (
   UNIQUE KEY `observation` (`stand`),
   KEY `kenjinkaiID` (`kenjinkaiID`),
   CONSTRAINT `stands_ibfk_1` FOREIGN KEY (`kenjinkaiID`) REFERENCES `kenjinkais` (`kenjinkaiID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -221,8 +221,8 @@ CREATE TABLE `users` (
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `fullname` (`fullname`),
   KEY `standID` (`standID`),
-  CONSTRAINT `users_ibfk_1` FOREIGN KEY (`standID`) REFERENCES `stands` (`standID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `users_ibfk_1` FOREIGN KEY (`standID`) REFERENCES `stands` (`standID`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

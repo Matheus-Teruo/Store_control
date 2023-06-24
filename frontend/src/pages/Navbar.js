@@ -28,7 +28,7 @@ function Navbar() {
                 Home
               </NavLink>
             </li>
-            {auth.user.authenticated &&
+            {auth.user.authenticated === true &&
               <>
               <li>
                 <NavLink to="/vendedor">
@@ -48,14 +48,14 @@ function Navbar() {
               </>
             }
           </ul>
-          {auth.user.authenticated ?
+          {auth.user.authenticated === true?
             <div>
               <NavLink to="/user">{auth.user.firstname}</NavLink>
             </div>
-            :
+          : 
             <div>
-              <NavLink to="/login"/>
-              <NavLink to="/signup"/>
+              <NavLink to="/login">Login</NavLink>
+              <NavLink to="/signup">Sign-up</NavLink>
             </div>
           }
         </nav>

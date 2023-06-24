@@ -20,7 +20,7 @@ router.get("/main", (req, res) => {  // Get home info
         res.json(row)
       });
   } catch(err) {
-    res.status(401).json({authenticated: false});
+    res.json({standID: 0, superuser: 0});
   }
   })
 

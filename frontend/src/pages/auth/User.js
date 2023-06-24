@@ -11,7 +11,9 @@ function User() {
   const [user, setUser] = useState({
     username: "",
     fullname: "",
-    standID: null});
+    kenjinkai: "",
+    stand: "",
+    superuser: 0});
   const [change, setChange] = useState({
     username:false,
     fullname:false,
@@ -19,15 +21,13 @@ function User() {
     standID:false});
   const [newUsername, setNewUsername] = useState("");
   const [newFullname, setNewFullname] = useState("");
-  const [indexKenjinkai, setIndexKenjinkai] = useState(0);
-  const [newStand, setNewStand] = useState(null);
+  const [newStandID, setNewStandID] = useState(null);
   const [newPassword, setNewPassword] = useState({
     oldpassword: "",
     newpassword: ""});
   const [check, setCheck] = useState({
     username: false,
     fullname: false,
-    standID: false,
     password: false});
   const [alreadyUsedUN, setAlreadyUsedUN] = useState({username: "", U_noUsed: true});
   const [alreadyUsedFN, setAlreadyUsedFN] = useState({fullname: "", F_noUsed: true});
@@ -35,29 +35,35 @@ function User() {
   const auth = useContext(AuthContext);
 
   useEffect(() => {  // Take user initial value
-    if (auth.user.authenticated && user.username === "") {
-      var resStatus;
-      fetch('/api/user')
-        .then(res => {
-          resStatus = res.status;
-          return res.json()})
-        .then(data => {
-          if (resStatus === 200){
-            setNewUsername(data.username)
-            setNewFullname(data.fullname)
-            setNewStand({
-              kenjinkai: data.kenjinkai,
-              stand: data.stand
-            })
-            return setUser(data)
-          } else if (resStatus === 401){
-            return auth.onLogout()
-          }
-        })
-    } else if (auth.user.authenticated && user.username !== ""){
+    if (auth.user.authenticated === true && user.username === "") {
+      RequisiteList()
+    } else if (auth.user.authenticated === true && user.username !== ""){ // Special case logout
       navigate('/login');
     }
   }, [auth, navigate])
+
+  function RequisiteList() {
+    var resStatus;
+    fetch('/api/user')
+      .then(res => {
+        resStatus = res.status;
+        return res.json()})
+      .then(data => {
+        if (resStatus === 200){
+          setNewUsername(data.username)
+          setNewFullname(data.fullname)
+          setNewStandID(data.standID)
+          return setUser({
+            username: data.username,
+            fullname: data.fullname,
+            kenjinkai: data.kenjinkai,
+            stand: data.stand,
+            superuser: data.superuser})
+        } else if (resStatus === 401){
+          return auth.onLogout()
+        }
+      })
+  }
 
   function handleLogout() {
     auth.onLogout()
@@ -92,16 +98,14 @@ function User() {
     setCheck(check => ({...check, fullname:value}))
   };
 
-  function handleNewKenjinkai(event) {  // Manage NewKenjinkai State
-    if (event.target.id === "kenjinkai") {
-      setNewStand((newStand) => ({...newStand, kenjinkai: event.target.value}))
-    } else  if(event.target.id === "stand") {
-      setNewStand((newStand) => ({...newStand, stand: event.target.value}))
+  function h_SChange(value) {  // Manage NewKenjinkai State
+    const aux = parseInt(value)
+    if (aux === 0) {
+      setNewStandID(null)
+    } else {
+      setNewStandID(aux)
     }
   }
-  function h_STValid(value) {
-    setCheck(check => ({...check, standID:value}))
-  };
 
   function h_OPWChange(event) {  // Manage NewPassword State
     setNewPassword((newPassword) => ({...newPassword, oldpassword: event.target.value}))
@@ -113,30 +117,32 @@ function User() {
     setCheck(check => ({...check, password:value}))
   };
 
-  async function SubmitNewUsername(){
-    var resStatus;
-    fetch("/api/newusername", {  // Pre login get salt
-      method: "POST",
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({"username": newUsername})
-    })
-      .then(res => {
-        resStatus = res.status;
-        return res.json()})
-      .then(data => {
-        if (resStatus === 200) {
-          setUser(user => ({...user, username: data.username}));
-          return setChange((change) => ({...change, username: false}))
-        } else if (resStatus === 401) {
-          // deal with error
-        }
+  async function SubmitEditUsername(){
+    if (check.username){
+      var resStatus;
+      fetch("/api/editusername", {  // Pre login get salt
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({"username": newUsername})
       })
-      .catch(console.error)
+        .then(res => {
+          resStatus = res.status;
+          return res.json()})
+        .then(data => {
+          if (resStatus === 200) {
+            setUser(user => ({...user, username: data.username}));
+            return setChange((change) => ({...change, username: false}))
+          } else if (resStatus === 409) {
+            setAlreadyUsedUN({username: data.value, U_noUsed: false});
+          }
+        })
+        .catch(console.error)
+    }
   }
 
-  async function SubmitNewFullname(){
+  async function SubmitEditFullname(){
     var resStatus;
-    fetch("/api/newfullname", {  // Pre login get salt
+    fetch("/api/editfullname", {  // Pre login get salt
       method: "POST",
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({"fullname": newFullname})
@@ -148,19 +154,19 @@ function User() {
         if (resStatus === 200) {
           setUser(user => ({...user, fullname: data.fullname}));
           return setChange((change) => ({...change, fullname: false}))
-        } else if (resStatus === 401) {
-          // deal with error
+        } else if (resStatus === 409) {
+          setAlreadyUsedFN({fullname: data.value, F_noUsed: false});
         }
       })
       .catch(console.error)
   }
 
-  async function SubmitNewKenjinkai(){
+  async function SubmitChangeStand(){
     var resStatus;
     fetch("/api/changestandid", {  // Pre login get salt
       method: "POST",
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({"standID": newStand.standID})
+      body: JSON.stringify({"standID": newStandID})
     })
       .then(res => {
         resStatus = res.status;
@@ -168,7 +174,8 @@ function User() {
       .then(data => {
         if (resStatus === 200) {
           setUser(user => ({...user, standID: data.standID}));
-          return setChange((change) => ({...change, standID: false}))
+          setChange((change) => ({...change, standID: false}));
+          return RequisiteList();
         } else if (resStatus === 401) {
           // deal with error
         }
@@ -176,43 +183,46 @@ function User() {
       .catch(console.error)
   }
 
-  async function PreSubmitNewPassword(){
+  async function PreSubmitEditPassword(){
     var resStatus;
-    fetch("/api/prenewpassword", {  // Pre login get salt
-      method: "POST"
+    fetch("/api/preeditpassword", {  // Pre login get salt
+      method: "POST",
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify([])
     })
       .then(res => {
         resStatus = res.status;
         return res.json()})
       .then(data => {
         if (resStatus === 200) {
-          setUser(user => ({...user, standID: data.standID}));
-          return setChange((change) => ({...change, standID: false}))
+          return SubmitEditPassword(data.salt)
         } else if (resStatus === 401) {
           // deal with error
         }
       })
       .catch(console.error)
   }
-  async function SubmitNewPassword(){
+  async function SubmitEditPassword(salt){
     var resStatus;
 
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(newPassword.newpassword, salt);
+    const oldhash = bcrypt.hashSync(newPassword.oldpassword, salt);
+    const newsalt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(newPassword.newpassword, newsalt);
 
-    fetch("/api/newpassword", {  // Pre login get salt
+    fetch("/api/editpassword", {  // Pre login get salt
       method: "POST",
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        "password": newPassword.oldpassword,
+        "password": oldhash,
         "newpassword": hash,
-        "salt": salt})
+        "salt": newsalt})
     })
       .then(res => {
         resStatus = res.status;
         return res.json()})
       .then(data => {
         if (resStatus === 200) {
+          setUser(user => ({...user, standID: data.standID}));
           return setChange((change) => ({...change, password: false}))
         } else if (resStatus === 401) {
           // deal with error
@@ -239,7 +249,7 @@ function User() {
                 dupliValue={alreadyUsedUN.username}
                 dupliCheck={alreadyUsedUN.U_noUsed}
                 defaultValue={user.username}/>
-              <button disabled={check.username ? false : true}>Confirmar</button>
+              <button onClick={() => (SubmitEditUsername())} disabled={check.username ? false : true}>Confirmar</button>
             </>
           }
         </div>
@@ -257,7 +267,7 @@ function User() {
                 dupliValue={alreadyUsedFN.fullname}
                 dupliCheck={alreadyUsedFN.F_noUsed}
                 defaultValue={user.fullname}/>
-              <button disabled={check.fullname ? false : true}>Confirmar</button>
+              <button onClick={() => (SubmitEditFullname())} disabled={check.fullname ? false : true}>Confirmar</button>
             </>
           }
         </div>
@@ -270,8 +280,10 @@ function User() {
             </>
           :
             <>
-            <StandID/>
-            <button disabled={check.standID ? false : true}>Confirmar</button>
+            <StandID
+              output={h_SChange}
+              defaultValue={newStandID}/>
+            <button onClick={() => (SubmitChangeStand())}>Confirmar</button>
             </>
           }
         </div>
@@ -287,10 +299,10 @@ function User() {
             <Password
               output={h_PWChange}
               valid={h_PWValid}/>
-            <button disabled={check.password ? false : true}>Confirmar</button>
+            <button onClick={() => PreSubmitEditPassword()} disabled={check.password ? false : true}>Confirmar</button>
           </>
           }
-          <button onClick={() => handleLogout}>
+          <button onClick={() => handleLogout()}>
             Log out
           </button>
         </div>  

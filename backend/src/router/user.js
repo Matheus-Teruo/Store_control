@@ -33,9 +33,16 @@ router.get("/user", (req, res) => {  // Check user
       .then(rows => {
         const row  = rows[0];
         if (row.standID !== null){
-          return res.json({username: row.username, fullname: row.fullname, superuser: decoded.superuser, standID: row.standID});
+          database('stands')
+            .select('stands.stand', 'stands.kenjinkaiID', 'kenjinkais.kenjinkai')
+            .join('kenjinkais', 'stands.kenjinkaiID', 'kenjinkais.kenjinkaiID')
+            .where({'stands.standID': row.standID})
+            .then(stands => {
+              const stand = stands[0]
+              return res.json({username: row.username, fullname: row.fullname, superuser: decoded.superuser, standID: row.standID, kenjinkai: stand.kenjinkai, stand: stand.stand});
+            })
         } else {
-          return res.json({username: row.username, fullname: row.fullname, superuser: decoded.superuser, standID: null});
+          return res.json({username: row.username, fullname: row.fullname, superuser: decoded.superuser, standID: row.standID, kenjinkai: "", stand: ""});
         }
       })
   } catch(err) {
@@ -50,43 +57,23 @@ router.get("/liststand", (req, res) => {  // Check user
       .select('kenjinkai', 'kenjinkaiID')
       .orderBy('kenjinkaiID', 'asc')
       .then(kenjinkais => {
-        console.log("kenjinkais")
-        console.log(kenjinkais)
         if (kenjinkais.length > 0) {
-          console.log("kenjinkais")
-          console.log(kenjinkais)
           database('stands')
             .select('standID', 'stand', 'kenjinkaiID')
             .orderBy('kenjinkaiID', 'asc')
             .then(stands => {
               if (stands.length > 0){
-                console.log("stands")
-                console.log(stands)
-                const kens = [];
-                for (const x of kenjinkais) {
-                    const aux1 = [];
-                    for (const y of stands) {
-                        if (x.kenjinkaiID === y.kenjinkaiID) {
-                            aux1.push({"stand": y.stand, "standID": y.standID});
-                        }
-                    }
-                    kens.push({"kenjinkai": x.kenjinkai, "stands": aux1});
-                }
-                res.json(kens); 
+                return res.json({kenjinkais: kenjinkais, stands: stands}); 
               } else {
-                const kens = [];
-                for (const x of kenjinkais) {
-                    kens.push({"kenjinkai": x.kenjinkai, "stands": []});
-                }
-                return res.json(kens);
+                return res.json({kenjinkais: kenjinkais, stands: []}); 
               }
             })
         } else {
-          return res.json([]);
+          return res.json({kenjinkais: [], stands: []}); 
         }
       })
   } catch(err) {
-    return res.status(401).json({authenticated: false});
+    return res.status(401).json({message: 'error on take list'});
   }
 })
 
@@ -173,22 +160,31 @@ router.post("/logout", (req, res) => {  // Log out user
   }
 })
 
-router.post("/newusername", (req, res) => {  // Log in request
+router.post("/editusername", (req, res) => {  // Log in request
   const data = req.body;
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     database('users')
       .where({userID: decoded.userID})
-      .update({username: data.username })
+      .update({username: data.username})
       .then(() => {
-        return res.json({message: `username successfull update to: ${data.username}`, username:data.username});
+        console.log(`username successfull update to: ${data.username}`)
+        return res.json({message: `username successfull update to: ${data.username}`, username: data.username});
+      })
+      .catch(error => {
+        if (error.errno === 1062){  // Duplication error
+          const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
+          return res.status(409).json({error: `Username '${data.username}' already exist`, column: column, value: data.username});
+        } else{
+          return res.status(501).json({ error: {error}});
+        }
       })
   } catch(err) {
-    return res.status(401).json({message: `change error`});
+    return res.status(501).json({message: `change error`});
   }
 })
 
-router.post("/newfullname", (req, res) => {  // Log in request
+router.post("/editfullname", (req, res) => {  // Log in request
   const data = req.body;
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
@@ -200,8 +196,16 @@ router.post("/newfullname", (req, res) => {  // Log in request
         res.cookie("jwt", createToken({userID: decoded.userID, firstname: firstname, superuser: decoded.superuser}), { httpOnly: true, maxAge: maxAge * 1000 });
         return res.json({message: `fullname successfull update to: ${data.fullname}`, fullname: data.fullname});
       })
+      .catch(error => {
+        if (error.errno === 1062){  // Duplication error
+          const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
+          return res.status(409).json({error: `Fullname '${data.fullname}' already exist`, column: column, value: data.fullname});
+        } else{
+          return res.status(501).json({ error: {error}});
+        }
+      })
   } catch(err) {
-    return res.status(401).json({message: `change error`});
+    return res.status(501).json({message: `change error`});
   }
 })
 
@@ -220,8 +224,7 @@ router.post("/changestandid", (req, res) => {  // Log in request
   }
 })
 
-router.post("/prenewpassword", (req, res) => {  // Log in request
-  const data = req.body;
+router.post("/preeditpassword", (req, res) => {  // Log in request
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     database('users')
@@ -241,7 +244,7 @@ router.post("/prenewpassword", (req, res) => {  // Log in request
   }
 })
 
-router.post("/newpassword", (req, res) => {  // Log in request
+router.post("/editpassword", (req, res) => {  // Log in request
   const data = req.body;
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;

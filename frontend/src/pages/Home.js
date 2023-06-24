@@ -8,21 +8,19 @@ function Home() {
     standID: 0,
     superuser: false,
   })
-  const [debug, setDebug] = useState(true)
   const auth = useContext(AuthContext);
 
   useEffect(() => {
-    if (auth.user.authenticated && user.standID === 0 && debug) {
-      setDebug(false)
+    if (auth.user.authenticated === true && user.standID === 0) {
       var resStatus;
       fetch("/api/main")
         .then(res => {
           resStatus = res.status;
           return res.json()})
         .then(data => {
-          if (resStatus === 200){
+          if (data.standID !== 0){
             return setUser(data)
-          } else if (resStatus === 401){
+          } else {
             return auth.onLogout()
           }
         })
@@ -32,8 +30,7 @@ function Home() {
 
   return (
     <div className="container">
-      <div>{auth.user.authenticated}</div>
-      {auth.user.authenticated?
+      {auth.user.authenticated === true ?
         <>
           <div>
             EVENTO 

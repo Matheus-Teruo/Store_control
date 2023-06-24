@@ -4,13 +4,12 @@ import AuthContext from '../../../store/auth_context';
 function StandID(prop) {
   const [standIndex, setStandIndex] = useState(0)
   const [kenjinkaiIndex, setKenjinkaiIndex] = useState(0)
-  const [stand, setStand] = useState([])
+  const [stands, setStands] = useState([])
   const [kenjinkais, setKenjinkais] = useState([])
   const auth = useContext(AuthContext);
   
   useEffect(() => {  // Take user initial value
     var resStatus;
-    console.log("ué")
     if (auth.user.authenticated) {
       var resStatus;
       fetch('/api/liststand')
@@ -19,48 +18,48 @@ function StandID(prop) {
           return res.json()})
         .then(data => {
           if (resStatus === 200){
-            setKenjinkais(data);
-            let kIndex = null;
-            let sIndex = null;
-
-            for (let i = 0; i < data.length; i++) {
-              const kenjinkai = data[i];
-              kIndex = i;
-              const stands = kenjinkai.stands;
-              for (let j = 0; j < stands.length; j++) {
-                const stand = stands[j];
-                if (stand.ID === 0) { /////DEUTALT VALUE
-                  sIndex = j;
-                  break;
-                }
-              }
+            setKenjinkais(data.kenjinkais);
+            setStands(data.stands);
+            if (prop.defaultValue !== null){
+              setKenjinkaiIndex(data.stands.filter(item => item.standID === prop.defaultValue)[0].kenjinkaiID)
             }
+          } else {
+
           }
-          // setStand(data[0].stands);
         })
     }
-  }, [])
+  }, [auth])
 
-  // useEffect(() => {  // Set default value
-  //   setFullname(prop.defaultValue || "")
-  //   if (prop.defaultValue){
-  //     // setFN_Check(FN_Check => ({...FN_Check, haveMinChar: true}))
-  //   }
-  // }, [prop.defaultValue])
+  useEffect(() => {  // Set default value
+    setStandIndex(prop.defaultValue || 0)
+  }, [prop.defaultValue])
+
+  function handleStandChange(event) {
+    prop.output(event.target.value);
+    setStandIndex(event.target.value)
+  }
+
+  function handleKenjinkaiChange(event) {
+    prop.output(0);
+    setStandIndex(0)
+    setKenjinkaiIndex(parseInt(event.target.value))
+  }
 
   return (
     <div>
       <label htmlFor="kenjinkai">Estande</label>
-        <select id="kenjinkai" name="kenjinkai">
-          <option value="option1">Option 1</option>
-          <option value="option2">Option 2</option>
-          <option value="option3">Option 3</option>
-        </select>
-        <select id="stand" name="stand">
-          <option value="option1">Option 1</option>
-          <option value="option2">Option 2</option>
-          <option value="option3">Option 3</option>
-        </select>
+      <select onChange={handleKenjinkaiChange} value={kenjinkaiIndex} id="kenjinkai" name="kenjinkai">
+        <option value={0}></option>
+        {kenjinkais.map((kenjinkai) => (
+          <option key={kenjinkai.kenjinkaiID} value={kenjinkai.kenjinkaiID}>{kenjinkai.kenjinkai}</option>
+        ))}
+      </select>
+      <select onChange={handleStandChange} value={standIndex} id="stand" name="stand">
+        <option value={0}></option>
+        {stands.filter(item => item.kenjinkaiID === kenjinkaiIndex).map((stand) => (
+          <option key={stand.standID} value={stand.standID}>{stand.stand}</option>
+        ))}
+      </select>
     </div>
   )
 }
