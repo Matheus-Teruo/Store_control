@@ -14,16 +14,16 @@ const maxAge = 3 * 24 * 60 * 60;
 const createToken = (payload) => {
   return jwt.sign({payload}, process.env.SECRET_TOKEN, {expiresIn: maxAge})
 }
-
+// auth_content
 router.get("/checkuser", (req, res) => {  // Check user
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
-    return res.json({authenticated: true, firstname: decoded.firstname});
+    return res.json({authenticated: true, firstname: decoded.firstname, superuser: decoded.superuser});
   } catch(err) {
     return res.json({authenticated: false});
   }
 })
-
+// Home
 router.get("/user", (req, res) => {  // Check user
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
@@ -49,7 +49,7 @@ router.get("/user", (req, res) => {  // Check user
     res.status(401).json({authenticated: false});
   }
 })
-
+// StandID
 router.get("/liststand", (req, res) => {  // Check user
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
@@ -76,7 +76,7 @@ router.get("/liststand", (req, res) => {  // Check user
     return res.status(401).json({message: 'error on take list'});
   }
 })
-
+// Sing up
 router.post("/signup", (req, res) => {  // Sign up request
   const data = req.body;
   const firstname = data.fullname.split(' ')[0];
@@ -107,7 +107,7 @@ router.post("/signup", (req, res) => {  // Sign up request
       }
     })
 })
-
+// Login
 router.post("/prelogin", (req, res) => {  // Username check
   const data = req.body;
   database('users')
@@ -150,7 +150,7 @@ router.post("/login", (req, res) => {  // Log in request
       return res.status(501).json(error);
     })
 })
-
+// auth_content
 router.post("/logout", (req, res) => {  // Log out user
   try {
     res.clearCookie('jwt')
@@ -159,8 +159,8 @@ router.post("/logout", (req, res) => {  // Log out user
     return res.status(501).json(error);
   }
 })
-
-router.post("/editusername", (req, res) => {  // Log in request
+// User
+router.post("/editusername", (req, res) => {  // Edit username
   const data = req.body;
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
@@ -184,7 +184,7 @@ router.post("/editusername", (req, res) => {  // Log in request
   }
 })
 
-router.post("/editfullname", (req, res) => {  // Log in request
+router.post("/editfullname", (req, res) => {  // Edit fullname
   const data = req.body;
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
@@ -209,7 +209,7 @@ router.post("/editfullname", (req, res) => {  // Log in request
   }
 })
 
-router.post("/changestandid", (req, res) => {  // Log in request
+router.post("/changestandid", (req, res) => {  // Change user stand
   const data = req.body;
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
@@ -224,7 +224,7 @@ router.post("/changestandid", (req, res) => {  // Log in request
   }
 })
 
-router.post("/preeditpassword", (req, res) => {  // Log in request
+router.post("/preeditpassword", (req, res) => {  // Take the salt value
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     database('users')
@@ -244,7 +244,7 @@ router.post("/preeditpassword", (req, res) => {  // Log in request
   }
 })
 
-router.post("/editpassword", (req, res) => {  // Log in request
+router.post("/editpassword", (req, res) => {  // Check password and change
   const data = req.body;
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;

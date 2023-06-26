@@ -21,6 +21,7 @@ services:
       - db-password
     volumes:
       - backend-node:/opt/app/node_modules
+      - ./backend/images:/code/images
       - ./backend/src:/code/src:ro
       - ./backend/codes:/code/codes:ro
       - ./backend/package.json:/code/package.json

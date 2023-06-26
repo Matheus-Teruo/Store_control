@@ -24,17 +24,18 @@ function Database() {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (auth.user.authenticated && auth.user.superuser) {
+  useEffect(() => {  // Load from pages
+    console.log(auth.user)
+    if (auth.user.authenticated === true && auth.user.superuser) {
       RequestLists()
-    } else if (!auth.user.authenticated) {
+    } else if (auth.user.authenticated === false) {
       navigate('/login');
-    } else if (auth.user.superuser){
+    } else if (auth.user.superuser === true && !auth.user.superuser){
       navigate('/')
     }
-  }, [])
+  }, [auth, navigate])
 
-async function RequestLists() {
+async function RequestLists() {  // List all stand and kenjinkais
   var resStatus;
     fetch('/api/listallstands')
       .then(res => {
@@ -231,16 +232,12 @@ function h_SValid(value) {
       <h1>Kenjinkais e estandes</h1>
       <div>
         <h2>Menu</h2>
-        {!showKenjinkai &&
         <div>
           <button onClick={() => {setShowKenjinkai(true)}}>Registrar kenjinkai</button>
         </div>
-        }
-        {
         <div>
           <button onClick={() => {setShowStand(true)}}>Novo estande</button>
         </div>
-        }
       </div>
       <ul>
         <li><p>kenjinkaiID</p><p>kenjinkai</p><p>diretoria</p><p>stands</p></li>

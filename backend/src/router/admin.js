@@ -3,13 +3,25 @@ const database = require("../database");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
+// const multer = require('multer');
+
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "../../images")
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, `${req.body.nameimage}${path.extname(file.originalname)}`)
+//   }
+// })
 
 const router = express();
 router.use(express.json());
 router.use(morgan("common"));
 router.use(cookieParser());
+const upload = multer({storage: storage})
 
-router.get("/listallstands", (req, res) => {  // Check user
+//  Database
+router.get("/listallstands", (req, res) => {  // Request all stands and kenjinkais
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     if (decoded.superuser) {
@@ -38,7 +50,7 @@ router.get("/listallstands", (req, res) => {  // Check user
   }
 })
 
-router.post("/newkenjinkai", (req, res) => {  // Check user
+router.post("/newkenjinkai", (req, res) => {  // Create new kenjinkai
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     if (decoded.superuser) {
@@ -66,7 +78,7 @@ router.post("/newkenjinkai", (req, res) => {  // Check user
   }
 })
 
-router.post("/editkenjinkai", (req, res) => {  // Check user
+router.post("/editkenjinkai", (req, res) => {  // Change kenjinkai property
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     if (decoded.superuser) {
@@ -95,7 +107,7 @@ router.post("/editkenjinkai", (req, res) => {  // Check user
   }
 })
 
-router.post("/delkenjinkai", (req, res) => {  // Check user
+router.post("/delkenjinkai", (req, res) => {  // Delete kenjinkai
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     if (decoded.superuser) {
@@ -117,7 +129,7 @@ router.post("/delkenjinkai", (req, res) => {  // Check user
   }
 })
 
-router.post("/newstand", (req, res) => {  // Check user
+router.post("/newstand", (req, res) => {  // Create new stand
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     if (decoded.superuser) {
@@ -145,7 +157,7 @@ router.post("/newstand", (req, res) => {  // Check user
   }
 })
 
-router.post("/editstand", (req, res) => {  // Check user
+router.post("/editstand", (req, res) => {  // Change stands property
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     if (decoded.superuser) {
@@ -174,7 +186,7 @@ router.post("/editstand", (req, res) => {  // Check user
   }
 })
 
-router.post("/delstand", (req, res) => {  // Check user
+router.post("/delstand", (req, res) => {  // Delete stand
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     if (decoded.superuser) {
@@ -195,5 +207,120 @@ router.post("/delstand", (req, res) => {  // Check user
     res.status(401).json({authenticated: false});
   }
 })
+// Inventory
+router.get("/inventory", (req, res) => {
+  try{
+    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+    const data = req.body;
+    database('users')
+      .select('stands.standID', 'stands.stand')
+      .join('stands', 'users.standID', 'stands.standID')
+      .where({userID: decoded.userID})
+      .then((rows) => {
+        if (rows.length > 0){
+          const row = rows[0];
+          database('items')
+            .select()
+            .where({standID: row.standID})
+            .then((items) => {
+              return res.json({stand: {standID:row.standID ,stand:row.stand}, items: items})
+            })
+        } else {  // User without stand
+          return res.json({stand: {standID:0 ,stand:""}, items: []})
+        }
+      })
+  } catch {  // Error of authenticated
+    return res.status(401).json({authenticated: false});
+  }
+})
+
+router.post("/newitem", (req, res, next) => {  // Create new item
+  try{
+    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+    const data = req.body;
+      if (decoded.superuser === 1) {
+        database('items')
+          .insert(data)
+          .then(() => {
+            console.log(`new item created: ${data.item}`)
+            return res.json({message: "new item created"})
+          })
+          .catch(error => {
+            if (error.errno === 1062){  // Duplication error
+              const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
+              if (column === "stand"){
+                return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
+              }
+            } else {
+              return res.status(501).json({ error: {error}});
+            }
+          })
+      } else {
+        database('users')
+          .select('standID')
+          .where({userID: decoded.userID})
+          .then((rows) => {
+            const row = rows[0];
+            if (row.standID === data.standID){
+              database('items')
+                .insert(data)
+                .then(() => {
+                  console.log(`new item created: ${data.item}`)
+                  return res.json({message: "new item created"})
+                })
+                .catch(error => {
+                  if (error.errno === 1062){  // Duplication error
+                    const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
+                    if (column === "stand"){
+                      return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
+                    }
+                  } else {
+                    return res.status(501).json({ error: {error}});
+                  }
+                })
+            } else {
+              return res.status(401).json({authenticated: false});
+            }
+          })
+      }
+  } catch {
+    return res.status(401).json({authenticated: false});
+  }
+})
+
+router.post("/edititem", (req, res, next) => {  // Create new item
+  try{
+    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+    const data = req.body;
+    database('items')
+      .where({itemID: data.itemID})
+      .update({item: data.item, price: data.price, stock: data.stock})
+      .then(() => {
+        console.log(`item edited: ${data.item}`)
+        return res.json({message: "item edited"})
+      })
+      .catch(error => {
+        console.error(error)
+        if (error.errno === 1062){  // Duplication error
+          const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
+          if (column === "item"){
+            return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
+          }
+        } else {
+          return res.status(501).json({ error: {error}});
+        }
+      })
+  } catch {
+    return res.status(401).json({authenticated: false});
+  }
+})
+
+// router.use((err, req, res, next) => {  // Cancel the upload of image
+//   if (err) {
+//     // Handle the error appropriately
+//     return res.status(401).json({ error: 'Unauthorized' });
+//   }
+//   next();
+// });
 
 module.exports = router;
