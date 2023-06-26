@@ -18,7 +18,7 @@ const router = express();
 router.use(express.json());
 router.use(morgan("common"));
 router.use(cookieParser());
-const upload = multer({storage: storage})
+// const upload = multer({storage: storage})
 
 //  Database
 router.get("/listallstands", (req, res) => {  // Request all stands and kenjinkais
@@ -248,7 +248,7 @@ router.post("/newitem", (req, res, next) => {  // Create new item
           .catch(error => {
             if (error.errno === 1062){  // Duplication error
               const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
-              if (column === "stand"){
+              if (column === "item"){
                 return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
               }
             } else {
@@ -271,7 +271,7 @@ router.post("/newitem", (req, res, next) => {  // Create new item
                 .catch(error => {
                   if (error.errno === 1062){  // Duplication error
                     const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
-                    if (column === "stand"){
+                    if (column === "item"){
                       return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
                     }
                   } else {

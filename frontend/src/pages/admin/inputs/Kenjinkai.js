@@ -4,9 +4,7 @@ const regexnumber = /[0-9]/
 const regexspace = /\s/
 const regexspecial = /["]|[']|[\\]|[/]|[.]/
 
-function Kenjinkai(prop) {
-  const [kenjinkai, setKenjinkai] = useState("")
-  const [principal, setPrincipal] = useState("")
+function Kenjinkai(props) {
   const [K_Check, setK_Check] = useState({
     haveMinChar: false,
     noNumber: true,
@@ -15,7 +13,6 @@ function Kenjinkai(prop) {
   const [P_Check, setP_Check] = useState({
     haveMinChar: false,
     noNumber: true,
-    noSpace: true, 
     noSpecialChar: true});
   const [submitvalid, setSubmitvalid] = useState(false);
 
@@ -26,91 +23,80 @@ function Kenjinkai(prop) {
         K_Check.noSpecialChar &&
         P_Check.haveMinChar &&
         P_Check.noNumber &&
-        P_Check.noSpace &&
         P_Check.noSpecialChar &&
-        prop.dupliValue !== kenjinkai){
+        props.dupliValue !== props.kenjinkai){
       setSubmitvalid(true);
-      prop.valid(true)
+      props.valid(true)
     } else {
       setSubmitvalid(false);
-      prop.valid(false)
+      props.valid(false)
     }
-  }, [K_Check, P_Check, kenjinkai, prop.dupliValue])
+  }, [K_Check, P_Check, props.kenjinkai, props.dupliValue])
 
-  const handleKenjinkaiChange = (event) => {  // Username conditions
-    setKenjinkai(event.target.value);
-    prop.output_K(event.target.value);
-
-    if (event.target.value.trim().length >= 3) {  // Check min number of char
+  useEffect(() => {  // Kenjinkai conditions
+    if (props.kenjinkai.trim().length >= 3) {  // Check min number of char
       setK_Check(K_Check => ({...K_Check, haveMinChar: true})
     )} else {
       setK_Check(K_Check => ({...K_Check, haveMinChar: false})
     )};
 
-    if (!regexnumber.test(event.target.value)) {  // Check use of number
+    if (!regexnumber.test(props.kenjinkai)) {  // Check use of number
       setK_Check(K_Check => ({...K_Check, noNumber: true})
     )} else {
       setK_Check(K_Check => ({...K_Check, noNumber: false})
     )};
 
-    if (!regexspace.test(event.target.value)) {  // Check use of space
+    if (!regexspace.test(props.kenjinkai)) {  // Check use of space
       setK_Check(K_Check => ({...K_Check, noSpace: true})
     )} else {
       setK_Check(K_Check => ({...K_Check, noSpace: false})
     )};
 
-    if (!regexspecial.test(event.target.value)) {  // Check use of special char
+    if (!regexspecial.test(props.kenjinkai)) {  // Check use of special char
       setK_Check(K_Check => ({...K_Check, noSpecialChar: true})
     )} else {
       setK_Check(K_Check => ({...K_Check, noSpecialChar: false})
     )};
-  };
-
-  const handlePrincipalChange = (event) => {  // Username conditions
-    setPrincipal(event.target.value);
-    prop.output_P(event.target.value);
-
-    if (event.target.value.trim().length >= 3) {  // Check min number of char
+  }, [props.kenjinkai])
+  
+  useEffect(() => {  // Principal conditions
+    if (props.principal.trim().length >= 3) {  // Check min number of char
       setP_Check(P_Check => ({...P_Check, haveMinChar: true})
     )} else {
       setP_Check(P_Check => ({...P_Check, haveMinChar: false})
     )};
 
-    if (!regexnumber.test(event.target.value)) {  // Check use of number
+    if (!regexnumber.test(props.principal)) {  // Check use of number
       setP_Check(P_Check => ({...P_Check, noNumber: true})
     )} else {
       setP_Check(P_Check => ({...P_Check, noNumber: false})
     )};
 
-    if (!regexspace.test(event.target.value)) {  // Check use of space
-      setP_Check(P_Check => ({...P_Check, noSpace: true})
-    )} else {
-      setP_Check(P_Check => ({...P_Check, noSpace: false})
-    )};
-
-    if (!regexspecial.test(event.target.value)) {  // Check use of special char
+    if (!regexspecial.test(props.principal)) {  // Check use of special char
       setP_Check(P_Check => ({...P_Check, noSpecialChar: true})
     )} else {
       setP_Check(P_Check => ({...P_Check, noSpecialChar: false})
     )};
-  };
+  }, [props.principal])
 
   return (
     <>
       <label>Kenjinkai:</label>
-      <input value={kenjinkai} onChange={handleKenjinkaiChange} id="kenjinkai" type="text" name="kenjinkai"/>
-      {!K_Check.haveMinChar && <div>minChar</div>}
-      {!K_Check.noNumber && <div>nonumber</div>}
-      {!K_Check.noSpace && <div>noSpace</div>}
-      {!K_Check.noSpecialChar && <div>noSpecialChar</div>}
-      {!prop.dupliCheck && (prop.dupliValue === kenjinkai) && <div>noUsed</div>}
-      <div>{prop.dupliValue}</div>
+      <input value={props.kenjinkai} onChange={event => props.output(event)} id="kenjinkai" type="text" name="kenjinkai"/>
+      <div>
+        {!K_Check.haveMinChar && <div>minChar</div>}
+        {!K_Check.noNumber && <div>nonumber</div>}
+        {!K_Check.noSpace && <div>noSpace</div>}
+        {!K_Check.noSpecialChar && <div>noSpecialChar</div>}
+        {props.dupliValue !== ""  && (props.dupliValue === props.kenjinkai) && <div>noUsed</div>}
+      </div>
       <label>Diretoria:</label>
-      <input value={principal} onChange={handlePrincipalChange} id="principal" type="text" name="principal"/>
-      {!P_Check.haveMinChar && <div>minChar</div>}
-      {!P_Check.noNumber && <div>nonumber</div>}
-      {!P_Check.noSpace && <div>noSpace</div>}
-      {!P_Check.noSpecialChar && <div>noSpecialChar</div>}
+      <input value={props.principal} onChange={event => props.output(event)} id="principal" type="text" name="principal"/>
+      <div>
+        {!P_Check.haveMinChar && <div>minChar</div>}
+        {!P_Check.noNumber && <div>nonumber</div>}
+        {!P_Check.noSpecialChar && <div>noSpecialChar</div>}
+      </div>
     </>
   )
 }

@@ -29,8 +29,8 @@ function User() {
     username: false,
     fullname: false,
     password: false});
-  const [alreadyUsedUN, setAlreadyUsedUN] = useState({username: "", U_noUsed: true});
-  const [alreadyUsedFN, setAlreadyUsedFN] = useState({fullname: "", F_noUsed: true});
+  const [alreadyUsedUN, setAlreadyUsedUN] = useState("");
+  const [alreadyUsedFN, setAlreadyUsedFN] = useState("");
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
 
@@ -45,9 +45,7 @@ function User() {
   function RequisiteList() {
     var resStatus;
     fetch('/api/user')
-      .then(res => {
-        resStatus = res.status;
-        return res.json()})
+      .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         if (resStatus === 200){
           setNewUsername(data.username)
@@ -84,18 +82,25 @@ function User() {
         return "";
   }}
 
-  function h_UNChange(value) {  // Username conditions
-    setNewUsername(value)
+  function h_Change(event) {  // Handle Change
+    if (event.target.id === "username") {  // Username
+      setNewUsername(event.target.value)
+    } else if (event.target.id === "fullname") {  // Fullname
+      setNewFullname(event.target.value);
+    } else if (event.target.id === "oldpassword") {  // Old Password
+      setNewPassword((newPassword) => ({...newPassword, oldpassword: event.target.value}));
+    } else if (event.target.id === "password") {  // New Password
+      setNewPassword((newPassword) => ({...newPassword, newpassword: event.target.value}));
+    }
   };
   function h_UNValid(value) {
     setCheck(check => ({...check, username:value}))
   };
-
-  function h_FNChange(value) {  // Fullname conditions
-    setNewFullname(value);
-  };
   function h_FNValid(value) {
     setCheck(check => ({...check, fullname:value}))
+  };
+  function h_PWValid(value) {
+    setCheck(check => ({...check, password:value}))
   };
 
   function h_SChange(value) {  // Manage NewKenjinkai State
@@ -107,33 +112,20 @@ function User() {
     }
   }
 
-  function h_OPWChange(event) {  // Manage NewPassword State
-    setNewPassword((newPassword) => ({...newPassword, oldpassword: event.target.value}))
-  }
-  function h_PWChange(value) {  // Password conditions
-    setNewPassword((newPassword) => ({...newPassword, password: value}))
-  };
-  function h_PWValid(value) {
-    setCheck(check => ({...check, password:value}))
-  };
-
   async function SubmitEditUsername(){
     if (check.username){
       var resStatus;
       fetch("/api/editusername", {  // Pre login get salt
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
+        method: "POST", headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({"username": newUsername})
       })
-        .then(res => {
-          resStatus = res.status;
-          return res.json()})
+        .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200) {
             setUser(user => ({...user, username: data.username}));
             return setChange((change) => ({...change, username: false}))
           } else if (resStatus === 409) {
-            setAlreadyUsedUN({username: data.value, U_noUsed: false});
+            setAlreadyUsedUN(data.value);
           }
         })
         .catch(console.error)
@@ -143,19 +135,16 @@ function User() {
   async function SubmitEditFullname(){
     var resStatus;
     fetch("/api/editfullname", {  // Pre login get salt
-      method: "POST",
-      headers: {'Content-Type': 'application/json'},
+      method: "POST", headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({"fullname": newFullname})
     })
-      .then(res => {
-        resStatus = res.status;
-        return res.json()})
+      .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         if (resStatus === 200) {
           setUser(user => ({...user, fullname: data.fullname}));
           return setChange((change) => ({...change, fullname: false}))
         } else if (resStatus === 409) {
-          setAlreadyUsedFN({fullname: data.value, F_noUsed: false});
+          setAlreadyUsedFN(data.value);
         }
       })
       .catch(console.error)
@@ -164,13 +153,10 @@ function User() {
   async function SubmitChangeStand(){
     var resStatus;
     fetch("/api/changestandid", {  // Pre login get salt
-      method: "POST",
-      headers: {'Content-Type': 'application/json'},
+      method: "POST", headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({"standID": newStandID})
     })
-      .then(res => {
-        resStatus = res.status;
-        return res.json()})
+      .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         if (resStatus === 200) {
           setUser(user => ({...user, standID: data.standID}));
@@ -186,13 +172,10 @@ function User() {
   async function PreSubmitEditPassword(){
     var resStatus;
     fetch("/api/preeditpassword", {  // Pre login get salt
-      method: "POST",
-      headers: {'Content-Type': 'application/json'},
+      method: "POST", headers: {'Content-Type': 'application/json'},
       body: JSON.stringify([])
     })
-      .then(res => {
-        resStatus = res.status;
-        return res.json()})
+      .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         if (resStatus === 200) {
           return SubmitEditPassword(data.salt)
@@ -204,22 +187,18 @@ function User() {
   }
   async function SubmitEditPassword(salt){
     var resStatus;
-
     const oldhash = bcrypt.hashSync(newPassword.oldpassword, salt);
     const newsalt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(newPassword.newpassword, newsalt);
 
     fetch("/api/editpassword", {  // Pre login get salt
-      method: "POST",
-      headers: {'Content-Type': 'application/json'},
+      method: "POST", headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         "password": oldhash,
         "newpassword": hash,
         "salt": newsalt})
     })
-      .then(res => {
-        resStatus = res.status;
-        return res.json()})
+      .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         if (resStatus === 200) {
           setUser(user => ({...user, standID: data.standID}));
@@ -244,11 +223,10 @@ function User() {
           :
             <>
               <Username
-                output={h_UNChange}
-                valid={h_UNValid}
-                dupliValue={alreadyUsedUN.username}
-                dupliCheck={alreadyUsedUN.U_noUsed}
-                defaultValue={user.username}/>
+                output={h_Change}
+                username={newUsername}
+                dupliValue={alreadyUsedUN}
+                valid={h_UNValid}/>
               <button onClick={() => (SubmitEditUsername())} disabled={check.username ? false : true}>Confirmar</button>
             </>
           }
@@ -262,11 +240,10 @@ function User() {
           :
             <>
               <Fullname
-                output={h_FNChange}
-                valid={h_FNValid}
-                dupliValue={alreadyUsedFN.fullname}
-                dupliCheck={alreadyUsedFN.F_noUsed}
-                defaultValue={user.fullname}/>
+                output={h_Change}
+                fullname={newFullname}
+                dupliValue={alreadyUsedFN}
+                valid={h_FNValid}/>
               <button onClick={() => (SubmitEditFullname())} disabled={check.fullname ? false : true}>Confirmar</button>
             </>
           }
@@ -295,9 +272,9 @@ function User() {
           :
           <>
             <label htmlFor="password">Senha atual:</label>
-            <input id="oldpassword" type="password" name="oldpassword" value={newPassword.oldpassword} onChange={h_OPWChange}/>
+            <input value={newPassword.oldpassword} onChange={h_Change} id="oldpassword" type="password" name="oldpassword"/>
             <Password
-              output={h_PWChange}
+              output={h_Change}
               valid={h_PWValid}/>
             <button onClick={() => PreSubmitEditPassword()} disabled={check.password ? false : true}>Confirmar</button>
           </>

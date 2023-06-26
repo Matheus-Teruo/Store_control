@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import AuthContext from '../../../store/auth_context';
 
-function StandID(prop) {
+function StandID(props) {
   const [standIndex, setStandIndex] = useState(0)
   const [kenjinkaiIndex, setKenjinkaiIndex] = useState(0)
   const [stands, setStands] = useState([])
@@ -13,15 +13,13 @@ function StandID(prop) {
     if (auth.user.authenticated) {
       var resStatus;
       fetch('/api/liststand')
-        .then(res => {
-          resStatus = res.status;
-          return res.json()})
+        .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200){
             setKenjinkais(data.kenjinkais);
             setStands(data.stands);
-            if (prop.defaultValue !== null){
-              setKenjinkaiIndex(data.stands.filter(item => item.standID === prop.defaultValue)[0].kenjinkaiID)
+            if (props.defaultValue !== null){
+              setKenjinkaiIndex(data.stands.filter(item => item.standID === props.defaultValue)[0].kenjinkaiID)
             }
           } else {
 
@@ -31,30 +29,30 @@ function StandID(prop) {
   }, [auth])
 
   useEffect(() => {  // Set default value
-    setStandIndex(prop.defaultValue || 0)
-  }, [prop.defaultValue])
+    setStandIndex(props.defaultValue || 0)
+  }, [props.defaultValue])
 
   function handleStandChange(event) {
-    prop.output(event.target.value);
+    props.output(event.target.value);
     setStandIndex(event.target.value)
   }
 
   function handleKenjinkaiChange(event) {
-    prop.output(0);
-    setStandIndex(0)
+    props.output(0);
+    setStandIndex(0);
     setKenjinkaiIndex(parseInt(event.target.value))
   }
 
   return (
     <div>
       <label htmlFor="kenjinkai">Estande</label>
-      <select onChange={handleKenjinkaiChange} value={kenjinkaiIndex} id="kenjinkai" name="kenjinkai">
+      <select value={kenjinkaiIndex} onChange={handleKenjinkaiChange} id="kenjinkai" name="kenjinkai">
         <option value={0}></option>
         {kenjinkais.map((kenjinkai) => (
           <option key={kenjinkai.kenjinkaiID} value={kenjinkai.kenjinkaiID}>{kenjinkai.kenjinkai}</option>
         ))}
       </select>
-      <select onChange={handleStandChange} value={standIndex} id="stand" name="stand">
+      <select value={standIndex} onChange={handleStandChange} id="stand" name="stand">
         <option value={0}></option>
         {stands.filter(item => item.kenjinkaiID === kenjinkaiIndex).map((stand) => (
           <option key={stand.standID} value={stand.standID}>{stand.stand}</option>

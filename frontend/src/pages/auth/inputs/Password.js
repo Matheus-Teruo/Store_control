@@ -4,7 +4,7 @@ const regexnumber = /[0-9]/
 const regexletter = /[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ]/
 const regexspace = /\s/
 
-function Password(prop) {
+function Password(props) {
   const [password, setPassword] = useState("");
   const [passwordC, setPasswordC] = useState("");
   const [Check, setCheck] = useState({
@@ -22,10 +22,10 @@ function Password(prop) {
         Check.haveNumber &&
         PW_D_Check){
           setSubmitvalid(true);
-          prop.valid(true)
+          props.valid(true)
         } else {
           setSubmitvalid(false);
-          prop.valid(false)
+          props.valid(false)
         }
   }, [Check, PW_D_Check])
 
@@ -38,10 +38,10 @@ function Password(prop) {
   }, [password, passwordC])
 
   const handlePasswordChange = (event) => {  // Password conditions
-    prop.output(event.target.value);
+    props.output(event);
     setPassword(event.target.value);
 
-    if (event.target.value.trim().length >= 6) {  // Check min number of char
+    if (event.target.value.length >= 6) {  // Check min number of char
       setCheck(Check => ({...Check, haveMinChar: true})
     )} else {
       setCheck((Check) => ({...Check, haveMinChar: false})
@@ -64,7 +64,7 @@ function Password(prop) {
     )} else {
       setCheck((Check) => ({...Check, noSpace: false})
     )};
-  };
+  };  
 
   const handlePasswordChangeC = (event) => {  // Password confirmation set
     setPasswordC(event.target.value);
@@ -74,16 +74,20 @@ function Password(prop) {
     <div>
       <div>
         <label htmlFor="password">Senha:</label>
-        <input value={password} onChange={handlePasswordChange} id="password" type="password" name="password" />
-        {!Check.haveMinChar && <div>minChar</div>}
-        {!Check.haveLetter && <div>haveletter</div>}
-        {!Check.haveNumber && <div>havenumber</div>}
-        {!Check.noSpace && <div>noSpace</div>}
+        <input value={props.password} onChange={handlePasswordChange} id="password" type="password" name="password" />
+        <div>
+          {!Check.haveMinChar && <div>minChar</div>}
+          {!Check.haveLetter && <div>haveletter</div>}
+          {!Check.haveNumber && <div>havenumber</div>}
+          {!Check.noSpace && <div>noSpace</div>}
+        </div>
       </div>
       <div>
         <label htmlFor="PW_D_Check">Confirmar senha:</label>
         <input value={passwordC} onChange={handlePasswordChangeC} id="PW_D_Check" type="password" name="PW_D_Check" />
-        {!PW_D_Check && <div>noMatch</div>}
+        <div>
+          {!PW_D_Check && <div>noMatch</div>}
+        </div>
       </div>
     </div>
   )

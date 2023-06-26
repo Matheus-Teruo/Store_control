@@ -7,14 +7,14 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [submitvalid, setSubmitvalid] = useState(false);
-  const [processingUN, setProcessingUN] = useState({username: false, UN_Confimed: false});
-  const [processingPW, setProcessingPW] = useState({password: false, PW_Confirmed: false});
+  const [processingUN, setProcessingUN] = useState(0);
+  const [processingPW, setProcessingPW] = useState(0);
   const [UN_Check, setUN_Check] = useState(false);
   const [PW_Check, setPW_Check] = useState(false);
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
 
-  useEffect(() => {
+  useEffect(() => {  // Check all condition
     if (UN_Check && PW_Check){
       setSubmitvalid(true);
     } else {
@@ -22,26 +22,24 @@ function Login() {
     }
   }, [UN_Check, PW_Check])
   
-  const handleUsernameChange = (event) => {  // Username conditions
-    setUsername(event.target.value)
-    setProcessingUN({username: false, UN_Confimed: false});
-
-    if (event.target.value.trim().length >= 4) {  // Check min number of char
-      setUN_Check(true)
-    } else {
-      setUN_Check(false)
-    };
-  };
-
-  const handlePasswordChange = (event) => {  // Password conditions
-    setPassword(event.target.value);
-    setProcessingPW({password: false, PW_Confimed: false});
-
-    if (event.target.value.trim().length >= 6) {  // Check min number of char
-      setPW_Check(true)
-    } else {
-      setPW_Check(false)
-    };
+  const handleChange = (event) => {  // Handle Change
+    if (event.target.id === "username") {  // Username conditions
+      setUsername(event.target.value)
+      setProcessingUN(0);
+      if (event.target.value.trim().length >= 4) {  // Check min number of char
+        setUN_Check(true)
+      } else {
+        setUN_Check(false)
+      };
+    } else if (event.target.id === "password") {  // Fullname conditions
+      setPassword(event.target.value);
+      setProcessingPW(0);
+      if (event.target.value.trim().length >= 6) {  // Check min number of char
+        setPW_Check(true)
+      } else {
+        setPW_Check(false)
+      };
+    }
   };
 
   async function SubmitPreLogin(event) {  // Submit POST request prelogin
@@ -55,15 +53,13 @@ function Login() {
         "username": username
       })
     })
-      .then(res => {
-        resStatus = res.status;
-        return res.json()})
+      .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         if (resStatus === 200) {
-          setProcessingUN({username: true, UN_Confimed: true});
+          setProcessingUN(1);
           SubmitLogin(data.salt);
         } else if (resStatus === 401) {
-          return setProcessingUN({username: true, UN_Confimed: false});
+          return setProcessingUN(2);
         }
       })
       .catch(console.error)
@@ -81,16 +77,14 @@ function Login() {
         "password": hash
       })
     })
-      .then(res => {
-        resStatus = res.status;
-        return res.json()})
+      .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         if (resStatus === 200) {
-          setProcessingPW({password: true, PW_Confimed: true});
+          setProcessingPW(1);
           auth.onLogin()
           return navigate('/');
         } else if (resStatus === 401) {
-          return setProcessingPW({password: true, PW_Confimed: false});
+          return setProcessingPW(2);
         }
       })
       .catch(console.error)
@@ -102,15 +96,15 @@ function Login() {
       <Form method="post">
         <div>
           <label>Usuário:</label>
-          <input value={username} onChange={handleUsernameChange} id="username" type="text" name="username" required/>
-          {processingUN.username && processingUN.UN_Confimed && <div>verde</div>}
-          {processingUN.username && !processingUN.UN_Confimed && <div>vermelho</div>}
+          <input value={username} onChange={handleChange} id="username" type="text" name="username" required/>
+          {processingUN === 1 && <div>verde</div>}
+          {processingUN === 2 && <div>vermelho</div>}
         </div>
         <div>
           <label htmlFor="password">Senha:</label>
-          <input value={password} onChange={handlePasswordChange} id="password" type="password" name="password" required/>
-          {processingPW.password && processingPW.PW_Confimed && <div>verde</div>}
-          {processingPW.password && !processingPW.PW_Confimed && <div>vermelho</div>}
+          <input value={password} onChange={handleChange} id="password" type="password" name="password" required/>
+          {processingPW === 1 && <div>verde</div>}
+          {processingPW === 2 && <div>vermelho</div>}
         </div>
         <button onClick={SubmitPreLogin} type="submit" disabled={submitvalid ? false : true}>Login</button>
       </Form>

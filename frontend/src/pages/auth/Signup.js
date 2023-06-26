@@ -11,8 +11,8 @@ function Signup() {
   const [fullname, setFullname] = useState("");
   const [password, setPassword] = useState("");
   const [submitvalid, setSubmitvalid] = useState(false);
-  const [alreadyUsedUN, setAlreadyUsedUN] = useState({username: "", U_noUsed: true});
-  const [alreadyUsedFN, setAlreadyUsedFN] = useState({fullname: "", F_noUsed: true});
+  const [alreadyUsedUN, setAlreadyUsedUN] = useState("");
+  const [alreadyUsedFN, setAlreadyUsedFN] = useState("");
   const [check, setCheck] = useState({
     username: false,
     fullname: false,
@@ -36,7 +36,6 @@ function Signup() {
     // encrypt password
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
-    
     var resStatus;
 
     fetch("/api/signup", {  // Post form
@@ -49,9 +48,7 @@ function Signup() {
         "fullname": fullname
       })
     })
-      .then(res => {
-        resStatus = res.status;
-        return res.json()})
+      .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         if (resStatus=== 201){  // Successful sign up
           auth.onLogin()
@@ -67,22 +64,20 @@ function Signup() {
       .catch(console.error)
   }
 
-  function h_UNChange(value) {  // Username conditions
-    setUsername(value)
+  function h_Change(event) {  // Handle Change
+    if (event.target.id === "username") {  // Username
+      setUsername(event.target.value)
+    } else if (event.target.id === "fullname") {  // Fullname
+      setFullname(event.target.value)
+    } else if (event.target.id === "password") {  // Password
+      setPassword(event.target.value)
+    }
   };
   function h_UNValid(value) {
     setCheck(check => ({...check, username:value}))
   };
-
-  function h_FNChange(value) {  // Fullname conditions
-    setFullname(value);
-  };
   function h_FNValid(value) {
     setCheck(check => ({...check, fullname:value}))
-  };
-
-  function h_PWChange(value) {  // Password conditions
-    setPassword(value)
   };
   function h_PWValid(value) {
     setCheck(check => ({...check, password:value}))
@@ -93,17 +88,17 @@ function Signup() {
       <h1>Sign-up</h1>
       <Form method="post">
         <Username
-          output={h_UNChange}
-          valid={h_UNValid}
-          dupliValue={alreadyUsedUN.username}
-          dupliCheck={alreadyUsedUN.U_noUsed}/>
+          output={h_Change}
+          username={username}
+          dupliValue={alreadyUsedUN}
+          valid={h_UNValid}/>
         <Fullname
-          output={h_FNChange}
-          valid={h_FNValid}
-          dupliValue={alreadyUsedFN.fullname}
-          dupliCheck={alreadyUsedFN.F_noUsed}/>
+          output={h_Change}
+          fullname={fullname}
+          dupliValue={alreadyUsedFN}
+          valid={h_FNValid}/>
         <Password
-          output={h_PWChange}
+          output={h_Change}
           valid={h_PWValid}/>
         <button onClick={SubmitSingUp} type="submit" disabled={submitvalid ? false : true}>Sign up</button>
       </Form>

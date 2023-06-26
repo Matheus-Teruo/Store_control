@@ -29,9 +29,7 @@ function Inventory() {
   async function RequestItems() {  // List all itens from stand
     var resStatus;
       fetch('/api/inventory')
-        .then(res => {
-          resStatus = res.status;
-          return res.json()})
+        .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200){
             setStand(data.stand)
@@ -49,8 +47,7 @@ function Inventory() {
     if (stand.standID !== 0) {
       var resStatus;
       fetch('/api/newitem', {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
+        method: "POST", headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           "item": newItem,
           "price": newPrice,
@@ -58,9 +55,7 @@ function Inventory() {
           "standID": stand.standID
         })
       })
-        .then(res => {
-          resStatus = res.status;
-          return res.json()})
+        .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200){
             RequestItems();
@@ -82,8 +77,7 @@ function Inventory() {
     if (itemID !== 0) {
       var resStatus;
       fetch('/api/edititem', {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
+        method: "POST", headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           "itemID": itemID,
           "item": newItem,
@@ -91,9 +85,7 @@ function Inventory() {
           "stock": newStock
         })
       })
-        .then(res => {
-          resStatus = res.status;
-          return res.json()})
+        .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200){
             RequestItems();
@@ -113,15 +105,15 @@ function Inventory() {
   //   var resStatus;
   // }
   
-  function h_Change(event) {  // Username conditions
-    if (event.target.id === "item") {
+  function h_Change(event) {  // Handle Change
+    if (event.target.id === "item") {  // Item
       setNewItem(event.target.value)
-    } else if (event.target.id === "price") {
+    } else if (event.target.id === "price") {  // Price
       if (event.target.value === ""){
         return setNewPrice(parseFloat(0))
       }
       setNewPrice(parseFloat(event.target.value));
-    } else if (event.target.id === "stock") {
+    } else if (event.target.id === "stock") {  // Stock
       if (event.target.value === ""){
         return setNewStock(parseInt(0))
       }

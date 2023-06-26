@@ -3,8 +3,7 @@ import React, { useState, useEffect } from 'react'
 const regexnumber = /[0-9]/
 const regexspecial = /["]|[']|[\\]|[/]|[.]/
 
-function Fullname(prop) {
-  const [fullname, setFullname] = useState("");
+function Fullname(props) {
   const [Check, setCheck] = useState({
     haveMinChar: false,
     noNumber: true,
@@ -15,54 +14,46 @@ function Fullname(prop) {
     if (Check.haveMinChar &&
         Check.noNumber &&
         Check.noSpecialChar &&
-        prop.defaultValue !== fullname &&
-        prop.dupliValue !== fullname){
+        props.dupliValue !== props.fullname){
       setSubmitvalid(true);
-      prop.valid(true)
+      props.valid(true)
     } else {
       setSubmitvalid(false);
-      prop.valid(false)
+      props.valid(false)
     }
-  }, [Check, fullname, prop.dupliValue, prop.defaultValue])
+  }, [Check, props.fullname, props.dupliValue])
 
-  useEffect(() => {  // Set default value
-    setFullname(prop.defaultValue || "")
-    if (prop.defaultValue){
-      setCheck(Check => ({...Check, haveMinChar: true}))
-    }
-  }, [prop.defaultValue])
-
-  const handleFullnameChange = (event) => {  // Fullname conditions
-    setFullname(event.target.value);
-    prop.output(event.target.value);
-
-    if (event.target.value.trim().length >= 6) {  // Check min number of char
+  useEffect(() => {
+    if (props.fullname.trim().length >= 6) {  // Check min number of char
       setCheck(Check => ({...Check, haveMinChar: true})
     )} else {
       setCheck(Check => ({...Check, haveMinChar: false})
     )}
 
-    if (!regexnumber.test(event.target.value)) {  // Check use of number
-      setCheck(Check => ({...Check, noSpecialChar: true})
+    if (!regexnumber.test(props.fullname)) {  // Check use of number
+      setCheck(Check => ({...Check, noNumber: true})
     )} else {
-      setCheck(Check => ({...Check, noSpecialChar: false})
+      setCheck(Check => ({...Check, noNumber: false})
     )};
 
-    if (!regexspecial.test(event.target.value)) {  // Check use of special char
+    if (!regexspecial.test(props.fullname)) {  // Check use of special char
       setCheck(Check => ({...Check, noSpecialChar: true})
     )} else {
       setCheck(Check => ({...Check, noSpecialChar: false})
     )};
-  };
+  }, [props.fullname])
+  
 
   return (
     <div>
       <label htmlFor="fullname">Nome Completo:</label>
-      <input value={fullname} onChange={handleFullnameChange} id="fullname" type="text" name="fullname" />
-      {!Check.haveMinChar && <div>minChar</div>}
-      {!Check.noSpecialChar && <div>noCharEspecial</div>}
-      {!prop.dupliCheck && (prop.dupliValue === fullname) && <div>noUsed</div>}
-      <div>{prop.dupliValue}</div>
+      <input value={props.fullname} onChange={event => props.output(event)} id="fullname" type="text" name="fullname" />
+      <div>
+        {!Check.haveMinChar && <div>minChar</div>}
+        {!Check.noNumber && <div>noNumber</div>}
+        {!Check.noSpecialChar && <div>noCharEspecial</div>}
+        {props.dupliValue !== "" && (props.dupliValue === props.fullname) && <div>noUsed</div>}
+      </div>
     </div>
   )
 }

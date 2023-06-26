@@ -3,9 +3,7 @@ import React, { useState, useEffect } from 'react'
 const regexnumber = /[0-9]/
 const regexspecial = /["]|[']|[\\]|[/]|[.]/
 
-function Stands(prop) {
-  const [stand, setStand] = useState("")
-  const [kenjinkaiID, setKenjinkaiID] = useState(prop.kenjinkaiID)
+function Stands(props) {
   const [Check, setCheck] = useState({
     haveMinChar: false,
     noNumber: true,
@@ -16,57 +14,50 @@ function Stands(prop) {
     if (Check.haveMinChar &&
         Check.noNumber &&
         Check.noSpecialChar &&
-        kenjinkaiID !== 0 &&
-        prop.dupliValue !== stand){
+        props.kenjinkaiID !== 0 &&
+        props.dupliValue !== props.stand){
       setSubmitvalid(true);
-      prop.valid(true)
+      props.valid(true)
     } else {
       setSubmitvalid(false);
-      prop.valid(false)
+      props.valid(false)
     }
-  }, [Check, kenjinkaiID, stand, prop.dupliValue])
+  }, [Check, props.stand, props.kenjinkaiID, props.dupliValue])
 
-  const handleStandChange = (event) => {  // Username conditions
-    setStand(event.target.value);
-    prop.output(event.target.value);
-
-    if (event.target.value.trim().length > 2) {  // Check min number of char
+  useEffect(() => {  // Stand conditions
+    if (props.stand.trim().length > 2) {  // Check min number of char
       setCheck(Check => ({...Check, haveMinChar: true})
     )} else {
       setCheck(Check => ({...Check, haveMinChar: false})
     )};
 
-    if (!regexnumber.test(event.target.value)) {  // Check use of number
+    if (!regexnumber.test(props.stand)) {  // Check use of number
       setCheck(Check => ({...Check, noNumber: true})
     )} else {
       setCheck(Check => ({...Check, noNumber: false})
     )};
 
-    if (!regexspecial.test(event.target.value)) {  // Check use of special char
+    if (!regexspecial.test(props.stand)) {  // Check use of special char
       setCheck(Check => ({...Check, noSpecialChar: true})
     )} else {
       setCheck(Check => ({...Check, noSpecialChar: false})
     )};
-  };
-
-  const handleKenjinkaiChange = (event) => {  // Username conditions
-    setKenjinkaiID(parseInt(event.target.value));
-    prop.outputID(event.target.value);
-    console.log()
-  }
+  }, [props.stand])
 
   return (
     <div>
       <label>Estande:</label>
-      <input value={stand} onChange={handleStandChange} id="stand" type="text" name="stand"/>
-      {!Check.haveMinChar && <div>minChar</div>}
-      {!Check.noNumber && <div>nonumber</div>}
-      {!Check.noSpecialChar && <div>noSpecialChar</div>}
-      {!prop.dupliCheck && (prop.dupliValue === stand) && <div>noUsed</div>}
+      <input value={props.stand} onChange={event => props.output(event)} id="stand" type="text" name="stand"/>
+      <div>
+        {!Check.haveMinChar && <div>minChar</div>}
+        {!Check.noNumber && <div>nonumber</div>}
+        {!Check.noSpecialChar && <div>noSpecialChar</div>}
+        {props.dupliValue !== "" && (props.dupliValue === props.stand) && <div>noUsed</div>}
+      </div>
       <label htmlFor="kenjinkai">Kenjinkai</label>
-      <select onChange={handleKenjinkaiChange} value={kenjinkaiID} id="kenjinkai" name="kenjinkai">
+      <select value={props.kenjinkaiID} onChange={event => props.output(event)} id="kenjinkaiID" name="kenjinkaiID">
         <option value={0}></option>
-        {prop.kenjinkais.map((kenjinkai) => (
+        {props.kenjinkais.map((kenjinkai) => (
           <option key={kenjinkai.kenjinkaiID} value={kenjinkai.kenjinkaiID}>{kenjinkai.kenjinkai}</option>
         ))}
       </select>

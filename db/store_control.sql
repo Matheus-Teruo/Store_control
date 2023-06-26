@@ -196,7 +196,7 @@ CREATE TABLE `stands` (
   `stand` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
   `kenjinkaiID` int NOT NULL,
   PRIMARY KEY (`standID`),
-  UNIQUE KEY `observation` (`stand`),
+  UNIQUE KEY `stand` (`stand`),
   KEY `kenjinkaiID` (`kenjinkaiID`),
   CONSTRAINT `stands_ibfk_1` FOREIGN KEY (`kenjinkaiID`) REFERENCES `kenjinkais` (`kenjinkaiID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
