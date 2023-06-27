@@ -17,6 +17,7 @@ import Signup from "./pages/auth/Signup";
 import Admin from "./pages/admin/Admin";
 import Inventory from "./pages/admin/Inventory";
 import Database from "./pages/admin/Database";
+import Cards from "./pages/admin/Cards";
 
 import { AuthContextProvider } from "./store/auth_context";
 
@@ -33,11 +34,12 @@ const router = createBrowserRouter([
       { path: '/user', element: <User/>},
       { path: '/login', element: <Login/>},
       { path: '/signup', element: <Signup/>},
+      { path: '/inventario', element: <Inventory/>},
       { path: '/admin/',
         element: <Admin/>,
         children: [
-          { path: 'inventario', element: <Inventory/>},
-          { path: 'config', element: <Database/>},
+          { path: 'cards', element: <Cards/>},
+          { path: 'database', element: <Database/>},
         ],
       }
     ],

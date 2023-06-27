@@ -10,10 +10,10 @@ function Navbar() {
   const auth = useContext(AuthContext);
 
   useEffect(() => {
-    if (!auth.user.authenticated || auth.user.authenticated === 2 && user.firstTime){
+    if (auth.user.authenticated === 2 && user.firstTime){
       setUser((user) => ({...user, firstTime: false}))
       return auth.onLogin()
-    } else if (auth.user.authenticated && !user.firstTime){
+    } else if (auth.user.authenticated === true && !user.firstTime){
       setUser((user) => ({...user, firstTime: true}))
     }
   }, [])
@@ -28,7 +28,7 @@ function Navbar() {
                 Home
               </NavLink>
             </li>
-            {auth.user.authenticated === true &&
+            {/* {auth.user.authenticated === true &&
               <>
               <li>
                 <NavLink to="/vendedor">
@@ -46,7 +46,7 @@ function Navbar() {
                 </NavLink>
               </li>
               </>
-            }
+            } */}
           </ul>
           {auth.user.authenticated === true?
             <div>

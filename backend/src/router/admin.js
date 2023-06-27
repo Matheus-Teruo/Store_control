@@ -65,9 +65,7 @@ router.post("/newkenjinkai", (req, res) => {  // Create new kenjinkai
           console.error(error)
           if (error.errno === 1062){  // Duplication error
             const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
-            if (column === "kenjinkai"){
-              return res.status(409).json({error: `error on sing-up kenjinkai '${data.kenjinkai}'. Kenjinkai '${data.kenjinkai}' already exist`, column: column, value: data.kenjinkai});
-            }
+            return res.status(409).json({error: `error on sing-up kenjinkai '${data.kenjinkai}'. Kenjinkai '${data.kenjinkai}' already exist`, column: column, value: data.kenjinkai});
           } else {
             return res.status(501).json({ error: {error}});
           }
@@ -94,9 +92,7 @@ router.post("/editkenjinkai", (req, res) => {  // Change kenjinkai property
           console.error(error)
           if (error.errno === 1062){  // Duplication error
             const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
-            if (column === "kenjinkai"){
-              return res.status(409).json({error: `error on edit kenjinkai '${data.kenjinkai}'. Kenjinkai '${data.kenjinkai}' already exist`, column: column, value: data.kenjinkai});
-            }
+            return res.status(409).json({error: `error on edit kenjinkai '${data.kenjinkai}'. Kenjinkai '${data.kenjinkai}' already exist`, column: column, value: data.kenjinkai});
           } else {
             return res.status(501).json({ error: {error}});
           }
@@ -144,9 +140,7 @@ router.post("/newstand", (req, res) => {  // Create new stand
           console.error(error)
           if (error.errno === 1062){  // Duplication error
             const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
-            if (column === "stand"){
-              return res.status(409).json({error: `error on sing-up stand '${data.stand}'. Stand '${data.stand}' already exist`, column: column, value: data.stand});
-            }
+            return res.status(409).json({error: `error on sing-up stand '${data.stand}'. Stand '${data.stand}' already exist`, column: column, value: data.stand});
           } else {
             return res.status(501).json({ error: {error}});
           }
@@ -173,9 +167,7 @@ router.post("/editstand", (req, res) => {  // Change stands property
           console.error(error)
           if (error.errno === 1062){  // Duplication error
             const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
-            if (column === "stand"){
-              return res.status(409).json({error: `error on edited stand '${data.stand}'. Stand '${data.stand}' already exist`, column: column, value: data.stand});
-            }
+            return res.status(409).json({error: `error on edited stand '${data.stand}'. Stand '${data.stand}' already exist`, column: column, value: data.stand});
           } else {
             return res.status(501).json({ error: {error}});
           }
@@ -238,51 +230,47 @@ router.post("/newitem", (req, res, next) => {  // Create new item
   try{
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     const data = req.body;
-      if (decoded.superuser === 1) {
-        database('items')
-          .insert(data)
-          .then(() => {
-            console.log(`new item created: ${data.item}`)
-            return res.json({message: "new item created"})
-          })
-          .catch(error => {
-            if (error.errno === 1062){  // Duplication error
-              const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
-              if (column === "item"){
-                return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
-              }
-            } else {
-              return res.status(501).json({ error: {error}});
-            }
-          })
-      } else {
-        database('users')
-          .select('standID')
-          .where({userID: decoded.userID})
-          .then((rows) => {
-            const row = rows[0];
-            if (row.standID === data.standID){
-              database('items')
-                .insert(data)
-                .then(() => {
-                  console.log(`new item created: ${data.item}`)
-                  return res.json({message: "new item created"})
-                })
-                .catch(error => {
-                  if (error.errno === 1062){  // Duplication error
-                    const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
-                    if (column === "item"){
-                      return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
-                    }
-                  } else {
-                    return res.status(501).json({ error: {error}});
-                  }
-                })
-            } else {
-              return res.status(401).json({authenticated: false});
-            }
-          })
-      }
+    if (decoded.superuser === 1) {
+      database('items')
+        .insert(data)
+        .then(() => {
+          console.log(`new item created: ${data.item}`)
+          return res.json({message: "new item created"})
+        })
+        .catch(error => {
+          if (error.errno === 1062){  // Duplication error
+            const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
+            return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
+          } else {
+            return res.status(501).json({ error: {error}});
+          }
+        })
+    } else {
+      database('users')
+        .select('standID')
+        .where({userID: decoded.userID})
+        .then((rows) => {
+          const row = rows[0];
+          if (row.standID === data.standID){
+            database('items')
+              .insert(data)
+              .then(() => {
+                console.log(`new item created: ${data.item}`)
+                return res.json({message: "new item created"})
+              })
+              .catch(error => {
+                if (error.errno === 1062){  // Duplication error
+                  const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
+                  return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
+                } else {
+                  return res.status(501).json({ error: {error}});
+                }
+              })
+          } else {
+            return res.status(401).json({authenticated: false});
+          }
+        })
+    }
   } catch {
     return res.status(401).json({authenticated: false});
   }
@@ -303,9 +291,7 @@ router.post("/edititem", (req, res, next) => {  // Create new item
         console.error(error)
         if (error.errno === 1062){  // Duplication error
           const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
-          if (column === "item"){
-            return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
-          }
+          return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
         } else {
           return res.status(501).json({ error: {error}});
         }
@@ -323,4 +309,46 @@ router.post("/edititem", (req, res, next) => {  // Create new item
 //   next();
 // });
 
+router.get("/allcards", (req, res) => {
+  try{
+    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+    const data = req.body;
+    database('cards')
+      .select()
+      .then((rows) => {
+        if (rows.length > 0){
+          return res.json(rows)
+        } else {  // User without stand
+          return res.json([])
+        }
+      })
+  } catch {  // Error of authenticated
+    return res.status(401).json({authenticated: false});
+  }
+})
+
+router.post("/newcard", (req, res, next) => {  // Create new item
+  try{
+    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+    const data = req.body;
+    if (decoded.superuser === 1) {
+      database('cards')
+        .insert(data)
+        .then(() => {
+          console.log(`new card created: ${data.cardID}`)
+          return res.json({message: "new card created"})
+        })
+        .catch(error => {
+          if (error.errno === 1062){  // Duplication error
+            const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
+            return res.status(409).json({error: `error on create item '${data.cardID}'. Stand '${data.cardID}' already exist`, column: column, value: data.cardID});
+          } else {
+            return res.status(501).json({ error: {error}});
+          }
+        })
+    }
+  } catch {
+    return res.status(401).json({authenticated: false});
+  }
+})
 module.exports = router;

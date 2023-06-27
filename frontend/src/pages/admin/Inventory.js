@@ -8,8 +8,8 @@ function Inventory() {
   const [stand, setStand] = useState({standID:0 ,stand:""})
   const [showItem, setShowItem] = useState(false)
   const [newItem, setNewItem] = useState("")
-  const [newPrice, setNewPrice] = useState(0)
-  const [newStock, setNewStock] = useState(0)
+  const [newPrice, setNewPrice] = useState("")
+  const [newStock, setNewStock] = useState("")
   const [itemID, setItemID] = useState(0)
   const [selectedImage, setSelectedImage] = useState()
   const [alreadyUsedI, setAlreadyUsedI] = useState("")
@@ -109,15 +109,9 @@ function Inventory() {
     if (event.target.id === "item") {  // Item
       setNewItem(event.target.value)
     } else if (event.target.id === "price") {  // Price
-      if (event.target.value === ""){
-        return setNewPrice(parseFloat(0))
-      }
-      setNewPrice(parseFloat(event.target.value));
+      setNewPrice(event.target.value);
     } else if (event.target.id === "stock") {  // Stock
-      if (event.target.value === ""){
-        return setNewStock(parseInt(0))
-      }
-      setNewStock(parseInt(event.target.value));
+      setNewStock(event.target.value);
     }
   };
   function handleImage(event) {

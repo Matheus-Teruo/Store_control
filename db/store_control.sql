@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `cards`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cards` (
-  `cardID` int NOT NULL,
+  `cardID` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `debit` int NOT NULL,
   PRIMARY KEY (`cardID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -38,7 +38,7 @@ DROP TABLE IF EXISTS `customers`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `customers` (
   `customerID` int NOT NULL AUTO_INCREMENT,
-  `cardID` int NOT NULL,
+  `cardID` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `control_t` datetime NOT NULL,
   `in_use` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`customerID`),
@@ -58,7 +58,7 @@ CREATE TABLE `donations` (
   `donationID` int NOT NULL AUTO_INCREMENT,
   `value` int NOT NULL,
   `donation_t` datetime NOT NULL,
-  `cardID` int NOT NULL,
+  `cardID` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `userID` int NOT NULL,
   PRIMARY KEY (`donationID`),
   KEY `cardID` (`cardID`),
@@ -134,7 +134,7 @@ CREATE TABLE `recharges` (
   `rechargeID` int NOT NULL AUTO_INCREMENT,
   `recharge` int NOT NULL,
   `recharge_t` datetime NOT NULL,
-  `cardID` int NOT NULL,
+  `cardID` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `userID` int NOT NULL,
   PRIMARY KEY (`rechargeID`),
   KEY `cardID` (`cardID`),
@@ -155,7 +155,7 @@ CREATE TABLE `sales` (
   `saleID` int NOT NULL AUTO_INCREMENT,
   `userID` int NOT NULL,
   `standID` int NOT NULL,
-  `cardID` int NOT NULL,
+  `cardID` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `sale_t` datetime NOT NULL,
   PRIMARY KEY (`saleID`),
   KEY `userID` (`userID`),

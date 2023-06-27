@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Link } from 'react-router-dom';
-import { Clipboard, DollarSign, Table, Database } from 'react-feather';
+import { Clipboard, DollarSign, Table, CreditCard ,Database } from 'react-feather';
 import AuthContext from '../store/auth_context';
 
 function Home() {
@@ -14,9 +14,7 @@ function Home() {
     if (auth.user.authenticated === true && user.standID === 0) {
       var resStatus;
       fetch("/api/main")
-        .then(res => {
-          resStatus = res.status;
-          return res.json()})
+        .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (data.standID !== 0){
             return setUser(data)
@@ -63,8 +61,8 @@ function Home() {
               }
             </div>
             <div className="frame">
-              {user.superuser ? 
-              <Link to="/admin/inventario">
+              {user.standID !== 0 ? 
+              <Link to="/inventario">
                 <Table alt="Sheets"/>
                 <p>Inventário</p>
               </Link>
@@ -75,19 +73,22 @@ function Home() {
               </div>
               } 
             </div>
-            <div className="frame">
-              {user.superuser ? 
-              <Link to="/admin/config">
-                <Database alt="Database"/>
-                <p>Database</p>
-              </Link>
-              :
+            {user.superuser && 
               <div>
-                <Database alt="Database"/>
-                <p>Database</p>
+                <Link to="/admin/cards">
+                  <CreditCard alt="Cards"/>
+                  <p>Cartões</p>
+                </Link>  
               </div>
-              }
-            </div>
+            }
+            {user.superuser && 
+              <div className="frame">
+                <Link to="/admin/database">
+                  <Database alt="Database"/>
+                  <p>Database</p>
+                </Link>
+              </div>
+            }
           </div>
         </>
       :

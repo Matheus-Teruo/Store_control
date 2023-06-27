@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { useNavigate  } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import AuthContext from '../../store/auth_context';
 import Kenjinkai from './inputs/Kenjinkai';
 import Stands from './inputs/Stands';
@@ -25,7 +25,6 @@ function Database() {
   const navigate = useNavigate();
 
   useEffect(() => {  // Load from pages
-    console.log(auth.user)
     if (auth.user.authenticated === true && auth.user.superuser) {
       RequestLists()
     } else if (auth.user.authenticated === false) {
@@ -63,7 +62,8 @@ async function handleNewKenjinkai() {
       .then(data => {
         if (resStatus === 200) {
           RequestLists()
-          setShowKenjinkai(false)
+          setNewKenjinkai(""); setNewPrincipal("");
+          setShowKenjinkai(false); setAlreadyUsedK("")
           setCheck(check => ({...check, kenjinkai:false}))
         } else if (resStatus === 409) {
           setAlreadyUsedK(data.value);
@@ -88,7 +88,8 @@ async function handleEditKenjinkai() {
       .then(data => {
         if (resStatus === 200) {
           RequestLists()
-          setShowKenjinkai(false); setEdit("");
+          setNewKenjinkai(""); setNewPrincipal("");
+          setShowKenjinkai(false); setAlreadyUsedK(""); setEdit("");
           setCheck(check => ({...check, kenjinkai:false}))  
         } else if (resStatus === 409) {
           setAlreadyUsedK({kenjinkai: data.value, K_noUsed: false});
@@ -108,7 +109,8 @@ async function handleDelKenjinkai() {
       .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         RequestLists()
-        setShowKenjinkai(false); setEdit(""); setConfirmDel(false);
+        setNewKenjinkai(""); setNewPrincipal("");
+        setShowKenjinkai(false); setAlreadyUsedK(""); setEdit(""); setConfirmDel(false);
         setCheck(check => ({...check, kenjinkai:false}))
       })
       .catch(console.error)
@@ -129,7 +131,8 @@ async function handleNewStand() {
       .then(data => {
         if (resStatus === 200){
           RequestLists()
-          setShowStand(false)
+          setNewStand(""); setNewKenjinkaiID(0);
+          setShowStand(false); setAlreadyUsedS(false)
           setCheck(check => ({...check, stand:false}))
         } else if (resStatus === 409) {
           setAlreadyUsedS(data.value);
@@ -154,7 +157,8 @@ async function handleEditStand() {
       .then(data => {
         if (resStatus === 200){
           RequestLists()
-          setShowStand(false); setEdit("");
+          setNewStand(""); setNewKenjinkaiID(0);
+          setShowStand(false); setAlreadyUsedS(false); setEdit("");
           setCheck(check => ({...check, stand:false}))
         } else if (resStatus === 409) {
           setAlreadyUsedS(data.value);
@@ -174,7 +178,8 @@ async function handleDelStand() {
       .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
           RequestLists()
-          setShowStand(false); setEdit(""); setConfirmDel(false);
+          setNewStand(""); setNewKenjinkaiID(0);
+          setShowStand(false); setAlreadyUsedS(false); setEdit(""); setConfirmDel(false);
           setCheck(check => ({...check, stand:false}))
       })
       .catch(console.error)
@@ -220,13 +225,24 @@ function h_SValid(value) {  // Stand valid
         {kenjinkais.length !== 0 && kenjinkais.map((kenjinkai) => (
           <li key={kenjinkai.kenjinkaiID}>
             <p>{kenjinkai.kenjinkaiID}</p>
-            <p onClick={() => {setNewKenjinkaiID(kenjinkai.kenjinkaiID); setEdit("kenjinkai"); setShowKenjinkai(true)}}
+            <p onClick={() => {
+              setNewKenjinkaiID(kenjinkai.kenjinkaiID); 
+              setEdit("kenjinkai"); 
+              setShowKenjinkai(true);
+              setNewKenjinkai(kenjinkai.kenjinkai);
+              setNewPrincipal(kenjinkai.principal)}}
             >{kenjinkai.kenjinkai}</p>
             <p>{kenjinkai.principal}</p>
             {stands.filter(item => item.kenjinkaiID === kenjinkai.kenjinkaiID).length !== 0 ?
               <ul>
                 {stands.filter(item => item.kenjinkaiID === kenjinkai.kenjinkaiID).map((stand) => (
-                  <li key={stand.standID} onClick={() => {setStandID(stand.standID); setEdit("stand"); setShowStand(true); setNewKenjinkaiID(kenjinkai.kenjinkaiID)}}>{stand.stand}</li>
+                  <li key={stand.standID} onClick={() => {
+                    setStandID(stand.standID); 
+                    setNewStand(stand.stand)
+                    setEdit("stand"); 
+                    setShowStand(true); 
+                    setNewKenjinkaiID(kenjinkai.kenjinkaiID)}}
+                  >{stand.stand}</li>
                 ))}
               </ul>
               :
