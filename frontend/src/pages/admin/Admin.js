@@ -8,6 +8,11 @@ function Admin() {
         <div>
           <ul>
             <li>
+              <NavLink to="/admin/allusers">
+                Usuarios
+              </NavLink>
+            </li>
+            <li>
               <NavLink to="/admin/cards">
                 Cartões
               </NavLink>

@@ -4,7 +4,7 @@ const regexnumber = /[0-9]/
 const regexspace = /\s/
 const regexspecial = /["]|[']|[\\]|[/]|[.]/
 
-function Kenjinkai(props) {
+function Association(props) {
   const [K_Check, setK_Check] = useState({
     haveMinChar: false,
     noNumber: true,
@@ -24,40 +24,40 @@ function Kenjinkai(props) {
         P_Check.haveMinChar &&
         P_Check.noNumber &&
         P_Check.noSpecialChar &&
-        props.dupliValue !== props.kenjinkai){
+        props.dupliValue !== props.association){
       setSubmitvalid(true);
       props.valid(true)
     } else {
       setSubmitvalid(false);
       props.valid(false)
     }
-  }, [K_Check, P_Check, props.kenjinkai, props.dupliValue])
+  }, [K_Check, P_Check, props.association, props.dupliValue])
 
   useEffect(() => {  // Kenjinkai conditions
-    if (props.kenjinkai.trim().length >= 3) {  // Check min number of char
+    if (props.association.trim().length >= 3) {  // Check min number of char
       setK_Check(K_Check => ({...K_Check, haveMinChar: true})
     )} else {
       setK_Check(K_Check => ({...K_Check, haveMinChar: false})
     )};
 
-    if (!regexnumber.test(props.kenjinkai)) {  // Check use of number
+    if (!regexnumber.test(props.association)) {  // Check use of number
       setK_Check(K_Check => ({...K_Check, noNumber: true})
     )} else {
       setK_Check(K_Check => ({...K_Check, noNumber: false})
     )};
 
-    if (!regexspace.test(props.kenjinkai)) {  // Check use of space
+    if (!regexspace.test(props.association)) {  // Check use of space
       setK_Check(K_Check => ({...K_Check, noSpace: true})
     )} else {
       setK_Check(K_Check => ({...K_Check, noSpace: false})
     )};
 
-    if (!regexspecial.test(props.kenjinkai)) {  // Check use of special char
+    if (!regexspecial.test(props.association)) {  // Check use of special char
       setK_Check(K_Check => ({...K_Check, noSpecialChar: true})
     )} else {
       setK_Check(K_Check => ({...K_Check, noSpecialChar: false})
     )};
-  }, [props.kenjinkai])
+  }, [props.association])
   
   useEffect(() => {  // Principal conditions
     if (props.principal.trim().length >= 3) {  // Check min number of char
@@ -82,13 +82,13 @@ function Kenjinkai(props) {
   return (
     <>
       <label>Kenjinkai:</label>
-      <input value={props.kenjinkai} onChange={event => props.output(event)} id="kenjinkai" type="text" name="kenjinkai"/>
+      <input value={props.association} onChange={event => props.output(event)} id="association" type="text" name="association"/>
       <div>
         {!K_Check.haveMinChar && <div>minChar</div>}
         {!K_Check.noNumber && <div>nonumber</div>}
         {!K_Check.noSpace && <div>noSpace</div>}
         {!K_Check.noSpecialChar && <div>noSpecialChar</div>}
-        {props.dupliValue !== ""  && (props.dupliValue === props.kenjinkai) && <div>noUsed</div>}
+        {props.dupliValue !== ""  && (props.dupliValue === props.association) && <div>noUsed</div>}
       </div>
       <label>Diretoria:</label>
       <input value={props.principal} onChange={event => props.output(event)} id="principal" type="text" name="principal"/>
@@ -101,4 +101,4 @@ function Kenjinkai(props) {
   )
 }
 
-export default Kenjinkai
+export default Association

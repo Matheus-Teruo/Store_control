@@ -63,10 +63,12 @@ function Item(props) {
         {!I_Check.noSpecialChar && <div>noSpecialChar</div>}
         {props.dupliValue !== "" && (props.dupliValue === props.item) && <div>noUsed</div>}
       </div>
+      <label>preço:</label>
       <input value={props.price} onChange={event => props.output(event)} id="price" type="number" name="price" min="0"/>
       <div>
         {!P_Check && <p>noZero</p>}
       </div>
+      <label>estoque:</label>
       <input value={props.stock} onChange={event => props.output(event)} id="stock" type="number" name="stock" min="0"/>
       <div>
         {!S_Check && <p>noZero</p>}

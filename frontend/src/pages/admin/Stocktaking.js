@@ -3,7 +3,7 @@ import { useNavigate  } from 'react-router-dom';
 import AuthContext from '../../store/auth_context';
 import Item from './inputs/Item';
 
-function Inventory() {
+function Stocktaking() {
   const [items, setItems] = useState([])
   const [stand, setStand] = useState({standID:0 ,stand:""})
   const [showItem, setShowItem] = useState(false)
@@ -28,7 +28,7 @@ function Inventory() {
 
   async function RequestItems() {  // List all itens from stand
     var resStatus;
-      fetch('/api/inventory')
+      fetch('/api/stocktaking')
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200){
@@ -177,4 +177,4 @@ function Inventory() {
   )
 }
 
-export default Inventory
+export default Stocktaking

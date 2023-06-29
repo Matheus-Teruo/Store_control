@@ -14,7 +14,7 @@ function Stands(props) {
     if (Check.haveMinChar &&
         Check.noNumber &&
         Check.noSpecialChar &&
-        props.kenjinkaiID !== 0 &&
+        props.associationID !== 0 &&
         props.dupliValue !== props.stand){
       setSubmitvalid(true);
       props.valid(true)
@@ -22,7 +22,7 @@ function Stands(props) {
       setSubmitvalid(false);
       props.valid(false)
     }
-  }, [Check, props.stand, props.kenjinkaiID, props.dupliValue])
+  }, [Check, props.stand, props.associationID, props.dupliValue])
 
   useEffect(() => {  // Stand conditions
     if (props.stand.trim().length > 2) {  // Check min number of char
@@ -54,11 +54,11 @@ function Stands(props) {
         {!Check.noSpecialChar && <div>noSpecialChar</div>}
         {props.dupliValue !== "" && (props.dupliValue === props.stand) && <div>noUsed</div>}
       </div>
-      <label htmlFor="kenjinkai">Kenjinkai</label>
-      <select value={props.kenjinkaiID} onChange={event => props.output(event)} id="kenjinkaiID" name="kenjinkaiID">
+      <label htmlFor="association">Kenjinkai</label>
+      <select value={props.associationID} onChange={event => props.output(event)} id="associationID" name="associationID">
         <option value={0}></option>
-        {props.kenjinkais.map((kenjinkai) => (
-          <option key={kenjinkai.kenjinkaiID} value={kenjinkai.kenjinkaiID}>{kenjinkai.kenjinkai}</option>
+        {props.associations.map((association) => (
+          <option key={association.associationID} value={association.associationID}>{association.association}</option>
         ))}
       </select>
     </div>

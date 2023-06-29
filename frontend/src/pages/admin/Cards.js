@@ -18,7 +18,7 @@ function Cards() {
       RequestListsCards()
     } else if (auth.user.authenticated === false) {
       navigate('/login');
-    } else if (auth.user.superuser === true && !auth.user.superuser){
+    } else if (auth.user.authenticated === true && !auth.user.superuser){
       navigate('/')
     }
   }, [auth, navigate])
@@ -87,7 +87,7 @@ function Cards() {
       </div>
       <div>
         <ul>
-          <li><p>Código do Cartão</p><p>debito</p></li>
+          <li><p>Código do Cartão</p><p>debito</p><p>Em uso</p></li>
           {cards.length !== 0 &&
           cards.filter(item => {
             if (filter === "1"){
@@ -101,7 +101,7 @@ function Cards() {
             <li key={card.cardID}>
               <p>{card.cardID}</p>
               <p>{card.debit}</p>  
- 
+              <p>{card.in_use}</p>
             </li>  
           ))}
         </ul>

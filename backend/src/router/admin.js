@@ -20,28 +20,72 @@ router.use(morgan("common"));
 router.use(cookieParser());
 // const upload = multer({storage: storage})
 
+async function checkCardUse(array) {  // [{cardID: char(12), debit: int},...]
+  const updatedArray = [];
+  for (const item of array) {
+    const { cardID, debit } = item;
+    try {
+      const [result] = await database('customers')
+        .select('in_use')
+        .where({cardID: cardID})
+        .orderBy('control_t', 'desc')
+        .limit(1);
+      const { in_use } = result || {};
+      updatedArray.push({ cardID, debit, in_use });
+    } catch (error) {
+      console.error(`Error retrieving 'in_use' for cardID: ${cardID}`, error);
+    }
+  }
+  return updatedArray
+}
+
+async function checkStandAssociation(array) {
+  for (const item of array) {
+    const { standID } = item;
+
+    if (standID !== null) {
+      try {
+        const rows = await database('stands')
+          .select('associationID')
+          .where({standID: standID});
+        if (rows.length > 0) {
+          const associationID = rows[0].associationID;
+          item.associationID = associationID;
+        }
+      } catch (error) {
+        // Handle error
+        console.error(`Error retrieving 'associationID' for standID: ${standID}`, error);
+        // You can choose to skip or handle the specific error case
+      }
+    } else {
+      item.associationID = null;
+    }
+  }
+
+  return array;
+}
 //  Database
-router.get("/listallstands", (req, res) => {  // Request all stands and kenjinkais
+router.get("/listallstands", (req, res) => {  // Request all stands and associations
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     if (decoded.superuser) {
-      database('kenjinkais')
-        .select('kenjinkai', 'kenjinkaiID', "principal")
-        .orderBy('kenjinkaiID', 'asc')
-        .then(kenjinkais => {
-          if (kenjinkais.length > 0) {
+      database('associations')
+        .select('association', 'associationID', "principal")
+        .orderBy('associationID', 'asc')
+        .then(associations => {
+          if (associations.length > 0) {
             database('stands')
-              .select('standID', 'stand', 'kenjinkaiID')
-              .orderBy('kenjinkaiID', 'asc')
+              .select('standID', 'stand', 'associationID')
+              .orderBy('associationID', 'asc')
               .then(stands => {
                 if (stands.length > 0){
-                  res.json({kenjinkais: kenjinkais, stands: stands}); 
+                  res.json({associations: associations, stands: stands}); 
                 } else {
-                  res.json({kenjinkais: kenjinkais, stands: []});
+                  res.json({associations: associations, stands: []});
                 }
               })
             } else {
-              res.json({kenjinkais: [], stands: []});
+              res.json({associations: [], stands: []});
             }
           })
     }
@@ -50,49 +94,51 @@ router.get("/listallstands", (req, res) => {  // Request all stands and kenjinka
   }
 })
 
-router.post("/newkenjinkai", (req, res) => {  // Create new kenjinkai
+router.post("/newassociation", (req, res) => {  // Create new association
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     if (decoded.superuser) {
       const data = req.body;
-      database('kenjinkais')
+      database('associations')
         .insert(data)
         .then(() => {
-          console.log(`successful created kenjinkai: ${data.kenjinkai}`);
-          res.json({message: `successful created kenjinkai: ${data.kenjinkai}`});
+          console.log(`successful created association: ${data.association}`);
+          res.json({message: `successful created association: ${data.association}`});
         })
         .catch(error => {
           console.error(error)
           if (error.errno === 1062){  // Duplication error
             const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
-            return res.status(409).json({error: `error on sing-up kenjinkai '${data.kenjinkai}'. Kenjinkai '${data.kenjinkai}' already exist`, column: column, value: data.kenjinkai});
+            return res.status(409).json({error: `error on sing-up association '${data.association}'. Association '${data.association}' already exist`, column: column, value: data.association});
           } else {
             return res.status(501).json({ error: {error}});
           }
         })
+    } else {
+      res.status(401).json({message: "user has no authorization"});
     }
   } catch(err) {
     res.status(401).json({authenticated: false});
   }
 })
 
-router.post("/editkenjinkai", (req, res) => {  // Change kenjinkai property
+router.post("/editassociation", (req, res) => {  // Change association property
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     if (decoded.superuser) {
       const data = req.body;
-      database('kenjinkais')
-        .where({kenjinkaiID: data.kenjinkaiID})
-        .update({kenjinkai: data.kenjinkai, principal: data.principal})
+      database('associations')
+        .where({associationID: data.associationID})
+        .update({association: data.association, principal: data.principal})
         .then(() => {
-          console.log(`successful edited kenjinkai: ${data.kenjinkai}`);
-           return res.json({message: `successful edited kenjinkai: ${data.kenjinkai}`});
+          console.log(`successful edited association: ${data.association}`);
+           return res.json({message: `successful edited association: ${data.association}`});
         })
         .catch(error => {
           console.error(error)
           if (error.errno === 1062){  // Duplication error
             const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
-            return res.status(409).json({error: `error on edit kenjinkai '${data.kenjinkai}'. Kenjinkai '${data.kenjinkai}' already exist`, column: column, value: data.kenjinkai});
+            return res.status(409).json({error: `error on edit association '${data.association}'. Assiciation '${data.association}' already exist`, column: column, value: data.association});
           } else {
             return res.status(501).json({ error: {error}});
           }
@@ -103,17 +149,17 @@ router.post("/editkenjinkai", (req, res) => {  // Change kenjinkai property
   }
 })
 
-router.post("/delkenjinkai", (req, res) => {  // Delete kenjinkai
+router.post("/delassociation", (req, res) => {  // Delete association
   try {
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     if (decoded.superuser) {
       const data = req.body;
-      database('kenjinkais')
-        .where({kenjinkaiID: data.kenjinkaiID})
+      database('associations')
+        .where({associationID: data.associationID})
         .del()
         .then(() => {
-          console.log(`successful deleted kenjinkai`);
-          return res.json({message: `successful deleted kenjinkai`});
+          console.log(`successful deleted association`);
+          return res.json({message: `successful deleted association`});
         })
         .catch(error => {
           console.error(error)
@@ -134,7 +180,7 @@ router.post("/newstand", (req, res) => {  // Create new stand
         .insert(data)
         .then(() => {
           console.log(`successful created stand: ${data.stand}`);
-          res.json({message: `successful created kenjinkai: ${data.stand}`});
+          res.json({message: `successful created association: ${data.stand}`});
         })
         .catch(error => {
           console.error(error)
@@ -158,10 +204,10 @@ router.post("/editstand", (req, res) => {  // Change stands property
       const data = req.body;
       database('stands')
         .where({standID: data.standID})
-        .update({stand: data.stand, kenjinkaiID: data.kenjinkaiID})
+        .update({stand: data.stand, associationID: data.associationID})
         .then(() => {
           console.log(`successful edited stand: ${data.stand}`);
-          res.json({message: `successful edited kenjinkai: ${data.stand}`});
+          res.json({message: `successful edited association: ${data.stand}`});
         })
         .catch(error => {
           console.error(error)
@@ -188,7 +234,7 @@ router.post("/delstand", (req, res) => {  // Delete stand
         .del()
         .then(() => {
           console.log(`successful deleted stand`);
-          return res.json({message: `successful deleted kenjinkai`});
+          return res.json({message: `successful deleted association`});
         })
         .catch(error => {
           console.error(error);
@@ -199,8 +245,9 @@ router.post("/delstand", (req, res) => {  // Delete stand
     res.status(401).json({authenticated: false});
   }
 })
-// Inventory
-router.get("/inventory", (req, res) => {
+
+// Stocktaking
+router.get("/stocktaking", (req, res) => {
   try{
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     const data = req.body;
@@ -230,22 +277,7 @@ router.post("/newitem", (req, res, next) => {  // Create new item
   try{
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     const data = req.body;
-    if (decoded.superuser === 1) {
-      database('items')
-        .insert(data)
-        .then(() => {
-          console.log(`new item created: ${data.item}`)
-          return res.json({message: "new item created"})
-        })
-        .catch(error => {
-          if (error.errno === 1062){  // Duplication error
-            const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
-            return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
-          } else {
-            return res.status(501).json({ error: {error}});
-          }
-        })
-    } else {
+    if (data.standID > 1) {
       database('users')
         .select('standID')
         .where({userID: decoded.userID})
@@ -263,6 +295,7 @@ router.post("/newitem", (req, res, next) => {  // Create new item
                   const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
                   return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
                 } else {
+                  console.error(error)
                   return res.status(501).json({ error: {error}});
                 }
               })
@@ -270,6 +303,8 @@ router.post("/newitem", (req, res, next) => {  // Create new item
             return res.status(401).json({authenticated: false});
           }
         })
+    } else {
+      return res.status(401).json({message: "StandID === 1"});
     }
   } catch {
     return res.status(401).json({authenticated: false});
@@ -280,22 +315,32 @@ router.post("/edititem", (req, res, next) => {  // Create new item
   try{
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     const data = req.body;
-    database('items')
-      .where({itemID: data.itemID})
-      .update({item: data.item, price: data.price, stock: data.stock})
-      .then(() => {
-        console.log(`item edited: ${data.item}`)
-        return res.json({message: "item edited"})
-      })
-      .catch(error => {
-        console.error(error)
-        if (error.errno === 1062){  // Duplication error
-          const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
-          return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
-        } else {
-          return res.status(501).json({ error: {error}});
-        }
-      })
+    if (data.standID > 1) {
+      database('users')
+        .select('standID')
+        .where({userID: decoded.userID})
+        .then((rows) => {
+          const row = rows[0];
+          if (row.standID === data.standID){
+            database('items')
+              .where({itemID: data.itemID})
+              .update({item: data.item, price: data.price, stock: data.stock})
+              .then(() => {
+                console.log(`item edited: ${data.item}`)
+                return res.json({message: "item edited"})
+              })
+              .catch(error => {
+                if (error.errno === 1062){  // Duplication error
+                  const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
+                  return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
+                } else {
+                  console.error(error)
+                  return res.status(501).json({ error: {error}});
+                }
+              })
+          }
+        })
+    }
   } catch {
     return res.status(401).json({authenticated: false});
   }
@@ -313,15 +358,25 @@ router.get("/allcards", (req, res) => {
   try{
     var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
     const data = req.body;
-    database('cards')
+    if (decoded.superuser) {
+      database('cards')
       .select()
       .then((rows) => {
         if (rows.length > 0){
-          return res.json(rows)
+          checkCardUse(rows)
+            .then(newrows => {
+              return res.json(newrows)
+            })
+            .catch(error => {
+              console.error('Error updating array with "in_use" values:', error);
+            })
         } else {  // User without stand
           return res.json([])
         }
       })
+    } else {
+      return res.status(401).json({authenticated: false});
+    }
   } catch {  // Error of authenticated
     return res.status(401).json({authenticated: false});
   }
@@ -349,6 +404,76 @@ router.post("/newcard", (req, res, next) => {  // Create new item
     }
   } catch {
     return res.status(401).json({authenticated: false});
+  }
+})
+
+router.get("/allusers", (req, res) => {
+  try{
+    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+    const data = req.body;
+    if (decoded.superuser){
+      database('users')
+        .select('userID', 'username', 'fullname', 'standID', 'superuser')
+        .then((rows) => {
+          checkStandAssociation(rows)
+            .then(newrows => {
+              return res.json(newrows)
+            })
+            .catch(error => {
+              console.error('Error updating array with "associationID" values:', error);
+            })
+        })
+    } else {
+      return res.status(401).json({authenticated: false});
+    } 
+  } catch {  // Error of authenticated
+    return res.status(401).json({authenticated: false});
+  }
+})
+
+router.get("/liststand", (req, res) => {  // Check user
+  try {
+    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+    if (decoded.superuser) {
+      database('associations')
+      .select('association', 'associationID')
+      .orderBy('associationID', 'asc')
+      .then(associations => {
+        if (associations.length > 0) {
+          database('stands')
+            .select('standID', 'stand', 'associationID')
+            .orderBy('associationID', 'asc')
+            .then(stands => {
+              if (stands.length > 0){
+                return res.json({associations: associations, stands: stands}); 
+              } else {
+                return res.json({associations: associations, stands: []}); 
+              }
+            })
+        } else {
+          return res.json({associations: [], stands: []}); 
+        }
+      })
+    } else {
+      return res.status(401).json({message: 'user not allowed'});
+    }
+  } catch(err) {
+    return res.status(401).json({message: 'error on take list'});
+  }
+})
+
+router.post("/changestandid", (req, res) => {  // Change user stand
+  const data = req.body;
+  try {
+    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+    database('users')
+      .where({userID: decoded.userID})
+      .update({standID: data.standID})
+      .then(() => {
+        return res.json({message: `standID successfull update to: ${data.standID}`, standID: data.standID});
+      })
+  } catch(err) {
+    return res.status(401).json({message: `change error`});
   }
 })
 module.exports = router;

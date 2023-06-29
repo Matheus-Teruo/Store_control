@@ -1,3 +1,9 @@
+# Sales monitoring project
+
+A project with the objective of controlling the sales and inventory of a fundraiser for a charity event
+
+the repository with the following README was used as a base, with the link: https://github.com/docker/awesome-compose
+
 ## Compose sample application
 
 ### Use with Docker Development Environments

@@ -8,16 +8,16 @@ import Home from "./pages/Home";
 import Seller from "./pages/main/Seller";
 import ConfirmPurchase from "./pages/main/ConfirmPurchase";
 import Cashier from "./pages/main/Cashier";
-import ConfirmRecharge from "./pages/main/ConfirmRecharge";
 
 import User from "./pages/auth/User";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 
 import Admin from "./pages/admin/Admin";
-import Inventory from "./pages/admin/Inventory";
+import Stocktaking from "./pages/admin/Stocktaking";
 import Database from "./pages/admin/Database";
 import Cards from "./pages/admin/Cards";
+import AllUsers from "./pages/admin/AllUsers";
 
 import { AuthContextProvider } from "./store/auth_context";
 
@@ -30,14 +30,14 @@ const router = createBrowserRouter([
       { path: '/vendedor', element: <Seller/>},
       { path: '/vendedor/confirmar-compra', element: <ConfirmPurchase/>},
       { path: '/caixa', element: <Cashier/>},
-      { path: '/caixa/confirmar-recarga', element: <ConfirmRecharge/>},
       { path: '/user', element: <User/>},
       { path: '/login', element: <Login/>},
       { path: '/signup', element: <Signup/>},
-      { path: '/inventario', element: <Inventory/>},
+      { path: '/inventario', element: <Stocktaking/>},
       { path: '/admin/',
         element: <Admin/>,
         children: [
+          { path: 'allusers', element: <AllUsers/>},
           { path: 'cards', element: <Cards/>},
           { path: 'database', element: <Database/>},
         ],

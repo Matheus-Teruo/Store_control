@@ -11,7 +11,7 @@ function User() {
   const [user, setUser] = useState({
     username: "",
     fullname: "",
-    kenjinkai: "",
+    association: "",
     stand: "",
     superuser: 0});
   const [change, setChange] = useState({
@@ -54,7 +54,7 @@ function User() {
           return setUser({
             username: data.username,
             fullname: data.fullname,
-            kenjinkai: data.kenjinkai,
+            association: data.association,
             stand: data.stand,
             superuser: data.superuser})
         } else if (resStatus === 401){
@@ -76,7 +76,7 @@ function User() {
         return setChange((change) => ({...change, fullname: true}))
       case "password":
         return setChange((change) => ({...change, password: true}))
-      case "kenjinkai":
+      case "association":
         return setChange((change) => ({...change, standID: true}))
       default:
         return "";
@@ -103,7 +103,7 @@ function User() {
     setCheck(check => ({...check, password:value}))
   };
 
-  function h_SChange(value) {  // Manage NewKenjinkai State
+  function h_SChange(value) {  // Manage stand ID
     const aux = parseInt(value)
     if (aux === 0) {
       setNewStandID(null)
@@ -251,17 +251,17 @@ function User() {
         <div>
           {!change.standID?
             <>
-              <p onClick={() => {handleChange("kenjinkai")}}>Estande</p>
-              <p>{user.kenjinkai}</p>
+              <p>Estande</p>
+              <p>{user.association}</p>
               <p>{user.stand}</p>
             </>
           :
-            <>
-            <StandID
-              output={h_SChange}
-              defaultValue={newStandID}/>
-            <button onClick={() => (SubmitChangeStand())}>Confirmar</button>
-            </>
+            <></>
+            // <StandID
+            //   output={h_SChange}
+            //   defaultValue={newStandID}/>
+            // <button onClick={() => (SubmitChangeStand())}>Confirmar</button>
+            // </>
           }
         </div>
         <div>

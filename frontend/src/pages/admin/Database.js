@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../../store/auth_context';
-import Kenjinkai from './inputs/Kenjinkai';
+import Association from './inputs/Association';
 import Stands from './inputs/Stands';
 
 function Database() {
-  const [kenjinkais, setKenjinkais] = useState([])
+  const [associations, setAssociations] = useState([])
   const [stands, setStands] = useState([])
-  const [showKenjinkai, setShowKenjinkai] = useState(false)
-  const [newKenjinkai, setNewKenjinkai] = useState("")
+  const [showAssociation, setShowAssociation] = useState(false)
+  const [newAssociation, setNewAssociation] = useState("")
   const [newPrincipal, setNewPrincipal] = useState("")
   const [alreadyUsedK, setAlreadyUsedK] = useState("");
   const [showStand, setShowStand] = useState(false)
   const [newStand, setNewStand] = useState("")
-  const [newKenjinkaiID, setNewKenjinkaiID] = useState(0)
+  const [newAssociationID, setNewAssociationID] = useState(0)
   const [alreadyUsedS, setAlreadyUsedS] = useState("");
   const [check, setCheck] = useState({
-    kenjinkai: false,
+    association: false,
     stand: false})
   const [standID, setStandID] = useState(0)
   const [edit, setEdit] = useState("")
@@ -34,27 +34,27 @@ function Database() {
     }
   }, [auth, navigate])
 
-async function RequestLists() {  // List all stand and kenjinkais
+async function RequestLists() {  // List all stand and associations
   var resStatus;
     fetch('/api/listallstands')
       .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         if (resStatus === 200){
           setStands(data.stands)
-          return setKenjinkais(data.kenjinkais)
+          return setAssociations(data.associations)
         } else if (resStatus === 401){
           return auth.onLogout()
         }
       })
 }
   
-async function handleNewKenjinkai() {
+async function handleNewAssociation() {
   if (auth.user.authenticated) {
     var resStatus;
-    fetch("/api/newkenjinkai", {  // Post form
+    fetch("/api/newassociation", {  // Post form
       method: "POST", headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        "kenjinkai": newKenjinkai,
+        "association": newAssociation,
         "principal": newPrincipal
       })
     })
@@ -62,9 +62,9 @@ async function handleNewKenjinkai() {
       .then(data => {
         if (resStatus === 200) {
           RequestLists()
-          setNewKenjinkai(""); setNewPrincipal("");
-          setShowKenjinkai(false); setAlreadyUsedK("")
-          setCheck(check => ({...check, kenjinkai:false}))
+          setNewAssociation(""); setNewPrincipal("");
+          setShowAssociation(false); setAlreadyUsedK("")
+          setCheck(check => ({...check, association:false}))
         } else if (resStatus === 409) {
           setAlreadyUsedK(data.value);
         }
@@ -73,14 +73,14 @@ async function handleNewKenjinkai() {
   }
 }
 
-async function handleEditKenjinkai() {
+async function handleEditAssociation() {
   if (auth.user.authenticated) {
     var resStatus;
-    fetch("/api/editkenjinkai", {  // Post form
+    fetch("/api/editassociation", {  // Post form
       method: "POST", headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        "kenjinkaiID": newKenjinkaiID,
-        "kenjinkai": newKenjinkai,
+        "associationID": newAssociationID,
+        "association": newAssociation,
         "principal": newPrincipal
       })
     })
@@ -88,30 +88,30 @@ async function handleEditKenjinkai() {
       .then(data => {
         if (resStatus === 200) {
           RequestLists()
-          setNewKenjinkai(""); setNewPrincipal("");
-          setShowKenjinkai(false); setAlreadyUsedK(""); setEdit("");
-          setCheck(check => ({...check, kenjinkai:false}))  
+          setNewAssociation(""); setNewPrincipal("");
+          setShowAssociation(false); setAlreadyUsedK(""); setEdit("");
+          setCheck(check => ({...check, association:false}))  
         } else if (resStatus === 409) {
-          setAlreadyUsedK({kenjinkai: data.value, K_noUsed: false});
+          setAlreadyUsedK({association: data.value, K_noUsed: false});
         }
       })
       .catch(console.error)
   }
 }
 
-async function handleDelKenjinkai() {
+async function handleDelAssociation() {
   if (auth.user.authenticated) {
     var resStatus;
-    fetch("/api/delkenjinkai", {  // Post form
+    fetch("/api/delassociation", {  // Post form
       method: "POST", headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({"kenjinkaiID": newKenjinkaiID,})
+      body: JSON.stringify({"associationID": newAssociationID,})
     })
       .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         RequestLists()
-        setNewKenjinkai(""); setNewPrincipal("");
-        setShowKenjinkai(false); setAlreadyUsedK(""); setEdit(""); setConfirmDel(false);
-        setCheck(check => ({...check, kenjinkai:false}))
+        setNewAssociation(""); setNewPrincipal("");
+        setShowAssociation(false); setAlreadyUsedK(""); setEdit(""); setConfirmDel(false);
+        setCheck(check => ({...check, association:false}))
       })
       .catch(console.error)
   }
@@ -124,14 +124,14 @@ async function handleNewStand() {
       method: "POST", headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         "stand": newStand,
-        "kenjinkaiID": newKenjinkaiID
+        "associationID": newAssociationID
       })
     })
       .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         if (resStatus === 200){
           RequestLists()
-          setNewStand(""); setNewKenjinkaiID(0);
+          setNewStand(""); setNewAssociationID(0);
           setShowStand(false); setAlreadyUsedS(false)
           setCheck(check => ({...check, stand:false}))
         } else if (resStatus === 409) {
@@ -150,14 +150,14 @@ async function handleEditStand() {
       body: JSON.stringify({
         "standID": standID,
         "stand": newStand,
-        "kenjinkaiID": newKenjinkaiID
+        "associationID": newAssociationID
       })
     })
       .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         if (resStatus === 200){
           RequestLists()
-          setNewStand(""); setNewKenjinkaiID(0);
+          setNewStand(""); setNewAssociationID(0);
           setShowStand(false); setAlreadyUsedS(false); setEdit("");
           setCheck(check => ({...check, stand:false}))
         } else if (resStatus === 409) {
@@ -178,7 +178,7 @@ async function handleDelStand() {
       .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
           RequestLists()
-          setNewStand(""); setNewKenjinkaiID(0);
+          setNewStand(""); setNewAssociationID(0);
           setShowStand(false); setAlreadyUsedS(false); setEdit(""); setConfirmDel(false);
           setCheck(check => ({...check, stand:false}))
       })
@@ -186,22 +186,22 @@ async function handleDelStand() {
   }
 }
 
-function h_KChange(event) {  // Kenjinkai conditions
-  if (event.target.id === "kenjinkai"){  // Name
-    setNewKenjinkai(event.target.value);
+function h_KChange(event) {  // Association conditions
+  if (event.target.id === "association"){  // Name
+    setNewAssociation(event.target.value);
   } else if (event.target.id === "principal"){  // Principal
     setNewPrincipal(event.target.value);
   }
 };
-function h_KValid(value) {  // Kenjinkai valid
-  setCheck(check => ({...check, kenjinkai:value}))
+function h_KValid(value) {  // Association valid
+  setCheck(check => ({...check, association:value}))
 };
 
 function h_SChange(event) {  // Stand conditions
   if (event.target.id === "stand") {
     setNewStand(event.target.value);
-  } else if (event.target.id === "kenjinkaiID") {
-    setNewKenjinkaiID(parseInt(event.target.value));
+  } else if (event.target.id === "associationID") {
+    setNewAssociationID(parseInt(event.target.value));
   }
 };
 function h_SValid(value) {  // Stand valid
@@ -210,11 +210,11 @@ function h_SValid(value) {  // Stand valid
 
   return (
     <div>
-      <h1>Kenjinkais e estandes</h1>
+      <h1>Associations e estandes</h1>
       <div>
         <h2>Menu</h2>
         <div>
-          <button onClick={() => {setShowKenjinkai(true)}}>Registrar kenjinkai</button>
+          <button onClick={() => {setShowAssociation(true)}}>Registrar kenjinkai</button>
         </div>
         <div>
           <button onClick={() => {setShowStand(true)}}>Novo estande</button>
@@ -222,58 +222,58 @@ function h_SValid(value) {  // Stand valid
       </div>
       <ul>
         <li><p>kenjinkaiID</p><p>kenjinkai</p><p>diretoria</p><p>stands</p></li>
-        {kenjinkais.length !== 0 && kenjinkais.map((kenjinkai) => (
-          <li key={kenjinkai.kenjinkaiID}>
-            <p>{kenjinkai.kenjinkaiID}</p>
+        {associations.length !== 0 && associations.map((association) => (
+          <li key={association.associationID}>
+            <p>{association.associationID}</p>
             <p onClick={() => {
-              setNewKenjinkaiID(kenjinkai.kenjinkaiID); 
-              setEdit("kenjinkai"); 
-              setShowKenjinkai(true);
-              setNewKenjinkai(kenjinkai.kenjinkai);
-              setNewPrincipal(kenjinkai.principal)}}
-            >{kenjinkai.kenjinkai}</p>
-            <p>{kenjinkai.principal}</p>
-            {stands.filter(item => item.kenjinkaiID === kenjinkai.kenjinkaiID).length !== 0 ?
+              setNewAssociationID(association.associationID); 
+              setEdit("association"); 
+              setShowAssociation(true);
+              setNewAssociation(association.association);
+              setNewPrincipal(association.principal)}}
+            >{association.association}</p>
+            <p>{association.principal}</p>
+            {stands.filter(item => item.associationID === association.associationID).length !== 0 ?
               <ul>
-                {stands.filter(item => item.kenjinkaiID === kenjinkai.kenjinkaiID).map((stand) => (
+                {stands.filter(item => item.associationID === association.associationID).map((stand) => (
                   <li key={stand.standID} onClick={() => {
                     setStandID(stand.standID); 
                     setNewStand(stand.stand)
                     setEdit("stand"); 
                     setShowStand(true); 
-                    setNewKenjinkaiID(kenjinkai.kenjinkaiID)}}
+                    setNewAssociationID(association.associationID)}}
                   >{stand.stand}</li>
                 ))}
               </ul>
               :
-              <button onClick={() => {setNewKenjinkaiID(kenjinkai.kenjinkaiID); setShowStand(true)}}>Criar estande</button>
+              <button onClick={() => {setNewAssociationID(association.associationID); setShowStand(true)}}>Criar estande</button>
             }       
           </li>  
         ))}
       </ul>
-      {showKenjinkai &&
+      {showAssociation &&
       <div>
         <div>
-          {edit === "kenjinkai" &&
+          {edit === "association" &&
           <div>
             <h1>Editar kenjinkai:</h1>
-            <h2>{kenjinkais.filter(item => item.kenjinkaiID === newKenjinkaiID)[0].kenjinkai}</h2>
+            <h2>{associations.filter(item => item.associationID === newAssociationID)[0].association}</h2>
           </div>
           }
-          <Kenjinkai
+          <Association
             output={h_KChange}
-            kenjinkai={newKenjinkai}
+            association={newAssociation}
             principal={newPrincipal}
             dupliValue={alreadyUsedK}
             valid={h_KValid}/>
-          {edit === "kenjinkai" ?
+          {edit === "association" ?
             <div>
-              <button onClick={() => (setConfirmDel(true))}>Excluir Kenjinkai</button>
-              <button onClick={() => (handleEditKenjinkai())} disabled={check.kenjinkai ? false : true}>Editar Kenjinkai</button>
+              <button onClick={() => (setConfirmDel(true))}>Excluir kenjinkai</button>
+              <button onClick={() => (handleEditAssociation())} disabled={check.association ? false : true}>Editar kenjinkai</button>
             </div>
           :
             <div>
-              <button onClick={() => {handleNewKenjinkai()}} disabled={check.kenjinkai ? false : true}>Registrar</button>
+              <button onClick={() => {handleNewAssociation()}} disabled={check.association ? false : true}>Registrar</button>
             </div>
           }
         </div>
@@ -291,8 +291,8 @@ function h_SValid(value) {  // Stand valid
           <Stands
             output={h_SChange}
             stand={newStand}
-            kenjinkaiID={newKenjinkaiID}
-            kenjinkais={kenjinkais}
+            associationID={newAssociationID}
+            associations={associations}
             dupliValue={alreadyUsedS}
             valid={h_SValid}/>
           {edit === "stand" ?
@@ -311,15 +311,15 @@ function h_SValid(value) {  // Stand valid
       {confirmDel &&
       <div>
         <div>
-          <h2>Excluir: {edit === "kenjinkai" ?
-          <>kenjinkai {kenjinkais.filter(item => item.kenjinkaiID === newKenjinkaiID)[0].kenjinkai}</>
+          <h2>Excluir: {edit === "association" ?
+          <>kenjinkai {associations.filter(item => item.associationID === newAssociationID)[0].association}</>
           :
           edit === "stand" &&
           <>estande {stands.filter(item => item.standID === standID)[0].stand}</>}</h2>
           <div>
             <button onClick={() => (setConfirmDel(false))}>Cancelar</button>
-            {edit === "kenjinkai" ?
-            <button onClick={() => (handleDelKenjinkai())}>Excluir Kenjinkai</button>
+            {edit === "association" ?
+            <button onClick={() => (handleDelAssociation())}>Excluir kenjinkai</button>
             :
             edit === "stand" &&
             <button onClick={() => (handleDelStand())}>Excluir Estande</button>

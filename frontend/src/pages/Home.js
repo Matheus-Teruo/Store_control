@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Link } from 'react-router-dom';
-import { Clipboard, DollarSign, Table, CreditCard ,Database } from 'react-feather';
+import { Clipboard, DollarSign, Table, Users, CreditCard, Database } from 'react-feather';
 import AuthContext from '../store/auth_context';
 
 function Home() {
@@ -61,7 +61,7 @@ function Home() {
               }
             </div>
             <div className="frame">
-              {user.standID !== 0 ? 
+              {user.standID !== null && user.standID !== 1 ? 
               <Link to="/inventario">
                 <Table alt="Sheets"/>
                 <p>Inventário</p>
@@ -73,7 +73,15 @@ function Home() {
               </div>
               } 
             </div>
-            {user.superuser && 
+            {user.superuser === 1 && 
+              <div>
+                <Link to="/admin/allusers">
+                  <Users alt="Users"/>
+                  <p>Usuários</p>
+                </Link>  
+              </div>
+            }
+            {user.superuser === 1 && 
               <div>
                 <Link to="/admin/cards">
                   <CreditCard alt="Cards"/>
@@ -81,7 +89,7 @@ function Home() {
                 </Link>  
               </div>
             }
-            {user.superuser && 
+            {user.superuser === 1 && 
               <div className="frame">
                 <Link to="/admin/database">
                   <Database alt="Database"/>

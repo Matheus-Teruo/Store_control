@@ -34,46 +34,19 @@ router.get("/user", (req, res) => {  // Check user
         const row  = rows[0];
         if (row.standID !== null){
           database('stands')
-            .select('stands.stand', 'stands.kenjinkaiID', 'kenjinkais.kenjinkai')
-            .join('kenjinkais', 'stands.kenjinkaiID', 'kenjinkais.kenjinkaiID')
+            .select('stands.stand', 'stands.associationID', 'associations.association')
+            .join('associations', 'stands.associationID', 'associations.associationID')
             .where({'stands.standID': row.standID})
             .then(stands => {
               const stand = stands[0]
-              return res.json({username: row.username, fullname: row.fullname, superuser: decoded.superuser, standID: row.standID, kenjinkai: stand.kenjinkai, stand: stand.stand});
+              return res.json({username: row.username, fullname: row.fullname, superuser: decoded.superuser, standID: row.standID, association: stand.association, stand: stand.stand});
             })
         } else {
-          return res.json({username: row.username, fullname: row.fullname, superuser: decoded.superuser, standID: row.standID, kenjinkai: "", stand: ""});
+          return res.json({username: row.username, fullname: row.fullname, superuser: decoded.superuser, standID: row.standID, association: "", stand: ""});
         }
       })
   } catch(err) {
     res.status(401).json({authenticated: false});
-  }
-})
-// StandID
-router.get("/liststand", (req, res) => {  // Check user
-  try {
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
-    database('kenjinkais')
-      .select('kenjinkai', 'kenjinkaiID')
-      .orderBy('kenjinkaiID', 'asc')
-      .then(kenjinkais => {
-        if (kenjinkais.length > 0) {
-          database('stands')
-            .select('standID', 'stand', 'kenjinkaiID')
-            .orderBy('kenjinkaiID', 'asc')
-            .then(stands => {
-              if (stands.length > 0){
-                return res.json({kenjinkais: kenjinkais, stands: stands}); 
-              } else {
-                return res.json({kenjinkais: kenjinkais, stands: []}); 
-              }
-            })
-        } else {
-          return res.json({kenjinkais: [], stands: []}); 
-        }
-      })
-  } catch(err) {
-    return res.status(401).json({message: 'error on take list'});
   }
 })
 // Sing up
@@ -206,21 +179,6 @@ router.post("/editfullname", (req, res) => {  // Edit fullname
       })
   } catch(err) {
     return res.status(501).json({message: `change error`});
-  }
-})
-
-router.post("/changestandid", (req, res) => {  // Change user stand
-  const data = req.body;
-  try {
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
-    database('users')
-      .where({userID: decoded.userID})
-      .update({standID: data.standID})
-      .then(() => {
-        return res.json({message: `standID successfull update to: ${data.standID}`, standID: data.standID});
-      })
-  } catch(err) {
-    return res.status(401).json({message: `change error`});
   }
 })
 
