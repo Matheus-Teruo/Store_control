@@ -13,9 +13,9 @@ function Cards() {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
-  useEffect(() => {  // Load from pages
+  useEffect(() => {  // Page requirements
     if (auth.user.authenticated === true && auth.user.superuser) {
-      RequestLists()
+      RequestCards()
     } else if (auth.user.authenticated === false) {
       navigate('/login');
     } else if (auth.user.authenticated === true && !auth.user.superuser){
@@ -23,7 +23,7 @@ function Cards() {
     }
   }, [auth, navigate])
   
-  async function RequestLists() {  // List all Cards
+  async function RequestCards() {  // List all Cards
     var resStatus;
       fetch('/api/allcards')
         .then(res => {resStatus = res.status; return res.json()})
@@ -36,7 +36,7 @@ function Cards() {
         })
   }
 
-  async function SubmitNewCard() {
+  async function SubmitNewCard() {  // Submit new card
     if (auth.user.authenticated) {
       var resStatus;
       fetch("/api/newcard", {  // Post form
@@ -49,7 +49,7 @@ function Cards() {
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200) {
-            RequestLists()
+            RequestCards()
             setNewCardID("")
             setShowCard(false); setCheck(false); alreadyUsed(false)
           } else if (resStatus === 409) {
@@ -61,13 +61,11 @@ function Cards() {
         .catch(console.error)
     }
   }
-  function h_Change(event) {  // Card conditions
+
+  function handleChange(event) {  // Card conditions
     if (event.target.id === "card"){  // Code
       setNewCardID(event.target.value);
     }
-  };
-  function h_Valid(value) {  // Card valid
-    setCheck(value)
   };
 
   return (
@@ -112,10 +110,10 @@ function Cards() {
       <div>
         <div>
           <Code
-          output={h_Change}
+          output={handleChange}
           card={newCardID}
           dupliValue={alreadyUsed}
-          valid={h_Valid}/>
+          valid={(value) => setCheck(value)}/>
         </div>
         <button onClick={() => (SubmitNewCard())} disabled={check ? false : true}>Criar Cartões</button>
       </div>  

@@ -23,7 +23,7 @@ function Username(props) {
     }
   }, [Check, props.username, props.dupliValue])
 
-  useEffect(() => {  // Username conditions
+  useEffect(() => {  // Conditions logic
     if (props.username.length >= 4) {  // Check min number of char
       setCheck(Check => ({...Check, haveMinChar: true})
     )} else {
@@ -43,7 +43,6 @@ function Username(props) {
     )};
   }, [props.username])
   
-
   return (
     <div>
       <label>Usuário:</label>

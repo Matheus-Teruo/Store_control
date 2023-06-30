@@ -10,7 +10,7 @@ function Home() {
   })
   const auth = useContext(AuthContext);
 
-  useEffect(() => {
+  useEffect(() => {  // Page requirements
     if (auth.user.authenticated === true && user.standID === 0) {
       var resStatus;
       fetch("/api/main")

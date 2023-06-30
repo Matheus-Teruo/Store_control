@@ -33,7 +33,7 @@ function Association(props) {
     }
   }, [K_Check, P_Check, props.association, props.dupliValue])
 
-  useEffect(() => {  // Kenjinkai conditions
+  useEffect(() => {  // Association conditions logic
     if (props.association.trim().length >= 3) {  // Check min number of char
       setK_Check(K_Check => ({...K_Check, haveMinChar: true})
     )} else {
@@ -59,7 +59,7 @@ function Association(props) {
     )};
   }, [props.association])
   
-  useEffect(() => {  // Principal conditions
+  useEffect(() => {  // Principal conditions logic
     if (props.principal.trim().length >= 3) {  // Check min number of char
       setP_Check(P_Check => ({...P_Check, haveMinChar: true})
     )} else {

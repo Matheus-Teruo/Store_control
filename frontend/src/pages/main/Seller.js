@@ -17,15 +17,15 @@ function Seller() {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
-  useEffect(() => {  // Load from pages
+  useEffect(() => {  // Page requirements
     if (auth.user.authenticated === true) {
-      RequestLists()
+      RequestItemsByStand()
     } else if (auth.user.authenticated === false) {
       navigate('/login');
     }
   }, [auth, navigate])
 
-  async function RequestLists() {  // List all itens by stand
+  async function RequestItemsByStand() {  // List all itens by stand
     var resStatus;
       fetch('/api/listitemsbystand')
         .then(res => {resStatus = res.status; return res.json()})
@@ -39,7 +39,7 @@ function Seller() {
         })
   }
 
-  async function SubmitPurchase() {  // Submit the recharge
+  async function SubmitPurchase() {  // Submit the purchase
     if (auth.user.authenticated) {
       var resStatus;
       fetch("/api/purchase", {  // Post form
@@ -53,7 +53,7 @@ function Seller() {
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200){
-            RequestLists()
+            RequestItemsByStand()
             setCart([]); setCard(0);
             setConfirmPurchase(false); setCheck({purchase: false, card: false})
             SubmitCardCheck()
@@ -67,7 +67,7 @@ function Seller() {
     }
   }
 
-  async function SubmitCardCheck() {
+  async function SubmitCardCheck() {  // Submit debit checker
     var resStatus;
       fetch("/api/cardcheck", {  // Post form
         method: "POST", headers: {'Content-Type': 'application/json'},
@@ -79,7 +79,7 @@ function Seller() {
       })
   }
 
-  useEffect(() => {  // Sum the total
+  useEffect(() => {  // Sum the total on cart
     const subtotal = cart.reduce((accumulator, element) => {
       return accumulator + (element.price * element.amount);
     }, 0);

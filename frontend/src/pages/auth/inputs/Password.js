@@ -37,7 +37,7 @@ function Password(props) {
     }
   }, [password, passwordC])
 
-  const handlePasswordChange = (event) => {  // Password conditions
+  const handlePasswordChange = (event) => {  // Conditions logic
     props.output(event);
     setPassword(event.target.value);
 

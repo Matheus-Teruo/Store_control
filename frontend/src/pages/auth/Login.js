@@ -21,28 +21,8 @@ function Login() {
       setSubmitvalid(false);
     }
   }, [UN_Check, PW_Check])
-  
-  const handleChange = (event) => {  // Handle Change
-    if (event.target.id === "username") {  // Username conditions
-      setUsername(event.target.value)
-      setProcessingUN(0);
-      if (event.target.value.trim().length >= 4) {  // Check min number of char
-        setUN_Check(true)
-      } else {
-        setUN_Check(false)
-      };
-    } else if (event.target.id === "password") {  // Fullname conditions
-      setPassword(event.target.value);
-      setProcessingPW(0);
-      if (event.target.value.trim().length >= 6) {  // Check min number of char
-        setPW_Check(true)
-      } else {
-        setPW_Check(false)
-      };
-    }
-  };
 
-  async function SubmitPreLogin(event) {  // Submit POST request prelogin
+  async function SubmitPreLogin(event) {  // Submit prelogin
     event.preventDefault()
     var resStatus;
 
@@ -60,12 +40,14 @@ function Login() {
           SubmitLogin(data.salt);
         } else if (resStatus === 401) {
           return setProcessingUN(2);
+        } else if (resStatus === 403) {  // Forbiten try login while logged
+          return navigate('/')
         }
       })
       .catch(console.error)
   }
 
-  async function SubmitLogin(salt) {  // Submit POST request login
+  async function SubmitLogin(salt) {  // Submit login
     var resStatus;
     const hash = bcrypt.hashSync(password, salt);
 
@@ -89,6 +71,26 @@ function Login() {
       })
       .catch(console.error)
   }
+
+  const handleChange = (event) => {  // Handle Change
+    if (event.target.id === "username") {  // Username conditions
+      setUsername(event.target.value)
+      setProcessingUN(0);
+      if (event.target.value.trim().length >= 4) {  // Check min number of char
+        setUN_Check(true)
+      } else {
+        setUN_Check(false)
+      };
+    } else if (event.target.id === "password") {  // Fullname conditions
+      setPassword(event.target.value);
+      setProcessingPW(0);
+      if (event.target.value.trim().length >= 6) {  // Check min number of char
+        setPW_Check(true)
+      } else {
+        setPW_Check(false)
+      };
+    }
+  };
 
   return (
     <div>

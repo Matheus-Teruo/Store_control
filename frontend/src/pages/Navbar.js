@@ -9,7 +9,7 @@ function Navbar() {
   })
   const auth = useContext(AuthContext);
 
-  useEffect(() => {
+  useEffect(() => {  // Page requirements
     if (auth.user.authenticated === 2 && user.firstTime){
       setUser((user) => ({...user, firstTime: false}))
       return auth.onLogin()

@@ -8,36 +8,17 @@ function StandID(props) {
   const [associations, setAssociations] = useState([])
   const auth = useContext(AuthContext);
   
-  useEffect(() => {  // Take user initial value
-    var resStatus;
-    if (auth.user.authenticated) {
-      var resStatus;
-      fetch('/api/liststand')
-        .then(res => {resStatus = res.status; return res.json()})
-        .then(data => {
-          if (resStatus === 200){
-            setAssociations(data.associations);
-            setStands(data.stands);
-            if (props.defaultValue !== null){
-              setAssociationIndex(data.stands.filter(item => item.standID === props.defaultValue)[0].associationID)
-            }
-          } else {
-
-          }
-        })
-    }
-  }, [auth])
-
-  useEffect(() => {  // Set default value
+  useEffect(() => {  // Set default value of associationID
     setStandIndex(props.defaultValue || 0)
+    setAssociationIndex(props.stands.filter(element => element.standID === props.defaultValue)[0].associationID)
   }, [props.defaultValue])
 
-  function handleStandChange(event) {
+  function handleStandChange(event) {  // handle stand
     props.output(event.target.value);
     setStandIndex(event.target.value)
   }
 
-  function handleAssociationChange(event) {
+  function handleAssociationChange(event) {  // handle association
     props.output(0);
     setStandIndex(0);
     setAssociationIndex(parseInt(event.target.value))

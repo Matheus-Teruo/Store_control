@@ -4,7 +4,7 @@ import AuthContext from '../../store/auth_context';
 import Username from './inputs/Username';
 import Fullname from './inputs/Fullname';
 import Password from './inputs/Password';
-import StandID from './inputs/StandID';
+// import StandID from './inputs/StandID';
 import bcrypt from 'bcryptjs';
 
 function User() {
@@ -14,13 +14,13 @@ function User() {
     association: "",
     stand: "",
     superuser: 0});
-  const [change, setChange] = useState({
+  const [selected, setSelected] = useState({
     username:false,
     fullname:false,
     password:false});
   const [newUsername, setNewUsername] = useState("");
   const [newFullname, setNewFullname] = useState("");
-  const [newStandID, setNewStandID] = useState(null);
+  // const [newStandID, setNewStandID] = useState(null);
   const [newPassword, setNewPassword] = useState({
     oldpassword: "",
     newpassword: ""});
@@ -33,15 +33,15 @@ function User() {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
 
-  useEffect(() => {  // Take user initial value
+  useEffect(() => {  // Page requirements
     if (auth.user.authenticated === true && user.username === "") {
-      RequisiteList()
+      RequestUserData()
     } else if (auth.user.authenticated === true && user.username !== ""){ // Special case logout
       navigate('/login');
     }
   }, [auth, navigate])
 
-  function RequisiteList() {
+  function RequestUserData() {  // Request user data
     var resStatus;
     fetch('/api/user')
       .then(res => {resStatus = res.status; return res.json()})
@@ -49,7 +49,7 @@ function User() {
         if (resStatus === 200){
           setNewUsername(data.username)
           setNewFullname(data.fullname)
-          setNewStandID(data.standID)
+          // setNewStandID(data.standID)
           return setUser({
             username: data.username,
             fullname: data.fullname,
@@ -62,56 +62,7 @@ function User() {
       })
   }
 
-  function SubmitLogout() {
-    auth.onLogout()
-    navigate('/')
-  }
-
-  function handleChange(select) {  // Select editor
-    switch (select) {
-      case "username":
-        return setChange((change) => ({...change, username: true}))
-      case "fullname":
-        return setChange((change) => ({...change, fullname: true}))
-      case "password":
-        return setChange((change) => ({...change, password: true}))
-      case "association":
-        return setChange((change) => ({...change, standID: true}))
-      default:
-        return "";
-  }}
-
-  function h_Change(event) {  // Handle Change
-    if (event.target.id === "username") {  // Username
-      setNewUsername(event.target.value)
-    } else if (event.target.id === "fullname") {  // Fullname
-      setNewFullname(event.target.value);
-    } else if (event.target.id === "oldpassword") {  // Old Password
-      setNewPassword((newPassword) => ({...newPassword, oldpassword: event.target.value}));
-    } else if (event.target.id === "password") {  // New Password
-      setNewPassword((newPassword) => ({...newPassword, newpassword: event.target.value}));
-    }
-  };
-  function h_UNValid(value) {
-    setCheck(check => ({...check, username:value}))
-  };
-  function h_FNValid(value) {
-    setCheck(check => ({...check, fullname:value}))
-  };
-  function h_PWValid(value) {
-    setCheck(check => ({...check, password:value}))
-  };
-
-  // function h_SChange(value) {  // Manage stand ID
-  //   const aux = parseInt(value)
-  //   if (aux === 0) {
-  //     setNewStandID(null)
-  //   } else {
-  //     setNewStandID(aux)
-  //   }
-  // }
-
-  async function SubmitEditUsername(){
+  async function SubmitEditUsername(){  // Submit edit username
     if (check.username){
       var resStatus;
       fetch("/api/editusername", {  // Pre login get salt
@@ -122,7 +73,7 @@ function User() {
         .then(data => {
           if (resStatus === 200) {
             setUser(user => ({...user, username: data.username}));
-            return setChange((change) => ({...change, username: false}))
+            return setSelected((selected) => ({...selected, username: false}))
           } else if (resStatus === 409) {
             setAlreadyUsedUN(data.value);
           } else if (resStatus === 401){
@@ -133,7 +84,7 @@ function User() {
     }
   }
 
-  async function SubmitEditFullname(){
+  async function SubmitEditFullname(){  // Submit edit fullname
     if (check.fullname){
       var resStatus;
       fetch("/api/editfullname", {  // Pre login get salt
@@ -144,7 +95,7 @@ function User() {
         .then(data => {
           if (resStatus === 200) {
             setUser(user => ({...user, fullname: data.fullname}));
-            return setChange((change) => ({...change, fullname: false}))
+            return setSelected((selected) => ({...selected, fullname: false}))
           } else if (resStatus === 409) {
             setAlreadyUsedFN(data.value);
           } else if (resStatus === 401){
@@ -155,26 +106,7 @@ function User() {
     }
   }
 
-  // async function SubmitChangeStand(){
-  //   var resStatus;
-  //   fetch("/api/changestandid", {  // Pre login get salt
-  //     method: "POST", headers: {'Content-Type': 'application/json'},
-  //     body: JSON.stringify({"standID": newStandID})
-  //   })
-  //     .then(res => {resStatus = res.status; return res.json()})
-  //     .then(data => {
-  //       if (resStatus === 200) {
-  //         setUser(user => ({...user, standID: data.standID}));
-  //         setChange((change) => ({...change, standID: false}));
-  //         return RequisiteList();
-  //       }  else if (resStatus === 401){
-  //         return auth.onLogout()
-  //       }
-  //     })
-  //     .catch(console.error)
-  // }
-
-  async function PreSubmitEditPassword(){
+  async function PreSubmitEditPassword(){  // Submit take salt
     if (check.password){
       var resStatus;
       fetch("/api/preeditpassword", {  // Pre login get salt
@@ -192,7 +124,8 @@ function User() {
         .catch(console.error)
     }
   }
-  async function SubmitEditPassword(salt){
+
+  async function SubmitEditPassword(salt){  // Submit edit password
     var resStatus;
     const oldhash = bcrypt.hashSync(newPassword.oldpassword, salt);
     const newsalt = bcrypt.genSaltSync(10);
@@ -209,7 +142,7 @@ function User() {
       .then(data => {
         if (resStatus === 200) {
           setUser(user => ({...user, standID: data.standID}));
-          return setChange((change) => ({...change, password: false}))
+          return setSelected((selected) => ({...selected, password: false}))
         }  else if (resStatus === 401){
           return auth.onLogout()
         }
@@ -217,72 +150,124 @@ function User() {
       .catch(console.error)
   }
 
+  function SubmitLogout() {  // Submit Log out
+    auth.onLogout()
+    navigate('/')
+  }
+
+  function handleSelected(select) {  // Select editor
+    switch (select) {
+      case "username":
+        return setSelected((selected) => ({...selected, username: true}))
+      case "fullname":
+        return setSelected((selected) => ({...selected, fullname: true}))
+      case "password":
+        return setSelected((selected) => ({...selected, password: true}))
+      default:
+        return "";
+  }}
+
+  function handleChange(event) {  // Handle Change
+    if (event.target.id === "username") {  // Username
+      setNewUsername(event.target.value)
+    } else if (event.target.id === "fullname") {  // Fullname
+      setNewFullname(event.target.value);
+    } else if (event.target.id === "oldpassword") {  // Old Password
+      setNewPassword((newPassword) => ({...newPassword, oldpassword: event.target.value}));
+    } else if (event.target.id === "password") {  // New Password
+      setNewPassword((newPassword) => ({...newPassword, newpassword: event.target.value}));
+    }
+  };
+
+  // function h_SChange(value) {  // Manage stand ID
+  //   const aux = parseInt(value)
+  //   if (aux === 0) {
+  //     setNewStandID(null)
+  //   } else {
+  //     setNewStandID(aux)
+  //   }
+  // }
+
+  // async function SubmitChangeStand(){
+  //   var resStatus;
+  //   fetch("/api/changestandid", {  // Pre login get salt
+  //     method: "POST", headers: {'Content-Type': 'application/json'},
+  //     body: JSON.stringify({"standID": newStandID})
+  //   })
+  //     .then(res => {resStatus = res.status; return res.json()})
+  //     .then(data => {
+  //       if (resStatus === 200) {
+  //         setUser(user => ({...user, standID: data.standID}));
+  //         setSelected((selected) => ({...selected, standID: false}));
+  //         return RequestUserData();
+  //       }  else if (resStatus === 401){
+  //         return auth.onLogout()
+  //       }
+  //     })
+  //     .catch(console.error)
+  // }
+
   return (
     <div>
       {auth.user.authenticated ?
       <div>
         <div>
-          {!change.username?
+          {!selected.username?
             <>
               <p>Usuário</p>
-              <p onClick={() => {handleChange("username")}}>{user.username}</p>
+              <p onClick={() => {handleSelected("username")}}>{user.username}</p>
             </>
           :
             <>
               <Username
-                output={h_Change}
+                output={handleChange}
                 username={newUsername}
                 dupliValue={alreadyUsedUN}
-                valid={h_UNValid}/>
+                valid={(value) => setCheck(check => ({...check, username:value}))}/>
               <button onClick={() => (SubmitEditUsername())} disabled={check.username ? false : true}>Confirmar</button>
             </>
           }
         </div>
         <div>
-          {!change.fullname?
+          {!selected.fullname?
             <>
               <p>Nome completo</p>
-              <p onClick={() => {handleChange("fullname")}}>{user.fullname}</p>
+              <p onClick={() => {handleSelected("fullname")}}>{user.fullname}</p>
             </>
           :
             <>
               <Fullname
-                output={h_Change}
+                output={handleChange}
                 fullname={newFullname}
                 dupliValue={alreadyUsedFN}
-                valid={h_FNValid}/>
+                valid={(value) => setCheck(check => ({...check, fullname:value}))}/>
               <button onClick={() => (SubmitEditFullname())} disabled={check.fullname ? false : true}>Confirmar</button>
             </>
           }
         </div>
         <div>
-          {!change.standID?
-            <>
-              <p>Estande</p>
-              <p>{user.association}</p>
-              <p>{user.stand}</p>
-            </>
-          :
-            <></>
-            // <StandID
-            //   output={h_SChange}
-            //   defaultValue={newStandID}/>
-            // <button onClick={() => (SubmitChangeStand())}>Confirmar</button>
-            // </>
-          }
+          <p>Estande</p>
+          <p>{user.association}</p>
+          <p>{user.stand}</p>
+            {/* <>
+               <StandID
+                 output={h_SChange}
+                 defaultValue={newStandID}/>
+                <button onClick={() => (SubmitChangeStand())}>Confirmar</button>
+             </> */}
         </div>
         <div>
-          {!change.password?
-          <button onClick={() => {handleChange("password")}}>
+          {!selected.password?
+          <button onClick={() => {handleSelected("password")}}>
             Alterar Senha
           </button>
           :
           <>
             <label htmlFor="password">Senha atual:</label>
-            <input value={newPassword.oldpassword} onChange={h_Change} id="oldpassword" type="password" name="oldpassword"/>
+            <input value={newPassword.oldpassword} onChange={handleChange} id="oldpassword" type="password" name="oldpassword"/>
             <Password
-              output={h_Change}
-              valid={h_PWValid}/>
+              output={handleChange}
+              valid={(value) => setCheck(check => ({...check, password:value}))}/>
             <button onClick={() => PreSubmitEditPassword()} disabled={check.password ? false : true}>Confirmar</button>
           </>
           }

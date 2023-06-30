@@ -24,7 +24,7 @@ function Stands(props) {
     }
   }, [Check, props.stand, props.associationID, props.dupliValue])
 
-  useEffect(() => {  // Stand conditions
+  useEffect(() => {  // Conditions logic
     if (props.stand.trim().length > 2) {  // Check min number of char
       setCheck(Check => ({...Check, haveMinChar: true})
     )} else {

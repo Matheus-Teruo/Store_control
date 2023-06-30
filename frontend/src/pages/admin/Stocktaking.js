@@ -18,7 +18,7 @@ function Stocktaking() {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
-  useEffect(() => {  // Load from pages
+  useEffect(() => {  // Page requirements
     if (auth.user.authenticated === true) {
       RequestItems()
     } else if (auth.user.authenticated === false) {

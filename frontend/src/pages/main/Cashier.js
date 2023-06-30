@@ -22,7 +22,7 @@ function Cashier() {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
-  useEffect(() => {  // Load from pages
+  useEffect(() => {  // Page requirements
     if (auth.user.authenticated === true) {
       RequestLists()
     } else if (auth.user.authenticated === false) {
@@ -128,8 +128,15 @@ function Cashier() {
     }, 0);
     setSumAux(subtotal);
   }, [cart])
-  
 
+  useEffect(() => {  // Set check to recharge
+    if (recharge > 0) {
+      return setCheck(check => ({...check, recharge: true}))
+    } else {
+      return setCheck(check => ({...check, recharge: false}))
+    }
+  }, [recharge])
+  
   function handleCart(item) {  // Add item on cart
     if (cart.some(element => element.itemID === item.itemID)){
       const updatedCart = cart.map(element => {
@@ -150,6 +157,7 @@ function Cashier() {
         amount:1}])
     }
   };
+
   function handleRemoveCart(itemID) {  // Remove item from cart
     const updatedCart = cart.map(element => {
       if (element.itemID === itemID) {
@@ -163,16 +171,7 @@ function Cashier() {
       return element;  // return other itens
     }).filter(Boolean)
     setCart(updatedCart);
-  }
-
-  useEffect(() => {  // Set check to recharge
-    if (recharge > 0) {
-      return setCheck(check => ({...check, recharge: true}))
-    } else {
-      return setCheck(check => ({...check, recharge: false}))
-    }
-  }, [recharge])
-  
+  }  
 
   function h_Valid(value) {  // Card valid
     setCheck(check => ({...check, card: value}))

@@ -30,7 +30,7 @@ function Signup() {
     }
   }, [check])
 
-  async function SubmitSingUp(event) {  // Submit POST request sign-up
+  async function SubmitSingUp(event) {  // Submit sign-up
     event.preventDefault()
     // encrypt password
     const salt = bcrypt.genSaltSync(10);
@@ -57,12 +57,14 @@ function Signup() {
           } else if (data.column === "fullname") {
             setAlreadyUsedFN({fullname: data.value, F_noUsed: false});
           }
+        } else if (resStatus === 403) {  // Forbiten create user logged
+          return navigate('/')
         }
       })
       .catch(console.error)
   }
 
-  function h_Change(event) {  // Handle Change
+  function handleChange(event) {  // Handle Change
     if (event.target.id === "username") {  // Username
       setUsername(event.target.value)
     } else if (event.target.id === "fullname") {  // Fullname
@@ -71,33 +73,24 @@ function Signup() {
       setPassword(event.target.value)
     }
   };
-  function h_UNValid(value) {
-    setCheck(check => ({...check, username:value}))
-  };
-  function h_FNValid(value) {
-    setCheck(check => ({...check, fullname:value}))
-  };
-  function h_PWValid(value) {
-    setCheck(check => ({...check, password:value}))
-  };
 
   return (
     <div>
       <h1>Sign-up</h1>
       <Form method="post">
         <Username
-          output={h_Change}
+          output={handleChange}
           username={username}
           dupliValue={alreadyUsedUN}
-          valid={h_UNValid}/>
+          valid={(value) => setCheck(check => ({...check, username:value}))}/>
         <Fullname
-          output={h_Change}
+          output={handleChange}
           fullname={fullname}
           dupliValue={alreadyUsedFN}
-          valid={h_FNValid}/>
+          valid={(value) => setCheck(check => ({...check, fullname:value}))}/>
         <Password
-          output={h_Change}
-          valid={h_PWValid}/>
+          output={handleChange}
+          valid={(value) => setCheck(check => ({...check, password:value}))}/>
         <button onClick={SubmitSingUp} type="submit" disabled={submitvalid ? false : true}>Sign up</button>
       </Form>
     </div>

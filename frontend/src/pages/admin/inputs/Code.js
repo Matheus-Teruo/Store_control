@@ -15,7 +15,7 @@ function Code(props) {
     }
   }, [check, props.card, props.dupliValue])
 
-  useEffect(() => {  // Item name conditions
+  useEffect(() => {  // Conditions logic
     if (props.card !== null && props.card.length === 12) {  // Check min number of char
       setCheck(true)
     } else {

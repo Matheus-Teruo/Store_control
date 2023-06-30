@@ -24,7 +24,7 @@ function Database() {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
-  useEffect(() => {  // Load from pages
+  useEffect(() => {  // Page requirements
     if (auth.user.authenticated === true && auth.user.superuser) {
       RequestLists()
     } else if (auth.user.authenticated === false) {
@@ -34,195 +34,189 @@ function Database() {
     }
   }, [auth, navigate])
 
-async function RequestLists() {  // List all stand and associations
-  var resStatus;
-    fetch('/api/liststands')
-      .then(res => {resStatus = res.status; return res.json()})
-      .then(data => {
-        if (resStatus === 200){
-          setStands(data.stands)
-          return setAssociations(data.associations)
-        } else if (resStatus === 401){
-          return auth.onLogout()
-        }
-      })
-}
-  
-async function SubmitNewAssociation() {
-  if (auth.user.authenticated) {
+  async function RequestLists() {  // List all stand and associations
     var resStatus;
-    fetch("/api/newassociation", {  // Post form
-      method: "POST", headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        "association": newAssociation,
-        "principal": newPrincipal
-      })
-    })
-      .then(res => {resStatus = res.status; return res.json()})
-      .then(data => {
-        if (resStatus === 200) {
-          RequestLists()
-          setNewAssociation(""); setNewPrincipal("");
-          setShowAssociation(false); setAlreadyUsedK("")
-          setCheck(check => ({...check, association:false}))
-        } else if (resStatus === 409) {
-          setAlreadyUsedK(data.value);
-        } else if (resStatus === 401){
-          return auth.onLogout()
-        }
-      })
-      .catch(console.error)
+      fetch('/api/liststands')
+        .then(res => {resStatus = res.status; return res.json()})
+        .then(data => {
+          if (resStatus === 200){
+            setStands(data.stands)
+            return setAssociations(data.associations)
+          } else if (resStatus === 401){
+            return auth.onLogout()
+          }
+        })
   }
-}
+    
+  async function SubmitNewAssociation() {  // Submit new association
+    if (auth.user.authenticated) {
+      var resStatus;
+      fetch("/api/newassociation", {  // Post form
+        method: "POST", headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          "association": newAssociation,
+          "principal": newPrincipal
+        })
+      })
+        .then(res => {resStatus = res.status; return res.json()})
+        .then(data => {
+          if (resStatus === 200) {
+            RequestLists()
+            setNewAssociation(""); setNewPrincipal("");
+            setShowAssociation(false); setAlreadyUsedK("")
+            setCheck(check => ({...check, association:false}))
+          } else if (resStatus === 409) {
+            setAlreadyUsedK(data.value);
+          } else if (resStatus === 401){
+            return auth.onLogout()
+          }
+        })
+        .catch(console.error)
+    }
+  }
 
-async function SubmitEditAssociation() {
-  if (auth.user.authenticated) {
-    var resStatus;
-    fetch("/api/editassociation", {  // Post form
-      method: "POST", headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        "associationID": newAssociationID,
-        "association": newAssociation,
-        "principal": newPrincipal
+  async function SubmitEditAssociation() {  // Submite edit association
+    if (auth.user.authenticated) {
+      var resStatus;
+      fetch("/api/editassociation", {  // Post form
+        method: "POST", headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          "associationID": newAssociationID,
+          "association": newAssociation,
+          "principal": newPrincipal
+        })
       })
-    })
-      .then(res => {resStatus = res.status; return res.json()})
-      .then(data => {
-        if (resStatus === 200) {
-          RequestLists()
-          setNewAssociation(""); setNewPrincipal("");
-          setShowAssociation(false); setAlreadyUsedK(""); setEdit("");
-          setCheck(check => ({...check, association:false}))  
-        } else if (resStatus === 409) {
-          setAlreadyUsedK({association: data.value, K_noUsed: false});
-        } else if (resStatus === 401){
-          return auth.onLogout()
-        }
-      })
-      .catch(console.error)
+        .then(res => {resStatus = res.status; return res.json()})
+        .then(data => {
+          if (resStatus === 200) {
+            RequestLists()
+            setNewAssociation(""); setNewPrincipal("");
+            setShowAssociation(false); setAlreadyUsedK(""); setEdit("");
+            setCheck(check => ({...check, association:false}))  
+          } else if (resStatus === 409) {
+            setAlreadyUsedK({association: data.value, K_noUsed: false});
+          } else if (resStatus === 401){
+            return auth.onLogout()
+          }
+        })
+        .catch(console.error)
+    }
   }
-}
 
-async function SubmitDelAssociation() {
-  if (auth.user.authenticated) {
-    var resStatus;
-    fetch("/api/delassociation", {  // Post form
-      method: "POST", headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({"associationID": newAssociationID,})
-    })
-      .then(res => {resStatus = res.status; return res.json()})
-      .then(data => {
-        if (resStatus === 200){
-          RequestLists()
-          setNewAssociation(""); setNewPrincipal("");
-          setShowAssociation(false); setAlreadyUsedK(""); setEdit(""); setConfirmDel(false);
-          setCheck(check => ({...check, association:false}))
-        } else if (resStatus === 401){
-          return auth.onLogout()
-        }
+  async function SubmitDelAssociation() {  // Submit delete association
+    if (auth.user.authenticated) {
+      var resStatus;
+      fetch("/api/delassociation", {  // Post form
+        method: "POST", headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({"associationID": newAssociationID,})
       })
-      .catch(console.error)
+        .then(res => {resStatus = res.status; return res.json()})
+        .then(data => {
+          if (resStatus === 200){
+            RequestLists()
+            setNewAssociation(""); setNewPrincipal("");
+            setShowAssociation(false); setAlreadyUsedK(""); setEdit(""); setConfirmDel(false);
+            setCheck(check => ({...check, association:false}))
+          } else if (resStatus === 401){
+            return auth.onLogout()
+          }
+        })
+        .catch(console.error)
+    }
   }
-}
 
-async function SubmitNewStand() {
-  if (auth.user.authenticated) {
-    var resStatus;
-    fetch("/api/newstand", {  // Post form
-      method: "POST", headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        "stand": newStand,
-        "associationID": newAssociationID
+  async function SubmitNewStand() {  // Submit new stand
+    if (auth.user.authenticated) {
+      var resStatus;
+      fetch("/api/newstand", {  // Post form
+        method: "POST", headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          "stand": newStand,
+          "associationID": newAssociationID
+        })
       })
-    })
-      .then(res => {resStatus = res.status; return res.json()})
-      .then(data => {
-        if (resStatus === 200){
-          RequestLists()
-          setNewStand(""); setNewAssociationID(0);
-          setShowStand(false); setAlreadyUsedS(false)
-          setCheck(check => ({...check, stand:false}))
-        } else if (resStatus === 409) {
-          setAlreadyUsedS(data.value);
-        } else if (resStatus === 401){
-          return auth.onLogout()
-        }
-      })
-      .catch(console.error)
+        .then(res => {resStatus = res.status; return res.json()})
+        .then(data => {
+          if (resStatus === 200){
+            RequestLists()
+            setNewStand(""); setNewAssociationID(0);
+            setShowStand(false); setAlreadyUsedS(false)
+            setCheck(check => ({...check, stand:false}))
+          } else if (resStatus === 409) {
+            setAlreadyUsedS(data.value);
+          } else if (resStatus === 401){
+            return auth.onLogout()
+          }
+        })
+        .catch(console.error)
+    }
   }
-}
 
-async function SubmitEditStand() {
-  if (auth.user.authenticated) {
-    var resStatus;
-    fetch("/api/editstand", {  // Post form
-      method: "POST", headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        "standID": standID,
-        "stand": newStand,
-        "associationID": newAssociationID
+  async function SubmitEditStand() {  // Submit edit stand
+    if (auth.user.authenticated) {
+      var resStatus;
+      fetch("/api/editstand", {  // Post form
+        method: "POST", headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          "standID": standID,
+          "stand": newStand,
+          "associationID": newAssociationID
+        })
       })
-    })
-      .then(res => {resStatus = res.status; return res.json()})
-      .then(data => {
-        if (resStatus === 200){
-          RequestLists()
-          setNewStand(""); setNewAssociationID(0);
-          setShowStand(false); setAlreadyUsedS(false); setEdit("");
-          setCheck(check => ({...check, stand:false}))
-        } else if (resStatus === 409) {
-          setAlreadyUsedS(data.value);
-        } else if (resStatus === 401){
-          return auth.onLogout()
-        }
+        .then(res => {resStatus = res.status; return res.json()})
+        .then(data => {
+          if (resStatus === 200){
+            RequestLists()
+            setNewStand(""); setNewAssociationID(0);
+            setShowStand(false); setAlreadyUsedS(false); setEdit("");
+            setCheck(check => ({...check, stand:false}))
+          } else if (resStatus === 409) {
+            setAlreadyUsedS(data.value);
+          } else if (resStatus === 401){
+            return auth.onLogout()
+          }
+        })
+        .catch(console.error)
+    }
+  }
+
+  async function SubmitDelStand() {  // Submit delete stand
+    if (auth.user.authenticated) {
+      var resStatus;
+      fetch("/api/delstand", {  // Post form
+        method: "POST", headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({"standID": standID})
       })
-      .catch(console.error)
+        .then(res => {resStatus = res.status; return res.json()})
+        .then(data => {
+          if (resStatus === 200) {
+            RequestLists()
+            setNewStand(""); setNewAssociationID(0);
+            setShowStand(false); setAlreadyUsedS(false); setEdit(""); setConfirmDel(false);
+            setCheck(check => ({...check, stand:false}))
+          } else if (resStatus === 401){
+            return auth.onLogout()
+          }
+        })
+        .catch(console.error)
+    }
   }
-}
 
-async function SubmitDelStand() {
-  if (auth.user.authenticated) {
-    var resStatus;
-    fetch("/api/delstand", {  // Post form
-      method: "POST", headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({"standID": standID})
-    })
-      .then(res => {resStatus = res.status; return res.json()})
-      .then(data => {
-        if (resStatus === 200) {
-          RequestLists()
-          setNewStand(""); setNewAssociationID(0);
-          setShowStand(false); setAlreadyUsedS(false); setEdit(""); setConfirmDel(false);
-          setCheck(check => ({...check, stand:false}))
-        } else if (resStatus === 401){
-          return auth.onLogout()
-        }
-      })
-      .catch(console.error)
-  }
-}
+  function handleKChange(event) {  // Association conditions
+    if (event.target.id === "association"){  // Name
+      setNewAssociation(event.target.value);
+    } else if (event.target.id === "principal"){  // Principal
+      setNewPrincipal(event.target.value);
+    }
+  };
 
-function h_KChange(event) {  // Association conditions
-  if (event.target.id === "association"){  // Name
-    setNewAssociation(event.target.value);
-  } else if (event.target.id === "principal"){  // Principal
-    setNewPrincipal(event.target.value);
-  }
-};
-function h_KValid(value) {  // Association valid
-  setCheck(check => ({...check, association:value}))
-};
-
-function h_SChange(event) {  // Stand conditions
-  if (event.target.id === "stand") {
-    setNewStand(event.target.value);
-  } else if (event.target.id === "associationID") {
-    setNewAssociationID(parseInt(event.target.value));
-  }
-};
-function h_SValid(value) {  // Stand valid
-  setCheck(check => ({...check, stand:value}))
-};
+  function handleSChange(event) {  // Stand conditions
+    if (event.target.id === "stand") {
+      setNewStand(event.target.value);
+    } else if (event.target.id === "associationID") {
+      setNewAssociationID(parseInt(event.target.value));
+    }
+  };
 
   return (
     <div>
@@ -277,11 +271,11 @@ function h_SValid(value) {  // Stand valid
           </div>
           }
           <Association
-            output={h_KChange}
+            output={handleKChange}
             association={newAssociation}
             principal={newPrincipal}
             dupliValue={alreadyUsedK}
-            valid={h_KValid}/>
+            valid={(value) => setCheck(check => ({...check, association:value}))}/>
           {edit === "association" ?
             <div>
               <button onClick={() => (setConfirmDel(true))}>Excluir kenjinkai</button>
@@ -305,12 +299,12 @@ function h_SValid(value) {  // Stand valid
             </div>
           }
           <Stands
-            output={h_SChange}
+            output={handleSChange}
             stand={newStand}
             associationID={newAssociationID}
             associations={associations}
             dupliValue={alreadyUsedS}
-            valid={h_SValid}/>
+            valid={(value) => setCheck(check => ({...check, stand:value}))}/>
           {edit === "stand" ?
             <div>
               <button onClick={() => (setConfirmDel(true))}>Excluir Estande</button>

@@ -23,7 +23,7 @@ function Fullname(props) {
     }
   }, [Check, props.fullname, props.dupliValue])
 
-  useEffect(() => {
+  useEffect(() => {  // Conditions logic
     if (props.fullname.trim().length >= 6) {  // Check min number of char
       setCheck(Check => ({...Check, haveMinChar: true})
     )} else {
@@ -43,7 +43,6 @@ function Fullname(props) {
     )};
   }, [props.fullname])
   
-
   return (
     <div>
       <label htmlFor="fullname">Nome Completo:</label>

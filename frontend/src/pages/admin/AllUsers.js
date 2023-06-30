@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../../store/auth_context';
-import StandID from '../auth/inputs/StandID';
+import StandID from './inputs/StandID';
 
 function AllUsers() {
   const [users, setUsers] = useState([])
@@ -12,9 +12,9 @@ function AllUsers() {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
 
-  useEffect(() => {  // Load from pages
+  useEffect(() => {  // Page requirements
     if (auth.user.authenticated === true && auth.user.superuser) {
-      RequestLists()
+      RequestUsers()
       RequestStands()
     } else if (auth.user.authenticated === false) {
       navigate('/login');
@@ -23,7 +23,7 @@ function AllUsers() {
     }
   }, [auth, navigate])
 
-  async function RequestLists() {  // List all Users
+  async function RequestUsers() {  // List all users
     var resStatus;
     fetch('/api/allusers')
       .then(res => {resStatus = res.status; return res.json()})
@@ -36,7 +36,7 @@ function AllUsers() {
       })
   }
 
-  async function RequestStands() {
+  async function RequestStands() {  // List all stands
     var resStatus;
       fetch('/api/liststand')
         .then(res => {resStatus = res.status; return res.json()})
@@ -50,7 +50,7 @@ function AllUsers() {
         })
   }
 
-  async function SubmitChangeStand(){
+  async function SubmitEditStandID(){  // Submit edit StandID
     var resStatus;
     fetch("/api/changestandid", {  // Pre login get salt
       method: "POST", headers: {'Content-Type': 'application/json'},
@@ -60,7 +60,7 @@ function AllUsers() {
       .then(data => {
         if (resStatus === 200) {
           setSelectedUserID(0);
-          return RequestLists();
+          return RequestUsers();
         } else if (resStatus === 401){
           return auth.onLogout()
         }
@@ -68,7 +68,7 @@ function AllUsers() {
       .catch(console.error)
   }
 
-  function h_SChange(value) {  // Manage stand ID
+  function handleChange(value) {  // Manage stand ID
     const aux = parseInt(value)
     if (aux === 0) {
       setNewStandID(null)
@@ -119,11 +119,11 @@ function AllUsers() {
               :
               <p>
                 <StandID
-                  output={h_SChange}
+                  output={handleChange}
                   associations={associations}
                   stands={stands}
                   defaultValue={user.standID}/>
-                <button onClick={() => (SubmitChangeStand())}>Confirmar</button>
+                <button onClick={() => (SubmitEditStandID())}>Confirmar</button>
               </p>
               }
               <p>{user.superuser}</p>

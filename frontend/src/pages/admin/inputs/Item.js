@@ -24,7 +24,7 @@ function Item(props) {
     }
   }, [I_Check, P_Check, S_Check, props.item, props.dupliValue])
 
-  useEffect(() => {  // Item name conditions
+  useEffect(() => {  // Name conditions logic
     if (props.item.trim().length >= 3) {  // Check min number of char
       setI_Check(I_Check => ({...I_Check, haveMinChar: true})
     )} else {
@@ -38,7 +38,7 @@ function Item(props) {
     )};
   }, [props.item])
   
-  useEffect(() => {  // Price conditions
+  useEffect(() => {  // Price conditions logic
     if (parseInt(props.price) > 0) {  // Check positive not zero
       setP_Check(true)
     } else {
@@ -46,7 +46,7 @@ function Item(props) {
     };
   }, [props.price])
   
-  useEffect(() => {  // Stock conditions
+  useEffect(() => {  // Stock conditions logic
     if (parseInt(props.stock) > 0) {  // Check positive not zero
       setS_Check(true)
     } else {

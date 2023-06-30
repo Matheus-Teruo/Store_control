@@ -89,7 +89,7 @@ router.post("/signup", (req, res) => {  // Sign up request
         return res.status(501).json({ error: {error}});
       })
   } else {
-  return res.json({authenticated: true});
+  return res.status(403).json({authenticated: true});
   }
 })
 // Login
@@ -113,7 +113,7 @@ router.post("/prelogin", (req, res) => {  // Username check
         return res.status(501).json(error);
       })
   } else {
-    return res.json({authenticated: true});
+    return res.status(403).json({authenticated: true});
   }
 })
 
