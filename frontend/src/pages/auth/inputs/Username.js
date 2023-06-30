@@ -21,7 +21,7 @@ function Username(props) {
       setSubmitvalid(false);
       props.valid(false)
     }
-  }, [Check, props.username, props.dupliValue])
+  }, [Check, props.dupliValue, props.username])
 
   useEffect(() => {  // Conditions logic
     if (props.username.length >= 4) {  // Check min number of char

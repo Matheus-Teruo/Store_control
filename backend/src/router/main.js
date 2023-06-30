@@ -3,7 +3,6 @@ const database = require("../database");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 
-
 const router = express();
 router.use(express.json());
 router.use(cookieParser());
@@ -64,6 +63,8 @@ async function Card(ID) {  // cardID => {debit: int, time: datetime}
         if (rows.length > 0){
           const row = rows[0];
           const now = new Date();
+          const offset = now.getTimezoneOffset();
+          now.setMinutes(now.getMinutes() - offset);
           const Datetime = now.toISOString().slice(0, 19).replace('T', ' ');
           resolve({debit: row.debit, time: Datetime})
         } else {

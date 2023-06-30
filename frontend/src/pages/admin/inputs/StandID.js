@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import AuthContext from '../../../store/auth_context';
 
 function StandID(props) {
@@ -6,7 +6,6 @@ function StandID(props) {
   const [associationIndex, setAssociationIndex] = useState(0)
   const [stands, setStands] = useState([])
   const [associations, setAssociations] = useState([])
-  const auth = useContext(AuthContext);
   
   useEffect(() => {  // Set default value of associationID
     setStandIndex(props.defaultValue || 0)

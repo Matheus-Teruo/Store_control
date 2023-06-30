@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { Maximize, Slash } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Code from '../admin/inputs/Code';
+import Scanner from './Scanner';
+import Quagga from 'quagga';
 
 function Cashier() {
   const [recharge, setRecharge] = useState(0)
+  const [showScanner, setShowScanner] = useState(false)
+  const [results, setResults] = useState([]);
   const [card, setCard] = useState("")
   const [cart, setCart] = useState([])
   const [sumAux, setSumAux] = useState(0)
@@ -100,12 +105,11 @@ function Cashier() {
   }
 
   async function SubmitCardCheck() {
-    var resStatus;
       fetch("/api/cardcheck", {  // Post form
         method: "POST", headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({"cardID": card})
       })
-      .then(res => {resStatus = res.status; return res.json()})
+      .then(res => res.json())
       .then(data => {
         setMessage(data.card)
         setMessageValue(data.value)
@@ -136,7 +140,19 @@ function Cashier() {
       return setCheck(check => ({...check, recharge: false}))
     }
   }, [recharge])
+
+  useEffect(() => {
+    if (results[0]) {
+      setCard(results[0].codeResult.code)
+      setShowScanner(false)
+    }
+  }, [results])
   
+  const handleScan = (result) => {
+    setResults([]);
+    setResults(prevResults => prevResults.concat([result]));
+  };
+
   function handleCart(item) {  // Add item on cart
     if (cart.some(element => element.itemID === item.itemID)){
       const updatedCart = cart.map(element => {
@@ -187,6 +203,14 @@ function Cashier() {
               card={card}
               dupliValue={""}
               valid={h_Valid}/>
+              {showScanner && !confirmRecharge && !confirmReset ?
+              <>
+                <Scanner DetectedCode={handleScan}/>
+                <button onClick={() => {setShowScanner(false); return Quagga.stop()}}><Slash/></button>
+              </>
+              : 
+                <button onClick={() => setShowScanner(true)}><Maximize/></button>
+              }
             <button onClick={() => SubmitCardCheck()} disabled={check.card ? false : true}>Verificar Cartão</button>
             <button onClick={() => {setConfirmReset(true);SubmitCardCheck()}} disabled={check.card ? false : true}>Resetar Cartão</button>
           </div>
@@ -256,6 +280,14 @@ function Cashier() {
             valid={h_Valid}/>
           <button onClick={() => setConfirmRecharge(false)}>Cancelar</button>
           <button onClick={() => SubmitRecharge()} disabled={check.recharge && check.card ? false : true}>Confirmar</button>
+          {showScanner && !confirmReset ?
+          <>
+            <Scanner DetectedCode={handleScan}/>
+            <button onClick={() => {setShowScanner(false); return Quagga.stop()}}><Slash/></button>
+          </>
+          : 
+            <button onClick={() => setShowScanner(true)}><Maximize/></button>
+          }
         </div>
       </div>
       }
@@ -271,6 +303,14 @@ function Cashier() {
             valid={h_Valid}/>
           <button onClick={() => setConfirmReset(false)}>Cancelar</button>
           <button onClick={() => SubmitReset()} disabled={check.card ? false : true}>Confirmar</button>
+          {showScanner && !confirmRecharge ?
+          <>
+            <Scanner DetectedCode={handleScan}/>
+            <button onClick={() => {setShowScanner(false); return Quagga.stop()}}><Slash/></button>
+          </>
+          : 
+            <button onClick={() => setShowScanner(true)}><Maximize/></button>
+          }
         </div>
       </div>
       }

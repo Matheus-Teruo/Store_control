@@ -36,7 +36,7 @@ function User() {
   useEffect(() => {  // Page requirements
     if (auth.user.authenticated === true && user.username === "") {
       RequestUserData()
-    } else if (auth.user.authenticated === true && user.username !== ""){ // Special case logout
+    } else if (auth.user.authenticated === false && user.username !== ""){ // Special case logout
       navigate('/login');
     }
   }, [auth, user, navigate])

@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { Maximize, Slash } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Code from '../admin/inputs/Code'
+import Scanner from './Scanner';
+import Quagga from 'quagga';
 
 function Seller() {
   const [cart, setCart] = useState([])
   const [total, setTotal] = useState(0)
+  const [showScanner, setShowScanner] = useState(false)
+  const [results, setResults] = useState([]);
   const [card, setCard] = useState("")
   const [stand, setStand] = useState({standID:0 ,stand:""})
   const [items, setItems] = useState([])
@@ -68,12 +73,11 @@ function Seller() {
   }
 
   async function SubmitCardCheck() {  // Submit debit checker
-    var resStatus;
       fetch("/api/cardcheck", {  // Post form
         method: "POST", headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({"cardID": card})
       })
-      .then(res => {resStatus = res.status; return res.json()})
+      .then(res => res.json())
       .then(data => {
         setMessageValue(data.value)
       })
@@ -93,7 +97,19 @@ function Seller() {
       return setCheck(check => ({...check, purchase: false}))
     }
   }, [total])
+
+  useEffect(() => {
+    if (results[0]) {
+      setCard(results[0].codeResult.code)
+      setShowScanner(false)
+    }
+  }, [results])
   
+  const handleScan = (result) => {
+    setResults([]);
+    setResults(prevResults => prevResults.concat([result]));
+  };
+
   function handleCart(item) {  // Add item on cart
     if (cart.some(element => element.itemID === item.itemID)){
       const updatedCart = cart.map(element => {
@@ -142,6 +158,14 @@ function Seller() {
             card={card}
             dupliValue={""}
             valid={(value) => setCheck(check => ({...check, card:value}))}/>
+          {showScanner && !confirmPurchase ?
+            <>
+              <Scanner DetectedCode={handleScan}/>
+              <button onClick={() => {setShowScanner(false); return Quagga.stop()}}><Slash/></button>
+            </>
+          : 
+            <button onClick={() => setShowScanner(true)}><Maximize/></button>
+          }
           <button onClick={() => SubmitCardCheck()} disabled={check.card ? false : true}>Verificar Cartão</button>
           <div>
             <p>{messageValue}</p>
@@ -176,6 +200,14 @@ function Seller() {
               card={card}
               dupliValue={""}
               valid={(value) => setCheck(check => ({...check, card:value}))}/>
+              {showScanner ?
+              <>
+                <Scanner DetectedCode={handleScan}/>
+                <button onClick={() => {setShowScanner(false); return Quagga.stop()}}><Slash/></button>
+              </>
+              : 
+                <button onClick={() => setShowScanner(true)}><Maximize/></button>
+              }
             <button onClick={() => setConfirmPurchase(false)}>Cancelar</button>
             <button onClick={() => SubmitPurchase()} disabled={check.purchase && check.card ? false : true}>Confirmar</button>
           </div>
