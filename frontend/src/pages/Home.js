@@ -16,9 +16,9 @@ function Home() {
       fetch("/api/main")
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
-          if (data.standID !== 0){
+          if (resStatus === 200){
             return setUser(data)
-          } else {
+          } else if (resStatus === 401){
             return auth.onLogout()
           }
         })

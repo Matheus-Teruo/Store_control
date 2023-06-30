@@ -6,7 +6,6 @@ import Navbar from "./pages/Navbar";
 import Home from "./pages/Home";
 
 import Seller from "./pages/main/Seller";
-import ConfirmPurchase from "./pages/main/ConfirmPurchase";
 import Cashier from "./pages/main/Cashier";
 
 import User from "./pages/auth/User";
@@ -28,7 +27,6 @@ const router = createBrowserRouter([
     children: [
       { path: '/', element: <Home/>},
       { path: '/vendedor', element: <Seller/>},
-      { path: '/vendedor/confirmar-compra', element: <ConfirmPurchase/>},
       { path: '/caixa', element: <Cashier/>},
       { path: '/user', element: <User/>},
       { path: '/login', element: <Login/>},

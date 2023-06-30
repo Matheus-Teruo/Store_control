@@ -14,28 +14,14 @@ function AllUsers() {
 
   useEffect(() => {  // Load from pages
     if (auth.user.authenticated === true && auth.user.superuser) {
-      RequestStands()
       RequestLists()
+      RequestStands()
     } else if (auth.user.authenticated === false) {
       navigate('/login');
     } else if (auth.user.authenticated === true && !auth.user.superuser){
       navigate('/')
     }
   }, [auth, navigate])
-
-  async function RequestStands() {
-    var resStatus;
-      fetch('/api/liststand')
-        .then(res => {resStatus = res.status; return res.json()})
-        .then(data => {
-          if (resStatus === 200){
-            setAssociations(data.associations);
-            setStands(data.stands);
-          } else {
-            // error
-          }
-        })
-  }
 
   async function RequestLists() {  // List all Users
     var resStatus;
@@ -50,6 +36,20 @@ function AllUsers() {
       })
   }
 
+  async function RequestStands() {
+    var resStatus;
+      fetch('/api/liststand')
+        .then(res => {resStatus = res.status; return res.json()})
+        .then(data => {
+          if (resStatus === 200){
+            setAssociations(data.associations);
+            setStands(data.stands);
+          } else if (resStatus === 401){
+            return auth.onLogout()
+          }
+        })
+  }
+
   async function SubmitChangeStand(){
     var resStatus;
     fetch("/api/changestandid", {  // Pre login get salt
@@ -61,8 +61,8 @@ function AllUsers() {
         if (resStatus === 200) {
           setSelectedUserID(0);
           return RequestLists();
-        } else if (resStatus === 401) {
-          // deal with error
+        } else if (resStatus === 401){
+          return auth.onLogout()
         }
       })
       .catch(console.error)

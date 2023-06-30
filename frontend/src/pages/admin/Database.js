@@ -36,7 +36,7 @@ function Database() {
 
 async function RequestLists() {  // List all stand and associations
   var resStatus;
-    fetch('/api/listallstands')
+    fetch('/api/liststands')
       .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         if (resStatus === 200){
@@ -48,7 +48,7 @@ async function RequestLists() {  // List all stand and associations
       })
 }
   
-async function handleNewAssociation() {
+async function SubmitNewAssociation() {
   if (auth.user.authenticated) {
     var resStatus;
     fetch("/api/newassociation", {  // Post form
@@ -67,13 +67,15 @@ async function handleNewAssociation() {
           setCheck(check => ({...check, association:false}))
         } else if (resStatus === 409) {
           setAlreadyUsedK(data.value);
+        } else if (resStatus === 401){
+          return auth.onLogout()
         }
       })
       .catch(console.error)
   }
 }
 
-async function handleEditAssociation() {
+async function SubmitEditAssociation() {
   if (auth.user.authenticated) {
     var resStatus;
     fetch("/api/editassociation", {  // Post form
@@ -93,13 +95,15 @@ async function handleEditAssociation() {
           setCheck(check => ({...check, association:false}))  
         } else if (resStatus === 409) {
           setAlreadyUsedK({association: data.value, K_noUsed: false});
+        } else if (resStatus === 401){
+          return auth.onLogout()
         }
       })
       .catch(console.error)
   }
 }
 
-async function handleDelAssociation() {
+async function SubmitDelAssociation() {
   if (auth.user.authenticated) {
     var resStatus;
     fetch("/api/delassociation", {  // Post form
@@ -108,16 +112,20 @@ async function handleDelAssociation() {
     })
       .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
-        RequestLists()
-        setNewAssociation(""); setNewPrincipal("");
-        setShowAssociation(false); setAlreadyUsedK(""); setEdit(""); setConfirmDel(false);
-        setCheck(check => ({...check, association:false}))
+        if (resStatus === 200){
+          RequestLists()
+          setNewAssociation(""); setNewPrincipal("");
+          setShowAssociation(false); setAlreadyUsedK(""); setEdit(""); setConfirmDel(false);
+          setCheck(check => ({...check, association:false}))
+        } else if (resStatus === 401){
+          return auth.onLogout()
+        }
       })
       .catch(console.error)
   }
 }
 
-async function handleNewStand() {
+async function SubmitNewStand() {
   if (auth.user.authenticated) {
     var resStatus;
     fetch("/api/newstand", {  // Post form
@@ -136,13 +144,15 @@ async function handleNewStand() {
           setCheck(check => ({...check, stand:false}))
         } else if (resStatus === 409) {
           setAlreadyUsedS(data.value);
+        } else if (resStatus === 401){
+          return auth.onLogout()
         }
       })
       .catch(console.error)
   }
 }
 
-async function handleEditStand() {
+async function SubmitEditStand() {
   if (auth.user.authenticated) {
     var resStatus;
     fetch("/api/editstand", {  // Post form
@@ -162,13 +172,15 @@ async function handleEditStand() {
           setCheck(check => ({...check, stand:false}))
         } else if (resStatus === 409) {
           setAlreadyUsedS(data.value);
+        } else if (resStatus === 401){
+          return auth.onLogout()
         }
       })
       .catch(console.error)
   }
 }
 
-async function handleDelStand() {
+async function SubmitDelStand() {
   if (auth.user.authenticated) {
     var resStatus;
     fetch("/api/delstand", {  // Post form
@@ -177,10 +189,14 @@ async function handleDelStand() {
     })
       .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
+        if (resStatus === 200) {
           RequestLists()
           setNewStand(""); setNewAssociationID(0);
           setShowStand(false); setAlreadyUsedS(false); setEdit(""); setConfirmDel(false);
           setCheck(check => ({...check, stand:false}))
+        } else if (resStatus === 401){
+          return auth.onLogout()
+        }
       })
       .catch(console.error)
   }
@@ -269,11 +285,11 @@ function h_SValid(value) {  // Stand valid
           {edit === "association" ?
             <div>
               <button onClick={() => (setConfirmDel(true))}>Excluir kenjinkai</button>
-              <button onClick={() => (handleEditAssociation())} disabled={check.association ? false : true}>Editar kenjinkai</button>
+              <button onClick={() => (SubmitEditAssociation())} disabled={check.association ? false : true}>Editar kenjinkai</button>
             </div>
           :
             <div>
-              <button onClick={() => {handleNewAssociation()}} disabled={check.association ? false : true}>Registrar</button>
+              <button onClick={() => {SubmitNewAssociation()}} disabled={check.association ? false : true}>Registrar</button>
             </div>
           }
         </div>
@@ -298,11 +314,11 @@ function h_SValid(value) {  // Stand valid
           {edit === "stand" ?
             <div>
               <button onClick={() => (setConfirmDel(true))}>Excluir Estande</button>
-              <button onClick={() => (handleEditStand())} disabled={check.stand ? false : true}>Editar Estande</button>
+              <button onClick={() => (SubmitEditStand())} disabled={check.stand ? false : true}>Editar Estande</button>
             </div>
           :
             <div>
-              <button onClick={() => (handleNewStand())} disabled={check.stand ? false : true}>Criar Estande</button>
+              <button onClick={() => (SubmitNewStand())} disabled={check.stand ? false : true}>Criar Estande</button>
             </div>
           }
         </div>
@@ -319,10 +335,10 @@ function h_SValid(value) {  // Stand valid
           <div>
             <button onClick={() => (setConfirmDel(false))}>Cancelar</button>
             {edit === "association" ?
-            <button onClick={() => (handleDelAssociation())}>Excluir kenjinkai</button>
+            <button onClick={() => (SubmitDelAssociation())}>Excluir kenjinkai</button>
             :
             edit === "stand" &&
-            <button onClick={() => (handleDelStand())}>Excluir Estande</button>
+            <button onClick={() => (SubmitDelStand())}>Excluir Estande</button>
             }
           </div>
         </div>

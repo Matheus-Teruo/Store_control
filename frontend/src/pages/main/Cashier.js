@@ -32,7 +32,7 @@ function Cashier() {
 
   async function RequestLists() {  // List all itens and stands
     var resStatus;
-      fetch('/api/listallitems')
+      fetch('/api/listitems')
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200){
@@ -44,7 +44,7 @@ function Cashier() {
         })
   }
 
-  async function handleRecharge() {  // Submit the recharge
+  async function SubmitRecharge() {  // Submit the recharge
     if (auth.user.authenticated) {
       var resStatus;
       fetch("/api/recharge", {  // Post form
@@ -56,10 +56,14 @@ function Cashier() {
       })
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
-          RequestLists()
-          setRecharge(0); setCard(0);
-          setConfirmRecharge(false); setCheck({recharge: false, card: false})
-          handleCardCheck()
+          if (resStatus === 200){
+            RequestLists()
+            setRecharge(0); setCard(0);
+            setConfirmRecharge(false); setCheck({recharge: false, card: false})
+            return SubmitCardCheck()
+          } else if (resStatus === 401){
+            return auth.onLogout()
+          }
         })
         .catch((error) => {
           console.error(error.message);
@@ -68,7 +72,7 @@ function Cashier() {
     }
   }
 
-  async function handleReset() {  // Submit the recharge
+  async function SubmitReset() {  // Submit the recharge
     if (auth.user.authenticated) {
       var resStatus;
       fetch("/api/resetcard", {  // Post form
@@ -79,10 +83,14 @@ function Cashier() {
       })
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
-          RequestLists()
-          setRecharge(0); setCard(0);
-          setConfirmReset(false); setCheck({recharge: false, card: false})
-          setMessage(`finalizado cartão: ${data.cardID}`); setMessageValue("")
+          if (resStatus === 200){
+            RequestLists()
+            setRecharge(0); setCard(0);
+            setConfirmReset(false); setCheck({recharge: false, card: false})
+            setMessage(`finalizado cartão: ${data.cardID}`); setMessageValue("")
+          } else if (resStatus === 401){
+            return auth.onLogout()
+          }
         })
         .catch((error) => {
           console.error(error.message);
@@ -91,7 +99,7 @@ function Cashier() {
     }
   }
 
-  async function handleCardCheck() {
+  async function SubmitCardCheck() {
     var resStatus;
       fetch("/api/cardcheck", {  // Post form
         method: "POST", headers: {'Content-Type': 'application/json'},
@@ -180,8 +188,8 @@ function Cashier() {
               card={card}
               dupliValue={""}
               valid={h_Valid}/>
-            <button onClick={() => handleCardCheck()} disabled={check.card ? false : true}>Verificar Cartão</button>
-            <button onClick={() => {setConfirmReset(true);handleCardCheck()}} disabled={check.card ? false : true}>Resetar Cartão</button>
+            <button onClick={() => SubmitCardCheck()} disabled={check.card ? false : true}>Verificar Cartão</button>
+            <button onClick={() => {setConfirmReset(true);SubmitCardCheck()}} disabled={check.card ? false : true}>Resetar Cartão</button>
           </div>
           {stands.length === 0 ?
           <div>Nenhum estande no banco de dados</div>
@@ -248,7 +256,7 @@ function Cashier() {
             dupliValue={""}
             valid={h_Valid}/>
           <button onClick={() => setConfirmRecharge(false)}>Cancelar</button>
-          <button onClick={() => handleRecharge()} disabled={check.recharge && check.card ? false : true}>Confirmar</button>
+          <button onClick={() => SubmitRecharge()} disabled={check.recharge && check.card ? false : true}>Confirmar</button>
         </div>
       </div>
       }
@@ -263,7 +271,7 @@ function Cashier() {
             dupliValue={""}
             valid={h_Valid}/>
           <button onClick={() => setConfirmReset(false)}>Cancelar</button>
-          <button onClick={() => handleReset()} disabled={check.card ? false : true}>Confirmar</button>
+          <button onClick={() => SubmitReset()} disabled={check.card ? false : true}>Confirmar</button>
         </div>
       </div>
       }

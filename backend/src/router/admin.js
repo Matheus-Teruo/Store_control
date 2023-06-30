@@ -2,7 +2,6 @@ const express = require("express");
 const database = require("../database");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const morgan = require("morgan");
 // const multer = require('multer');
 
 // const storage = multer.diskStorage({
@@ -16,9 +15,17 @@ const morgan = require("morgan");
 
 const router = express();
 router.use(express.json());
-router.use(morgan("common"));
 router.use(cookieParser());
 // const upload = multer({storage: storage})
+
+const decodeJWT = (req, res) => {
+  try {
+    const decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+    return decoded;
+  } catch (error) {
+    return false
+  }
+}
 
 async function checkCardUse(array) {  // [{cardID: char(12), debit: int},...]
   const updatedArray = [];
@@ -39,7 +46,7 @@ async function checkCardUse(array) {  // [{cardID: char(12), debit: int},...]
   return updatedArray
 }
 
-async function checkStandAssociation(array) {
+async function checkStandAssociation(array) {  //
   for (const item of array) {
     const { standID } = item;
 
@@ -65,9 +72,11 @@ async function checkStandAssociation(array) {
   return array;
 }
 //  Database
-router.get("/listallstands", (req, res) => {  // Request all stands and associations
-  try {
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+router.get("/liststands", (req, res) => {  // Request all stands and associations
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     if (decoded.superuser) {
       database('associations')
         .select('association', 'associationID', "principal")
@@ -82,21 +91,21 @@ router.get("/listallstands", (req, res) => {  // Request all stands and associat
                   res.json({associations: associations, stands: stands}); 
                 } else {
                   res.json({associations: associations, stands: []});
-                }
-              })
-            } else {
-              res.json({associations: [], stands: []});
-            }
-          })
+              }})
+          } else {
+            res.json({associations: [], stands: []});
+        }})
+    } else {
+      return res.status(401).end();
     }
-  } catch(err) {
-    res.status(401).json({authenticated: false});
   }
 })
 
 router.post("/newassociation", (req, res) => {  // Create new association
-  try {
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     if (decoded.superuser) {
       const data = req.body;
       database('associations')
@@ -106,25 +115,25 @@ router.post("/newassociation", (req, res) => {  // Create new association
           res.json({message: `successful created association: ${data.association}`});
         })
         .catch(error => {
-          console.error(error)
           if (error.errno === 1062){  // Duplication error
             const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
             return res.status(409).json({error: `error on sing-up association '${data.association}'. Association '${data.association}' already exist`, column: column, value: data.association});
           } else {
+            console.error(error)
             return res.status(501).json({ error: {error}});
           }
         })
     } else {
-      res.status(401).json({message: "user has no authorization"});
+      return res.status(401).end();
     }
-  } catch(err) {
-    res.status(401).json({authenticated: false});
   }
 })
 
 router.post("/editassociation", (req, res) => {  // Change association property
-  try {
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     if (decoded.superuser) {
       const data = req.body;
       database('associations')
@@ -132,26 +141,28 @@ router.post("/editassociation", (req, res) => {  // Change association property
         .update({association: data.association, principal: data.principal})
         .then(() => {
           console.log(`successful edited association: ${data.association}`);
-           return res.json({message: `successful edited association: ${data.association}`});
+          return res.json({message: `successful edited association: ${data.association}`});
         })
         .catch(error => {
-          console.error(error)
           if (error.errno === 1062){  // Duplication error
             const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
             return res.status(409).json({error: `error on edit association '${data.association}'. Assiciation '${data.association}' already exist`, column: column, value: data.association});
           } else {
+            console.error(error)
             return res.status(501).json({ error: {error}});
           }
         })
+    } else {
+      return res.status(401).end();
     }
-  } catch(err) {
-    res.status(401).json({authenticated: false});
   }
 })
 
 router.post("/delassociation", (req, res) => {  // Delete association
-  try {
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     if (decoded.superuser) {
       const data = req.body;
       database('associations')
@@ -165,15 +176,17 @@ router.post("/delassociation", (req, res) => {  // Delete association
           console.error(error)
           return res.status(501).json({ error: {error}});
         })
+    } else {
+      return res.status(401).end();
     }
-  } catch(err) {
-    res.status(401).json({authenticated: false});
   }
 })
 
 router.post("/newstand", (req, res) => {  // Create new stand
-  try {
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     if (decoded.superuser) {
       const data = req.body;
       database('stands')
@@ -183,23 +196,25 @@ router.post("/newstand", (req, res) => {  // Create new stand
           res.json({message: `successful created association: ${data.stand}`});
         })
         .catch(error => {
-          console.error(error)
           if (error.errno === 1062){  // Duplication error
             const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
             return res.status(409).json({error: `error on sing-up stand '${data.stand}'. Stand '${data.stand}' already exist`, column: column, value: data.stand});
           } else {
+            console.error(error)
             return res.status(501).json({ error: {error}});
           }
         })
+    } else {
+      return res.status(401).end();
     }
-  } catch(err) {
-    res.status(401).json({authenticated: false});
   }
 })
 
 router.post("/editstand", (req, res) => {  // Change stands property
-  try {
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     if (decoded.superuser) {
       const data = req.body;
       database('stands')
@@ -210,23 +225,25 @@ router.post("/editstand", (req, res) => {  // Change stands property
           res.json({message: `successful edited association: ${data.stand}`});
         })
         .catch(error => {
-          console.error(error)
           if (error.errno === 1062){  // Duplication error
             const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
             return res.status(409).json({error: `error on edited stand '${data.stand}'. Stand '${data.stand}' already exist`, column: column, value: data.stand});
           } else {
+            console.error(error)
             return res.status(501).json({ error: {error}});
           }
         })
+    } else {
+      return res.status(401).end();
     }
-  } catch(err) {
-    res.status(401).json({authenticated: false});
   }
 })
 
 router.post("/delstand", (req, res) => {  // Delete stand
-  try {
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     if (decoded.superuser) {
       const data = req.body;
       database('stands')
@@ -240,50 +257,51 @@ router.post("/delstand", (req, res) => {  // Delete stand
           console.error(error);
           return res.status(501).json({ error: {error}});
         })
+    } else {
+      return res.status(401).end();
     }
-  } catch(err) {
-    res.status(401).json({authenticated: false});
   }
 })
 
 // Stocktaking
-router.get("/stocktaking", (req, res) => {
-  try{
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
-    const data = req.body;
+router.get("/stocktaking", (req, res) => {  // Request items from a standID
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     database('users')
       .select('stands.standID', 'stands.stand')
       .join('stands', 'users.standID', 'stands.standID')
       .where({userID: decoded.userID})
-      .then((rows) => {
-        if (rows.length > 0){
-          const row = rows[0];
+      .then((rowsUsers) => {
+        if (rowsUsers.length > 0){
+          const user = rowsUsers[0];
           database('items')
             .select()
-            .where({standID: row.standID})
+            .where({standID: user.standID})
             .then((items) => {
-              return res.json({stand: {standID:row.standID ,stand:row.stand}, items: items})
+              return res.json({stand: {standID: user.standID, stand: user.stand}, items: items})
             })
         } else {  // User without stand
-          return res.json({stand: {standID:0 ,stand:""}, items: []})
+          return res.json({stand: {standID:0, stand:""}, items: []})
         }
       })
-  } catch {  // Error of authenticated
-    return res.status(401).json({authenticated: false});
   }
 })
 
 router.post("/newitem", (req, res, next) => {  // Create new item
-  try{
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
-    const data = req.body;
+  const data = req.body;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     if (data.standID > 1) {
       database('users')
         .select('standID')
         .where({userID: decoded.userID})
-        .then((rows) => {
-          const row = rows[0];
-          if (row.standID === data.standID){
+        .then((rowsUsers) => {
+          const user = rowsUsers[0];
+          if (user.standID === data.standID){
             database('items')
               .insert(data)
               .then(() => {
@@ -295,33 +313,33 @@ router.post("/newitem", (req, res, next) => {  // Create new item
                   const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
                   return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
                 } else {
-                  console.error(error)
-                  return res.status(501).json({ error: {error}});
+                console.error(error)
+                return res.status(501).json({ error: {error}});
                 }
               })
           } else {
-            return res.status(401).json({authenticated: false});
+          return res.status(401).end();
           }
         })
     } else {
-      return res.status(401).json({message: "StandID === 1"});
+    return res.status(401).end();
     }
-  } catch {
-    return res.status(401).json({authenticated: false});
   }
 })
 
-router.post("/edititem", (req, res, next) => {  // Create new item
-  try{
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
-    const data = req.body;
+router.post("/edititem", (req, res, next) => {  // Change item property
+  const data = req.body;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     if (data.standID > 1) {
       database('users')
         .select('standID')
         .where({userID: decoded.userID})
-        .then((rows) => {
-          const row = rows[0];
-          if (row.standID === data.standID){
+        .then((rowsUsers) => {
+          const user = rowsUsers[0];
+          if (user.standID === data.standID){
             database('items')
               .where({itemID: data.itemID})
               .update({item: data.item, price: data.price, stock: data.stock})
@@ -338,11 +356,13 @@ router.post("/edititem", (req, res, next) => {  // Create new item
                   return res.status(501).json({ error: {error}});
                 }
               })
+          } else {
+            return res.status(401).end(); 
           }
         })
+    } else {
+      return res.status(401).end();
     }
-  } catch {
-    return res.status(401).json({authenticated: false});
   }
 })
 
@@ -353,39 +373,40 @@ router.post("/edititem", (req, res, next) => {  // Create new item
 //   }
 //   next();
 // });
-
-router.get("/allcards", (req, res) => {
-  try{
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
-    const data = req.body;
+// Cards
+router.get("/allcards", (req, res) => {  //  Request all cards
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     if (decoded.superuser) {
       database('cards')
       .select()
-      .then((rows) => {
-        if (rows.length > 0){
-          checkCardUse(rows)
+      .then((rowsCards) => {
+        if (rowsCards.length > 0){
+          checkCardUse(rowsCards)
             .then(newrows => {
               return res.json(newrows)
             })
             .catch(error => {
               console.error('Error updating array with "in_use" values:', error);
             })
-        } else {  // User without stand
+        } else { // User without stand
           return res.json([])
         }
       })
     } else {
-      return res.status(401).json({authenticated: false});
+      return res.status(401).end();
     }
-  } catch {  // Error of authenticated
-    return res.status(401).json({authenticated: false});
   }
 })
 
 router.post("/newcard", (req, res, next) => {  // Create new item
-  try{
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
-    const data = req.body;
+  const data = req.body;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     if (decoded.superuser === 1) {
       database('cards')
         .insert(data)
@@ -398,24 +419,26 @@ router.post("/newcard", (req, res, next) => {  // Create new item
             const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
             return res.status(409).json({error: `error on create item '${data.cardID}'. Stand '${data.cardID}' already exist`, column: column, value: data.cardID});
           } else {
+            console.error(error) 
             return res.status(501).json({ error: {error}});
           }
         })
+    } else {
+      return res.status(401).end();
     }
-  } catch {
-    return res.status(401).json({authenticated: false});
   }
 })
-
-router.get("/allusers", (req, res) => {
-  try{
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
-    const data = req.body;
+// AllUsers
+router.get("/allusers", (req, res) => {  // Request all users
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     if (decoded.superuser){
       database('users')
         .select('userID', 'username', 'fullname', 'standID', 'superuser')
-        .then((rows) => {
-          checkStandAssociation(rows)
+        .then((rowsUsers) => {
+          checkStandAssociation(rowsUsers)
             .then(newrows => {
               return res.json(newrows)
             })
@@ -424,16 +447,16 @@ router.get("/allusers", (req, res) => {
             })
         })
     } else {
-      return res.status(401).json({authenticated: false});
-    } 
-  } catch {  // Error of authenticated
-    return res.status(401).json({authenticated: false});
+      return res.status(401).end();
+    }
   }
 })
 
-router.get("/liststand", (req, res) => {  // Check user
-  try {
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+router.get("/liststand", (req, res) => {  // Request user stands
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     if (decoded.superuser) {
       database('associations')
       .select('association', 'associationID')
@@ -447,7 +470,7 @@ router.get("/liststand", (req, res) => {  // Check user
               if (stands.length > 0){
                 return res.json({associations: associations, stands: stands}); 
               } else {
-                return res.json({associations: associations, stands: []}); 
+              return res.json({associations: associations, stands: []}); 
               }
             })
         } else {
@@ -455,25 +478,23 @@ router.get("/liststand", (req, res) => {  // Check user
         }
       })
     } else {
-      return res.status(401).json({message: 'user not allowed'});
+      return res.status(401).end();
     }
-  } catch(err) {
-    return res.status(401).json({message: 'error on take list'});
   }
 })
 
 router.post("/changestandid", (req, res) => {  // Change user stand
   const data = req.body;
-  try {
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
-    database('users')
-      .where({userID: decoded.userID})
-      .update({standID: data.standID})
-      .then(() => {
-        return res.json({message: `standID successfull update to: ${data.standID}`, standID: data.standID});
-      })
-  } catch(err) {
-    return res.status(401).json({message: `change error`});
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
+  database('users')
+    .where({userID: decoded.userID})
+    .update({standID: data.standID})
+    .then(() => {
+      return res.json({message: `standID successfull update to: ${data.standID}`, standID: data.standID});
+    })
   }
 })
 module.exports = router;

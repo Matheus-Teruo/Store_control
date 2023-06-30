@@ -39,7 +39,7 @@ function Seller() {
         })
   }
 
-  async function handlePurchase() {  // Submit the recharge
+  async function SubmitPurchase() {  // Submit the recharge
     if (auth.user.authenticated) {
       var resStatus;
       fetch("/api/purchase", {  // Post form
@@ -52,10 +52,14 @@ function Seller() {
       })
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
-          RequestLists()
-          setCart([]); setCard(0);
-          setConfirmPurchase(false); setCheck({purchase: false, card: false})
-          handleCardCheck()
+          if (resStatus === 200){
+            RequestLists()
+            setCart([]); setCard(0);
+            setConfirmPurchase(false); setCheck({purchase: false, card: false})
+            SubmitCardCheck()
+          } else if (resStatus === 401){
+            return auth.onLogout()
+          }
         })
         .catch((error) => {
           console.error(error.message);
@@ -63,7 +67,7 @@ function Seller() {
     }
   }
 
-  async function handleCardCheck() {
+  async function SubmitCardCheck() {
     var resStatus;
       fetch("/api/cardcheck", {  // Post form
         method: "POST", headers: {'Content-Type': 'application/json'},
@@ -138,7 +142,7 @@ function Seller() {
             card={card}
             dupliValue={""}
             valid={(value) => setCheck(check => ({...check, card:value}))}/>
-          <button onClick={() => handleCardCheck()} disabled={check.card ? false : true}>Verificar Cartão</button>
+          <button onClick={() => SubmitCardCheck()} disabled={check.card ? false : true}>Verificar Cartão</button>
           <div>
             <p>{messageValue}</p>
           </div>
@@ -173,7 +177,7 @@ function Seller() {
               dupliValue={""}
               valid={(value) => setCheck(check => ({...check, card:value}))}/>
             <button onClick={() => setConfirmPurchase(false)}>Cancelar</button>
-            <button onClick={() => handlePurchase()} disabled={check.purchase && check.card ? false : true}>Confirmar</button>
+            <button onClick={() => SubmitPurchase()} disabled={check.purchase && check.card ? false : true}>Confirmar</button>
           </div>
         </div>
         }

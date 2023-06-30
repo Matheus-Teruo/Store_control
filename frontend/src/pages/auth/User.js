@@ -17,8 +17,7 @@ function User() {
   const [change, setChange] = useState({
     username:false,
     fullname:false,
-    password:false,
-    standID:false});
+    password:false});
   const [newUsername, setNewUsername] = useState("");
   const [newFullname, setNewFullname] = useState("");
   const [newStandID, setNewStandID] = useState(null);
@@ -63,7 +62,7 @@ function User() {
       })
   }
 
-  function handleLogout() {
+  function SubmitLogout() {
     auth.onLogout()
     navigate('/')
   }
@@ -103,14 +102,14 @@ function User() {
     setCheck(check => ({...check, password:value}))
   };
 
-  function h_SChange(value) {  // Manage stand ID
-    const aux = parseInt(value)
-    if (aux === 0) {
-      setNewStandID(null)
-    } else {
-      setNewStandID(aux)
-    }
-  }
+  // function h_SChange(value) {  // Manage stand ID
+  //   const aux = parseInt(value)
+  //   if (aux === 0) {
+  //     setNewStandID(null)
+  //   } else {
+  //     setNewStandID(aux)
+  //   }
+  // }
 
   async function SubmitEditUsername(){
     if (check.username){
@@ -126,6 +125,8 @@ function User() {
             return setChange((change) => ({...change, username: false}))
           } else if (resStatus === 409) {
             setAlreadyUsedUN(data.value);
+          } else if (resStatus === 401){
+            return auth.onLogout()
           }
         })
         .catch(console.error)
@@ -133,57 +134,63 @@ function User() {
   }
 
   async function SubmitEditFullname(){
-    var resStatus;
-    fetch("/api/editfullname", {  // Pre login get salt
-      method: "POST", headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({"fullname": newFullname})
-    })
-      .then(res => {resStatus = res.status; return res.json()})
-      .then(data => {
-        if (resStatus === 200) {
-          setUser(user => ({...user, fullname: data.fullname}));
-          return setChange((change) => ({...change, fullname: false}))
-        } else if (resStatus === 409) {
-          setAlreadyUsedFN(data.value);
-        }
+    if (check.fullname){
+      var resStatus;
+      fetch("/api/editfullname", {  // Pre login get salt
+        method: "POST", headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({"fullname": newFullname})
       })
-      .catch(console.error)
+        .then(res => {resStatus = res.status; return res.json()})
+        .then(data => {
+          if (resStatus === 200) {
+            setUser(user => ({...user, fullname: data.fullname}));
+            return setChange((change) => ({...change, fullname: false}))
+          } else if (resStatus === 409) {
+            setAlreadyUsedFN(data.value);
+          } else if (resStatus === 401){
+            return auth.onLogout()
+          }
+        })
+        .catch(console.error)
+    }
   }
 
-  async function SubmitChangeStand(){
-    var resStatus;
-    fetch("/api/changestandid", {  // Pre login get salt
-      method: "POST", headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({"standID": newStandID})
-    })
-      .then(res => {resStatus = res.status; return res.json()})
-      .then(data => {
-        if (resStatus === 200) {
-          setUser(user => ({...user, standID: data.standID}));
-          setChange((change) => ({...change, standID: false}));
-          return RequisiteList();
-        } else if (resStatus === 401) {
-          // deal with error
-        }
-      })
-      .catch(console.error)
-  }
+  // async function SubmitChangeStand(){
+  //   var resStatus;
+  //   fetch("/api/changestandid", {  // Pre login get salt
+  //     method: "POST", headers: {'Content-Type': 'application/json'},
+  //     body: JSON.stringify({"standID": newStandID})
+  //   })
+  //     .then(res => {resStatus = res.status; return res.json()})
+  //     .then(data => {
+  //       if (resStatus === 200) {
+  //         setUser(user => ({...user, standID: data.standID}));
+  //         setChange((change) => ({...change, standID: false}));
+  //         return RequisiteList();
+  //       }  else if (resStatus === 401){
+  //         return auth.onLogout()
+  //       }
+  //     })
+  //     .catch(console.error)
+  // }
 
   async function PreSubmitEditPassword(){
-    var resStatus;
-    fetch("/api/preeditpassword", {  // Pre login get salt
-      method: "POST", headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify([])
-    })
-      .then(res => {resStatus = res.status; return res.json()})
-      .then(data => {
-        if (resStatus === 200) {
-          return SubmitEditPassword(data.salt)
-        } else if (resStatus === 401) {
-          // deal with error
-        }
+    if (check.password){
+      var resStatus;
+      fetch("/api/preeditpassword", {  // Pre login get salt
+        method: "POST", headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify([])
       })
-      .catch(console.error)
+        .then(res => {resStatus = res.status; return res.json()})
+        .then(data => {
+          if (resStatus === 200) {
+            return SubmitEditPassword(data.salt)
+          } else if (resStatus === 401){
+            return auth.onLogout()
+          }
+        })
+        .catch(console.error)
+    }
   }
   async function SubmitEditPassword(salt){
     var resStatus;
@@ -203,8 +210,8 @@ function User() {
         if (resStatus === 200) {
           setUser(user => ({...user, standID: data.standID}));
           return setChange((change) => ({...change, password: false}))
-        } else if (resStatus === 401) {
-          // deal with error
+        }  else if (resStatus === 401){
+          return auth.onLogout()
         }
       })
       .catch(console.error)
@@ -279,7 +286,7 @@ function User() {
             <button onClick={() => PreSubmitEditPassword()} disabled={check.password ? false : true}>Confirmar</button>
           </>
           }
-          <button onClick={() => handleLogout()}>
+          <button onClick={() => SubmitLogout()}>
             Log out
           </button>
         </div>  

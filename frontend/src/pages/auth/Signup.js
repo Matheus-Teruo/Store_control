@@ -32,12 +32,10 @@ function Signup() {
 
   async function SubmitSingUp(event) {  // Submit POST request sign-up
     event.preventDefault()
-
     // encrypt password
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
     var resStatus;
-
     fetch("/api/signup", {  // Post form
       method: "POST",
       headers: {'Content-Type': 'application/json'},

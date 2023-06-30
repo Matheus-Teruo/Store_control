@@ -1,9 +1,7 @@
 const express = require("express");
 const database = require("../database");
-const morgan = require("morgan");
 
 const router = express();
-router.use(morgan("common"));
 
 router.get("/", function(req, res, next) {
   database.raw('select VERSION() version')

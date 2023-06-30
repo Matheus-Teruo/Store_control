@@ -15,7 +15,7 @@ function Cards() {
 
   useEffect(() => {  // Load from pages
     if (auth.user.authenticated === true && auth.user.superuser) {
-      RequestListsCards()
+      RequestLists()
     } else if (auth.user.authenticated === false) {
       navigate('/login');
     } else if (auth.user.authenticated === true && !auth.user.superuser){
@@ -23,7 +23,7 @@ function Cards() {
     }
   }, [auth, navigate])
   
-  async function RequestListsCards() {  // List all Cards
+  async function RequestLists() {  // List all Cards
     var resStatus;
       fetch('/api/allcards')
         .then(res => {resStatus = res.status; return res.json()})
@@ -36,7 +36,7 @@ function Cards() {
         })
   }
 
-  async function handleNewCard() {
+  async function SubmitNewCard() {
     if (auth.user.authenticated) {
       var resStatus;
       fetch("/api/newcard", {  // Post form
@@ -49,11 +49,13 @@ function Cards() {
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200) {
-            RequestListsCards()
+            RequestLists()
             setNewCardID("")
             setShowCard(false); setCheck(false); alreadyUsed(false)
           } else if (resStatus === 409) {
             setAlreadyUsed(data.value);
+          } else if (resStatus === 401){
+            return auth.onLogout()
           }
         })
         .catch(console.error)
@@ -115,7 +117,7 @@ function Cards() {
           dupliValue={alreadyUsed}
           valid={h_Valid}/>
         </div>
-        <button onClick={() => (handleNewCard())} disabled={check ? false : true}>Criar Cartões</button>
+        <button onClick={() => (SubmitNewCard())} disabled={check ? false : true}>Criar Cartões</button>
       </div>  
       }
     </div>

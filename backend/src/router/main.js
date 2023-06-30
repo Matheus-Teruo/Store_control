@@ -2,12 +2,20 @@ const express = require("express");
 const database = require("../database");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const morgan = require("morgan");
+
 
 const router = express();
 router.use(express.json());
-router.use(morgan("common"));
 router.use(cookieParser());
+
+const decodeJWT = (req, res) => {
+  try {
+    const decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+    return decoded;
+  } catch (error) {
+    return false
+  }
+}
 
 async function Customer(value) { // {card: char(12), valid: boolean, time: datetime}
   return new Promise((resolve, reject) => {
@@ -100,50 +108,52 @@ async function Goods(parameter) {  // {saleID: int,items: [{itemID: int, saleID:
 
 // Home
 router.get("/main", (req, res) => {  // Get home info
-  try {
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     database('users')
       .select('standID', 'superuser')
       .where({userID: decoded.userID})
-      .then(rows => {
-        const row  = rows[0];
-        res.json(row)
+      .then(rowsUsers => {
+        const user  = rowsUsers[0];
+        res.json(user)
       });
-  } catch(err) {
-    res.json({standID: 0, superuser: 0});
   }
 })
 // Cashier
-router.get("/listallitems", (req, res) => {
-  try{
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+router.get("/listitems", (req, res) => {  // Request items and stands
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     database('stands')
       .select("standID", "stand")
       .whereNot({standID: 1})
-      .then((rows) => {
-        if (rows.length > 0){
+      .then((rowsStands) => {
+        if (rowsStands.length > 0){
           database('items')
             .select()
-            .then((rows2) =>{
-              if (rows2.length > 0) {
-                return res.json({stands: rows, items: rows2})
+            .then((rowsItems) =>{
+              if (rowsItems.length > 0) {
+                return res.json({stands: rowsStands, items: rowsItems})
               } else {
-                return res.json({stands: rows, items: []})
+                return res.json({stands: rowsStands, items: []})
               }
             })
-        } else {  // No stand created
+        } else { // No stand created
           return res.json({stands: [], items: []})
         }
       })
-  } catch {  // Error of authenticated
-    return res.status(401).json({authenticated: false});
   }
 })
 
-router.post("/recharge", (req, res) => {
-  try{
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
-    const data = req.body;
+router.post("/recharge", (req, res) => {  // Submit recharge
+  const data = req.body;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     Card(data.cardID)
       .then(card => {
         database('recharges')
@@ -171,17 +181,17 @@ router.post("/recharge", (req, res) => {
           })
       })
       .catch(() => {  // No card resgistred
-        return res.status(406).json({message: "error no card registred", error: "cards"})
+        return res.status(406).json({message: "error, no card registred", error: "cards"})
       })
-  } catch {  // Error of authenticated
-    return res.status(401).json({message: "error user not registred",authenticated: false});
   }
 })
 
-router.post("/resetcard", (req, res) => {
-  try{
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
-    const data = req.body;
+router.post("/resetcard", (req, res) => {  // Submit reset card
+  const data = req.body;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     Card(data.cardID)
       .then(card => {
         if (card.debit > 0) {
@@ -220,32 +230,32 @@ router.post("/resetcard", (req, res) => {
       .catch(() => {  // No card resgistred
         return res.status(406).json({message: "error no card registred", error: "cards"})
       })
-  } catch {  // Error of authenticated
-    return res.status(401).json({message: "error user not registred",authenticated: false});
   }
 })
 // Seller
-router.get("/listitemsbystand", (req, res) => {
-  try{
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
+router.get("/listitemsbystand", (req, res) => {  // Request items by stand
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     database('users')
       .select('standID')
       .where({userID: decoded.userID})
-      .then((rowsUser) => {
-        if (rowsUser.length > 0){
-          const user = rowsUser[0];
+      .then((rowsUsers) => {
+        if (rowsUsers.length > 0){
+          const user = rowsUsers[0];
           database('stands')
             .select('stand')
             .where({standID: user.standID})
-            .then((rowsStand) => {
-              if (rowsStand.length > 0) {
-                const stand = rowsStand[0];
+            .then((rowsStands) => {
+              if (rowsStands.length > 0) {
+                const stand = rowsStands[0];
                 database('items')
                   .select()
                   .where({standID: user.standID})
-                  .then((rowsItem) =>{
-                    if (rowsItem.length > 0) {
-                      return res.json({standID: user.standID, stand: stand.stand, items: rowsItem})
+                  .then((rowsItems) =>{
+                    if (rowsItems.length > 0) {
+                      return res.json({standID: user.standID, stand: stand.stand, items: rowsItems})
                     } else {
                       return res.json({standID: user.standID, stand: stand.stand, items: []})
                     }
@@ -254,21 +264,23 @@ router.get("/listitemsbystand", (req, res) => {
                     console.error(error)
                     return res.status(500).json({standID: 0, stand: "", items: []})
                   })
+              } else {
+                return res.status(401).end();
               }
             })
-        } else {  // No stand selected
+        } else {// No stand selected
           return res.json({standID: 0, stand: "", items: []})
         }
       })
-  } catch {  // Error of authenticated
-    return res.status(401).json({authenticated: false});
   }
 })
 
-router.post("/purchase", (req, res) => {
-  try{
-    var decoded = jwt.verify(req.cookies.jwt, process.env.SECRET_TOKEN).payload;
-    const data = req.body;
+router.post("/purchase", (req, res) => {  // Submit purchase
+  const data = req.body;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
     Card(data.cardID)  // Check debit and take now time
       .then(card => {
         const total = data.items.reduce((sum, item) => {
@@ -294,10 +306,10 @@ router.post("/purchase", (req, res) => {
                         })
                     })
                 })
-          })
-          .catch(() => {  // Error on register sales
-            return res.status(500).json({message: "error on register sales", error: "sales"})
-          })
+            })
+            .catch(() => {  // Error on register sales
+              return res.status(500).json({message: "error on register sales", error: "sales"})
+            })
         } else {
           return res.json({message: "insuficient debit", error: "card"})
         }
@@ -305,12 +317,10 @@ router.post("/purchase", (req, res) => {
       .catch(() => {  // No card resgistred
         return res.status(406).json({message: "error no card registred", error: "cards"})
       })
-  } catch {  // Error of authenticated
-    return res.status(401).json({authenticated: false});
   }
 })
 
-router.post('/cardcheck', (req, res) => {
+router.post('/cardcheck', (req, res) => {  // Request card debit
   const data = req.body;
   Card(data.cardID)
     .then((card) => {
