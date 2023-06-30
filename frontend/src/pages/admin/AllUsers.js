@@ -117,14 +117,14 @@ function AllUsers() {
                 <p>{stands.filter(element => element.standID === user.standID)[0]?.stand}</p>
               </>
               :
-              <p>
+              <div>
                 <StandID
                   output={handleChange}
                   associations={associations}
                   stands={stands}
                   defaultValue={user.standID}/>
                 <button onClick={() => (SubmitEditStandID())}>Confirmar</button>
-              </p>
+              </div>
               }
               <p>{user.superuser}</p>
             </li>  

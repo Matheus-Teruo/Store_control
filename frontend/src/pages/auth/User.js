@@ -39,7 +39,7 @@ function User() {
     } else if (auth.user.authenticated === true && user.username !== ""){ // Special case logout
       navigate('/login');
     }
-  }, [auth, navigate])
+  }, [auth, user, navigate])
 
   function RequestUserData() {  // Request user data
     var resStatus;

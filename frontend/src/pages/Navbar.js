@@ -16,7 +16,7 @@ function Navbar() {
     } else if (auth.user.authenticated === true && !user.firstTime){
       setUser((user) => ({...user, firstTime: true}))
     }
-  }, [])
+  }, [auth, user])
 
   return (
     <>

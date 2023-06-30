@@ -24,7 +24,7 @@ function Home() {
         })
         .catch(console.error)
     }
-  }, [auth])
+  }, [auth, user.standID])
 
   return (
     <div className="container">
