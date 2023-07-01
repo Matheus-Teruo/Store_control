@@ -490,10 +490,10 @@ router.post("/changestandid", (req, res) => {  // Change user stand
     return res.status(401).end();
   } else {
   database('users')
-    .where({userID: decoded.userID})
+    .where({userID: data.userID})
     .update({standID: data.standID})
     .then(() => {
-      return res.json({message: `standID successfull update to: ${data.standID}`, standID: data.standID});
+      return res.json({message: `userID: ${data.userID} successfull update standID  to: ${data.standID}`, standID: data.standID});
     })
   }
 })

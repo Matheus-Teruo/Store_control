@@ -11,7 +11,9 @@ function StandID(props) {
     setStandIndex(props.defaultValue || 0)
     setStands(props.stands)
     setAssociations(props.associations)
-    setAssociationIndex(props.stands.filter(element => element.standID === props.defaultValue)[0].associationID)
+    console.log(props.stands)
+    console.log(props.defaultValue)
+    setAssociationIndex(props.stands.filter(element => element.standID === props.defaultValue)[0]?.associationID)
   }, [props.defaultValue, props.stands, props.association])
 
   function handleStandChange(event) {  // handle stand
