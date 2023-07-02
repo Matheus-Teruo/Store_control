@@ -489,12 +489,14 @@ router.post("/changestandid", (req, res) => {  // Change user stand
   if (!decoded) {
     return res.status(401).end();
   } else {
-  database('users')
-    .where({userID: data.userID})
-    .update({standID: data.standID})
-    .then(() => {
-      return res.json({message: `userID: ${data.userID} successfull update standID  to: ${data.standID}`, standID: data.standID});
-    })
+    if (decoded.superuser) {
+      database('users')
+        .where({userID: data.userID})
+        .update({standID: data.standID})
+        .then(() => {
+          return res.json({message: `userID: ${data.userID} successfull update standID  to: ${data.standID}`, standID: data.standID});
+        })
+      }
   }
 })
 module.exports = router;
