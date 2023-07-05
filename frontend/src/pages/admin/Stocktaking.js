@@ -82,7 +82,8 @@ function Stocktaking() {
           "itemID": itemID,
           "item": newItem,
           "price": newPrice,
-          "stock": newStock
+          "stock": newStock,
+          "standID": stand.standID
         })
       })
         .then(res => {resStatus = res.status; return res.json()})

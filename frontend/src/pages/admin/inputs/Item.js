@@ -69,7 +69,7 @@ function Item(props) {
         {!P_Check && <p>noZero</p>}
       </div>
       <label>estoque:</label>
-      <input value={props.stock} onChange={event => props.output(event)} id="stock" type="number" name="stock" min="0"/>
+      <input value={props.stock} onChange={event => props.output(event)} id="stock" inputMode="numeric" type="number" name="stock" min="0"/>
       <div>
         {!S_Check && <p>noZero</p>}
       </div>

@@ -30,7 +30,6 @@ router.get("/checkuser", (req, res) => {  // Check user log in
     return res.json({authenticated: true, firstname: decoded.firstname, superuser: decoded.superuser});
   }
 })
-
 // User
 router.get("/user", (req, res) => {  // Request user atribute
   const decoded = decodeJWT(req, res);
@@ -236,7 +235,7 @@ router.post("/editpassword", (req, res) => {  // Check password and change
             .then(() => {
               return res.json({message: `password successfull update`})});
         } else {
-        return res.status(401).json({message: "password incorrect"})
+          return res.status(406).json({message: "password incorrect"})
         }
       }
     })

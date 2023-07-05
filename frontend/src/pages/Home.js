@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react'
+import './Home.css';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Clipboard, DollarSign, Table, Users, CreditCard, Database } from 'react-feather';
+import { Clipboard, DollarSign, Package, Users, CreditCard, Flag } from 'react-feather';
 import AuthContext from '../store/auth_context';
 
 function Home() {
@@ -27,90 +28,87 @@ function Home() {
   }, [auth, user.standID])
 
   return (
-    <div className="container">
-      {auth.user.authenticated === true ?
-        <>
-          <div>
-            EVENTO 
+    <>
+    {auth.user.authenticated === true ?
+      <div className="Body">
+        <h1 className="MainTitle">
+          Store Control
+        </h1>
+        <div className="MainSection">
+          <div className="MainSubtitle">
+            <h2>Funções</h2>
           </div>
-          <div>
-            <div className="frame">
-              {user.standID > 1 ?
-              <Link to="/vendedor">
-                <Clipboard alt="Vendedor"/>
-                <p>vendedor</p>
-              </Link>
-              :
-              <div>
-                <Clipboard alt="Vendedor"/>
-                <p>vendedor</p>
-              </div>
-              }
+          <div className="MainRole">
+            {user.standID > 1 ?
+            <Link className="MainFrame" to="/seller">
+              <Clipboard alt="Vendedor"/>
+              <p>vendedor</p>
+            </Link>
+            :
+            <div className="MainFrame invalid">
+              <Clipboard alt="Vendedor"/>
+              <p>vendedor</p>
             </div>
-            <div className="frame">
-              {user.standID === 1 ?
-              <Link to="/caixa">
-                <DollarSign alt="Caixa"/>
-                <p>Caixa</p>
-              </Link>
-              :
-              <div>
-                <DollarSign alt="Caixa"/>
-                <p>Caixa</p>
-              </div>
-              }
-            </div>
-            <div className="frame">
-              {user.standID !== null && user.standID !== 1 ? 
-              <Link to="/inventario">
-                <Table alt="Sheets"/>
-                <p>Inventário</p>
-              </Link>
-              :
-              <div>
-                <Table alt="Sheets"/>
-                <p>Inventário</p>
-              </div>
-              } 
-            </div>
-            {user.superuser === 1 && 
-              <div>
-                <Link to="/admin/allusers">
-                  <Users alt="Users"/>
-                  <p>Usuários</p>
-                </Link>  
-              </div>
             }
-            {user.superuser === 1 && 
-              <div>
-                <Link to="/admin/cards">
-                  <CreditCard alt="Cards"/>
-                  <p>Cartões</p>
-                </Link>  
-              </div>
-            }
-            {user.superuser === 1 && 
-              <div className="frame">
-                <Link to="/admin/database">
-                  <Database alt="Database"/>
-                  <p>Database</p>
-                </Link>
-              </div>
+            {user.standID === 1 ?
+            <Link className="MainFrame" to="/cashier">
+              <DollarSign alt="Caixa"/>
+              <p>Caixa</p>
+            </Link>
+            :
+            <div className="MainFrame invalid">
+              <DollarSign alt="Caixa"/>
+              <p>Caixa</p>
+            </div>
             }
           </div>
-        </>
-      :
-        <>
-          <div>
-            Hello to ...
+          {user.standID !== null && user.standID !== 1 ? 
+          <Link className="MainStocktaking" to="/stocktaking">
+            <Package alt="Stock"/>
+            <p>Inventário</p>
+          </Link>
+          :
+          <div className="MainStocktaking invalid">
+            <Package alt="Stock"/>
+            <p>Inventário</p>
           </div>
-          <div>
-            <Link to="/login">Log in</Link>
-            <Link to="/signup">Sign up</Link>
+          }
+          {user.superuser === 1 &&
+          <>
+          <div className="MainSubtitle">
+            <h2>Administrador</h2>
           </div>
-        </>
-      }
-    </div>
+          <div className="MainAdmin">
+            <Link className="MainFrame2" to="/admin/allusers">
+              <Users alt="Users"/>
+              <p>Usuários</p>
+            </Link>  
+            <Link className="MainFrame2" to="/admin/cards">
+              <CreditCard alt="Cards"/>
+              <p>Cartões</p>
+            </Link>
+            <Link className="MainFrame2" to="/admin/database">
+              <Flag alt="Database"/>
+              <p>Associações</p>
+            </Link>
+          </div>
+          </>
+          }
+        </div>
+      </div>
+    :
+      <div className="Home">
+        <h1 className="HomeTitle">
+          Store Control
+        </h1>
+        <div className="HomeUser">
+          <Link className="HomeAuth" to="/login">Entre</Link>
+          <p className="Hometext">ou</p>
+          <Link className="HomeAuth" to="/signup">Cadastre-se</Link>
+        </div>
+      </div>
+    }
+    </>
   )
 }
 

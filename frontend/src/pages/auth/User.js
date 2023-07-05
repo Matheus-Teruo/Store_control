@@ -1,13 +1,14 @@
+import "./User.css"
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { User, Smile, Flag, Lock, Unlock } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Username from './inputs/Username';
 import Fullname from './inputs/Fullname';
 import Password from './inputs/Password';
-// import StandID from './inputs/StandID';
 import bcrypt from 'bcryptjs';
 
-function User() {
+function UserPage() {
   const [user, setUser] = useState({
     username: "",
     fullname: "",
@@ -20,16 +21,17 @@ function User() {
     password:false});
   const [newUsername, setNewUsername] = useState("");
   const [newFullname, setNewFullname] = useState("");
-  // const [newStandID, setNewStandID] = useState(null);
   const [newPassword, setNewPassword] = useState({
     oldpassword: "",
     newpassword: ""});
   const [check, setCheck] = useState({
     username: false,
     fullname: false,
+    oldpassword: false,
     password: false});
   const [alreadyUsedUN, setAlreadyUsedUN] = useState("");
   const [alreadyUsedFN, setAlreadyUsedFN] = useState("");
+  const [isFoc, setIsFoc] = useState(false);
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
 
@@ -64,64 +66,76 @@ function User() {
 
   async function SubmitEditUsername(){  // Submit edit username
     if (check.username){
-      var resStatus;
-      fetch("/api/editusername", {  // Pre login get salt
-        method: "POST", headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({"username": newUsername})
-      })
-        .then(res => {resStatus = res.status; return res.json()})
-        .then(data => {
-          if (resStatus === 200) {
-            setUser(user => ({...user, username: data.username}));
-            return setSelected((selected) => ({...selected, username: false}))
-          } else if (resStatus === 409) {
-            setAlreadyUsedUN(data.value);
-          } else if (resStatus === 401){
-            return auth.onLogout()
-          }
+      if (user.username !== newUsername){
+        var resStatus;
+        fetch("/api/editusername", {  // Pre login get salt
+          method: "POST", headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({"username": newUsername})
         })
-        .catch(console.error)
+          .then(res => {resStatus = res.status; return res.json()})
+          .then(data => {
+            if (resStatus === 200) {
+              setUser(user => ({...user, username: data.username}));
+              return setSelected((selected) => ({...selected, username: false}))
+            } else if (resStatus === 409) {
+              setAlreadyUsedUN(data.value);
+            } else if (resStatus === 401){
+              return auth.onLogout()
+            }
+          })
+          .catch(console.error)
+      } else {
+        setSelected((selected) => ({...selected, username: false}))
+      }
     }
   }
 
   async function SubmitEditFullname(){  // Submit edit fullname
     if (check.fullname){
-      var resStatus;
-      fetch("/api/editfullname", {  // Pre login get salt
-        method: "POST", headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({"fullname": newFullname})
-      })
-        .then(res => {resStatus = res.status; return res.json()})
-        .then(data => {
-          if (resStatus === 200) {
-            setUser(user => ({...user, fullname: data.fullname}));
-            return setSelected((selected) => ({...selected, fullname: false}))
-          } else if (resStatus === 409) {
-            setAlreadyUsedFN(data.value);
-          } else if (resStatus === 401){
-            return auth.onLogout()
-          }
+      if (user.fullname !== newFullname) {
+        var resStatus;
+        fetch("/api/editfullname", {  // Pre login get salt
+          method: "POST", headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({"fullname": newFullname})
         })
-        .catch(console.error)
+          .then(res => {resStatus = res.status; return res.json()})
+          .then(data => {
+            if (resStatus === 200) {
+              setUser(user => ({...user, fullname: data.fullname}));
+              return setSelected((selected) => ({...selected, fullname: false}))
+            } else if (resStatus === 409) {
+              setAlreadyUsedFN(data.value);
+            } else if (resStatus === 401){
+              return auth.onLogout()
+            }
+          })
+          .catch(console.error)
+      } else {
+        setSelected((selected) => ({...selected, fullname: false}))
+      }
     }
   }
 
   async function PreSubmitEditPassword(){  // Submit take salt
     if (check.password){
-      var resStatus;
-      fetch("/api/preeditpassword", {  // Pre login get salt
-        method: "POST", headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify([])
-      })
-        .then(res => {resStatus = res.status; return res.json()})
-        .then(data => {
-          if (resStatus === 200) {
-            return SubmitEditPassword(data.salt)
-          } else if (resStatus === 401){
-            return auth.onLogout()
-          }
+      if (newPassword.oldpassword !== newPassword.newpassword) {
+        var resStatus;
+        fetch("/api/preeditpassword", {  // Pre login get salt
+          method: "POST", headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify([])
         })
-        .catch(console.error)
+          .then(res => {resStatus = res.status; return res.json()})
+          .then(data => {
+            if (resStatus === 200) {
+              return SubmitEditPassword(data.salt)
+            } else if (resStatus === 401){
+              return auth.onLogout()
+            }
+          })
+          .catch(console.error)
+      } else {
+        setSelected((selected) => ({...selected, password: false}))
+      }
     }
   }
 
@@ -141,10 +155,14 @@ function User() {
       .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         if (resStatus === 200) {
-          setUser(user => ({...user, standID: data.standID}));
-          return setSelected((selected) => ({...selected, password: false}))
-        }  else if (resStatus === 401){
+          
+          return setTimeout(() => {
+            setSelected((selected) => ({...selected, password: false}));
+          }, 1000);
+        } else if (resStatus === 401){
           return auth.onLogout()
+        } else if (resStatus === 406){
+          return setNewPassword((newPassword) => ({...newPassword, oldpassword: ""}));
         }
       })
       .catch(console.error)
@@ -174,102 +192,82 @@ function User() {
       setNewFullname(event.target.value);
     } else if (event.target.id === "oldpassword") {  // Old Password
       setNewPassword((newPassword) => ({...newPassword, oldpassword: event.target.value}));
+      if (event.target.value.trim().length >= 6) {  // Check min number of char
+        setCheck(check => ({...check, oldpassword:true}))
+      } else {
+        setCheck(check => ({...check, oldpassword:false}))
+      };
     } else if (event.target.id === "password") {  // New Password
       setNewPassword((newPassword) => ({...newPassword, newpassword: event.target.value}));
     }
   };
 
-  // function h_SChange(value) {  // Manage stand ID
-  //   const aux = parseInt(value)
-  //   if (aux === 0) {
-  //     setNewStandID(null)
-  //   } else {
-  //     setNewStandID(aux)
-  //   }
-  // }
-
-  // async function SubmitChangeStand(){
-  //   var resStatus;
-  //   fetch("/api/changestandid", {  // Pre login get salt
-  //     method: "POST", headers: {'Content-Type': 'application/json'},
-  //     body: JSON.stringify({"standID": newStandID})
-  //   })
-  //     .then(res => {resStatus = res.status; return res.json()})
-  //     .then(data => {
-  //       if (resStatus === 200) {
-  //         setUser(user => ({...user, standID: data.standID}));
-  //         setSelected((selected) => ({...selected, standID: false}));
-  //         return RequestUserData();
-  //       }  else if (resStatus === 401){
-  //         return auth.onLogout()
-  //       }
-  //     })
-  //     .catch(console.error)
-  // }
+  const classPassword = `SignupInput ${isFoc ? 'focused' : (newPassword.oldpassword === "" ? "" : check.oldpassword ? 'unfocOK' : 'unfocNO')}`
 
   return (
-    <div>
+    <>
       {auth.user.authenticated ?
-      <div>
-        <div>
-          {!selected.username?
-            <>
-              <p>Usuário</p>
-              <p onClick={() => {handleSelected("username")}}>{user.username}</p>
-            </>
-          :
-            <>
-              <Username
-                output={handleChange}
-                username={newUsername}
-                dupliValue={alreadyUsedUN}
-                valid={(value) => setCheck(check => ({...check, username:value}))}/>
-              <button onClick={() => (SubmitEditUsername())} disabled={check.username ? false : true}>Confirmar</button>
-            </>
-          }
-        </div>
-        <div>
-          {!selected.fullname?
-            <>
-              <p>Nome completo</p>
-              <p onClick={() => {handleSelected("fullname")}}>{user.fullname}</p>
-            </>
-          :
-            <>
-              <Fullname
-                output={handleChange}
-                fullname={newFullname}
-                dupliValue={alreadyUsedFN}
-                valid={(value) => setCheck(check => ({...check, fullname:value}))}/>
-              <button onClick={() => (SubmitEditFullname())} disabled={check.fullname ? false : true}>Confirmar</button>
-            </>
-          }
-        </div>
-        <div>
-          <p>Estande</p>
+      <div className="Userbackground">
+        {!selected.username?
+          <div className="UserUN" onClick={() => {handleSelected("username")}}>
+            <User/>
+            <p>{user.username}</p>
+          </div>
+        :
+          <div className="UserUN">
+            <Username
+              output={handleChange}
+              username={newUsername}
+              dupliValue={alreadyUsedUN}
+              valid={(value) => setCheck(check => ({...check, username:value}))}/>
+            <button onClick={() => (SubmitEditUsername())} disabled={check.username ? false : true}>Confirmar</button>
+          </div>
+        }
+        {!selected.fullname?
+          <div className="UserFN" onClick={() => {handleSelected("fullname")}}>
+            <Smile/>
+            <p>{user.fullname}</p>
+          </div>
+        :
+          <div className="UserFN">
+            <Fullname
+              output={handleChange}
+              fullname={newFullname}
+              dupliValue={alreadyUsedFN}
+              valid={(value) => setCheck(check => ({...check, fullname:value}))}/>
+            <button onClick={() => (SubmitEditFullname())} disabled={check.fullname ? false : true}>Confirmar</button>
+          </div>
+        }
+        <div className="UserAS">
+          <Flag/>
           <p>{user.association}</p>
           <p>{user.stand}</p>
-            {/* <>
-               <StandID
-                 output={h_SChange}
-                 defaultValue={newStandID}/>
-                <button onClick={() => (SubmitChangeStand())}>Confirmar</button>
-             </> */}
         </div>
-        <div>
-          {!selected.password?
+        {selected.password &&
+          <div className="UserPW">
+            <div className="UserPasswords">
+              <div className="UserOldPassword">
+                <div className={classPassword} onFocus={() => setIsFoc(true)} onBlur={() => setIsFoc(false)}>
+                  <label htmlFor="password"><Lock/></label>
+                  <input value={newPassword.oldpassword} onChange={handleChange} placeholder="Senha Atual" id="oldpassword" type="password" name="oldpassword"/>
+                </div>
+              </div>
+              <Password
+                output={handleChange}
+                placeholder={"Nova Senha"}
+                valid={(value) => setCheck(check => ({...check, password:value}))}/>
+            </div>
+            <div className="UserPasswordButtons">
+              <button onClick={() => setSelected((selected) => ({...selected, password: false}))}>Cancelar</button>
+              <button onClick={() => PreSubmitEditPassword()} disabled={check.password ? false : true}>Confirmar</button>
+            </div>          
+          </div>
+        }
+        <div className="UserMenu">
+          {!selected.password &&
           <button onClick={() => {handleSelected("password")}}>
             Alterar Senha
           </button>
-          :
-          <>
-            <label htmlFor="password">Senha atual:</label>
-            <input value={newPassword.oldpassword} onChange={handleChange} id="oldpassword" type="password" name="oldpassword"/>
-            <Password
-              output={handleChange}
-              valid={(value) => setCheck(check => ({...check, password:value}))}/>
-            <button onClick={() => PreSubmitEditPassword()} disabled={check.password ? false : true}>Confirmar</button>
-          </>
           }
           <button onClick={() => SubmitLogout()}>
             Log out
@@ -281,8 +279,8 @@ function User() {
         <p> Usuário deslogado </p>
       </div>
       }
-    </div>
+    </>
   )
 }
 
-export default User
+export default UserPage

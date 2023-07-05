@@ -1,16 +1,16 @@
+import './Seller.css'
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Maximize, Slash } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Code from '../admin/inputs/Code'
-import Scanner from './Scanner';
+import Scanner from './inputs/Scanner';
 import Quagga from 'quagga';
 
 function Seller() {
   const [cart, setCart] = useState([])
   const [total, setTotal] = useState(0)
   const [showScanner, setShowScanner] = useState(false)
-  const [results, setResults] = useState([]);
   const [card, setCard] = useState("")
   const [stand, setStand] = useState({standID:0 ,stand:""})
   const [items, setItems] = useState([])
@@ -98,16 +98,10 @@ function Seller() {
     }
   }, [total])
 
-  useEffect(() => {
-    if (results[0]) {
-      setCard(results[0].codeResult.code)
-      setShowScanner(false)
-    }
-  }, [results])
-  
-  const handleScan = (result) => {
-    setResults([]);
-    setResults(prevResults => prevResults.concat([result]));
+  const handleScan = (value) => {  // Take result of scanner
+    setCard(value)
+    Quagga.stop()
+    setShowScanner(false)
   };
 
   function handleCart(item) {  // Add item on cart
@@ -122,7 +116,7 @@ function Seller() {
         return element;
       });
       setCart(updatedCart);
-    } else {
+    } else if (item.stock !== 0){
       setCart(cart => [...cart, {
         itemID:item.itemID,
         item:item.item,
@@ -146,12 +140,9 @@ function Seller() {
   }
 
   return (
-    <div>
+    <div className="Sellerbackground">
       <div>
-        <h1>{stand.stand}</h1>
-        <div>
-          <h2>Menu</h2>
-        </div>
+        <h2>Estande: {stand.stand}</h2>
         <div>
           <Code
             output={event => setCard(event.target.value)}
@@ -202,7 +193,7 @@ function Seller() {
               valid={(value) => setCheck(check => ({...check, card:value}))}/>
               {showScanner ?
               <>
-                <Scanner DetectedCode={handleScan}/>
+                <Scanner DetectedCode={handleScan} output={handleScan}/>
                 <button onClick={() => {setShowScanner(false); return Quagga.stop()}}><Slash/></button>
               </>
               : 

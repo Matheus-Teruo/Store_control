@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { Maximize } from 'react-feather';
 import AuthContext from '../../store/auth_context';
+import Scanner from '../main/inputs/Scanner';
 import Code from './inputs/Code';
+import Quagga from 'quagga';
 
 function Cards() {
   const [cards, setCards] = useState([])
   const [showCard, setShowCard] = useState(false)
   const [newCardID, setNewCardID] = useState("")
+  const [showScanner, setShowScanner] = useState(false)
   const [check, setCheck] = useState(false)
   const [filter, setFilter] = useState(0)
   const [alreadyUsed, setAlreadyUsed] = useState("");
@@ -22,7 +26,7 @@ function Cards() {
       navigate('/')
     }
   }, [auth, navigate])
-  
+
   async function RequestCards() {  // List all Cards
     var resStatus;
       fetch('/api/allcards')
@@ -68,6 +72,12 @@ function Cards() {
     }
   };
 
+  const handleScan = (value) => {  // Take result of scanner
+    setNewCardID(value)
+    Quagga.stop()
+    setShowScanner(false)
+  };
+
   return (
     <div>
       <h1>Cartões</h1>
@@ -106,9 +116,11 @@ function Cards() {
           ))}
         </ul>
       </div>
+
       {showCard &&
       <div>
         <div>
+        <button onClick={() => setShowScanner(true)}><Maximize/></button>
           <Code
           output={handleChange}
           card={newCardID}
@@ -117,6 +129,12 @@ function Cards() {
         </div>
         <button onClick={() => (SubmitNewCard())} disabled={check ? false : true}>Criar Cartões</button>
       </div>  
+      }
+
+      {showScanner &&
+      <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false); return Quagga.stop()}}>
+        <Scanner DetectedCode={handleScan} output={handleScan}/>
+      </div>
       }
     </div>
   )

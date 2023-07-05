@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Lock, Unlock } from 'react-feather';
 
 const regexnumber = /[0-9]/
 const regexletter = /[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ]/
@@ -12,7 +13,12 @@ function Password(props) {
     noSpace: true,
     haveLetter: false,
     haveNumber: false});
+  const [checkAll, setCheckAll] = useState(false)
   const [PW_D_Check, setPW_D_Check] = useState(true);
+  const [isFocPW, setIsFocPW] = useState(false);
+  const [isFocPWC, setIsFocPWC] = useState(false);
+  const [animationPW, setAnimationPW] = useState(false)
+  const [animationPWC, setAnimationPWC] = useState(false)
   const [submitvalid, setSubmitvalid] = useState(false);
 
   useEffect(() => {  // Check all conditions
@@ -29,6 +35,18 @@ function Password(props) {
         }
   }, [Check, PW_D_Check])
 
+  useEffect(() => {
+    if (Check.haveMinChar &&
+        Check.noSpace &&
+        Check.haveLetter &&
+        Check.haveNumber){
+          setCheckAll(true)
+        } else {
+          setCheckAll(false)
+        }
+  }, [Check])
+  
+
   useEffect(() => {  // Check password confirmation
     if (password === passwordC) {
       setPW_D_Check(true)
@@ -36,6 +54,23 @@ function Password(props) {
       setPW_D_Check(false)
     }
   }, [password, passwordC])
+
+  useEffect(() => {  // Set animation
+    if (props.requiredField > 0){
+      if (!checkAll) {
+        setAnimationPW(true)
+        setTimeout(() => {
+          setAnimationPW(false);
+        }, 1000);
+      }
+      if (!PW_D_Check || passwordC === "") {
+        setAnimationPWC(true)
+        setTimeout(() => {
+          setAnimationPWC(false);
+        }, 1000);
+      }
+    }
+  }, [props.requiredField])
 
   const handlePasswordChange = (event) => {  // Conditions logic
     props.output(event);
@@ -70,24 +105,47 @@ function Password(props) {
     setPasswordC(event.target.value);
   };
 
+  const classPassword = `SignupInput ${isFocPW ? 'focused' : !props.requiredField > 0? (password === "" ? "" : checkAll  ? 'unfocOK' : 'unfocNO') : checkAll  ? 'unfocOK' : 'unfocNO'}`
+  const classPasswordC = `SignupInput ${isFocPWC ? 'focused' : !props.requiredField > 0? (passwordC === "" ? "" : PW_D_Check  ? 'unfocOK' : 'unfocNO') : passwordC === "" ? 'unfocNO' : PW_D_Check  ? 'unfocOK' : 'unfocNO'}`
+
   return (
-    <div>
-      <div>
-        <label htmlFor="password">Senha:</label>
-        <input value={props.password} onChange={handlePasswordChange} id="password" type="password" name="password" />
-        <div>
-          {!Check.haveMinChar && <div>minChar</div>}
-          {!Check.haveLetter && <div>haveletter</div>}
-          {!Check.haveNumber && <div>havenumber</div>}
-          {!Check.noSpace && <div>noSpace</div>}
+    <div className="Password">
+      <div className="PasswordPrimary">
+        <div className={classPassword} onFocus={() => setIsFocPW(true)} onBlur={() => setIsFocPW(false)}>
+          <label className={`${animationPW ? 'shake' : ''}`} htmlFor="password">
+            {password === "" ?
+              <Unlock/>
+            : submitvalid === true ?
+              <Lock/>
+            : submitvalid === false &&
+              <Unlock/>
+            }
+          </label>
+          <input value={password} onChange={handlePasswordChange} placeholder={props.placeholder || "Senha"} id="password" type="password" name="password" />
+        </div>
+        <div className="PasswordPrimaryCheck">
+          {password !== "" && !Check.haveMinChar && <div>Número mínimo de carácter</div>}
+          {password !== "" && !Check.haveLetter && <div>Deve conter letra</div>}
+          {password !== "" && !Check.haveNumber && <div>Deve conter número</div>}
+          {password !== "" && !Check.noSpace && <div>Não pode conter espaços</div>}
         </div>
       </div>
-      <div>
-        <label htmlFor="PW_D_Check">Confirmar senha:</label>
-        <input value={passwordC} onChange={handlePasswordChangeC} id="PW_D_Check" type="password" name="PW_D_Check" />
-        <div>
-          {!PW_D_Check && <div>noMatch</div>}
+      <div className="PasswordCopy">
+        <div className={classPasswordC} onFocus={() => setIsFocPWC(true)} onBlur={() => setIsFocPWC(false)}>
+          <label className={`${animationPWC ? 'shake' : ''}`} htmlFor="PW_D_Check">
+            {passwordC === "" ?
+              <Unlock/>
+            : submitvalid === true ?
+              <Lock/>
+            : submitvalid === false &&
+              <Unlock/>
+            }
+          </label>
+          <input value={passwordC} onChange={handlePasswordChangeC} placeholder={props.placeholder !== undefined? `Confirma ${props.placeholder}` : "Confimar Senha"} id="PW_D_Check" type="password" name="PW_D_Check" />
         </div>
+      <div className="PasswordCopyCheck">
+        {passwordC !== "" && !PW_D_Check && <div>noMatch</div>}
+      </div>
       </div>
     </div>
   )

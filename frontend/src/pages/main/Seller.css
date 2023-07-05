@@ -1,0 +1,5 @@
+.Sellerbackground{
+    background-color: red;
+    top: var(--height-header);
+    display: flex;
+  }

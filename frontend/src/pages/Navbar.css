@@ -1,0 +1,49 @@
+header {
+  width: 100vw;
+  height: var(--height-header);
+}
+
+.HeaderOnline{
+  background-color: var(--color-primary-1);
+}
+.HeaderOffline{
+  background-color: var(--color-primary-5);
+}
+
+.navHeader {
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navMenu{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  aspect-ratio: 1/1;
+}
+
+.navTitle{
+  color: var(--color-font-1);
+}
+
+.navUser {
+  min-width: var(--height-header);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+.navUser a{
+  padding: 0 7px 0 0;
+  margin: 0 0 1px;
+}
+
+.navLinks {
+  display: flex;
+  color: var(--color-font-1);
+  margin: 0 5px;
+}
+

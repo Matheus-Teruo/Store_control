@@ -16,6 +16,22 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `associations`
+--
+
+DROP TABLE IF EXISTS `associations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `associations` (
+  `associationID` int NOT NULL AUTO_INCREMENT,
+  `association` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `principal` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`associationID`),
+  UNIQUE KEY `association` (`association`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `cards`
 --
 
@@ -108,22 +124,6 @@ CREATE TABLE `items` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `associations`
---
-
-DROP TABLE IF EXISTS `associations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `associations` (
-  `associationID` int NOT NULL AUTO_INCREMENT,
-  `association` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `principal` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`associationID`),
-  UNIQUE KEY `association` (`association`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `recharges`
 --
 
@@ -134,6 +134,7 @@ CREATE TABLE `recharges` (
   `rechargeID` int NOT NULL AUTO_INCREMENT,
   `recharge` int NOT NULL,
   `recharge_t` datetime NOT NULL,
+  `payment` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL,
   `cardID` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `userID` int NOT NULL,
   PRIMARY KEY (`rechargeID`),
@@ -193,7 +194,7 @@ DROP TABLE IF EXISTS `stands`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `stands` (
   `standID` int NOT NULL AUTO_INCREMENT,
-  `stand` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `stand` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `associationID` int NOT NULL,
   PRIMARY KEY (`standID`),
   UNIQUE KEY `stand` (`stand`),
@@ -234,4 +235,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-23  5:37:33
+-- Dump completed on 2023-07-04 23:27:08

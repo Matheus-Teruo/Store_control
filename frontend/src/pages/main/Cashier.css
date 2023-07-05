@@ -1,0 +1,634 @@
+.Cashierbackground{
+  width: 100%;
+  background-color: red;
+  display: flex;
+}
+
+.CashierMain{
+  width: 100%;
+  top: var(--height-header);
+  bottom: calc(5vh + 39px);
+  background-color: green;
+}
+
+.CashierMenu{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: blue;
+}
+.CashierMenu ul{
+  width: 100%;
+  display: flex;
+  overflow-x: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+.CashierMenu ul::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+.CashierMenu li{
+  white-space: nowrap;
+  padding: 5px 8px;
+  margin: 0 5px 5px;
+  border-radius: 6px;
+  background-color: yellow;
+}
+
+.CashierCardCompact{
+  width: 100%;
+  display: flex;
+  justify-content: end;
+}
+.CashierCardCompact button{
+  width: 56px;
+  margin: 10px 7px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  background-color: var(--color-primary-6);
+  aspect-ratio: 8/5;
+}
+.CashierCardCompact.animation button{
+  animation: CardContract 1s;
+}
+.CashierCardCompact.animation button::after{
+  content: "";
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: var(--color-primary-6);
+  border-radius: 7px;
+  animation: CardAppearContract 1s;
+}
+
+.CashierCard{
+  position: relative;
+  width: 480px;
+  margin: 10px 0;
+  border-radius: 10px;
+  background-color: var(--color-primary-6);
+  aspect-ratio: 8/5;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  animation: CardExpand 1s;
+}
+.CashierCard::after {
+  content: "";
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: var(--color-primary-6);
+  border-radius: 10px;
+  animation: CardAppearExpand 1s;
+}
+.CashierCard button{
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+}
+.CashierCard input{
+  border: none;
+  border-radius: 6px;
+  width: 8em;
+  margin: 0 5px;
+  background-color: #ffffff50;
+}
+.CashierCard input.CardValid{
+  background-color: transparent;
+}
+.CashierCardHead{
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 8px;
+}
+.CashierCardNumber{
+  display: flex;
+}
+
+.CashierCardMain{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5px 100px 5px 0;
+}
+.CashierCardMainInvalid{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5px 50px 5px 0;
+}
+
+.CashierCardFooter{
+  display: flex;
+  justify-content: end;
+  margin: 5px 8px;
+}
+
+.CashierItems{
+  flex-grow: 1;
+  display: flex;
+  background-color: aqua;
+  overflow: auto;
+}
+.CashierItems svg{
+  height: 20px;
+}
+.CashierItems ul{
+  width: 100%;
+  position:static;
+  height: calc(100vh - calc(var(--height-header) + 5vh + 130px));
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+}
+.CashierItems ul.cardExpanded{
+  height: calc(100vh - calc(var(--height-header) + 5vh + 95px + 38.75vw));
+}
+.CashierItems li{
+  white-space: nowrap;
+  margin: 5px;
+  padding: 5px 3px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  white-space: nowrap;
+}
+.CashierItems p{
+  display: flex;
+  align-items: center;
+}
+.CashierItems p#name{
+  flex: 16;
+  overflow: hidden;
+  background-color: red;
+}
+.CashierItems p#price{
+  display: flex;
+  justify-content: space-between;
+  margin: 0 15px 0 5px;
+  flex: 3;
+  min-width: 40px;
+  background-color: red;
+}
+.CashierItems p#stock{
+  display: flex;
+  justify-content: space-between;
+  flex: 4;
+  min-width: 50px;
+  background-color: red;
+}
+
+.CashierFooter{
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+}
+
+.CashierList{
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: greenyellow;
+}
+.CashierList svg{
+  height: 20px;
+}
+.CashierList ul{
+  width: 100%;
+  max-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  background-color: aquamarine;
+  overflow-y: scroll;
+}
+.CashierList li{
+  margin: 5px;
+  padding: 5px 3px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: orange;
+  white-space: nowrap;
+}
+.CashierList p{
+  display: flex;
+  align-items: center;
+}
+.CashierList p#name{
+  width: 65%;
+  background-color: red;
+}
+.CashierList p#price{
+  width: 12%;
+  background-color: red;
+}
+.CashierList p#stock{
+  width: 9%;
+  background-color: red;
+}
+.CashierList p#stock svg{
+  height: 15px;
+}
+.CashierList p#remove{
+  width: 24px;
+  background-color: red;
+}
+
+.CashierCartToggle{
+  width: 40vw;
+  height: 8px;
+  border-radius: 4px;
+  margin: 5px 0;
+  background-color: blue;
+}
+
+.CashierAux{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: blueviolet;
+}
+.CashierAux p{
+  margin: 5px 8px;
+  background-color: aqua;
+}
+.CashierAux p#SumAux{
+  width: 50%;
+}
+
+.CashierAuxButtons{
+  display: flex;
+  align-items: center;
+  margin: 5px 8px;
+  background-color: yellow;
+}
+.CashierAuxButtons button{
+  margin: 0  0 0 8px;
+  padding: 0;
+  border: none;
+}
+
+.CashierTotal{
+  height: 5vh;
+  padding: 3px 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: orange;
+}
+
+.CashierTotalInput{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.CashierTotalInput input{
+  border: none;
+  border-radius: 4px;
+  width: 50vw;
+  font-size: 16px;
+  padding: 2px 3px;
+  margin: 0 5px;
+  background-color: #ffffff50;
+}
+.CashierTotal button{
+  display: flex;
+  margin: 0 2px;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+
+/*  Pop up */
+.BlackBackground{
+  z-index: 15;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #00000050;
+}
+.BlackBackgroundScanner{
+  z-index: 25;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #00000050;
+}
+.CashierRecharge{
+  position: fixed;
+  top: calc(50vh - 20vh);
+  left: calc(50vw - 40vw);
+  z-index: 20;
+  width: 80vw;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+}
+.CashierRecharge h3{
+  margin: 8px 0 0;
+}
+.CashierCardMini{
+  width: 480px;
+  margin: 10px 0;
+  border-radius: 10px;
+  background-color: var(--color-primary-6);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+.CashierCardMini button{
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+}
+.CashierCardMini input{
+  border: none;
+  border-radius: 6px;
+  width: 8em;
+  margin: 0 5px;
+  background-color: #ffffff50;
+}
+.CashierCardMini input.CardValid{
+  background-color: transparent;
+}
+.CashierCardMiniCode{
+  padding: 5px 8px;
+  display: flex;
+  align-items: center;
+}
+.CashierCardMiniBalance{
+  padding: 5px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+.CashierCardMiniBalance p{
+  display: flex;
+  align-items: start;
+}
+.CashierRechargeFooter p{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.CashierRechargeFooter p#recharge{
+  margin: 0 10px 0 0;
+}
+.CashierRechargeFooter .Payment{
+  display: flex;
+  padding: 3px 5px;
+}
+.CashierRechargeFooter input{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+.CashierRechargeFooter label{
+  margin: 3px 5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background-color: var(--color-primary-5);
+}
+.CashierRechargeFooterButtons{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+}
+.CashierRechargeFooter label.check{
+  background-color: var(--color-primary-6);
+}
+.CashierRechargeFooterButtons button{
+  display: flex;
+  margin: 0 10px;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+
+.CashierReset{
+  z-index: 20;
+  position: fixed;
+  top: calc(50vh - 25vh);
+  left: calc(50vw - 40vw);
+  width: 80vw;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: yellow;
+}
+.CashierReset h3{
+  margin: 8px 0 0;
+}
+.CashierCardMini .Balance{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 8px;
+}
+.CashierCardMini .Balance p{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.CashierCardMini .Balance p{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.CashierResetFooter{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+}
+.CashierResetFooter button{
+  display: flex;
+  margin: 0 10px;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+
+.CashierMessage{
+  z-index: 20;
+  position: fixed;
+  top: calc(50vh - 25vh);
+  left: calc(50vw - 35vw);
+  width: 70vw;
+  height: 50vh;
+  background-color: yellowgreen;
+}
+
+@media only screen and (max-width: 767px) {
+  /* Styles for mobile devices */
+  .CashierCard{
+    width: 62%;
+    margin: 10px;
+    animation: CardExpandMobile 1s;
+  }
+  .CashierCardCompact.animation button{
+    animation: CardContractMobile 1s;
+  }
+  .CashierCardMini{
+    width: 80%;
+    border-radius: 10px;
+  }
+}
+
+@keyframes CardExpand {
+  0% {
+    width: 56px;
+    aspect-ratio: 8/5;
+    border-radius: 6px;
+    transform: translateX(calc(50vw - 35px));
+  }
+  70% {
+    width: 480px;
+    aspect-ratio: 8/5;
+    border-radius: 10px;
+    transform: translateX(0);
+  }
+  100% {
+    width: 480px;
+    aspect-ratio: 8/5;
+    border-radius: 10px;
+    transform: translateX(0);
+  }
+}
+@keyframes CardExpandMobile {
+  0% {
+    width: 56px;
+    aspect-ratio: 8/5;
+    border-radius: 6px;
+    transform: translateX(calc(50vw - 35px));
+  }
+  70% {
+    width: 62%;
+    aspect-ratio: 8/5;
+    border-radius: 10px;
+    transform: translateX(0);
+  }
+  100% {
+    width: 62%;
+    aspect-ratio: 8/5;
+    border-radius: 10px;
+    transform: translateX(0);
+  }
+}
+@keyframes CardAppearExpand {
+  0% {
+    display: flex;
+    opacity: 100%;
+    background-color: var(--color-primary-6);
+    z-index: 10;
+  }
+  65% {
+    display: flex;
+    opacity: 100%;
+    z-index: 10;
+    background-color: var(--color-primary-6);
+  }
+  100% {
+    display: flex;
+    opacity: 0%;
+    z-index: 10;
+    background-color: var(--color-primary-6);
+  }
+}
+
+@keyframes CardContract {
+  0% {
+    width: 480px;
+    aspect-ratio: 8/5;
+    border-radius: 10px;
+    transform: translateX(calc(calc(240px - 50vw) + 7px));
+  }
+  65% {
+    width: 56px;
+    aspect-ratio: 8/5;
+    border-radius: 6px;
+    transform: translateX(0);
+  }
+  100% {
+    width: 56px;
+    aspect-ratio: 8/5;
+    border-radius: 6px;
+    transform: translateX(0);
+  }
+}
+@keyframes CardContractMobile {
+  0% {
+    width: 62%;
+    aspect-ratio: 8/5;
+    border-radius: 10px;
+    transform: translateX(calc(calc(31vw - 50vw) + 7px));
+  }
+  65% {
+    width: 56px;
+    aspect-ratio: 8/5;
+    border-radius: 6px;
+    transform: translateX(0);
+  }
+  100% {
+    width: 56px;
+    aspect-ratio: 8/5;
+    border-radius: 6px;
+    transform: translateX(0);
+  }
+}
+@keyframes CardAppearContract {
+  0% {
+    display: flex;
+    opacity: 100%;
+    background-color: var(--color-primary-6);
+    z-index: 10;
+  }
+  65% {
+    display: flex;
+    opacity: 100%;
+    z-index: 10;
+    background-color: var(--color-primary-6);
+  }
+  100% {
+    display: flex;
+    opacity: 0%;
+    z-index: 10;
+    background-color: var(--color-primary-6);
+  }
+}

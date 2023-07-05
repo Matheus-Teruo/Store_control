@@ -1,29 +1,42 @@
+import "./Cashier.css"
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { Maximize, Slash } from 'react-feather';
+import { CreditCard, Minimize2, Maximize, RefreshCw, DollarSign, Package, X, Minus, Plus, ArrowDown, CheckCircle } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Code from '../admin/inputs/Code';
-import Scanner from './Scanner';
+import Payment from "./inputs/Payment";
+import Scanner from './inputs/Scanner';
 import Quagga from 'quagga';
 
 function Cashier() {
-  const [recharge, setRecharge] = useState(0)
-  const [showScanner, setShowScanner] = useState(false)
-  const [results, setResults] = useState([]);
+  // Main
+  const [recharge, setRecharge] = useState("")
+  const [payment, setPayment] = useState("")
   const [card, setCard] = useState("")
-  const [cart, setCart] = useState([])
-  const [sumAux, setSumAux] = useState(0)
-  const [stands, setStands] = useState([]);
-  const [allItems, setAllItems] = useState([]);
-  const [items, setItems] = useState([]);
-  const [selectedID, setSelectedID] = useState(0)
-  const [confirmRecharge, setConfirmRecharge] = useState(false)
-  const [confirmReset, setConfirmReset] = useState(false)
-  const [message, setMessage] = useState("")
-  const [messageValue, setMessageValue] = useState(0)
   const [check, setCheck] = useState({
     recharge: false,
     card: false})
+  // Card
+  const [showCard, setShowCard] = useState(false)
+  const [cardBalance, setCardBalance] = useState(0)
+  const [balanceType, setBalanceType] = useState("")
+  // Scanner
+  const [showScanner, setShowScanner] = useState(false)
+  // Cart
+  const [showCart, setShowCart] = useState(false)
+  const [cart, setCart] = useState([])
+  const [sumAux, setSumAux] = useState(0)
+  // Items
+  const [stands, setStands] = useState([]);
+  const [selectedID, setSelectedID] = useState(0)
+  const [allItems, setAllItems] = useState([]);
+  const [items, setItems] = useState([]);
+  // Message
+  const [confirmRecharge, setConfirmRecharge] = useState(false)
+  const [confirmReset, setConfirmReset] = useState(false)
+  const [message, setMessage] = useState("")
+  // Aux to css
+  const [animation, setAnimation] = useState(false)
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -56,14 +69,15 @@ function Cashier() {
         method: "POST", headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           "recharge": recharge,
-          "cardID": card
+          "cardID": card,
+          "payment": payment
         })
       })
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200){
             RequestLists()
-            setRecharge(0); setCard(0);
+            setRecharge(0);
             setConfirmRecharge(false); setCheck({recharge: false, card: false})
             return SubmitCardCheck()
           } else if (resStatus === 401){
@@ -77,22 +91,23 @@ function Cashier() {
     }
   }
 
-  async function SubmitReset() {  // Submit the recharge
-    if (auth.user.authenticated) {
+  async function SubmitReset(type) {  // Submit the recharge
+    if (auth.user.authenticated && cardBalance !== "invalid") {
       var resStatus;
       fetch("/api/resetcard", {  // Post form
         method: "POST", headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-          "cardID": card
+          "cardID": card,
+          "finalization": type
         })
       })
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200){
             RequestLists()
-            setRecharge(0); setCard(0);
+            setRecharge(0);
             setConfirmReset(false); setCheck({recharge: false, card: false})
-            setMessage(`finalizado cartão: ${data.cardID}`); setMessageValue("")
+            setMessage(`finalizado cartão: ${data.cardID}`); setCardBalance(0)
           } else if (resStatus === 401){
             return auth.onLogout()
           }
@@ -111,8 +126,12 @@ function Cashier() {
       })
       .then(res => res.json())
       .then(data => {
-        setMessage(data.card)
-        setMessageValue(data.value)
+        if (data.code){
+          setBalanceType(data.payment)
+          return setCardBalance(data.value)
+        } else {
+          return setCardBalance("invalid")
+        }
       })
   }
 
@@ -140,20 +159,15 @@ function Cashier() {
       return setCheck(check => ({...check, recharge: false}))
     }
   }, [recharge])
-
-  useEffect(() => {
-    if (results[0]) {
-      setCard(results[0].codeResult.code)
-      setShowScanner(false)
-    }
-  }, [results])
   
-  const handleScan = (result) => {
-    setResults([]);
-    setResults(prevResults => prevResults.concat([result]));
+  const handleScan = (value) => {  // Take result of scanner
+    setCard(value)
+    Quagga.stop()
+    setShowScanner(false)
   };
 
   function handleCart(item) {  // Add item on cart
+    console.log(item)
     if (cart.some(element => element.itemID === item.itemID)){
       const updatedCart = cart.map(element => {
         if (element.itemID === item.itemID) {
@@ -161,11 +175,12 @@ function Cashier() {
             return {...element, amount: element.amount + 1};
           }
           return element;
-        }
+        } else {
         return element;
+        }
       });
       setCart(updatedCart);
-    } else {
+    } else if (item.stock !== 0){
       setCart(cart => [...cart, {
         itemID:item.itemID,
         item:item.item,
@@ -189,144 +204,228 @@ function Cashier() {
     setCart(updatedCart);
   }  
 
+  function handleCard(event){
+    setCard(event.target.value)
+  }
+
   function h_Valid(value) {  // Card valid
     setCheck(check => ({...check, card: value}))
+    if (value) {
+      SubmitCardCheck()
+    }
   };
 
   return (
-    <div>
-      <div>
-        <div>
-          <div>
-            <Code
-              output={event => setCard(event.target.value)}
-              card={card}
-              dupliValue={""}
-              valid={h_Valid}/>
-              {showScanner && !confirmRecharge && !confirmReset ?
-              <>
-                <Scanner DetectedCode={handleScan}/>
-                <button onClick={() => {setShowScanner(false); return Quagga.stop()}}><Slash/></button>
-              </>
-              : 
+    <div className="Cashierbackground">
+      <div className="CashierMain">
+        <div className="CashierMenu">
+          {showCard?
+          <div className="CashierCard">
+            <div className="CashierCardHead">
+              <div className="CashierCardNumber">
                 <button onClick={() => setShowScanner(true)}><Maximize/></button>
+                <Code
+                  output={handleCard}
+                  card={card}
+                  dupliValue={""}
+                  valid={h_Valid}/>
+              </div>
+              <button onClick={() => setShowCard(false)}><Minimize2/></button>
+            </div>
+              {(cardBalance === "invalid" && check.card) ?
+                <div className="CashierCardMainInvalid">
+                  <h3>Cartão Inválido</h3>
+                </div>
+              :(check.card) ?
+                <div className="CashierCardMain">
+                  <DollarSign size={19}/><h3>{cardBalance}</h3>
+                </div>
+              :
+                <div className="CashierCardMain">
+                </div>
               }
-            <button onClick={() => SubmitCardCheck()} disabled={check.card ? false : true}>Verificar Cartão</button>
-            <button onClick={() => {setConfirmReset(true);SubmitCardCheck()}} disabled={check.card ? false : true}>Resetar Cartão</button>
+            <div className="CashierCardFooter">
+              <button onClick={() => {setConfirmReset(true);SubmitCardCheck()}} disabled={check.card && cardBalance !== "invalid" ? false : true}><RefreshCw/></button>
+            </div>
           </div>
+          :
+          <div className={`CashierCardCompact ${animation? "animation" : ""}`}>
+            <button onClick={() => {setShowCard(true); setAnimation(true)}}><CreditCard/></button>
+          </div>
+          }
           {stands.length === 0 ?
           <div>Nenhum estande no banco de dados</div>
           :
           <ul>
             {stands.map((stand) => (
-              <li key={stand.standID} 
-                onClick={() => setSelectedID(stand.standID)}
-              >
+              <li key={stand.standID} onClick={() => setSelectedID(stand.standID)}>
                 {stand.stand}
               </li>
             ))}
           </ul>
           }
         </div>
-        <div>
+        <div className="CashierItems">
           {items.length === 0 ? 
           <div>Nenhum item no estande</div>
           :
-          <ul>
+          <ul className={`${showCard && "cardExpanded"}`}>
             {items.map((item) => (
-              <li key={item.itemID} 
-                onClick={() => handleCart(item)}>
-                <p>Name: {item.item}</p>
-                <p>Price: R${item.price}</p>
-                <p>Estoque: {item.stock}</p>
+              <li key={item.itemID} onClick={() => handleCart(item)}>
+                <p id="name">{item.item}</p>
+                <p id="price"><DollarSign/>{item.price}</p>
+                <p id="stock"><Package/>{item.stock}</p>
               </li>
             ))}
           </ul>
           }
         </div>
       </div>
-      <div>
-        <ul>
-          {cart.map(item => (
-            <li key={item.itemID}>
-              <p>{item.item}</p>
-              <p>{item.price}</p>
-              <p>{item.amount}</p>
-              <p onClick={() => handleRemoveCart(item.itemID)}>Remove</p>
-            </li>
-          ))}
-        </ul>
-        <div>
-          <p>Subtotal: {sumAux}</p>
-          <button onClick={() => setRecharge(recharge + sumAux)}>Adicionar</button>
-          <button onClick={() => setRecharge(sumAux)}>Passar</button>
-        </div>
-        <p>Total:</p>
-        <input
-          type="number" id="recharge" name="recharge"
-          value={recharge}
-          onChange={event => setRecharge(event.target.value)}
-        />
-        <button type="submit" onClick={() => setConfirmRecharge(true)} disabled={check.recharge ? false : true}>Recarregar</button>
-      </div>
-      {confirmRecharge &&
-      <div>
-        <div>
-          <p>{recharge}</p>
-          <Code
-            output={event => setCard(event.target.value)}
-            card={card}
-            dupliValue={""}
-            valid={h_Valid}/>
-          <button onClick={() => setConfirmRecharge(false)}>Cancelar</button>
-          <button onClick={() => SubmitRecharge()} disabled={check.recharge && check.card ? false : true}>Confirmar</button>
-          {showScanner && !confirmReset ?
+      <div className="CashierFooter">
+        <div className="CashierList">
+          {(showCart && cart.length > 0) &&
           <>
-            <Scanner DetectedCode={handleScan}/>
-            <button onClick={() => {setShowScanner(false); return Quagga.stop()}}><Slash/></button>
+            <div className="CashierCartToggle" onClick={() => {setShowCart(false)}}/> 
+            <ul>
+              {cart.map(item => (
+                <li key={item.itemID}>
+                  <p id="name">{item.item}</p>
+                  <p id="price"><DollarSign/>{item.price}</p>
+                  <p id="stock">{item.amount}<X/></p>
+                  <p id="remove" onClick={() => handleRemoveCart(item.itemID)}><Minus/></p>
+                </li>
+              ))}
+            </ul>
           </>
-          : 
-            <button onClick={() => setShowScanner(true)}><Maximize/></button>
           }
-        </div>
-      </div>
-      }
-      {confirmReset &&
-      <div>
-        <div>
-          <h3>Resetar cartão: {card}</h3>
-          <p>saldo: {messageValue}</p>
-          <Code
-            output={event => setCard(event.target.value)}
-            card={card}
-            dupliValue={""}
-            valid={h_Valid}/>
-          <button onClick={() => setConfirmReset(false)}>Cancelar</button>
-          <button onClick={() => SubmitReset()} disabled={check.card ? false : true}>Confirmar</button>
-          {showScanner && !confirmRecharge ?
-          <>
-            <Scanner DetectedCode={handleScan}/>
-            <button onClick={() => {setShowScanner(false); return Quagga.stop()}}><Slash/></button>
-          </>
-          : 
-            <button onClick={() => setShowScanner(true)}><Maximize/></button>
-          }
-        </div>
-      </div>
-      }
-      {message !== "" && !confirmReset &&
-        <div>
-          <div>
-            <p>message</p>
-            <div>
-              {message}
-              {messageValue}
-            </div>
-            <div>
-              <button onClick={() => setMessage("")}>OK</button>
+          <div className="CashierAux">
+            {cart.length > 0 ?
+            <>
+              <p>Carrinho: </p>
+              <p id="SumAux" onClick={() => {setShowCart(true)}}><DollarSign size={18}/>{sumAux}</p>
+            </>
+            :
+            <>
+              <p>Carrinho:</p>
+              <p id="SumAux"><DollarSign size={18}/>{sumAux}</p>
+            </>
+            }
+            <div className="CashierAuxButtons">
+              <button onClick={() => setRecharge(recharge + sumAux)} disabled={sumAux !== 0 ? false : true}><Plus/></button>
+              <button onClick={() => setRecharge(sumAux)} disabled={sumAux !== 0 ? false : true}><ArrowDown/></button>
             </div>
           </div>
-        </div>  
+        </div>
+        <div className="CashierTotal">
+          <p>Total:</p>
+          <div className="CashierTotalInput">
+            <DollarSign size={20}/>
+            <input
+              type="number" inputMode="numeric" id="recharge" name="recharge"
+              value={recharge}
+              onChange={event => setRecharge(event.target.value)}
+            />
+          </div>
+          <button type="submit" onClick={() => setConfirmRecharge(true)} disabled={check.recharge ? false : true}><CheckCircle size={20}/></button>
+        </div>
+      </div>
+
+      {confirmRecharge &&
+      <>
+        <div className="BlackBackground" onClick={() => setConfirmRecharge(false)}>
+        </div>
+        <div className="CashierRecharge">
+          <h3>Recarregar Cartão</h3>
+          <div className="CashierCardMini">
+            <div  className="CashierCardMiniCode">
+              <button onClick={() => setShowScanner(true)}><Maximize/></button>
+              <Code
+                output={handleCard}
+                card={card}
+                dupliValue={""}
+                valid={h_Valid}/>
+            </div>
+            <div className="CashierCardMiniBalance">
+              {check.card &&
+              <>
+                <p>Saldo atual</p>
+                <p><DollarSign size={18}/>{cardBalance}</p>
+              </>
+              }
+            </div>
+          </div>
+          <div className="CashierRechargeFooter">
+            <p>Recarregar</p>
+            <p id="recharge"><DollarSign size={20}/>{recharge}</p>
+            <Payment 
+              output={(value) => setPayment(value)}/>
+            <div className="CashierRechargeFooterButtons">
+              <button onClick={() => setConfirmRecharge(false)}>Cancelar</button>
+              <button onClick={() => SubmitRecharge()} disabled={check.recharge && check.card ? false : true}>Confirmar</button>
+            </div>
+          </div>
+        </div>
+      </>
+      }
+
+      {confirmReset &&
+      <>
+        <div className="BlackBackground" onClick={() => setConfirmReset(false)}>
+        </div>
+        <div className="CashierReset">
+          <h3>Finalizar Cartão</h3>
+          <div className="CashierCardMini">
+            <div  className="CashierCardMiniCode">
+              <button onClick={() => setShowScanner(true)}><Maximize/></button>
+              <Code
+                output={handleCard}
+                card={card}
+                dupliValue={""}
+                valid={h_Valid}/>
+            </div>
+            <div className="Balance">
+              <p><DollarSign size={18}/>{cardBalance}</p>
+              <p>{balanceType}</p>
+            </div>
+          </div>
+          <div className="CashierResetFooter">
+            <button onClick={() => setConfirmReset(false)}>Cancelar</button>
+            {cardBalance === 0 ?
+              <button onClick={() => SubmitReset("refund")} disabled={check.card ? false : true}>Confirmar</button>
+            : balanceType === "cash" ?
+            <>
+              <button onClick={() => SubmitReset("donation")} disabled={check.card ? false : true}>Doar</button>
+              <button onClick={() => SubmitReset("refund")} disabled={check.card ? false : true}>Reenbolsar</button>
+            </>
+            :
+              <button onClick={() => SubmitReset("donation")} disabled={check.card ? false : true}>Doar</button>
+            }
+            
+          </div>        
+        </div>
+      </>
+      }
+
+      {showScanner &&
+      <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false); return Quagga.stop()}}>
+        <Scanner DetectedCode={handleScan} output={handleScan}/>
+      </div>
+      }
+
+      {message !== "" && !confirmReset &&
+      <>
+        <div className="BlackBackground" onClick={() => setMessage("")}>
+        </div>
+        <div className="CashierMessage">
+          <div>
+            {message}
+            {cardBalance}
+          </div>
+          <div>
+            <button onClick={() => setMessage("")}>OK</button>
+          </div>
+        </div>
+      </>
       }
     </div>
   )

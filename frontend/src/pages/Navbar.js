@@ -1,5 +1,7 @@
+import "./Navbar.css"
 import React, { useState, useEffect, useContext } from 'react';
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, useLocation } from 'react-router-dom';
+import { ChevronLeft } from 'react-feather';
 import AuthContext from '../store/auth_context';
 
 function Navbar() {
@@ -8,6 +10,7 @@ function Navbar() {
     firstTime: true
   })
   const auth = useContext(AuthContext);
+  const { pathname } = useLocation();
 
   useEffect(() => {  // Page requirements
     if (auth.user.authenticated === 2 && user.firstTime){
@@ -20,44 +23,36 @@ function Navbar() {
 
   return (
     <>
-      <header>
-        <nav>
-          <ul>
-            <li>
-              <NavLink to="/">
-                Home
-              </NavLink>
-            </li>
-            {/* {auth.user.authenticated === true &&
-              <>
-              <li>
-                <NavLink to="/vendedor">
-                  Vendedor
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/caixa">
-                  Caixa
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/admin/inventario">
-                  Inventário
-                </NavLink>
-              </li>
-              </>
-            } */}
-          </ul>
-          {auth.user.authenticated === true?
-            <div>
-              <NavLink to="/user">{auth.user.firstname}</NavLink>
-            </div>
-          : 
-            <div>
-              <NavLink to="/login">Login</NavLink>
-              <NavLink to="/signup">Sign-up</NavLink>
-            </div>
-          }
+      <header className={auth.user.authenticated === true ? "HeaderOnline" : "HeaderOffline"}>
+        <nav className="navHeader">
+          <div className="navMenu">
+            {pathname !== '/' &&
+            <NavLink className="navLinks" to="/">
+              <ChevronLeft/>
+            </NavLink>
+            }
+          </div>
+          <div className="navTitle">
+            {pathname === '/user' &&
+              <h2>Usuário</h2>
+            }
+            {pathname === '/seller' &&
+              <h2>Vendedor</h2>
+            }
+            {pathname === '/cashier' &&
+              <h2>Caixa</h2>
+            }
+            {pathname === '/stocktaking' &&
+              <h2>Inventário</h2>
+            }
+          </div>
+          <div className="navUser">
+            {auth.user.authenticated === true &&
+            <NavLink className="navLinks" to="/user">
+              {auth.user.firstname}
+            </NavLink> 
+            }
+          </div>
         </nav>
       </header>
       <Outlet/>

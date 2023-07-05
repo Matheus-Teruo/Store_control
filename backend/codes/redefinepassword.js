@@ -12,7 +12,7 @@ rl.question('Digite o usuario para mudar a senha: ', (answer) => {
     .update({ password: "$2a$10$WQIrA4naM1x3cKgxdx.nJ.hh40QFDCPe0YQeWBbfF5LrVzaVYqRlq",
               salt: "$2a$10$WQIrA4naM1x3cKgxdx.nJ."})
     .then(() => {
-      console.log(`User ${answer} redefined password`);
+      console.log(`User ${answer} redefined password para shizuoka123`);
       database.destroy();
     })
     .catch((error) => {

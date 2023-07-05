@@ -220,18 +220,18 @@ function Database() {
 
   return (
     <div>
-      <h1>Associations e estandes</h1>
+      <h1>Associações e estandes</h1>
       <div>
         <h2>Menu</h2>
         <div>
-          <button onClick={() => {setShowAssociation(true)}}>Registrar kenjinkai</button>
+          <button onClick={() => {setShowAssociation(true); setEdit("")}}>Registrar Associação</button>
         </div>
         <div>
-          <button onClick={() => {setShowStand(true)}}>Novo estande</button>
+          <button onClick={() => {setShowStand(true); setEdit("")}}>Novo Estande</button>
         </div>
       </div>
       <ul>
-        <li><p>kenjinkaiID</p><p>kenjinkai</p><p>diretoria</p><p>stands</p></li>
+        <li><p>associaçãoID</p><p>associação</p><p>diretoria</p><p>stands</p></li>
         {associations.length !== 0 && associations.map((association) => (
           <li key={association.associationID}>
             <p>{association.associationID}</p>

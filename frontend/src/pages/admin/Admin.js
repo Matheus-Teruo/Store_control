@@ -4,7 +4,7 @@ import { Outlet, NavLink } from 'react-router-dom';
 function Admin() {
   return (
     <>
-      <header>
+      <nav>
         <div>
           <ul>
             <li>
@@ -19,12 +19,12 @@ function Admin() {
             </li>
             <li>
               <NavLink to="/admin/database">
-                Database
+                Associações
               </NavLink>
             </li>
           </ul>
         </div>
-      </header>
+      </nav>
       <Outlet/>
     </>
   )

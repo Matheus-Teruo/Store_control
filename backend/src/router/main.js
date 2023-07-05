@@ -158,7 +158,7 @@ router.post("/recharge", (req, res) => {  // Submit recharge
     Card(data.cardID)
       .then(card => {
         database('recharges')
-          .insert({recharge: data.recharge, recharge_t: card.time, cardID: data.cardID, userID: decoded.userID})
+          .insert({recharge: data.recharge, recharge_t: card.time, payment: data.payment, cardID: data.cardID, userID: decoded.userID})
           .then(() => {
             Customer({card: data.cardID, valid: true, time: card.time}) 
               .then(() => {
@@ -196,28 +196,70 @@ router.post("/resetcard", (req, res) => {  // Submit reset card
     Card(data.cardID)
       .then(card => {
         if (card.debit > 0) {
-          database('donations')
-            .insert({value: card.debit, donation_t: card.time, cardID: data.cardID, userID: decoded.userID})
-            .then(() => {
-              Customer({card: data.cardID, valid: false, time: card.time}) 
-                .then(() => {
-                  database('cards')
-                    .where({cardID: data.cardID})
-                    .update({debit: 0})
+          if (data.finalization === "donation"){
+            database('donations')
+              .insert({value: card.debit, donation_t: card.time, cardID: data.cardID, userID: decoded.userID})
+              .then(() => {
+                Customer({card: data.cardID, valid: false, time: card.time}) 
+                  .then(() => {
+                    database('cards')
+                      .where({cardID: data.cardID})
+                      .update({debit: 0})
+                      .then(() => {
+                        return res.json({message: "successful reset card", cardID: data.cardID});
+                      })
+                      .catch(() => {  // Error on update card debit
+                        return res.status(500).json({message: "error on update card debit", error: "cards"})
+                      })
+                  })
+                  .catch(() => {  // Error on register costumer
+                    return res.status(500).json({message: "error on update customers", error: "customers"})
+                  })
+              })
+              .catch(() => {  // Error on register recharge
+                return res.status(500).json({message: "error on register donation", error: "donations"})
+              })
+          } else {  // Refund the money
+            database('recharges')
+              .select('rechargeID', 'recharge', 'payment')
+              .where({cardID: value.card})
+              .orderBy('control_t', 'desc')
+              .limit(1)
+              .then((rowsRecharges) => {
+                const recharge = rowsRecharges[0];
+                if (recharge.payment === "cash"){
+                  const aux = recharge.recharge - card.debit;
+                  database('recharges')
+                    .where({rechargeID: recharge.rechargeID})
+                    .update({recharge: aux})
                     .then(() => {
-                      return res.json({message: "successful reset card", cardID: data.cardID});
+                      Customer({card: data.cardID, valid: false, time: card.time})
+                        .then(() => {
+                          database('cards')
+                            .where({cardID: data.cardID})
+                            .update({debit: 0})
+                            .then(() => {
+                              return res.json({message: "successful reset card", cardID: data.cardID});
+                            })
+                            .catch(() => {  // Error on update card debit
+                              return res.status(500).json({message: "error on update card debit", error: "cards"})
+                            })  
+                        })
+                        .catch(() => {  // Error on register costumer
+                          return res.status(500).json({message: "error on update customers", error: "customers"})
+                        })
                     })
-                    .catch(() => {  // Error on update card debit
-                      return res.status(500).json({message: "error on update card debit", error: "cards"})
+                    .catch(() => {  // Error on register costumer
+                      return res.status(500).json({message: "error on update recharge", error: "recharge"})
                     })
-                })
-                .catch(() => {  // Error on register costumer
-                  return res.status(500).json({message: "error on update customers", error: "customers"})
-                })
-            })
-            .catch(() => {  // Error on register recharge
-              return res.status(500).json({message: "error on register recharge", error: "donations"})
-            })
+                } else {
+                  return res.status(500).json({message: "error on recharge not possible refund", error: "recharges"})
+                }
+              })
+              .catch(() => {  // Error on register recharge
+                return res.status(500).json({message: "error on take recharge", error: "recharges"})
+              })
+          }
         } else {
           Customer({card: data.cardID, valid: false, time: card.time}) 
             .then(() => {
@@ -325,11 +367,144 @@ router.post('/cardcheck', (req, res) => {  // Request card debit
   const data = req.body;
   Card(data.cardID)
     .then((card) => {
-      return res.json({card: data.cardID, value: card.debit})
+      console.log(card)
+      if (card.debit > 0){
+        database('recharges')
+          .select('rechargeID', 'payment')
+          .where({cardID: data.cardID})
+          .orderBy('recharge_t', 'desc')
+          .limit(1)
+          .then((rowsRecharges) => {
+            if (rowsRecharges.length > 0) {
+              const recharge = rowsRecharges[0];
+              return res.json({card: data.cardID, value: card.debit, payment: recharge.payment, code: true})
+            } else {
+              return res.json({card: data.cardID, value: card.debit, payment: "", code: true})
+            }
+          })
+          .catch(() => {
+            return res.json({card: "error: recharge", value: 0, payment: "", code: false})
+          })
+      } else {
+        return res.json({card: data.cardID, value: card.debit, payment: "", code: true})
+      }
     })
     .catch(() => {
-      return res.json({card: "error: card not found", value: "0"})
+      return res.json({card: "error: card not found", value: 0, payment: "", code: false})
     })
 })
+// Stocktaking
+router.get("/stocktaking", (req, res) => {  // Request items from a standID
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
+    database('users')
+      .select('stands.standID', 'stands.stand')
+      .join('stands', 'users.standID', 'stands.standID')
+      .where({userID: decoded.userID})
+      .then((rowsUsers) => {
+        if (rowsUsers.length > 0){
+          const user = rowsUsers[0];
+          database('items')
+            .select()
+            .where({standID: user.standID})
+            .then((items) => {
+              return res.json({stand: {standID: user.standID, stand: user.stand}, items: items})
+            })
+        } else {  // User without stand
+          return res.json({stand: {standID:0, stand:""}, items: []})
+        }
+      })
+  }
+})
+
+router.post("/newitem", (req, res, next) => {  // Create new item
+  const data = req.body;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
+    if (data.standID > 1) {
+      database('users')
+        .select('standID')
+        .where({userID: decoded.userID})
+        .then((rowsUsers) => {
+          const user = rowsUsers[0];
+          if (user.standID === data.standID){
+            database('items')
+              .insert(data)
+              .then(() => {
+                console.log(`new item created: ${data.item}`)
+                return res.json({message: "new item created"})
+              })
+              .catch(error => {
+                if (error.errno === 1062){  // Duplication error
+                  const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
+                  return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
+                } else {
+                console.error(error)
+                return res.status(501).json({ error: {error}});
+                }
+              })
+          } else {
+          return res.status(401).end();
+          }
+        })
+    } else {
+    return res.status(401).end();
+    }
+  }
+})
+
+router.post("/edititem", (req, res, next) => {  // Change item property
+  const data = req.body;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
+    if (data.standID > 1) {
+      database('users')
+        .select('standID')
+        .where({userID: decoded.userID})
+        .then((rowsUsers) => {
+          const user = rowsUsers[0];
+          if (user.standID === data.standID){
+            database('items')
+              .where({itemID: data.itemID})
+              .update({item: data.item, price: data.price, stock: data.stock})
+              .then(() => {
+                console.log(`item edited: ${data.item}`)
+                return res.json({message: "item edited"})
+              })
+              .catch(error => {
+                if (error.errno === 1062){  // Duplication error
+                  const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
+                  return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
+                } else {
+                  console.error(error)
+                  return res.status(501).json({ error: {error}});
+                }
+              })
+          } else {
+            return res.status(501).json({message: "user are in diferent stand"}); 
+          }
+        })
+        .catch(error => {
+          return res.status(501).json({message: "user are in diferent stand, error table"}); 
+        })
+    } else {
+      return res.status(501).json({message: "stand 1 can't have items"});
+    }
+  }
+})
+
+// router.use((err, req, res, next) => {  // Cancel the upload of image
+//   if (err) {
+//     // Handle the error appropriately
+//     return res.status(401).json({ error: 'Unauthorized' });
+//   }
+//   next();
+// });
 
 module.exports = router;

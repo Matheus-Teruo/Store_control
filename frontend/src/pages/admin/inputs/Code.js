@@ -15,22 +15,26 @@ function Code(props) {
     }
   }, [check, props.card, props.dupliValue])
 
-  useEffect(() => {  // Conditions logic
-    if (props.card !== null && props.card.length === 12) {  // Check min number of char
+  useEffect(() => {
+    if (props.card.length === 12) {  // Check min number of char
       setCheck(true)
     } else {
       setCheck(false)
     };
-  }, [props.card])
+  })
+  function handleCard(event){  // Conditions logic
+    props.output(event)
+    if (event.target.value.length === 12) {  // Check min number of char
+      setCheck(true)
+    } else {
+      setCheck(false)
+    };
+  }
+
 
   return (
     <>
-      <label>Código do Cartão:</label>
-      <input value={props.card} onChange={event => props.output(event)} id="card" type="number" name="card"/>
-      <div>
-        {!check && <p>minChar</p>}
-        {props.dupliValue !== "" && (props.dupliValue === props.card) && <div>noUsed</div>}
-      </div>
+      <input className={` ${submitvalid ? "CardValid" : "CardInvalid"}`} value={props.card} onChange={handleCard} placeholder={`${(props.dupliValue !== "" && (props.dupliValue === props.card)) ? "Cartão já cadastrado" : ""}`} id="card" type="number" inputMode="numeric" name="card"/>
     </>
   )
 }

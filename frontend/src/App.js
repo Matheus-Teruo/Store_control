@@ -1,6 +1,6 @@
+import "./App.css"
 import React from "react";
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import "./App.css";
 
 import Navbar from "./pages/Navbar";
 import Home from "./pages/Home";
@@ -26,12 +26,12 @@ const router = createBrowserRouter([
     element: <Navbar/>,
     children: [
       { path: '/', element: <Home/>},
-      { path: '/vendedor', element: <Seller/>},
-      { path: '/caixa', element: <Cashier/>},
+      { path: '/seller', element: <Seller/>},
+      { path: '/cashier', element: <Cashier/>},
       { path: '/user', element: <User/>},
       { path: '/login', element: <Login/>},
       { path: '/signup', element: <Signup/>},
-      { path: '/inventario', element: <Stocktaking/>},
+      { path: '/stocktaking', element: <Stocktaking/>},
       { path: '/admin/',
         element: <Admin/>,
         children: [
