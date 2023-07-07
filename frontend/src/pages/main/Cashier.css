@@ -1,13 +1,10 @@
 .Cashierbackground{
-  width: 100%;
   background-color: red;
   display: flex;
 }
 
 .CashierMain{
   width: 100%;
-  top: var(--height-header);
-  bottom: calc(5vh + 39px);
   background-color: green;
 }
 
@@ -41,6 +38,7 @@
   justify-content: end;
 }
 .CashierCardCompact button{
+  display: relative;
   width: 56px;
   margin: 10px 7px;
   border: none;
@@ -56,14 +54,8 @@
 }
 .CashierCardCompact.animation button::after{
   content: "";
-  display: none;
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
   background-color: var(--color-primary-6);
-  border-radius: 7px;
   animation: CardAppearContract 1s;
 }
 
@@ -82,14 +74,17 @@
 }
 .CashierCard::after {
   content: "";
-  display: none;
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
   background-color: var(--color-primary-6);
-  border-radius: 10px;
+  animation: CardAppearExpand 1s;
+}
+.CashierCard.noUse{
+  background-color: var(--color-gray-100);
+}
+.CashierCard.noUse::after {
+  content: "";
+  position: absolute;
+  background-color: var(--color-gray-100);
   animation: CardAppearExpand 1s;
 }
 .CashierCard button{
@@ -133,7 +128,7 @@
 
 .CashierCardFooter{
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
   margin: 5px 8px;
 }
 
@@ -141,21 +136,20 @@
   flex-grow: 1;
   display: flex;
   background-color: aqua;
-  overflow: auto;
 }
 .CashierItems svg{
   height: 20px;
 }
 .CashierItems ul{
   width: 100%;
-  position:static;
   height: calc(100vh - calc(var(--height-header) + 5vh + 130px));
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
 }
 .CashierItems ul.cardExpanded{
-  height: calc(100vh - calc(var(--height-header) + 5vh + 95px + 38.75vw));
+  height: calc(100vh - calc(var(--height-header) + 5vh + 95px + 300px));
+  transition: height 0.70s;
 }
 .CashierItems li{
   white-space: nowrap;
@@ -318,11 +312,11 @@
 /*  Pop up */
 .BlackBackground{
   z-index: 15;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -330,21 +324,21 @@
 }
 .BlackBackgroundScanner{
   z-index: 25;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #00000050;
 }
 .CashierRecharge{
+  z-index: 20;
   position: fixed;
   top: calc(50vh - 20vh);
   left: calc(50vw - 40vw);
-  z-index: 20;
   width: 80vw;
   border-radius: 10px;
   display: flex;
@@ -389,13 +383,14 @@
 }
 .CashierCardMiniBalance{
   padding: 5px 8px;
+  min-height: 25px;
   display: flex;
   flex-direction: column;
   align-items: start;
 }
 .CashierCardMiniBalance p{
   display: flex;
-  align-items: start;
+  align-items: center;
 }
 .CashierRechargeFooter p{
   display: flex;
@@ -456,6 +451,7 @@
 }
 .CashierCardMini .Balance{
   display: flex;
+  min-height: 25px;
   align-items: center;
   justify-content: space-between;
   padding: 5px 8px;
@@ -491,7 +487,11 @@
   top: calc(50vh - 25vh);
   left: calc(50vw - 35vw);
   width: 70vw;
-  height: 50vh;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   background-color: yellowgreen;
 }
 
@@ -505,6 +505,11 @@
   .CashierCardCompact.animation button{
     animation: CardContractMobile 1s;
   }
+
+  .CashierItems ul.cardExpanded{
+    height: calc(100vh - calc(var(--height-header) + 5vh + 95px + 38.75vw));
+  }
+
   .CashierCardMini{
     width: 80%;
     border-radius: 10px;
@@ -551,26 +556,7 @@
     transform: translateX(0);
   }
 }
-@keyframes CardAppearExpand {
-  0% {
-    display: flex;
-    opacity: 100%;
-    background-color: var(--color-primary-6);
-    z-index: 10;
-  }
-  65% {
-    display: flex;
-    opacity: 100%;
-    z-index: 10;
-    background-color: var(--color-primary-6);
-  }
-  100% {
-    display: flex;
-    opacity: 0%;
-    z-index: 10;
-    background-color: var(--color-primary-6);
-  }
-}
+
 
 @keyframes CardContract {
   0% {
@@ -610,25 +596,5 @@
     aspect-ratio: 8/5;
     border-radius: 6px;
     transform: translateX(0);
-  }
-}
-@keyframes CardAppearContract {
-  0% {
-    display: flex;
-    opacity: 100%;
-    background-color: var(--color-primary-6);
-    z-index: 10;
-  }
-  65% {
-    display: flex;
-    opacity: 100%;
-    z-index: 10;
-    background-color: var(--color-primary-6);
-  }
-  100% {
-    display: flex;
-    opacity: 0%;
-    z-index: 10;
-    background-color: var(--color-primary-6);
   }
 }

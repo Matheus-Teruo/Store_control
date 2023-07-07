@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import AuthContext from '../../../store/auth_context';
 
 function StandID(props) {
   const [standIndex, setStandIndex] = useState(0)
@@ -11,18 +10,22 @@ function StandID(props) {
     setStandIndex(props.defaultValue || 0)
     setStands(props.stands)
     setAssociations(props.associations)
-    console.log(props.stands)
-    console.log(props.defaultValue)
     setAssociationIndex(props.stands.filter(element => element.standID === props.defaultValue)[0]?.associationID)
   }, [props.defaultValue, props.stands, props.association])
 
   function handleStandChange(event) {  // handle stand
     props.output(event.target.value);
     setStandIndex(event.target.value)
+    if (parseInt(event.target.value) <= 1){
+      props.valid(false)
+    } else {
+      props.valid(true)
+    }
   }
 
   function handleAssociationChange(event) {  // handle association
     props.output(0);
+    props.valid(false)
     setStandIndex(0);
     setAssociationIndex(parseInt(event.target.value))
   }

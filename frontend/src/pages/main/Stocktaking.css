@@ -1,0 +1,100 @@
+.ST_background{
+
+}
+
+.ST_Menu{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ST_Menu button{
+  display: flex;
+  margin: 5px 8px;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+
+.ST_Menu .Filtro{
+  margin: 5px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ST_Main{
+  background-color: red;
+}
+.ST_Main ul{
+  display: flex;
+  flex-direction: column;
+  background-color: aquamarine;
+}
+.ST_Main li{
+  margin: 2px 6px;
+  padding: 3px 8px;
+  display: flex;
+  background-color: gold;
+}
+.ST_Main p{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ST_Main p#name{
+  background-color: blueviolet;
+  flex: 10;
+}
+.ST_Main p#price{
+  margin: 0 8px;
+  min-width: 36px;
+  background-color: blueviolet;
+  flex: 2;
+}
+.ST_Main .quantity{
+  margin: 0 8px 0 0;
+  background-color: red;
+}
+.ST_Main p#stock{
+  min-width: 53px;
+  background-color: blueviolet;
+  flex: 3;
+}
+.ST_Main p#sold{
+  min-width: 53px;
+  background-color: blueviolet;
+  flex: 3;
+}
+.ST_Main p#total{
+  min-width: 53px;
+  position: relative;
+  background-color: blueviolet;
+  flex: 3;
+}
+.ST_Main p#total #dollar{
+  position: absolute;
+  left: 1px;
+}
+
+.ST_NewItem{
+  z-index: 20;
+  position: fixed;
+  top: calc(50vh - 20vh);
+  left: calc(50vw - 40vw);
+  width: 80vw;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+}
+.ST_NewItem button{
+  display: flex;
+  margin: 5px 8px;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}

@@ -29,7 +29,6 @@ function AllUsers() {
       .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         if (resStatus === 200){
-          console.log(data)
           return setUsers(data)
         } else if (resStatus === 401){
           return auth.onLogout()
@@ -43,8 +42,6 @@ function AllUsers() {
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200){
-            console.log(data.associations)
-            console.log(data.stands)
             setAssociations(data.associations);
             setStands(data.stands);
           } else if (resStatus === 401){
@@ -128,6 +125,7 @@ function AllUsers() {
                   output={handleChange}
                   associations={associations}
                   stands={stands}
+                  valid={() => {}}
                   defaultValue={user.standID}/>
                 <button onClick={() => (SubmitEditStandID())}>Confirmar</button>
               </div>

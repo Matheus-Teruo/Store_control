@@ -276,7 +276,7 @@ router.post("/resetcard", (req, res) => {  // Submit reset card
   }
 })
 // Seller
-router.get("/listitemsbystand", (req, res) => {  // Request items by stand
+router.get("/listitemsperstand", (req, res) => {  // Request items by stand
   const decoded = decodeJWT(req, res);
   if (!decoded) {
     return res.status(401).end();
@@ -367,30 +367,39 @@ router.post('/cardcheck', (req, res) => {  // Request card debit
   const data = req.body;
   Card(data.cardID)
     .then((card) => {
-      console.log(card)
-      if (card.debit > 0){
-        database('recharges')
-          .select('rechargeID', 'payment')
-          .where({cardID: data.cardID})
-          .orderBy('recharge_t', 'desc')
-          .limit(1)
-          .then((rowsRecharges) => {
-            if (rowsRecharges.length > 0) {
-              const recharge = rowsRecharges[0];
-              return res.json({card: data.cardID, value: card.debit, payment: recharge.payment, code: true})
-            } else {
-              return res.json({card: data.cardID, value: card.debit, payment: "", code: true})
-            }
-          })
-          .catch(() => {
-            return res.json({card: "error: recharge", value: 0, payment: "", code: false})
-          })
-      } else {
-        return res.json({card: data.cardID, value: card.debit, payment: "", code: true})
-      }
+      database('recharges')
+        .select('rechargeID', 'payment')
+        .where({cardID: data.cardID})
+        .orderBy('recharge_t', 'desc')
+        .limit(1)
+        .then((rowsRecharges) => {
+          if (rowsRecharges.length > 0) {
+            const recharge = rowsRecharges[0];
+            database('customers')
+              .select('in_use')
+              .where({cardID: data.cardID})
+              .orderBy('control_t', 'desc')
+              .limit(1)
+              .then((customers) => {
+                const customer = customers[0];
+                return res.json({card: data.cardID, value: card.debit, payment: recharge.payment, costumer: customer.in_use, code: true})
+              })
+              .catch((err) => {
+                console.error(err)
+                return res.json({card: "error: customer", value: 0, payment: "", costumer: 0, code: false})
+              })
+          } else {
+            return res.json({card: data.cardID, value: card.debit, payment: "", costumer: 0, code: true})
+          }
+        })
+        .catch((err) => {
+          console.error(err)
+          return res.json({card: "error: recharge", value: 0, payment: "", costumer: 0, code: false})
+        })
     })
-    .catch(() => {
-      return res.json({card: "error: card not found", value: 0, payment: "", code: false})
+    .catch((err) => {
+      console.error(err)
+      return res.json({card: "error: card not found", value: 0, payment: "", costumer: 0, code: false})
     })
 })
 // Stocktaking
@@ -412,10 +421,93 @@ router.get("/stocktaking", (req, res) => {  // Request items from a standID
             .then((items) => {
               return res.json({stand: {standID: user.standID, stand: user.stand}, items: items})
             })
+            .catch(() => {
+              return res.status(501).json({message: "user are in diferent stand, error table"}); 
+            })
         } else {  // User without stand
           return res.json({stand: {standID:0, stand:""}, items: []})
         }
       })
+      .catch(() => {
+        return res.status(501).json({message: "user are in diferent stand, error table"}); 
+      })
+  }
+})
+
+router.get("/stocktakingall", (req, res) => {  // Request all items and standID
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
+    if (decoded.superuser === 1){
+      database('items')
+        .select()
+        .then((items) => {
+          return res.json({items: items})
+        })
+        .catch(() => {
+          return res.status(501).json({message: "items error"}); 
+        })
+    } else {
+      return res.status(501).json({message: "Not superuser"}); 
+    }
+  }
+})
+
+router.get("/salesitems", (req, res) => {  // Request item sales and total
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
+    if (decoded.superuser) {
+      database('goods')
+        .select('itemID')
+        .sum('quantity as totalQuantity')
+        .select(database.raw('SUM(unit_p * quantity) as totalPrice'))
+        .groupBy('itemID')
+        .then((goods) => {
+          return res.json({goods: goods})
+        })
+        .catch((err) => {
+          console.error(err)
+          return res.status(501).json({message: "goods error"}); 
+        })
+    } else {
+      return res.status(501).json({message: "Not superuser"}); 
+    }
+  }
+})
+
+router.post("/salesitemsperstand", (req, res) => {  // Request item sales and total from one stand
+  const data = req.body;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
+    if (data.standID > 1) {
+      database('items')
+        .where({standID: data.standID})
+        .select("itemID")
+        .then((rows) => {
+          database('goods')
+            .select('itemID')
+            .whereIn({itemID: rows})
+            .sum('quantity as totalQuantity')
+            .sum(knex.raw('unit_p * quantity as totalPrice'))
+            .groupBy('itemID')
+            .then((goods) => {
+              return res.json({goods: goods})
+            })
+            .catch(() => {
+              return res.status(501).json({message: "goods error"}); 
+            })
+        })
+        .catch(() => {
+          return res.status(501).json({message: "items error"}); 
+        })
+    } else {
+      return res.status(501).json({message: "No userID"}); 
+    }
   }
 })
 
@@ -431,7 +523,7 @@ router.post("/newitem", (req, res, next) => {  // Create new item
         .where({userID: decoded.userID})
         .then((rowsUsers) => {
           const user = rowsUsers[0];
-          if (user.standID === data.standID){
+          if (user.standID === data.standID || decoded.superuser === 1){
             database('items')
               .insert(data)
               .then(() => {
@@ -469,7 +561,7 @@ router.post("/edititem", (req, res, next) => {  // Change item property
         .where({userID: decoded.userID})
         .then((rowsUsers) => {
           const user = rowsUsers[0];
-          if (user.standID === data.standID){
+          if (user.standID === data.standID || decoded.superuser === 1){
             database('items')
               .where({itemID: data.itemID})
               .update({item: data.item, price: data.price, stock: data.stock})

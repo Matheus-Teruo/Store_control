@@ -7,13 +7,13 @@ import Home from "./pages/Home";
 
 import Seller from "./pages/main/Seller";
 import Cashier from "./pages/main/Cashier";
+import Stocktaking from "./pages/main/Stocktaking";
 
 import User from "./pages/auth/User";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 
 import Admin from "./pages/admin/Admin";
-import Stocktaking from "./pages/admin/Stocktaking";
 import Database from "./pages/admin/Database";
 import Cards from "./pages/admin/Cards";
 import AllUsers from "./pages/admin/AllUsers";

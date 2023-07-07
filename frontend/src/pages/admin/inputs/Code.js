@@ -23,12 +23,14 @@ function Code(props) {
     };
   })
   function handleCard(event){  // Conditions logic
-    props.output(event)
-    if (event.target.value.length === 12) {  // Check min number of char
-      setCheck(true)
-    } else {
-      setCheck(false)
-    };
+    if (event.target.value.length <= 12){
+      props.output(event)
+      if (event.target.value.length === 12) {  // Check min number of char
+        setCheck(true)
+      } else {
+        setCheck(false)
+      };
+    }
   }
 
 

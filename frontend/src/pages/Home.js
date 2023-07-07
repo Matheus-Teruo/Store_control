@@ -50,7 +50,7 @@ function Home() {
               <p>vendedor</p>
             </div>
             }
-            {user.standID === 1 ?
+            {user.standID === 1 || user.superuser === 1 ?
             <Link className="MainFrame" to="/cashier">
               <DollarSign alt="Caixa"/>
               <p>Caixa</p>

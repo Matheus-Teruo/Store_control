@@ -20,6 +20,7 @@ function Cashier() {
   const [showCard, setShowCard] = useState(false)
   const [cardBalance, setCardBalance] = useState(0)
   const [balanceType, setBalanceType] = useState("")
+  const [customer, setCustomer] = useState("")
   // Scanner
   const [showScanner, setShowScanner] = useState(false)
   // Cart
@@ -77,7 +78,7 @@ function Cashier() {
         .then(data => {
           if (resStatus === 200){
             RequestLists()
-            setRecharge(0);
+            setRecharge(0); setShowCard(true);
             setConfirmRecharge(false); setCheck({recharge: false, card: false})
             return SubmitCardCheck()
           } else if (resStatus === 401){
@@ -105,7 +106,7 @@ function Cashier() {
         .then(data => {
           if (resStatus === 200){
             RequestLists()
-            setRecharge(0);
+            setRecharge(0); setShowCard(true);
             setConfirmReset(false); setCheck({recharge: false, card: false})
             setMessage(`finalizado cartão: ${data.cardID}`); setCardBalance(0)
           } else if (resStatus === 401){
@@ -128,6 +129,7 @@ function Cashier() {
       .then(data => {
         if (data.code){
           setBalanceType(data.payment)
+          setCustomer(data.customer)
           return setCardBalance(data.value)
         } else {
           return setCardBalance("invalid")
@@ -167,14 +169,14 @@ function Cashier() {
   };
 
   function handleCart(item) {  // Add item on cart
-    console.log(item)
     if (cart.some(element => element.itemID === item.itemID)){
       const updatedCart = cart.map(element => {
         if (element.itemID === item.itemID) {
           if (item.stock > element.amount){
             return {...element, amount: element.amount + 1};
+          } else {
+            return element;
           }
-          return element;
         } else {
         return element;
         }
@@ -188,7 +190,6 @@ function Cashier() {
         amount:1}])
     }
   };
-
   function handleRemoveCart(itemID) {  // Remove item from cart
     const updatedCart = cart.map(element => {
       if (element.itemID === itemID) {
@@ -203,6 +204,25 @@ function Cashier() {
     }).filter(Boolean)
     setCart(updatedCart);
   }  
+  function handleEditCartItem(itemID, field, value) {  // Edit item from cart
+    const item = items.find(item => item.itemID === itemID);
+    if (!item) {
+      return;
+    }
+    let newValue = value;
+    if (field === 'amount') {
+      newValue = Math.min(value, item.stock);
+    }
+
+    const updatedCart = cart.map(element => {
+      if (element.itemID === itemID) {
+        return { ...element, [field]: newValue };
+      } else {
+        return element; // return other items
+      }
+    });
+    setCart(updatedCart);
+  }
 
   function handleCard(event){
     setCard(event.target.value)
@@ -220,7 +240,7 @@ function Cashier() {
       <div className="CashierMain">
         <div className="CashierMenu">
           {showCard?
-          <div className="CashierCard">
+          <div className={`CashierCard ${customer === 1? "" : "noUse" }`}>
             <div className="CashierCardHead">
               <div className="CashierCardNumber">
                 <button onClick={() => setShowScanner(true)}><Maximize/></button>
@@ -245,6 +265,7 @@ function Cashier() {
                 </div>
               }
             <div className="CashierCardFooter">
+              <p>{balanceType}</p>
               <button onClick={() => {setConfirmReset(true);SubmitCardCheck()}} disabled={check.card && cardBalance !== "invalid" ? false : true}><RefreshCw/></button>
             </div>
           </div>
@@ -289,9 +310,9 @@ function Cashier() {
             <ul>
               {cart.map(item => (
                 <li key={item.itemID}>
-                  <p id="name">{item.item}</p>
+                  <p id="name" onClick={() => handleEditCartItem(item.itemID, 'amount', (item.amount + 1))}>{item.item}</p>
                   <p id="price"><DollarSign/>{item.price}</p>
-                  <p id="stock">{item.amount}<X/></p>
+                  <p id="stock" onClick={() => handleEditCartItem(item.itemID, 'amount', (item.amount + 1))}>{item.amount}<X/></p>
                   <p id="remove" onClick={() => handleRemoveCart(item.itemID)}><Minus/></p>
                 </li>
               ))}
@@ -332,77 +353,84 @@ function Cashier() {
 
       {confirmRecharge &&
       <>
-        <div className="BlackBackground" onClick={() => setConfirmRecharge(false)}>
-        </div>
-        <div className="CashierRecharge">
-          <h3>Recarregar Cartão</h3>
-          <div className="CashierCardMini">
-            <div  className="CashierCardMiniCode">
-              <button onClick={() => setShowScanner(true)}><Maximize/></button>
-              <Code
-                output={handleCard}
-                card={card}
-                dupliValue={""}
-                valid={h_Valid}/>
-            </div>
-            <div className="CashierCardMiniBalance">
-              {check.card &&
-              <>
-                <p>Saldo atual</p>
+      <div className="BlackBackground" onClick={() => setConfirmRecharge(false)}/>
+      <div className="CashierRecharge">
+        <h3>Recarregar Cartão</h3>
+        <div className="CashierCardMini">
+          <div  className="CashierCardMiniCode">
+            <button onClick={() => setShowScanner(true)}><Maximize/></button>
+            <Code
+              output={handleCard}
+              card={card}
+              dupliValue={""}
+              valid={h_Valid}/>
+          </div>
+          <div className="CashierCardMiniBalance">
+            {check.card &&
+              (cardBalance !== "invalid"?
                 <p><DollarSign size={18}/>{cardBalance}</p>
-              </>
-              }
-            </div>
-          </div>
-          <div className="CashierRechargeFooter">
-            <p>Recarregar</p>
-            <p id="recharge"><DollarSign size={20}/>{recharge}</p>
-            <Payment 
-              output={(value) => setPayment(value)}/>
-            <div className="CashierRechargeFooterButtons">
-              <button onClick={() => setConfirmRecharge(false)}>Cancelar</button>
-              <button onClick={() => SubmitRecharge()} disabled={check.recharge && check.card ? false : true}>Confirmar</button>
-            </div>
+              :
+                <p>{cardBalance}</p>
+              )
+            }
           </div>
         </div>
+        <div className="CashierRechargeFooter">
+          <p>Recarregar</p>
+          <p id="recharge"><DollarSign size={20}/>{recharge}</p>
+          <Payment 
+            output={(value) => setPayment(value)}/>
+          <div className="CashierRechargeFooterButtons">
+            <button onClick={() => setConfirmRecharge(false)}>Cancelar</button>
+            <button onClick={() => SubmitRecharge()} disabled={check.recharge && check.card ? false : true}>Confirmar</button>
+          </div>
+        </div>
+      </div>
       </>
       }
 
       {confirmReset &&
       <>
-        <div className="BlackBackground" onClick={() => setConfirmReset(false)}>
-        </div>
-        <div className="CashierReset">
-          <h3>Finalizar Cartão</h3>
-          <div className="CashierCardMini">
-            <div  className="CashierCardMiniCode">
-              <button onClick={() => setShowScanner(true)}><Maximize/></button>
-              <Code
-                output={handleCard}
-                card={card}
-                dupliValue={""}
-                valid={h_Valid}/>
-            </div>
-            <div className="Balance">
-              <p><DollarSign size={18}/>{cardBalance}</p>
-              <p>{balanceType}</p>
-            </div>
+      <div className="BlackBackground" onClick={() => setConfirmReset(false)}/>
+      <div className="CashierReset">
+        <h3>Finalizar Cartão</h3>
+        <div className="CashierCardMini">
+          <div  className="CashierCardMiniCode">
+            <button onClick={() => setShowScanner(true)}><Maximize/></button>
+            <Code
+              output={handleCard}
+              card={card}
+              dupliValue={""}
+              valid={h_Valid}/>
           </div>
-          <div className="CashierResetFooter">
-            <button onClick={() => setConfirmReset(false)}>Cancelar</button>
-            {cardBalance === 0 ?
-              <button onClick={() => SubmitReset("refund")} disabled={check.card ? false : true}>Confirmar</button>
-            : balanceType === "cash" ?
-            <>
-              <button onClick={() => SubmitReset("donation")} disabled={check.card ? false : true}>Doar</button>
-              <button onClick={() => SubmitReset("refund")} disabled={check.card ? false : true}>Reenbolsar</button>
-            </>
-            :
-              <button onClick={() => SubmitReset("donation")} disabled={check.card ? false : true}>Doar</button>
+          <div className="Balance">
+            {check.card &&
+              (cardBalance !== "invalid"?
+                <>
+                <p><DollarSign size={18}/>{cardBalance}</p>
+                <p>{balanceType}</p>
+                </>
+              :
+                <p>{cardBalance}</p>
+              )
             }
-            
-          </div>        
+          </div>
         </div>
+        <div className="CashierResetFooter">
+          <button onClick={() => setConfirmReset(false)}>Cancelar</button>
+          {cardBalance === 0 ?
+            <button onClick={() => SubmitReset("refund")} disabled={check.card ? false : true}>Confirmar</button>
+          : balanceType === "cash" ?
+          <>
+            <button onClick={() => SubmitReset("donation")} disabled={check.card ? false : true}>Doar</button>
+            <button onClick={() => SubmitReset("refund")} disabled={check.card ? false : true}>Reenbolsar</button>
+          </>
+          :
+            <button onClick={() => SubmitReset("donation")} disabled={check.card ? false : true}>Doar</button>
+          }
+          
+        </div>        
+      </div>
       </>
       }
 
@@ -414,12 +442,10 @@ function Cashier() {
 
       {message !== "" && !confirmReset &&
       <>
-        <div className="BlackBackground" onClick={() => setMessage("")}>
-        </div>
+        <div className="BlackBackground" onClick={() => setMessage("")}/>
         <div className="CashierMessage">
           <div>
             {message}
-            {cardBalance}
           </div>
           <div>
             <button onClick={() => setMessage("")}>OK</button>
