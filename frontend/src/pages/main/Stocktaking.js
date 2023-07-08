@@ -143,7 +143,7 @@ function Stocktaking() {
         .then(data => {
           if (resStatus === 200){
             RequestItems();
-            setShowItem(false); setCheck({item: false, standID: false});
+            setShowItem(false); setCheck(check => ({...check, item: false}));
             setNewItem(""); setNewPrice(0); setNewStock(0);
             // LATER IT'S NEED submit the image in sequence
           } else if (resStatus === 409) {
@@ -174,7 +174,7 @@ function Stocktaking() {
         .then(data => {
           if (resStatus === 200){
             RequestItems();
-            setShowItem(false); setCheck({item: false, standID: false}); setEdit(false);
+            setShowItem(false); setCheck(check => ({...check, item: false})); setEdit(false);
             setNewItem(""); setNewPrice(0); setNewStock(0);
             // LATER IT'S NEED submit the image in sequence
           } else if (resStatus === 409) {
