@@ -108,7 +108,7 @@ function Cashier() {
             RequestLists()
             setRecharge(0); setShowCard(true);
             setConfirmReset(false); setCheck({recharge: false, card: false})
-            setMessage(`finalizado cartão: ${data.cardID}`); setCardBalance(0)
+            setMessage(`Cartão ${data.cardID} finalizado`); setCardBalance(0)
           } else if (resStatus === 401){
             return auth.onLogout()
           }
@@ -240,7 +240,7 @@ function Cashier() {
       <div className="CashierMain">
         <div className="CashierMenu">
           {showCard?
-          <div className={`CashierCard ${customer === 1? "" : "noUse" }`}>
+          <div className={`CashierCard ${(check.card === false && customer !== 1)? "" : "noUse" }`}>
             <div className="CashierCardHead">
               <div className="CashierCardNumber">
                 <button onClick={() => setShowScanner(true)}><Maximize/></button>
@@ -265,7 +265,7 @@ function Cashier() {
                 </div>
               }
             <div className="CashierCardFooter">
-              <p>{balanceType}</p>
+              {customer === 1 ? <p>{balanceType}</p> : <p></p>}
               <button onClick={() => {setConfirmReset(true);SubmitCardCheck()}} disabled={check.card && cardBalance !== "invalid" ? false : true}><RefreshCw/></button>
             </div>
           </div>
@@ -294,8 +294,8 @@ function Cashier() {
             {items.map((item) => (
               <li key={item.itemID} onClick={() => handleCart(item)}>
                 <p id="name">{item.item}</p>
-                <p id="price"><DollarSign/>{item.price}</p>
-                <p id="stock"><Package/>{item.stock}</p>
+                <p id="price"><DollarSign size={19}/>{item.price}</p>
+                <p id="stock"><Package size={19}/>{item.stock}</p>
               </li>
             ))}
           </ul>
@@ -311,9 +311,9 @@ function Cashier() {
               {cart.map(item => (
                 <li key={item.itemID}>
                   <p id="name" onClick={() => handleEditCartItem(item.itemID, 'amount', (item.amount + 1))}>{item.item}</p>
-                  <p id="price"><DollarSign/>{item.price}</p>
+                  <p id="price"><DollarSign size={18}/>{item.price}</p>
                   <p id="stock" onClick={() => handleEditCartItem(item.itemID, 'amount', (item.amount + 1))}>{item.amount}<X/></p>
-                  <p id="remove" onClick={() => handleRemoveCart(item.itemID)}><Minus/></p>
+                  <p id="remove" onClick={() => handleRemoveCart(item.itemID)}><Minus size={19}/></p>
                 </li>
               ))}
             </ul>
@@ -356,7 +356,7 @@ function Cashier() {
       <div className="BlackBackground" onClick={() => setConfirmRecharge(false)}/>
       <div className="CashierRecharge">
         <h3>Recarregar Cartão</h3>
-        <div className="CashierCardMini">
+        <div className={`CashierCardMini  ${(check.card === false && customer !== 1)? "" : "noUse"}`}>
           <div  className="CashierCardMiniCode">
             <button onClick={() => setShowScanner(true)}><Maximize/></button>
             <Code
@@ -382,7 +382,7 @@ function Cashier() {
             output={(value) => setPayment(value)}/>
           <div className="CashierRechargeFooterButtons">
             <button onClick={() => setConfirmRecharge(false)}>Cancelar</button>
-            <button onClick={() => SubmitRecharge()} disabled={check.recharge && check.card ? false : true}>Confirmar</button>
+            <button onClick={() => SubmitRecharge()} disabled={check.recharge && check.card && cardBalance !== "invalid"? false : true}>Confirmar</button>
           </div>
         </div>
       </div>

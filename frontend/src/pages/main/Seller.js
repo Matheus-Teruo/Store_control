@@ -12,7 +12,7 @@ function Seller() {
   const [total, setTotal] = useState(0)
   const [showScanner, setShowScanner] = useState(false)
   const [showCard, setShowCard] = useState(false)
-  const [card, setCard] = useState("")
+  const [card, setCard] = useState(123456789012)
   const [stand, setStand] = useState({standID:0 ,stand:""})
   const [items, setItems] = useState([])
   const [check, setCheck] = useState({
@@ -20,6 +20,7 @@ function Seller() {
     card: false})
   const [confirmPurchase, setConfirmPurchase] = useState(false)
   const [cardBalance, setCardBalance] = useState(0)
+  const [customer, setCustomer] = useState("")
   const [animation, setAnimation] = useState(false)
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
@@ -90,6 +91,7 @@ function Seller() {
       .then(res => res.json())
       .then(data => {
         if (data.code){
+          setCustomer(data.customer)
           return setCardBalance(data.value)
         } else {
           return setCardBalance("invalid")
@@ -197,7 +199,7 @@ function Seller() {
             }
           </div>
           {showCard &&
-            <div className="SellerCard">
+            <div className={`SellerCard ${(check.card === false && customer !== 1)? "" : "noUse" }`}>
               <div className="SellerCardHead">
                 <div className="SellerCardNumber">
                   <button onClick={() => setShowScanner(true)}><Maximize/></button>
@@ -262,7 +264,7 @@ function Seller() {
       <div className="BlackBackground"/>
       <div  className="SellerPurchase">
         <h2>Finalizar Compra</h2>
-        <div className="SellerCardMini">
+        <div className={`SellerCardMini  ${(check.card === false && customer !== 1)? "" : "noUse"}`}>
           <div  className="SellerCardMiniCode">
             <button onClick={() => setShowScanner(true)}><Maximize/></button>
             <Code
