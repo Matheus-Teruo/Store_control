@@ -23,7 +23,7 @@ function Stocktaking() {
   const [selectedImage, setSelectedImage] = useState()
   const [check, setCheck] = useState({
     item: false,
-    StandID: false})
+    standID: false})
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -202,9 +202,9 @@ function Stocktaking() {
   function handleChangeStandID(value) {  // Manage stand ID
     const aux = parseInt(value)
     if (aux === 0) {
-      setStand(stand => ({...stand, StandID: null}))
+      setStand(stand => ({...stand, standID: null}))
     } else {
-      setStand(stand => ({...stand, StandID: null}))
+      setStand(stand => ({...stand, standID: aux}))
     }
   }
   function handleImage(event) {
@@ -243,7 +243,7 @@ function Stocktaking() {
             <li key={item.itemID} onClick={() => {
               setItemID(item.itemID);
               setShowItem(true); setEdit(true);
-              setNewItem(item.item); setStand(stand => ({...stand, StandID: item.standID}));
+              setNewItem(item.item); setStand(stand => ({...stand, standID: item.standID}));
               setNewPrice(parseFloat(item.price));
               setNewStock(parseInt(item.stock));}}>
               <p id="name">{item.item}</p>
@@ -298,7 +298,6 @@ function Stocktaking() {
               valid={value => setCheck(check => ({...check, standID: value}))}
               defaultValue={stand.standID}/>
           }
-          {console.log(check)}
           {/* {selectedImage &&
             <img src={URL.createObjectURL(selectedImage)}/>  
           }
