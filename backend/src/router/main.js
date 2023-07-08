@@ -173,7 +173,7 @@ router.post("/recharge", (req, res) => {  // Submit recharge
                     return res.status(500).json({message: "error on update card debit", error: "cards"})
                   })
               })
-              .catch(() => {  // Error on register costumer
+              .catch(() => {  // Error on register customer
                 return res.status(500).json({message: "error on update customers", error: "customers"})
               })
           })
@@ -212,7 +212,7 @@ router.post("/resetcard", (req, res) => {  // Submit reset card
                         return res.status(500).json({message: "error on update card debit", error: "cards"})
                       })
                   })
-                  .catch(() => {  // Error on register costumer
+                  .catch(() => {  // Error on register customer
                     return res.status(500).json({message: "error on update customers", error: "customers"})
                   })
               })
@@ -245,11 +245,11 @@ router.post("/resetcard", (req, res) => {  // Submit reset card
                               return res.status(500).json({message: "error on update card debit", error: "cards"})
                             })  
                         })
-                        .catch(() => {  // Error on register costumer
+                        .catch(() => {  // Error on register customer
                           return res.status(500).json({message: "error on update customers", error: "customers"})
                         })
                     })
-                    .catch(() => {  // Error on register costumer
+                    .catch(() => {  // Error on register customer
                       return res.status(500).json({message: "error on update recharge", error: "recharge"})
                     })
                 } else {
@@ -265,7 +265,7 @@ router.post("/resetcard", (req, res) => {  // Submit reset card
             .then(() => {
               return res.json({message: "successful reset card", cardID: data.cardID});   
             })
-            .catch(() => {  // Error on register costumer
+            .catch(() => {  // Error on register customer
               return res.status(500).json({message: "error on update customers", error: "customers"})
             })
         }
@@ -382,24 +382,24 @@ router.post('/cardcheck', (req, res) => {  // Request card debit
               .limit(1)
               .then((customers) => {
                 const customer = customers[0];
-                return res.json({card: data.cardID, value: card.debit, payment: recharge.payment, costumer: customer.in_use, code: true})
+                return res.json({card: data.cardID, value: card.debit, payment: recharge.payment, customer: customer.in_use, code: true})
               })
               .catch((err) => {
                 console.error(err)
-                return res.json({card: "error: customer", value: 0, payment: "", costumer: 0, code: false})
+                return res.json({card: "error: customer", value: 0, payment: "", customer: 0, code: false})
               })
           } else {
-            return res.json({card: data.cardID, value: card.debit, payment: "", costumer: 0, code: true})
+            return res.json({card: data.cardID, value: card.debit, payment: "", customer: 0, code: true})
           }
         })
         .catch((err) => {
           console.error(err)
-          return res.json({card: "error: recharge", value: 0, payment: "", costumer: 0, code: false})
+          return res.json({card: "error: recharge", value: 0, payment: "", customer: 0, code: false})
         })
     })
     .catch((err) => {
       console.error(err)
-      return res.json({card: "error: card not found", value: 0, payment: "", costumer: 0, code: false})
+      return res.json({card: "error: card not found", value: 0, payment: "", customer: 0, code: false})
     })
 })
 // Stocktaking

@@ -133,7 +133,9 @@ function Cards() {
 
       {showScanner &&
       <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false); return Quagga.stop()}}>
-        <Scanner DetectedCode={handleScan} output={handleScan}/>
+        <div className="ScanPreview">
+          <Scanner DetectedCode={handleScan} output={handleScan}/>
+        </div>
       </div>
       }
     </div>

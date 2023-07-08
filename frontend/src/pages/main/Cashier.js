@@ -1,7 +1,7 @@
 import "./Cashier.css"
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, Minimize2, Maximize, RefreshCw, DollarSign, Package, X, Minus, Plus, ArrowDown, CheckCircle } from 'react-feather';
+import { CreditCard, Minimize2, Maximize, Pause, RefreshCw, DollarSign, Package, X, Minus, Plus, ArrowDown, CheckCircle } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Code from '../admin/inputs/Code';
 import Payment from "./inputs/Payment";
@@ -240,7 +240,7 @@ function Cashier() {
       <div className="CashierMain">
         <div className="CashierMenu">
           {showCard?
-          <div className={`CashierCard ${(check.card === false && customer !== 1)? "" : "noUse" }`}>
+          <div className={`CashierCard ${(check.card === true && cardBalance === "invalid")? "noUse" : "" }`}>
             <div className="CashierCardHead">
               <div className="CashierCardNumber">
                 <button onClick={() => setShowScanner(true)}><Maximize/></button>
@@ -265,8 +265,8 @@ function Cashier() {
                 </div>
               }
             <div className="CashierCardFooter">
-              {customer === 1 ? <p>{balanceType}</p> : <p></p>}
-              <button onClick={() => {setConfirmReset(true);SubmitCardCheck()}} disabled={check.card && cardBalance !== "invalid" ? false : true}><RefreshCw/></button>
+              {cardBalance !== "invalid" && check.card ? (customer === 1 ? <p>{balanceType}</p> : customer === 0 && <Pause/>) : <div/>}
+              <button onClick={() => {setConfirmReset(true);SubmitCardCheck()}} disabled={check.card && cardBalance !== "invalid" && customer === 1 ? false : true}><RefreshCw/></button>
             </div>
           </div>
           :
@@ -356,7 +356,7 @@ function Cashier() {
       <div className="BlackBackground" onClick={() => setConfirmRecharge(false)}/>
       <div className="CashierRecharge">
         <h3>Recarregar Cartão</h3>
-        <div className={`CashierCardMini  ${(check.card === false && customer !== 1)? "" : "noUse"}`}>
+        <div className={`CashierCardMini  ${(check.card === true && cardBalance === "invalid")? "noUse" : ""}`}>
           <div  className="CashierCardMiniCode">
             <button onClick={() => setShowScanner(true)}><Maximize/></button>
             <Code
@@ -436,7 +436,9 @@ function Cashier() {
 
       {showScanner &&
       <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false); return Quagga.stop()}}>
-        <Scanner DetectedCode={handleScan} output={handleScan}/>
+        <div className="ScanPreview">
+          <Scanner DetectedCode={handleScan} output={handleScan}/>
+        </div>
       </div>
       }
 

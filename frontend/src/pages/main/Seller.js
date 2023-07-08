@@ -1,7 +1,7 @@
 import './Seller.css'
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, Minimize2, Maximize, DollarSign, Package, X, Minus, ShoppingBag } from 'react-feather';
+import { CreditCard, Minimize2, Maximize, Play, Pause, DollarSign, Package, X, Minus, ShoppingBag } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Code from '../admin/inputs/Code'
 import Scanner from './inputs/Scanner';
@@ -12,7 +12,7 @@ function Seller() {
   const [total, setTotal] = useState(0)
   const [showScanner, setShowScanner] = useState(false)
   const [showCard, setShowCard] = useState(false)
-  const [card, setCard] = useState(123456789012)
+  const [card, setCard] = useState(12345678901)
   const [stand, setStand] = useState({standID:0 ,stand:""})
   const [items, setItems] = useState([])
   const [check, setCheck] = useState({
@@ -199,7 +199,7 @@ function Seller() {
             }
           </div>
           {showCard &&
-            <div className={`SellerCard ${(check.card === false && customer !== 1)? "" : "noUse" }`}>
+            <div className={`SellerCard ${(check.card === true && cardBalance === "invalid")? "noUse" : "" }`}>
               <div className="SellerCardHead">
                 <div className="SellerCardNumber">
                   <button onClick={() => setShowScanner(true)}><Maximize/></button>
@@ -224,6 +224,15 @@ function Seller() {
                   </div>
                 }
               <div className="SellerCardFooter">
+                {(cardBalance === "invalid" && check.card) ?
+                  <></>
+                : (check.card && customer === 1) ?
+                  <Play/>
+                : (check.card && customer === 0) ?
+                  <Pause/>
+                :
+                  <></>
+                }
               </div>
             </div>
             }
@@ -264,7 +273,7 @@ function Seller() {
       <div className="BlackBackground"/>
       <div  className="SellerPurchase">
         <h2>Finalizar Compra</h2>
-        <div className={`SellerCardMini  ${(check.card === false && customer !== 1)? "" : "noUse"}`}>
+        <div className={`SellerCardMini  ${(check.card === true && cardBalance === "invalid")? "noUse" : ""}`}>
           <div  className="SellerCardMiniCode">
             <button onClick={() => setShowScanner(true)}><Maximize/></button>
             <Code
@@ -318,7 +327,9 @@ function Seller() {
 
       {showScanner &&
       <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false); return Quagga.stop()}}>
-        <Scanner DetectedCode={handleScan} output={handleScan}/>
+        <div className="ScanPreview">
+          <Scanner DetectedCode={handleScan} output={handleScan}/>
+        </div>
       </div>
       }
     </div>
