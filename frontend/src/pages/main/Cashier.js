@@ -1,7 +1,7 @@
 import "./Cashier.css"
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, Minimize2, Maximize, Pause, RefreshCw, DollarSign, Package, X, Minus, Plus, ArrowDown, CheckCircle } from 'react-feather';
+import { CreditCard, Minimize2, Maximize, Pause, RefreshCw, DollarSign, Package, Minus, Plus, ArrowDown, CheckCircle } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Code from '../admin/inputs/Code';
 import Payment from "./inputs/Payment";
@@ -11,7 +11,7 @@ import Quagga from 'quagga';
 function Cashier() {
   // Main
   const [recharge, setRecharge] = useState("")
-  const [payment, setPayment] = useState("")
+  const [payment, setPayment] = useState("cash")
   const [card, setCard] = useState("")
   const [check, setCheck] = useState({
     recharge: false,
@@ -35,7 +35,6 @@ function Cashier() {
   // Message
   const [confirmRecharge, setConfirmRecharge] = useState(false)
   const [confirmReset, setConfirmReset] = useState(false)
-  const [message, setMessage] = useState("")
   // Aux to css
   const [animation, setAnimation] = useState(false)
   const auth = useContext(AuthContext);
@@ -80,14 +79,17 @@ function Cashier() {
             RequestLists()
             setRecharge(0); setShowCard(true);
             setConfirmRecharge(false); setCheck({recharge: false, card: false})
-            return SubmitCardCheck()
+            SubmitCardCheck()
+            return setTimeout(() => {
+              setShowCard(false);
+              setCard("")
+            }, 4000);
           } else if (resStatus === 401){
             return auth.onLogout()
           }
         })
         .catch((error) => {
           console.error(error.message);
-          setMessage(error.message)
         })
     }
   }
@@ -107,15 +109,17 @@ function Cashier() {
           if (resStatus === 200){
             RequestLists()
             setRecharge(0); setShowCard(true);
-            setConfirmReset(false); setCheck({recharge: false, card: false})
-            setMessage(`Cartão ${data.cardID} finalizado`); setCardBalance(0)
+            setConfirmReset(false); setCheck({recharge: false, card: false}); setCardBalance(0)
+            return setTimeout(() => {
+              setShowCard(false);
+              setCard("")
+            }, 4000);
           } else if (resStatus === 401){
             return auth.onLogout()
           }
         })
         .catch((error) => {
           console.error(error.message);
-          setMessage(error.message)
         })
     }
   }
@@ -266,7 +270,7 @@ function Cashier() {
               }
             <div className="CashierCardFooter">
               {cardBalance !== "invalid" && check.card ? (customer === 1 ? <p>{balanceType}</p> : customer === 0 && <Pause/>) : <div/>}
-              <button onClick={() => {setConfirmReset(true);SubmitCardCheck()}} disabled={check.card && cardBalance !== "invalid" && customer === 1 ? false : true}><RefreshCw/></button>
+              <button onClick={() => {setConfirmReset(true);SubmitCardCheck(); setShowCard(false)}} disabled={check.card && cardBalance !== "invalid" && customer === 1 ? false : true}><RefreshCw/></button>
             </div>
           </div>
           :
@@ -292,7 +296,7 @@ function Cashier() {
           :
           <ul className={`${showCard && "cardExpanded"}`}>
             {items.map((item) => (
-              <li key={item.itemID} onClick={() => handleCart(item)}>
+              <li className={`${item.stock === 0 && "unavailable"}`}  key={item.itemID} onClick={() => handleCart(item)}>
                 <p id="name">{item.item}</p>
                 <p id="price"><DollarSign size={19}/>{item.price}</p>
                 <p id="stock"><Package size={19}/>{item.stock}</p>
@@ -312,8 +316,11 @@ function Cashier() {
                 <li key={item.itemID}>
                   <p id="name" onClick={() => handleEditCartItem(item.itemID, 'amount', (item.amount + 1))}>{item.item}</p>
                   <p id="price"><DollarSign size={18}/>{item.price}</p>
-                  <p id="stock" onClick={() => handleEditCartItem(item.itemID, 'amount', (item.amount + 1))}>{item.amount}<X/></p>
-                  <p id="remove" onClick={() => handleRemoveCart(item.itemID)}><Minus size={19}/></p>
+                  <div id="amount">
+                    <Plus size={19} onClick={() => handleEditCartItem(item.itemID, 'amount', (item.amount + 1))}/>
+                    <p id="amount">{item.amount}</p>
+                    <Minus size={19} onClick={() => handleRemoveCart(item.itemID)}/>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -347,7 +354,7 @@ function Cashier() {
               onChange={event => setRecharge(event.target.value)}
             />
           </div>
-          <button type="submit" onClick={() => setConfirmRecharge(true)} disabled={check.recharge ? false : true}><CheckCircle size={20}/></button>
+          <button type="submit" onClick={() => {setConfirmRecharge(true); setShowCard(false)}} disabled={check.recharge ? false : true}><CheckCircle size={20}/></button>
         </div>
       </div>
 
@@ -440,20 +447,6 @@ function Cashier() {
           <Scanner DetectedCode={handleScan} output={handleScan}/>
         </div>
       </div>
-      }
-
-      {message !== "" && !confirmReset &&
-      <>
-        <div className="BlackBackground" onClick={() => setMessage("")}/>
-        <div className="CashierMessage">
-          <div>
-            {message}
-          </div>
-          <div>
-            <button onClick={() => setMessage("")}>OK</button>
-          </div>
-        </div>
-      </>
       }
     </div>
   )

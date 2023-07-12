@@ -77,26 +77,57 @@ async function Card(ID) {  // cardID => {debit: int, time: datetime}
   })
 }
 
-async function Goods(parameter) {  // {saleID: int,items: [{itemID: int, saleID: int, amount: int, price: int}]}
+async function Goods(parameter) {  // {saleID: int,items: [{itemID: int, standID: int, amount: int, price: int}]}
   return new Promise((resolve, reject) => {
     const promise = parameter.items.map(item => {
-      return database("goods")
-        .insert({itemID: item.itemID, saleID: parameter.saleID, quantity: item.amount, unit_p: item.price})
-        .then(() => {
-          database('items')
-            .where({itemID: item.itemID})
-            .update({
-              stock: database.raw('stock - ?', [item.amount])
+      return database('items')
+        .where({itemID: item.itemID})
+        .select()
+        .then(stockitem => {
+          const stock = stockitem[0].stock;
+          if (stock >= item.amount){
+            database("goods")
+            .insert({itemID: item.itemID, saleID: parameter.saleID, quantity: item.amount, unit_p: item.price})
+            .then(() => {
+              database('items')
+                .where({itemID: item.itemID})
+                .decrement({stock: item.amount})
+                .catch((error) => {
+                  console.error((`Error update item with itemID ${item.itemID}:`, error));
+                });
             })
             .catch((error) => {
-              console.error((`Error update item with itemID ${item.itemID}:`, error));
+              console.error((`Error inserting item with itemID ${item.itemID}:`, error));
             });
+          } else {
+            console.error((`Error: no item on stocktaking, itemID ${item.itemID}:`))
+          }
         })
         .catch((error) => {
-          console.error((`Error inserting item with itemID ${item.itemID}:`, error));
+          console.error((`Error taking item with itemID ${item.itemID}:`, error));
         });
     })
 
+    Promise.all(promise)
+      .then(() => {
+        resolve();
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  })
+}
+
+async function Items(parameter) {  // [{itemID: int, standID: int, amount: int, price: int}]
+  return new Promise((resolve, reject) => {
+    const promise = parameter.map(item => {
+      return database('items')
+        .where({itemID: item.itemID})
+        .increment({stock: item.quantity})
+        .catch((error) => {
+          console.error((`Error update item with itemID ${item.itemID}:`, error));
+        });
+    })
     Promise.all(promise)
       .then(() => {
         resolve();
@@ -222,8 +253,8 @@ router.post("/resetcard", (req, res) => {  // Submit reset card
           } else {  // Refund the money
             database('recharges')
               .select('rechargeID', 'recharge', 'payment')
-              .where({cardID: value.card})
-              .orderBy('control_t', 'desc')
+              .where({cardID: data.cardID})
+              .orderBy('recharge_t', 'desc')
               .limit(1)
               .then((rowsRecharges) => {
                 const recharge = rowsRecharges[0];
@@ -256,7 +287,8 @@ router.post("/resetcard", (req, res) => {  // Submit reset card
                   return res.status(500).json({message: "error on recharge not possible refund", error: "recharges"})
                 }
               })
-              .catch(() => {  // Error on register recharge
+              .catch((error) => {  // Error on register recharge
+                console.error(error)
                 return res.status(500).json({message: "error on take recharge", error: "recharges"})
               })
           }
@@ -270,7 +302,8 @@ router.post("/resetcard", (req, res) => {  // Submit reset card
             })
         }
       })
-      .catch(() => {  // No card resgistred
+      .catch((error) => {  // No card resgistred
+        console.error(error)
         return res.status(406).json({message: "error no card registred", error: "cards"})
       })
   }
@@ -348,6 +381,9 @@ router.post("/purchase", (req, res) => {  // Submit purchase
                           res.json({message: "successful purchase", cardID:data.cardID, newdebit: aux})
                         })
                     })
+                    .catch(() => {
+                      res.json({message: "error: item with no stock", error: "items"})
+                    })
                 })
             })
             .catch(() => {  // Error on register sales
@@ -401,6 +437,111 @@ router.post('/cardcheck', (req, res) => {  // Request card debit
       console.error(err)
       return res.json({card: "error: card not found", value: 0, payment: "", customer: 0, code: false})
     })
+})
+
+router.get('/checklastsales', (req, res) => {  // Request card debit
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
+    database('sales')
+      .select()
+      .where({userID: decoded.userID})
+      .orderBy('sale_t', 'desc')
+      .limit(3)
+      .then((sales) => {
+        if (sales.length > 0){
+        const saleIDs = sales.map(sale => sale.saleID);
+        database('goods')
+          .select()
+          .whereIn('saleID', saleIDs)
+          .then((goods) => {
+            const sale = sales[0];
+            database('customers')
+              .select()
+              .where({cardID: sale.cardID})
+              .orderBy('control_t', 'desc')
+              .limit(1)
+              .then((customers) => {
+                if (customers[0].in_use === 1 && sale.sale_t > customers[0].control_t){
+                  return res.json({sales: sales,goods: goods, customer: sale.saleID});
+                } else {
+                  return res.json({sales: sales,goods: goods, customer: false});
+                }
+              })
+              .catch((err) => {
+                console.error(err)
+                return res.status(501).json({message: "customers error"});
+              })
+          })
+          .catch((err) => {
+            console.error(err)
+            return res.status(501).json({message: "goods error"}); 
+          })
+        }
+      })
+      .catch((err) => {
+        console.error(err)
+        return res.status(501).json({message: "sales error"}); 
+      })
+  }
+})
+
+router.post('/deletesale', (req, res) => {  // Request card debit
+  const data = req.body;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
+    database('goods')
+      .select()
+      .where({saleID: data.saleID})
+      // .select(database.raw('SUM(unit_p * quantity) as totalPrice'))
+      // .groupBy("saleID")
+      .then(goods => {
+        let totalSum = 0;
+        console.log(goods)
+        goods.forEach(good => {
+          const product = good.quantity * good.unit_p;
+          totalSum += product;
+        });
+        Items(goods)
+          .then(() => {
+            database('goods')
+              .where({saleID: data.saleID})
+              .delete()
+              .then(() => {
+                database('sales')
+                .where({saleID: data.saleID})
+                .delete()
+                .then(() => {
+                  database('cards')
+                    .where({cardID: data.cardID})
+                    .increment({debit: totalSum})
+                    .then(() => {
+                      return res.json({message: "undone purchase"})
+                    })
+                    .catch((err) => {
+                      console.error(err)
+                      return res.status(501).json({message: "card debit error"}); 
+                    })
+                })
+                .catch((err) => {
+                  console.error(err)
+                  return res.status(501).json({message: "sales delete error"}); 
+                })
+              })
+              .catch((err) => {
+                console.error(err)
+                return res.status(501).json({message: "goods delete error"}); 
+              })
+          })
+          .catch((err) => {
+            console.error(err)
+            return res.status(501).json({message: "item error"}); 
+          })
+      })
+  }
 })
 // Stocktaking
 router.get("/stocktaking", (req, res) => {  // Request items from a standID
@@ -463,7 +604,6 @@ router.get("/salesitems", (req, res) => {  // Request item sales and total
       database('goods')
         .select('itemID')
         .sum('quantity as totalQuantity')
-        .select(database.raw('SUM(unit_p * quantity) as totalPrice'))
         .groupBy('itemID')
         .then((goods) => {
           return res.json({goods: goods})
@@ -493,7 +633,6 @@ router.post("/salesitemsperstand", (req, res) => {  // Request item sales and to
             .select('itemID')
             .whereIn({itemID: rows})
             .sum('quantity as totalQuantity')
-            .sum(knex.raw('unit_p * quantity as totalPrice'))
             .groupBy('itemID')
             .then((goods) => {
               return res.json({goods: goods})

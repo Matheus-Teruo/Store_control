@@ -106,7 +106,41 @@ input#card::-webkit-outer-spin-button{
   -webkit-appearance: none;
   margin: 0;
 }
+input#amount::-webkit-inner-spin-button,
+input#amount::-webkit-outer-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
+}
+input#price::-webkit-inner-spin-button,
+input#price::-webkit-outer-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
+}
 
+.BlackBackgroundScanner{
+  z-index: 25;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #00000050;
+}
+.ScanPreview {
+  width: 100vw;
+  display: flex;
+}
+.ScanPreview div#interactive{
+  width: 100vw;
+  display: flex;
+}
+.ScanPreview div#interactive video,
+.ScanPreview div#interactive canvas{
+  max-width: 100%;
+}
 
 @keyframes CardAppearExpand {
   0% {

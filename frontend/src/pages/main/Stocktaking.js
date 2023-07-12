@@ -11,6 +11,8 @@ function Stocktaking() {
   const [stand, setStand] = useState({standID: 0,stand:""})
   const [stands, setStands] = useState([])
   const [associations, setAssociations] = useState([])
+  const [sales, setSales] = useState([])
+  const [goods, setGoods] = useState([])
   // New item
   const [showItem, setShowItem] = useState(false)
   const [edit, setEdit] = useState(false)
@@ -221,7 +223,7 @@ function Stocktaking() {
         <div className="ST_Menu">
           <button onClick={() => {setShowItem(true)}}>Novo item</button>
           <div className="Filtro">
-            <h3>filtro</h3>
+            <h3>filtro </h3>
             <select value={filter} onChange={event => setFilter(parseInt(event.target.value))} id="filter" name="filter">
               <option key={0} value={0}>Todos</option>
               {stands.lenght !== 0 && stands.filter(item => item.standID !== 1).map((element) =>  (
@@ -249,10 +251,9 @@ function Stocktaking() {
               <p id="name">{item.item}</p>
               <p id="price"><DollarSign size={18}/>{item.price}</p>
               <div className="quantity">
-                <p id="stock"><Package size={18}/>{item.stock}</p>
-                <p id="sold"><ShoppingBag size={18}/>{item.sold}</p>
+                <p id="stock" className={`${item.stock === 0 && "unavailable"}`}><Package size={18}/>{item.stock}</p>
+                <p id="sold"><ShoppingBag size={18}/>{item?.sold}</p>
               </div>
-              <p id="total"><DollarSign id="dollar" size={15}/><Square size={18}/>{item.totalPrice}</p>
             </li>
           )))
           : (items.lenght !== 0 && items.map((item) => (
@@ -265,10 +266,9 @@ function Stocktaking() {
               <p id="name">{item.item}</p>
               <p id="price"><DollarSign size={18}/>{item.price}</p>
               <div className="quantity">
-                <p id="stock"><Package size={18}/>{item.stock}</p>
+                <p id="stock" className={`${item.stock === 0 && "unavailable"}`}><Package size={18}/>{item.stock}</p>
                 <p id="sold"><ShoppingBag size={18}/>{item.sold}</p>
               </div>
-              <p id="total"><DollarSign id="dollar" size={15}/><Square size={18}/>{item.totalPrice}</p>
             </li>
           )))}
         </ul>

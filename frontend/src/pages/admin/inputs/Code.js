@@ -16,12 +16,12 @@ function Code(props) {
   }, [check, props.card, props.dupliValue])
 
   useEffect(() => {
-    if (props.card.length === 12) {  // Check min number of char
+    if (props.card.toString().length === 12) {  // Check min number of char
       setCheck(true)
     } else {
       setCheck(false)
     };
-  })
+  }, [])
   function handleCard(event){  // Conditions logic
     if (event.target.value.length <= 12){
       props.output(event)

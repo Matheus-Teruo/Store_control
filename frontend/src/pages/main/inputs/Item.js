@@ -49,7 +49,7 @@ function Item(props) {
   }, [props.price])
   
   useEffect(() => {  // Stock conditions logic
-    if (parseInt(props.stock) > 0) {  // Check positive not zero
+    if (parseInt(props.stock) >= 0) {  // Check positive not zero
       setS_Check(true)
     } else {
       setS_Check(false)

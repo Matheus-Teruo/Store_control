@@ -7,12 +7,23 @@ function StandID(props) {
   const [associations, setAssociations] = useState([])
   
   useEffect(() => {  // Set default value of associationID
-    setStandIndex(props.defaultValue || 0)
+    setStandIndex(props.defaultValue || 0)    
     setStands(props.stands)
     setAssociations(props.associations)
     setAssociationIndex(props.stands.filter(element => element.standID === props.defaultValue)[0]?.associationID)
   }, [props.defaultValue, props.stands, props.association])
 
+
+  useEffect(() => {
+    if (props.defaultValue) {
+      if (props.defaultValue <= 1){
+        props.valid(false)
+      } else {
+        props.valid(true)
+      }
+    }
+  }, [])
+  
   function handleStandChange(event) {  // handle stand
     props.output(event.target.value);
     setStandIndex(event.target.value)

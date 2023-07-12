@@ -1,7 +1,7 @@
 import './Seller.css'
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, Minimize2, Maximize, Play, Pause, DollarSign, Package, X, Minus, ShoppingBag } from 'react-feather';
+import { CreditCard, Minimize2, Maximize, Play, Pause, DollarSign, Package, Plus, Minus, ShoppingBag, ShoppingCart, BookOpen, Trash2 } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Code from '../admin/inputs/Code'
 import Scanner from './inputs/Scanner';
@@ -12,7 +12,7 @@ function Seller() {
   const [total, setTotal] = useState(0)
   const [showScanner, setShowScanner] = useState(false)
   const [showCard, setShowCard] = useState(false)
-  const [card, setCard] = useState(12345678901)
+  const [card, setCard] = useState("")
   const [stand, setStand] = useState({standID:0 ,stand:""})
   const [items, setItems] = useState([])
   const [check, setCheck] = useState({
@@ -21,6 +21,10 @@ function Seller() {
   const [confirmPurchase, setConfirmPurchase] = useState(false)
   const [cardBalance, setCardBalance] = useState(0)
   const [customer, setCustomer] = useState("")
+  const [showLastSales, setShowLastSales] = useState(false)
+  const [listLastSales, setListLastSales] = useState([])
+  const [listLastGoods, setListLastGoods] = useState([])
+  const [checkLastCustomer, setCheckLastCustomer] = useState(false)
   const [animation, setAnimation] = useState(false)
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
@@ -64,10 +68,13 @@ function Seller() {
           .then(data => {
             if (resStatus === 200){
               RequestItemsPerStand()
-              setCart([]);
+              setCart([]); setShowCard(true)
               setConfirmPurchase(false); setCheck({purchase: false, card: false})
               SubmitCardCheck()
-              return setCard(0);
+              return setTimeout(() => {
+                setShowCard(false);
+                setCard("")
+              }, 4000);
             } else if (resStatus === 401){
               return auth.onLogout()
             }
@@ -99,6 +106,47 @@ function Seller() {
       })
   }
 
+  async function RequestLastSales() {  // Request Lasts Sales
+    var resStatus;
+    fetch("/api/checklastsales")
+      .then(res => {resStatus = res.status; return res.json()})
+      .then(data => {
+        if (resStatus === 200){
+          setListLastSales(data.sales)
+          setListLastGoods(data.goods)
+          return setCheckLastCustomer(data.customer)
+        } else if (resStatus === 401){
+          return auth.onLogout()
+        }
+      })
+  }
+
+  async function SubmitDeleteSale(saleID, cardID) {  // Submit delete last sale
+    var resStatus;
+    fetch("/api/deletesale", {  // Post form
+      method: "POST", headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        "saleID": saleID,
+        "cardID": cardID
+    })
+    })
+    .then(res => {resStatus = res.status; return res.json()})
+    .then(data => {
+      if (resStatus === 200){
+        RequestItemsPerStand()
+        setShowLastSales(false)
+        setShowCard(true)
+        RequestLastSales()
+        return setTimeout(() => {
+          setShowCard(false);
+          setCard("")
+        }, 4000);
+      } else if (resStatus === 401){
+        return auth.onLogout()
+      }
+    })
+}
+
   useEffect(() => {  // Sum the total on cart
     const subtotal = cart.reduce((accumulator, element) => {
       return accumulator + (element.price * element.amount);
@@ -107,12 +155,12 @@ function Seller() {
   }, [cart])
 
   useEffect(() => {  // Set check to purchase
-    if (total > 0) {
+    if (cart.length > 0) {
       return setCheck(check => ({...check, purchase: true}))
     } else {
       return setCheck(check => ({...check, purchase: false}))
     }
-  }, [total])
+  }, [cart])
 
   function handleCart(item) {  // Add item on cart
     if (cart.some(element => element.itemID === item.itemID)){
@@ -236,11 +284,14 @@ function Seller() {
               </div>
             </div>
             }
+            <div className="SellerHistory">
+              <button onClick={() => {setShowLastSales(true); RequestLastSales()}}><BookOpen/></button>
+            </div>
         </div>
         <div className="SellerItems">
           <ul className={`${showCard && "cardExpanded"}`}>
             {items.map((item) => (
-              <li key={item.itemID}>
+              <li key={item.itemID} className={`${item.stock === 0 && "unavailable"}`}>
                 <div className="ItemImage" onClick={() => handleCart(item)}>
                   Image
                 </div>
@@ -248,7 +299,7 @@ function Seller() {
                   <p id="name">{item.item}</p>
                   <div className="SelletItemFooter">
                     <p id="price"><DollarSign/>{item.price}</p>
-                    <p id="stock"><Package/>{item.stock}</p>
+                    <p id="stock" className={`${item.stock && "unavailable"}`}><Package />{item.stock}</p>
                   </div>
                 </div>
                 <p id="amount" onClick={() => handleRemoveCart(item.itemID)}>
@@ -263,15 +314,15 @@ function Seller() {
         <div className="SellerFooter">
           <p>Total:</p>
           <p id="total"><DollarSign size={20}/>{total}</p>
-          <button onClick={() => setConfirmPurchase(true)} disabled={check.purchase ? false : true}>Finalizar</button>
+          <button onClick={() => {setConfirmPurchase(true); setShowCard(false)}} disabled={check.purchase ? false : true}><ShoppingCart/></button>
         </div>
       </div>
 
 
       {confirmPurchase &&
       <>
-      <div className="BlackBackground"/>
-      <div  className="SellerPurchase">
+      <div className="BlackBackground" onClick={() => setConfirmPurchase(false)}/>
+      <div className="SellerPurchase">
         <h2>Finalizar Compra</h2>
         <div className={`SellerCardMini  ${(check.card === true && cardBalance === "invalid")? "noUse" : ""}`}>
           <div  className="SellerCardMiniCode">
@@ -296,7 +347,7 @@ function Seller() {
           <ul>
             {cart.map(item => (
               <li key={item.itemID}>
-                <p id="name">{item.item}</p>
+                <p id="name" onClick={() => handleEditCartItem(item.itemID, 'amount', (item.amount + 1))}>{item.item}</p>
                 <div id="price">
                   <DollarSign size={20}/>
                   <input
@@ -305,13 +356,13 @@ function Seller() {
                     onChange={event => handleEditCartItem(item.itemID, 'price', event.target.value)}/>
                 </div>
                 <div id="amount">
+                  <Plus size={20} onClick={() => handleEditCartItem(item.itemID, 'amount', (item.amount + 1))}/>
                   <input
                     id="amount" type="number" inputMode="numeric"
                     value={item.amount}
                     onChange={event => handleEditCartItem(item.itemID, 'amount', event.target.value)}/>
-                  <X size={20}/>
+                  <Minus size={20} onClick={() => handleRemoveCart(item.itemID)}/>
                 </div>
-                <p id="remove" onClick={() => handleRemoveCart(item.itemID)}><Minus size={20}/></p>
               </li>
             ))}
           </ul>
@@ -319,7 +370,62 @@ function Seller() {
         </div>
         <div className="SellerPurchaseFooter">
           <button onClick={() => setConfirmPurchase(false)}>Cancelar</button>
-          <button onClick={() => SubmitPurchase()} disabled={(check.purchase && check.card && total < cardBalance) ? false : true}>Confirmar</button>
+          <button onClick={() => SubmitPurchase()} disabled={(check.purchase && check.card && total <= cardBalance) ? false : true}>Confirmar</button>
+        </div>
+      </div>
+      </>
+      }
+
+      {showLastSales &&
+      <>
+      <div className="BlackBackground" onClick={() => setShowLastSales(false)}/>
+      <div className="SellerLastSales">
+        <h2>Histórico de compra</h2>
+        <div className={`SellerCardMini  ${(check.card === true && cardBalance === "invalid")? "noUse" : ""}`}>
+          <div  className="SellerCardMiniCode">
+            <button onClick={() => setShowScanner(true)}><Maximize/></button>
+            <Code
+              output={handleCard}
+              card={card}
+              dupliValue={""}
+              valid={h_Valid}/>
+          </div>
+          <div className="SellerCardMiniBalance">
+          {check.card &&
+              (cardBalance !== "invalid"?
+                <p><DollarSign size={18}/>{cardBalance}</p>
+              :
+                <p>{cardBalance}</p>
+              )
+            }
+          </div>
+        </div>
+        <div className="SellerListLastSales">
+          <ul className="ListLastSales">
+          {listLastSales.map((sale) => (
+            <li key={sale.saleID} className="ItemSale">
+              <ul className="ListofGoods">
+                {listLastGoods.filter(element => element.saleID === sale.saleID).map((good) => (
+                  <li key={good.itemID} className="ItemGood">
+                    {stand.standID === sale.standID ?
+                      <p id="name">{items.filter(element => element.itemID === good.itemID)[0].item}</p>
+                    :
+                      <p id="itemID">{good.itemID}</p>
+                    }
+                    <p id="quantity"><ShoppingBag size={18}/>{good.quantity}</p>
+                    <p id="price"><DollarSign size={18}/>{good.unit_p}</p>
+                    
+                  </li>
+                ))}
+              </ul>
+              {checkLastCustomer === sale.saleID ?
+                <button id="discard" onClick={() => SubmitDeleteSale(sale.saleID, sale.cardID)} disabled={card === sale.cardID ? false : true}><Trash2/></button>
+              :
+                <p id="discard"><Trash2/></p>
+              }
+            </li>
+          ))}
+          </ul>
         </div>
       </div>
       </>

@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: var(--color-gray-100);
 }
 .MainTitle{
   padding: 5px 0 15px 0;
@@ -14,10 +15,11 @@
 }
 .MainSubtitle{
   width: 92%;
-  padding: 1vw 4vw;
+  margin: 0 0 8px 0;
+  padding: 5px 4vw;
   display: flex;
   justify-content: start;
-  background-color: blue;
+  background-color: var(--color-primary-1);
 }
 .MainRole{
   width: 100%;
@@ -97,29 +99,27 @@
   .MainRole{
     display: flex;
     justify-content: space-around;
-    background-color: green;
   }
   .MainFrame{
     width: 42%;
     aspect-ratio: 1/1;
     border-radius: 10px;
-    background-color: red;
+    background-color: var(--color-primary-3);
   }
   .MainStocktaking{
     width: 92%;
     margin: 4vw 0;
     height: 30vw;
     border-radius: 10px;
-    background-color: red;
+    background-color: var(--color-primary-3);
   }
   .MainAdmin{
     width: 92%;
-    background-color: yellow;
   }
   .MainFrame2{
     width: 28vw;
     aspect-ratio: 1/1;
     border-radius: 10px;
-    background-color: red;
+    background-color: var(--color-primary-3);
   }
 }
