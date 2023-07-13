@@ -1,3 +1,4 @@
+import './Database.css'
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../../store/auth_context';
@@ -219,124 +220,147 @@ function Database() {
   };
 
   return (
-    <div>
-      <h1>Associações e estandes</h1>
-      <div>
-        <h2>Menu</h2>
-        <div>
-          <button onClick={() => {setShowAssociation(true); setEdit("")}}>Registrar Associação</button>
-        </div>
-        <div>
-          <button onClick={() => {setShowStand(true); setEdit("")}}>Novo Estande</button>
+    <div className="Database">
+      <div className="Menu">
+        <h1>Associações e estandes</h1>
+        <div className="Actions">
+          <button onClick={() => {setShowAssociation(true); setEdit(""); setNewAssociation(""); setNewPrincipal("")}}>Registrar Associação</button>
+          <button onClick={() => {setShowStand(true); setEdit(""); setNewStand(""); setNewAssociationID(0)}}>Novo Estande</button>
         </div>
       </div>
-      <ul>
-        <li><p>associaçãoID</p><p>associação</p><p>diretoria</p><p>stands</p></li>
-        {associations.length !== 0 && associations.map((association) => (
-          <li key={association.associationID}>
-            <p>{association.associationID}</p>
-            <p onClick={() => {
-              setNewAssociationID(association.associationID); 
-              setEdit("association"); 
-              setShowAssociation(true);
-              setNewAssociation(association.association);
-              setNewPrincipal(association.principal)}}
-            >{association.association}</p>
-            <p>{association.principal}</p>
-            {stands.filter(item => item.associationID === association.associationID).length !== 0 ?
-              <ul>
-                {stands.filter(item => item.associationID === association.associationID).map((stand) => (
-                  <li key={stand.standID} onClick={() => {
-                    setStandID(stand.standID); 
-                    setNewStand(stand.stand)
-                    setEdit("stand"); 
-                    setShowStand(true); 
-                    setNewAssociationID(association.associationID)}}
-                  >{stand.stand}</li>
-                ))}
-              </ul>
-              :
-              <button onClick={() => {setNewAssociationID(association.associationID); setShowStand(true)}}>Criar estande</button>
-            }       
-          </li>  
-        ))}
-      </ul>
+      <div className="Main">
+        <ul className="ulAssociation">
+          <li className="liAssociation"><p id="association">Associação</p><p id="principal">Diretoria</p><div className="ulStands">Estandes</div></li>
+          {associations.length !== 0 && associations.map((association) => (
+            <li key={association.associationID} className="liAssociation">
+              <p id="association" onClick={() => {
+                setNewAssociationID(association.associationID); 
+                setEdit("association"); 
+                setShowAssociation(true);
+                setNewAssociation(association.association);
+                setNewPrincipal(association.principal)}}
+              >{association.association}</p>
+              <p id="principal" onClick={() => {
+                setNewAssociationID(association.associationID); 
+                setEdit("association"); 
+                setShowAssociation(true);
+                setNewAssociation(association.association);
+                setNewPrincipal(association.principal)}}>{association.principal}</p>
+              {stands.filter(item => item.associationID === association.associationID).length !== 0 ?
+                <ul className="ulStands">
+                  {stands.filter(item => item.associationID === association.associationID).map((stand) => (
+                    <li className="liStands" key={stand.standID} onClick={() => {
+                      setStandID(stand.standID); 
+                      setNewStand(stand.stand)
+                      setEdit("stand"); 
+                      setShowStand(true); 
+                      setNewAssociationID(association.associationID)}}
+                    >{stand.stand}</li>
+                  ))}
+                </ul>
+                :
+                <div className="ulStands">
+                  <button onClick={() => {setNewAssociationID(association.associationID); setShowStand(true)}}>
+                    Criar estande
+                  </button>
+                </div>
+              }       
+            </li>  
+          ))}
+        </ul>
+      </div>
+
+
       {showAssociation &&
-      <div>
-        <div>
-          {edit === "association" &&
-          <div>
-            <h1>Editar kenjinkai:</h1>
-            <h2>{associations.filter(item => item.associationID === newAssociationID)[0].association}</h2>
-          </div>
-          }
-          <Association
-            output={handleKChange}
-            association={newAssociation}
-            principal={newPrincipal}
-            dupliValue={alreadyUsedK}
-            valid={(value) => setCheck(check => ({...check, association:value}))}/>
-          {edit === "association" ?
-            <div>
-              <button onClick={() => (setConfirmDel(true))}>Excluir kenjinkai</button>
-              <button onClick={() => (SubmitEditAssociation())} disabled={check.association ? false : true}>Editar kenjinkai</button>
-            </div>
-          :
-            <div>
-              <button onClick={() => {SubmitNewAssociation()}} disabled={check.association ? false : true}>Registrar</button>
-            </div>
-          }
+      <>
+      <div className="BlackBackground" onClick={() => setShowAssociation(false)}/>
+      <div className="NewEditAssociation">
+        {edit === "association" ?
+        <div className="Title">
+          <h2>Editar kenjinkai:</h2>
+          <h2>{associations.filter(item => item.associationID === newAssociationID)[0].association}</h2>
+        </div>
+        : 
+        <div className="Title"> 
+          <h2>Criar kenjinkai</h2>
+        </div>
+        }
+        <Association
+          output={handleKChange}
+          association={newAssociation}
+          principal={newPrincipal}
+          dupliValue={alreadyUsedK}
+          valid={(value) => setCheck(check => ({...check, association:value}))}/>
+        <div className="Footer">
+        {edit === "association" ?
+        <>
+          <button onClick={() => (setConfirmDel(true))}>Excluir kenjinkai</button>
+          <button onClick={() => (SubmitEditAssociation())} disabled={check.association ? false : true}>Editar kenjinkai</button>
+        </>
+        :
+          <button onClick={() => {SubmitNewAssociation()}} disabled={check.association ? false : true}>Registrar</button>
+        }
         </div>
       </div>
+      </>
       }
+
       {showStand &&
-      <div>
-        <div>
-          {edit === "stand" &&
-            <div>
-              <h1>Editar estande:</h1>
-              <h2>{stands.filter(item => item.standID === standID)[0].stand}</h2>
-            </div>
-          }
-          <Stands
-            output={handleSChange}
-            stand={newStand}
-            associationID={newAssociationID}
-            associations={associations}
-            dupliValue={alreadyUsedS}
-            valid={(value) => setCheck(check => ({...check, stand:value}))}/>
-          {edit === "stand" ?
-            <div>
-              <button onClick={() => (setConfirmDel(true))}>Excluir Estande</button>
-              <button onClick={() => (SubmitEditStand())} disabled={check.stand ? false : true}>Editar Estande</button>
-            </div>
-          :
-            <div>
-              <button onClick={() => (SubmitNewStand())} disabled={check.stand ? false : true}>Criar Estande</button>
-            </div>
-          }
-        </div>
-      </div>
-      }
-      {confirmDel &&
-      <div>
-        <div>
-          <h2>Excluir: {edit === "association" ?
-          <>kenjinkai {associations.filter(item => item.associationID === newAssociationID)[0].association}</>
-          :
-          edit === "stand" &&
-          <>estande {stands.filter(item => item.standID === standID)[0].stand}</>}</h2>
-          <div>
-            <button onClick={() => (setConfirmDel(false))}>Cancelar</button>
-            {edit === "association" ?
-            <button onClick={() => (SubmitDelAssociation())}>Excluir kenjinkai</button>
-            :
-            edit === "stand" &&
-            <button onClick={() => (SubmitDelStand())}>Excluir Estande</button>
-            }
+      <>
+      <div className="BlackBackground" onClick={() => setShowStand(false)}/>
+      <div className="NewEditStand">
+        {edit === "stand" ?
+          <div className="Title">
+            <h2>Editar estande:</h2>
+            <h2>{stands.filter(item => item.standID === standID)[0].stand}</h2>
           </div>
+        :
+          <div className="Title">
+            <h2>Criar estande</h2>
+          </div>
+        }
+        <Stands
+          output={handleSChange}
+          stand={newStand}
+          associationID={newAssociationID}
+          associations={associations}
+          dupliValue={alreadyUsedS}
+          valid={(value) => setCheck(check => ({...check, stand:value}))}/>
+        <div className="Footer">
+        {edit === "stand" ?
+        <>
+          <button onClick={() => (setConfirmDel(true))}>Excluir Estande</button>
+          <button onClick={() => (SubmitEditStand())} disabled={check.stand ? false : true}>Editar Estande</button>
+        </>
+        :
+          <button onClick={() => (SubmitNewStand())} disabled={check.stand ? false : true}>Criar Estande</button>
+        }
         </div>
       </div>
+      </>
+      }
+
+      {confirmDel &&
+      <>
+      <div className="BlackBackgroundScanner" onClick={() => setConfirmDel(false)}/>
+      <div className="ConfirmDelete">
+        <div className="Title">
+          <h2>Excluir: {edit === "association" ?
+            <>Kenjinkai {associations.filter(item => item.associationID === newAssociationID)[0].association}</>
+          : edit === "stand" &&
+            <>Estande {stands.filter(item => item.standID === standID)[0].stand}</>}
+          </h2>
+        </div>
+        <div className="Footer">
+          <button onClick={() => (setConfirmDel(false))}>Cancelar</button>
+          {edit === "association" ?
+            <button onClick={() => (SubmitDelAssociation())}>Excluir kenjinkai</button>
+          : edit === "stand" &&
+            <button onClick={() => (SubmitDelStand())}>Excluir Estande</button>
+          }
+        </div>
+      </div>
+      </>
       }
     </div>
   )

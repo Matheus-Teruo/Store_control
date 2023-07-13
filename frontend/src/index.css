@@ -117,6 +117,19 @@ input#price::-webkit-outer-spin-button{
   margin: 0;
 }
 
+.BlackBackground{
+  z-index: 15;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #00000050;
+}
+
 .BlackBackgroundScanner{
   z-index: 25;
   position: fixed;

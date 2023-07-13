@@ -1,0 +1,212 @@
+.Database{
+  min-height: calc(100vh - var(--height-header));
+}
+.Database .Menu{
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  padding: 4px 10px;
+}
+.Database .Actions{
+  display: flex;
+}
+.Database .Menu button{
+  display: flex;
+  margin: 0 5px;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+
+.Database .Main{
+  display: flex;
+  padding: 2px 8px;
+  background-color: var(--color-primary-1);
+}
+.Database .Main ul.ulAssociation{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.Database .Main li.liAssociation{
+  width: 100%;
+  min-height: 25px;
+  border-radius: 5px;
+  padding: 0 3px;
+  box-sizing: border-box;
+  margin: 2px 0;
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--color-primary-2);
+}
+.Database .Main p{
+  padding: 0 2px;
+  display: flex;
+  justify-content: start;
+}
+.Database .Main p#association{
+  flex: 2;
+  min-width: 80px;
+}
+.Database .Main p#principal{
+  flex: 2;
+  min-width: 70px;
+}
+.Database .Main .ulStands{
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  flex: 3;
+  min-width: 140px;
+}
+.Database .Main .ulStands button{
+  display: flex;
+  margin: 0 5px;
+  padding: 2px 12px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+.Database .Main li.liStands{
+  width: 100%;
+  border-radius: 5px;
+  box-sizing: border-box;
+  display: flex;
+  margin: 2px 0;
+  padding: 2px 8px;
+  background-color: var(--color-primary-3);
+}
+
+
+.NewEditAssociation{
+  z-index: 20;
+  position: fixed;
+  top: calc(50vh - 20vh);
+  left: calc(50vw - 125px);
+  padding: 8px;
+  width: 350px;
+  aspect-ratio: 8/5;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-gray-100);
+}
+.NewEditAssociation .Title{
+  display: flex;
+}
+
+.NewEditAssociation .Association{
+  display: flex;
+  align-items: center;
+}
+.NewEditAssociation .Principal{
+  display: flex;
+  align-items: center;
+}
+.NewEditAssociation .Check{
+  display: flex;
+  flex-direction: column;
+  padding: 2px 10px;
+}
+
+.NewEditAssociation button{
+  display: flex;
+  margin: 0 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+
+.NewEditAssociation .Footer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.NewEditStand{
+  z-index: 20;
+  position: fixed;
+  top: calc(50vh - 20vh);
+  left: calc(50vw - 125px);
+  padding: 8px;
+  width: 350px;
+  aspect-ratio: 8/5;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-gray-100);
+}
+.NewEditStand .Title{
+  display: flex;
+}
+
+.NewEditStand .Stand{
+  display: flex;
+  align-items: center;
+}
+.NewEditStand .AssociationID{
+  display: flex;
+  align-items: center;
+}
+.NewEditStand .Check{
+  display: flex;
+  flex-direction: column;
+  padding: 2px 10px;
+}
+
+.NewEditStand button{
+  display: flex;
+  margin: 0 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+
+.NewEditStand .Footer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ConfirmDelete{
+  z-index: 30;
+  position: fixed;
+  top: calc(50vh - 20vh);
+  left: calc(50vw - 125px);
+  padding: 8px;
+  width: 350px;
+  aspect-ratio: 8/5;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-gray-100);
+}
+.ConfirmDelete Title{
+  margin: 0 0 8px;
+}
+.ConfirmDelete .Footer{
+  margin: 0 0 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ConfirmDelete .Footer button{
+  display: flex;
+  margin: 5px 12px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}

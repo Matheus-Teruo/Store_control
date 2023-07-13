@@ -1,9 +1,11 @@
+import './Cards.css'
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { Maximize } from 'react-feather';
+import { Play, Pause } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Scanner from '../main/inputs/Scanner';
 import Code from './inputs/Code';
+import Barcode from '../../midia/Barcode';
 import Quagga from 'quagga';
 
 function Cards() {
@@ -79,25 +81,24 @@ function Cards() {
   };
 
   return (
-    <div>
-      <h1>Cartões</h1>
-      <div>
-        <h2>Menu</h2>
-        <div>
-          <h3>filtro</h3>
+    <div className="Cards">
+      <div className="Menu">
+        <h1>Cartões</h1>
+      </div>
+      <div className="Actions">
+        <button onClick={() => {setShowCard(true)}}>Registrar cartão</button>
+        <div className="Filter">
+          <h3>Filtro</h3>
           <select value={filter} onChange={event => setFilter(event.target.value)} id="filter" name="filter">
             <option value={0}>Todos</option>
             <option value={1}>Cartões vazios</option>
             <option value={2}>Com crédito</option>
           </select>
         </div>
-        <div>
-          <button onClick={() => {setShowCard(true)}}>Registrar cartão</button>
-        </div>
       </div>
-      <div>
+      <div className="Main">
         <ul>
-          <li><p>Código do Cartão</p><p>debito</p><p>Em uso</p></li>
+          <li><p id="cardcode">Código do Cartão</p><p id="debit">Débito</p><p id="in_use">Em uso</p></li>
           {cards.length !== 0 &&
           cards.filter(item => {
             if (filter === "1"){
@@ -109,26 +110,30 @@ function Cards() {
             }
           }).map((card) => (
             <li key={card.cardID}>
-              <p>{card.cardID}</p>
-              <p>{card.debit}</p>  
-              <p>{card.in_use}</p>
+              <p id="cardcode">{card.cardID}</p>
+              <p id="debit">{card.debit}</p>  
+              <p id="in_use">{card.in_use === 1? <Play size={20}/> : <Pause size={20}/> }</p>
             </li>  
           ))}
         </ul>
       </div>
 
       {showCard &&
-      <div>
-        <div>
-        <button onClick={() => setShowScanner(true)}><Maximize/></button>
+      <>
+      <div className="BlackBackground" onClick={() => setShowCard(false)}/>
+      <div className={`Newcard ${check? "valid" : "" }`}>
+        <div className="Codebar">
+        <button onClick={() => setShowScanner(true)}><Barcode/></button>
           <Code
           output={handleChange}
           card={newCardID}
           dupliValue={alreadyUsed}
           valid={(value) => setCheck(value)}/>
         </div>
-        <button onClick={() => (SubmitNewCard())} disabled={check ? false : true}>Criar Cartões</button>
-      </div>  
+        {alreadyUsed === newCardID && (newCardID.toString().length === 12) && <p>Cartão {newCardID} já utilizado</p>}
+        <button id="createcard" onClick={() => (SubmitNewCard())} disabled={check ? false : true}>Criar Cartões</button>
+      </div>
+      </>
       }
 
       {showScanner &&

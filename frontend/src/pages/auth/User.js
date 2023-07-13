@@ -1,7 +1,7 @@
 import "./User.css"
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { User, Smile, Flag, Lock, Unlock } from 'react-feather';
+import { User, Smile, Flag, Lock } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Username from './inputs/Username';
 import Fullname from './inputs/Fullname';

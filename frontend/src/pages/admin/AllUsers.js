@@ -1,5 +1,7 @@
+import './AllUsers.css'
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { User, Key, CheckSquare } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import StandID from './inputs/StandID';
 
@@ -8,6 +10,7 @@ function AllUsers() {
   const [selectedUserID, setSelectedUserID] = useState(0)
   const [associations, setAssociations] = useState([])
   const [stands, setStands] = useState([])
+  const [filter, setFilter] = useState(0)
   const [newStandID, setNewStandID] = useState(null);
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
@@ -81,56 +84,50 @@ function AllUsers() {
   }
 
   return (
-    <div>
-      <h1>Usuários</h1>
-      <div>
-        <h2>Menu</h2>
-        <div>
+    <div className="AllUsers">
+      <div className="Menu">
+        <h1>Usuários</h1>
+        <div className="Filter">
           <h3>filtro</h3>
-          {/* <select value={filter} onChange={event => setFilter(event.target.value)} id="filter" name="filter">
+          <select value={filter} onChange={event => setFilter(parseInt(event.target.value))} id="filter" name="filter">
             <option value={0}>Todos</option>
-            <option value={1}>Cartões vazios</option>
-            <option value={2}>Com crédito</option>
-          </select> */}
+            {stands.map((stand) => (
+              <option key={stand.standID} value={stand.standID}>{stand.stand}</option>
+            ))}
+          </select>
         </div>
       </div>
-      <div>
+      <div className="Main">
         <ul>
-          <li><p>ID do Usuário</p><p>Usuário</p><p>Nome Completo</p><p>standID</p><p>Superuser</p></li>
-          {users.length !== 0 &&
-          users
-          // .filter(user => {
-          //   if (filter === "1"){
-          //     return user.debit === 0;
-          //   } else if (filter === "2") {
-          //     return user.debit !== 0;
-          //   } else {
-          //     return true
-          //   }
-          // })
-          .map((user) => (
+          <li><p id="userID">ID</p><p id="username">Usuário</p><p id="fullname">Nome</p><div className="AStand">Estande</div><p id="superuser">Admin</p></li>
+          {users.length !== 0 && users.filter(user => {
+            if (filter === 0){
+              return true;
+            } else {
+              return user.standID === filter
+            }
+          }).map((user) => (
             <li key={user.userID}>
-              <p>{user.userID}</p>
-              <p>{user.username}</p>
-              <p>{user.fullname}</p>  
+              <p id="userID">{user.userID}</p>
+              <p id="username">{user.username}</p>
+              <p id="fullname">{user.fullname}</p>  
               {selectedUserID !== user.userID?
-              <>
-                <p onClick={() => setSelectedUserID(user.userID)}>Estande</p>
-                <p>{associations.filter(association => association.associationID === user.associationID)[0]?.association}</p>
-                <p>{stands.filter(element => element.standID === user.standID)[0]?.stand}</p>
-              </>
+              <div className="AStand" onClick={() => setSelectedUserID(user.userID)}>
+                <p id="association">{associations.filter(association => association.associationID === user.associationID)[0]?.association}</p>
+                <p id="stand">{stands.filter(element => element.standID === user.standID)[0]?.stand}</p>
+              </div>
               :
-              <div>
+              <div className="AStand">
                 <StandID
                   output={handleChange}
                   associations={associations}
                   stands={stands}
                   valid={() => {}}
                   defaultValue={user.standID}/>
-                <button onClick={() => (SubmitEditStandID())}>Confirmar</button>
+                <button onClick={() => (SubmitEditStandID())}><CheckSquare size={20}/></button>
               </div>
               }
-              <p>{user.superuser}</p>
+              <p id="superuser">{user.superuser === 1 ? <Key/> : <User/>}</p>
             </li>  
           ))}
         </ul>

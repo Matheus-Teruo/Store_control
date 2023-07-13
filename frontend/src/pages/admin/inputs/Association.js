@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Flag, Star } from 'react-feather'
 
 const regexnumber = /[0-9]/
 const regexspace = /\s/
@@ -80,24 +81,30 @@ function Association(props) {
   }, [props.principal])
 
   return (
-    <>
-      <label>Kenjinkai:</label>
-      <input value={props.association} onChange={event => props.output(event)} id="association" type="text" name="association"/>
-      <div>
+    <div>
+      <div className="Association">
+        <label><Flag/></label>
+        <input value={props.association} onChange={event => props.output(event)}
+          id="association" type="text" name="association" placeholder="Associação"/>
+      </div>
+      <div className="Check">
         {!K_Check.haveMinChar && <div>minChar</div>}
         {!K_Check.noNumber && <div>nonumber</div>}
         {!K_Check.noSpace && <div>noSpace</div>}
         {!K_Check.noSpecialChar && <div>noSpecialChar</div>}
         {props.dupliValue !== ""  && (props.dupliValue === props.association) && <div>noUsed</div>}
       </div>
-      <label>Diretoria:</label>
-      <input value={props.principal} onChange={event => props.output(event)} id="principal" type="text" name="principal"/>
-      <div>
+      <div className="Principal">
+        <label><Star/></label>
+        <input value={props.principal} onChange={event => props.output(event)}
+          id="principal" type="text" name="principal" placeholder="Diretoria"/>
+      </div>
+      <div className="Check">
         {!P_Check.haveMinChar && <div>minChar</div>}
         {!P_Check.noNumber && <div>nonumber</div>}
         {!P_Check.noSpecialChar && <div>noSpecialChar</div>}
       </div>
-    </>
+    </div>
   )
 }
 

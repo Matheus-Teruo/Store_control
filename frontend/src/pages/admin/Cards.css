@@ -1,0 +1,103 @@
+.Cards{
+  min-height: calc(100vh - var(--height-header));
+}
+.Cards .Menu{
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  padding: 4px 10px;
+}
+.Cards .Filter{
+  height: 24px;
+  display: flex;
+}
+.Cards .Actions{
+  display: flex;
+  justify-content: space-between;
+  margin: 3px 12px;
+}
+.Cards .Actions button{
+  display: flex;
+  margin: 0 10px;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+.Cards .Main{
+  display: flex;
+  padding: 2px 8px;
+  background-color: var(--color-primary-1);
+}
+.Cards .Main ul{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.Cards .Main li{
+  width: 100%;
+  margin: 2px 0;
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--color-primary-2);
+}
+.Cards .Main p{
+  padding: 0 2px;
+  display: flex;
+  justify-content: start;
+}
+.Cards .Main p#cardcode{
+  flex: 2;
+  min-width: 140px;
+}
+.Cards .Main p#debit{
+  flex: 2;
+  min-width: 60px;
+}
+.Cards .Main p#in_use{
+  flex: 1;
+  min-width: 60px;
+}
+
+.Cards .Newcard{
+  z-index: 20;
+  position: fixed;
+  top: calc(50vh - 20vh);
+  left: calc(50vw - 125px);
+  padding: 8px;
+  width: 250px;
+  aspect-ratio: 8/5;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-gray-100);
+}
+.Cards .Newcard.valid{
+  background-color: var(--color-primary-6);
+}
+.Cards .Newcard.valid input{
+  background-color: transparent;
+}
+.Newcard .Codebar{
+  display: flex;
+  align-items: center;
+}
+.Newcard .Codebar button{
+  border: none;
+  padding: 0 5px;
+  background-color: transparent;
+}
+.Newcard .Codebar input{
+  border: none;
+  width: 95px;
+}
+.Newcard button#createcard{
+  display: flex;
+  margin: 0 10px;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}

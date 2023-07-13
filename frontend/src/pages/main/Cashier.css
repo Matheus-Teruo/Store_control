@@ -326,18 +326,6 @@
 }
 
 /*  Pop up */
-.BlackBackground{
-  z-index: 15;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #00000050;
-}
 .CashierRecharge{
   z-index: 20;
   position: fixed;

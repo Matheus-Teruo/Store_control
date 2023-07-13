@@ -1,7 +1,7 @@
 import "./Stocktaking.css"
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate  } from 'react-router-dom';
-import { DollarSign, Package, ShoppingBag, Square } from 'react-feather';
+import { DollarSign, Package, ShoppingBag } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Item from './inputs/Item';
 import StandID from '../admin/inputs/StandID';

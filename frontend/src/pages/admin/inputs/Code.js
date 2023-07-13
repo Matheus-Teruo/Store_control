@@ -36,7 +36,10 @@ function Code(props) {
 
   return (
     <>
-      <input className={` ${submitvalid ? "CardValid" : "CardInvalid"}`} value={props.card} onChange={handleCard} placeholder={`${(props.dupliValue !== "" && (props.dupliValue === props.card)) ? "Cartão já cadastrado" : ""}`} id="card" type="number" inputMode="numeric" name="card"/>
+      <input className={` ${submitvalid ? "CardValid" : "CardInvalid"}`}
+        value={props.card}
+        onChange={handleCard}
+        id="card" type="number" inputMode="numeric" name="card"/>
     </>
   )
 }

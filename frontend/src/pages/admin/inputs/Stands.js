@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Award, Flag } from 'react-feather';
 
 const regexnumber = /[0-9]/
 const regexspecial = /["]|[']|[\\]|[/]|[.]/
@@ -46,21 +47,26 @@ function Stands(props) {
 
   return (
     <div>
-      <label>Estande:</label>
-      <input value={props.stand} onChange={event => props.output(event)} id="stand" type="text" name="stand"/>
-      <div>
+      <div className="Stand">
+        <label><Award/></label>
+        <input value={props.stand} onChange={event => props.output(event)}
+          id="stand" type="text" name="stand" placeholder="Associação"/>
+      </div>
+      <div className="Check">
         {!Check.haveMinChar && <div>minChar</div>}
         {!Check.noNumber && <div>nonumber</div>}
         {!Check.noSpecialChar && <div>noSpecialChar</div>}
         {props.dupliValue !== "" && (props.dupliValue === props.stand) && <div>noUsed</div>}
       </div>
-      <label htmlFor="association">Kenjinkai</label>
-      <select value={props.associationID} onChange={event => props.output(event)} id="associationID" name="associationID">
-        <option value={0}></option>
-        {props.associations.map((association) => (
-          <option key={association.associationID} value={association.associationID}>{association.association}</option>
-        ))}
-      </select>
+      <div className="AssociationID">
+        <label htmlFor="association"><Flag/></label>
+        <select value={props.associationID} onChange={event => props.output(event)} id="associationID" name="associationID">
+          <option value={0}>Associação</option>
+          {props.associations.map((association) => (
+            <option key={association.associationID} value={association.associationID}>{association.association}</option>
+          ))}
+        </select>
+      </div>
     </div>
   )
 }

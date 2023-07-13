@@ -1,11 +1,12 @@
 import "./Cashier.css"
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, Minimize2, Maximize, Pause, RefreshCw, DollarSign, Package, Minus, Plus, ArrowDown, CheckCircle } from 'react-feather';
+import { CreditCard, Minimize2, Pause, RefreshCw, DollarSign, Package, Minus, Plus, ArrowDown, CheckCircle } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Code from '../admin/inputs/Code';
 import Payment from "./inputs/Payment";
 import Scanner from './inputs/Scanner';
+import Barcode from "../../midia/Barcode";
 import Quagga from 'quagga';
 
 function Cashier() {
@@ -247,7 +248,7 @@ function Cashier() {
           <div className={`CashierCard ${(check.card === true && cardBalance === "invalid")? "noUse" : "" }`}>
             <div className="CashierCardHead">
               <div className="CashierCardNumber">
-                <button onClick={() => setShowScanner(true)}><Maximize/></button>
+                <button onClick={() => setShowScanner(true)}><Barcode/></button>
                 <Code
                   output={handleCard}
                   card={card}
@@ -365,7 +366,7 @@ function Cashier() {
         <h3>Recarregar Cartão</h3>
         <div className={`CashierCardMini  ${(check.card === true && cardBalance === "invalid")? "noUse" : ""}`}>
           <div  className="CashierCardMiniCode">
-            <button onClick={() => setShowScanner(true)}><Maximize/></button>
+            <button onClick={() => setShowScanner(true)}><Barcode/></button>
             <Code
               output={handleCard}
               card={card}
@@ -403,7 +404,7 @@ function Cashier() {
         <h3>Finalizar Cartão</h3>
         <div className="CashierCardMini">
           <div  className="CashierCardMiniCode">
-            <button onClick={() => setShowScanner(true)}><Maximize/></button>
+            <button onClick={() => setShowScanner(true)}><Barcode/></button>
             <Code
               output={handleCard}
               card={card}

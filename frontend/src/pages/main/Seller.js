@@ -1,10 +1,12 @@
 import './Seller.css'
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, Minimize2, Maximize, Play, Pause, DollarSign, Package, Plus, Minus, ShoppingBag, ShoppingCart, BookOpen, Trash2 } from 'react-feather';
+import { CreditCard, Minimize2, Play, Pause, DollarSign, Package, Plus, Minus, ShoppingBag, ShoppingCart, Trash2 } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Code from '../admin/inputs/Code'
 import Scanner from './inputs/Scanner';
+import Barcode from '../../midia/Barcode';
+import History from '../../midia/History';
 import Quagga from 'quagga';
 
 function Seller() {
@@ -250,7 +252,7 @@ function Seller() {
             <div className={`SellerCard ${(check.card === true && cardBalance === "invalid")? "noUse" : "" }`}>
               <div className="SellerCardHead">
                 <div className="SellerCardNumber">
-                  <button onClick={() => setShowScanner(true)}><Maximize/></button>
+                  <button onClick={() => setShowScanner(true)}><Barcode/></button>
                   <Code
                     output={handleCard}
                     card={card}
@@ -285,7 +287,7 @@ function Seller() {
             </div>
             }
             <div className="SellerHistory">
-              <button onClick={() => {setShowLastSales(true); RequestLastSales()}}><BookOpen/></button>
+              <button onClick={() => {setShowLastSales(true); RequestLastSales()}}><History/></button>
             </div>
         </div>
         <div className="SellerItems">
@@ -326,7 +328,7 @@ function Seller() {
         <h2>Finalizar Compra</h2>
         <div className={`SellerCardMini  ${(check.card === true && cardBalance === "invalid")? "noUse" : ""}`}>
           <div  className="SellerCardMiniCode">
-            <button onClick={() => setShowScanner(true)}><Maximize/></button>
+            <button onClick={() => setShowScanner(true)}><Barcode/></button>
             <Code
               output={handleCard}
               card={card}
@@ -383,7 +385,7 @@ function Seller() {
         <h2>Histórico de compra</h2>
         <div className={`SellerCardMini  ${(check.card === true && cardBalance === "invalid")? "noUse" : ""}`}>
           <div  className="SellerCardMiniCode">
-            <button onClick={() => setShowScanner(true)}><Maximize/></button>
+            <button onClick={() => setShowScanner(true)}><Barcode/></button>
             <Code
               output={handleCard}
               card={card}

@@ -43,7 +43,6 @@ function StandID(props) {
 
   return (
     <div>
-      <label htmlFor="association">Estande</label>
       <select value={associationIndex} onChange={handleAssociationChange} id="association" name="association">
         <option value={0}></option>
         {associations.map((association) => (
