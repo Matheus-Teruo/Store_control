@@ -2,21 +2,10 @@ const express = require("express");
 const database = require("../database");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-// const multer = require('multer');
-
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "../../images")
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, `${req.body.nameimage}${path.extname(file.originalname)}`)
-//   }
-// })
 
 const router = express();
 router.use(express.json());
 router.use(cookieParser());
-// const upload = multer({storage: storage})
 
 const decodeJWT = (req, res) => {
   try {

@@ -67,7 +67,7 @@
 .ST_NewItem{
   z-index: 20;
   position: fixed;
-  top: calc(50vh - 20vh);
+  top: calc(50vh - 40vh);
   left: calc(50vw - 40vw);
   width: 80vw;
   border-radius: 10px;
@@ -84,4 +84,27 @@
   border: none;
   border-radius: 8px;
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+
+.ST_NewItem .Item{
+  display: flex;
+  align-items: center;
+}
+.ST_NewItem .Price{
+  display: flex;
+  align-items: center;
+}
+.ST_NewItem .Stock{
+  display: flex;
+  align-items: center;
+}
+.ST_NewItem .Check{
+  display: flex;
+  flex-direction: column;
+  padding: 2px 10px;
+}
+.ST_NewItem .Image{
+  display: flex;
+  width: 200px;
+  aspect-ratio: 1/1;
 }

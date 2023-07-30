@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { DollarSign, Package } from 'react-feather';
+import { Tag, DollarSign, Package } from 'react-feather';
 
 
 const regexspecial = /["]|[']|[\\]|[/]|[.]/
@@ -57,25 +57,31 @@ function Item(props) {
   }, [props.stock])
   
   return (
-    <>
-      <label id="item">Item:</label>
-      <input value={props.item} onChange={event => props.output(event)} id="item" type="text" name="item"/>
-      <div>
+    <div>
+      <div className="Item">
+        <label id="item"><Tag/></label>
+        <input value={props.item} onChange={event => props.output(event)} id="item" type="text" name="item"/>
+      </div>
+      <div className="Check">
         {!I_Check.haveMinChar && <p>minChar</p>}
         {!I_Check.noSpecialChar && <div>noSpecialChar</div>}
         {props.dupliValue !== "" && (props.dupliValue === props.item) && <div>noUsed</div>}
       </div>
-      <label id="price"><DollarSign/></label>
-      <input value={props.price} onChange={event => props.output(event)} id="price" type="number" name="price" min="0"/>
-      <div>
+      <div className="Price">
+        <label id="price"><DollarSign/></label>
+        <input value={props.price} onChange={event => props.output(event)} id="price" type="number" name="price" min="0"/>
+      </div>
+      <div className="Check">
         {!P_Check && <p>noZero</p>}
       </div>
-      <label id="stock" ><Package/></label>
-      <input value={props.stock} onChange={event => props.output(event)} id="stock" inputMode="numeric" type="number" name="stock" min="0"/>
-      <div>
+      <div className="Stock">
+        <label id="stock" ><Package/></label>
+        <input value={props.stock} onChange={event => props.output(event)} id="stock" inputMode="numeric" type="number" name="stock" min="0"/>
+      </div>
+      <div className="Check">
         {!S_Check && <p>noZero</p>}
       </div>
-    </>
+    </div>
   )
 }
 

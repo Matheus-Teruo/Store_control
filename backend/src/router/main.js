@@ -2,10 +2,21 @@ const express = require("express");
 const database = require("../database");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "../../images")
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${req.body.nameimage}${path.extname(file.originalname)}`)
+  }
+})
 
 const router = express();
 router.use(express.json());
 router.use(cookieParser());
+const upload = multer({storage: storage})
 
 const decodeJWT = (req, res) => {
   try {
@@ -496,8 +507,6 @@ router.post('/deletesale', (req, res) => {  // Request card debit
     database('goods')
       .select()
       .where({saleID: data.saleID})
-      // .select(database.raw('SUM(unit_p * quantity) as totalPrice'))
-      // .groupBy("saleID")
       .then(goods => {
         let totalSum = 0;
         console.log(goods)
@@ -595,7 +604,7 @@ router.get("/stocktakingall", (req, res) => {  // Request all items and standID
   }
 })
 
-router.get("/salesitems", (req, res) => {  // Request item sales and total
+router.get("/salesitems", (req, res) => {  // Request item sales
   const decoded = decodeJWT(req, res);
   if (!decoded) {
     return res.status(401).end();
@@ -730,12 +739,16 @@ router.post("/edititem", (req, res, next) => {  // Change item property
   }
 })
 
-// router.use((err, req, res, next) => {  // Cancel the upload of image
-//   if (err) {
-//     // Handle the error appropriately
-//     return res.status(401).json({ error: 'Unauthorized' });
-//   }
-//   next();
-// });
+router.post("/imageupload", upload.single("image"), (req, res) => {
+  const imageIdentifier = req.params.imageIdentifier;
+})
+
+router.use((err, req, res, next) => {  // Cancel the upload of image
+  if (err) {
+    // Handle the error appropriately
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  next();
+});
 
 module.exports = router;
