@@ -84,8 +84,7 @@
   z-index: 20;
   position: fixed;
   top: calc(50vh - 20vh);
-  left: calc(50vw - 125px);
-  padding: 8px;
+  left: calc(50vw - 175px);
   width: 350px;
   aspect-ratio: 8/5;
   border-radius: 10px;
@@ -97,6 +96,7 @@
 }
 .NewEditAssociation .Title{
   display: flex;
+  padding: 8px;
 }
 
 .NewEditAssociation .Association{
@@ -115,7 +115,7 @@
 
 .NewEditAssociation button{
   display: flex;
-  margin: 0 5px;
+  margin: 8px 5px;
   padding: 8px 12px;
   border: none;
   border-radius: 8px;
@@ -134,7 +134,6 @@
   position: fixed;
   top: calc(50vh - 20vh);
   left: calc(50vw - 175px);
-  padding: 8px;
   width: 350px;
   aspect-ratio: 8/5;
   border-radius: 10px;
@@ -146,6 +145,7 @@
 }
 .NewEditStand .Title{
   display: flex;
+  padding: 8px;
 }
 
 .NewEditStand .Stand{
@@ -164,7 +164,7 @@
 
 .NewEditStand button{
   display: flex;
-  margin: 0 5px;
+  margin: 8px 5px;
   padding: 8px 12px;
   border: none;
   border-radius: 8px;

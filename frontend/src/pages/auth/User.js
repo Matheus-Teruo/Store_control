@@ -1,7 +1,7 @@
 import "./User.css"
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { User, Smile, Flag, Lock } from 'react-feather';
+import { User, Smile, Flag, Award, Lock, Edit3, X, Check } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Username from './inputs/Username';
 import Fullname from './inputs/Fullname';
@@ -31,6 +31,7 @@ function UserPage() {
     password: false});
   const [alreadyUsedUN, setAlreadyUsedUN] = useState("");
   const [alreadyUsedFN, setAlreadyUsedFN] = useState("");
+  const [confirmLogout, setConfirmLogout] = useState(false)
   const [isFoc, setIsFoc] = useState(false);
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
@@ -173,14 +174,14 @@ function UserPage() {
     navigate('/')
   }
 
-  function handleSelected(select) {  // Select editor
+  function handleSelected(select, value) {  // Select editor
     switch (select) {
       case "username":
-        return setSelected((selected) => ({...selected, username: true}))
+        return setSelected((selected) => ({...selected, username: value}))
       case "fullname":
-        return setSelected((selected) => ({...selected, fullname: true}))
+        return setSelected((selected) => ({...selected, fullname: value}))
       case "password":
-        return setSelected((selected) => ({...selected, password: true}))
+        return setSelected((selected) => ({...selected, password: value}))
       default:
         return "";
   }}
@@ -209,9 +210,10 @@ function UserPage() {
       {auth.user.authenticated ?
       <div className="Userbackground">
         {!selected.username?
-          <div className="UserUN" onClick={() => {handleSelected("username")}}>
+          <div className="UserUN">
             <User/>
             <p>{user.username}</p>
+            <Edit3 onClick={() => handleSelected("username", true)}/>
           </div>
         :
           <div className="UserUN">
@@ -220,13 +222,15 @@ function UserPage() {
               username={newUsername}
               dupliValue={alreadyUsedUN}
               valid={(value) => setCheck(check => ({...check, username:value}))}/>
-            <button onClick={() => (SubmitEditUsername())} disabled={check.username ? false : true}>Confirmar</button>
+            <button onClick={() => handleSelected("username", false)}><X/></button>
+            <button onClick={() => SubmitEditUsername()} disabled={check.username ? false : true}><Check/></button>
           </div>
         }
         {!selected.fullname?
-          <div className="UserFN" onClick={() => {handleSelected("fullname")}}>
+          <div className="UserFN">
             <Smile/>
             <p>{user.fullname}</p>
+            <Edit3 onClick={() => handleSelected("fullname", true)}/>
           </div>
         :
           <div className="UserFN">
@@ -235,13 +239,15 @@ function UserPage() {
               fullname={newFullname}
               dupliValue={alreadyUsedFN}
               valid={(value) => setCheck(check => ({...check, fullname:value}))}/>
-            <button onClick={() => (SubmitEditFullname())} disabled={check.fullname ? false : true}>Confirmar</button>
+            <button onClick={() => handleSelected("fullname", false)}><X/></button>
+            <button onClick={() => SubmitEditFullname()} disabled={check.fullname ? false : true}><Check/></button>
           </div>
         }
         <div className="UserAS">
           <Flag/>
-          <p>{user.association}</p>
-          <p>{user.stand}</p>
+          <p title="Association">{user.association}</p>
+          <Award/>
+          <p title="Estande">{user.stand}</p>
         </div>
         {selected.password &&
           <div className="UserPW">
@@ -258,20 +264,32 @@ function UserPage() {
                 valid={(value) => setCheck(check => ({...check, password:value}))}/>
             </div>
             <div className="UserPasswordButtons">
-              <button onClick={() => setSelected((selected) => ({...selected, password: false}))}>Cancelar</button>
-              <button onClick={() => PreSubmitEditPassword()} disabled={check.password ? false : true}>Confirmar</button>
+              <button onClick={() => handleSelected("password", false)}><X/></button>
+              <button onClick={() => PreSubmitEditPassword()} disabled={check.password ? false : true}><Check/></button>
             </div>          
           </div>
         }
         <div className="UserMenu">
           {!selected.password &&
-          <button onClick={() => {handleSelected("password")}}>
-            Alterar Senha
+          <button onClick={() => handleSelected("password", true)}>
+            Alterar Senha <Edit3/>
           </button>
           }
-          <button onClick={() => SubmitLogout()}>
+          {!confirmLogout ?
+          <button onClick={() => setConfirmLogout(true)}>
             Log out
           </button>
+          :
+          <div className="LogoutConfirm">
+            <p>Log out</p>
+            <button  onClick={() => setConfirmLogout(false)}>
+              <X/>
+            </button>
+            <button onClick={() => SubmitLogout()}>
+              <Check/>
+            </button>
+          </div>
+          }
         </div>  
       </div>
       :

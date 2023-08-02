@@ -292,9 +292,7 @@ function Cashier() {
           }
         </div>
         <div className="CashierItems">
-          {items.length === 0 ? 
-          <div>Nenhum item no estande</div>
-          :
+          {selectedID !== 0 ? (items.length !== 0 ? 
           <ul className={`${showCard && "cardExpanded"}`}>
             {items.map((item) => (
               <li className={`${item.stock === 0 && "unavailable"}`}  key={item.itemID} onClick={() => handleCart(item)}>
@@ -304,6 +302,10 @@ function Cashier() {
               </li>
             ))}
           </ul>
+          :
+          <div>Nenhum item no estande</div>)
+          :
+          <div>Selecione um estande</div>
           }
         </div>
       </div>

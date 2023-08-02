@@ -383,6 +383,7 @@ function Seller() {
       <div className="BlackBackground" onClick={() => setShowLastSales(false)}/>
       <div className="SellerLastSales">
         <h2>Histórico de compra</h2>
+        <p>Identifique o cartão da última compra</p>
         <div className={`SellerCardMini  ${(check.card === true && cardBalance === "invalid")? "noUse" : ""}`}>
           <div  className="SellerCardMiniCode">
             <button onClick={() => setShowScanner(true)}><Barcode/></button>
@@ -416,7 +417,6 @@ function Seller() {
                     }
                     <p id="quantity"><ShoppingBag size={18}/>{good.quantity}</p>
                     <p id="price"><DollarSign size={18}/>{good.unit_p}</p>
-                    
                   </li>
                 ))}
               </ul>

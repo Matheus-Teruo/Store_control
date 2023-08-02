@@ -50,7 +50,7 @@ function Stands(props) {
       <div className="Stand">
         <label><Award/></label>
         <input value={props.stand} onChange={event => props.output(event)}
-          id="stand" type="text" name="stand" placeholder="Associação"/>
+          id="stand" type="text" name="stand" placeholder="Estande"/>
       </div>
       <div className="Check">
         {!Check.haveMinChar && <div>minChar</div>}

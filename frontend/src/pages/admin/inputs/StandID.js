@@ -10,11 +10,7 @@ function StandID(props) {
     setStandIndex(props.defaultValue || 0)    
     setStands(props.stands)
     setAssociations(props.associations)
-    setAssociationIndex(props.stands.filter(element => element.standID === props.defaultValue)[0]?.associationID)
-  }, [props.defaultValue, props.stands, props.association])
-
-
-  useEffect(() => {
+    setAssociationIndex(props.stands.filter(element => element.standID === props.defaultValue)[0]?.associationID || 0)
     if (props.defaultValue) {
       if (props.defaultValue <= 1){
         props.valid(false)
@@ -26,7 +22,7 @@ function StandID(props) {
   
   function handleStandChange(event) {  // handle stand
     props.output(event.target.value);
-    setStandIndex(event.target.value)
+    setStandIndex(parseInt(event.target.value))
     if (parseInt(event.target.value) <= 1){
       props.valid(false)
     } else {
@@ -44,13 +40,13 @@ function StandID(props) {
   return (
     <div>
       <select value={associationIndex} onChange={handleAssociationChange} id="association" name="association">
-        <option value={0}></option>
+        <option value={0}> - </option>
         {associations.map((association) => (
           <option key={association.associationID} value={association.associationID}>{association.association}</option>
         ))}
       </select>
       <select value={standIndex} onChange={handleStandChange} id="stand" name="stand">
-        <option value={0}></option>
+        <option value={0}> - </option>
         {stands.filter(item => item.associationID === associationIndex).map((stand) => (
           <option key={stand.standID} value={stand.standID}>{stand.stand}</option>
         ))}
