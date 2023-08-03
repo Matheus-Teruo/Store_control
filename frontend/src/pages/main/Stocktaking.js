@@ -57,7 +57,6 @@ function Stocktaking() {
             };
           });
           setItems(mergedItems)
-          // return RequestSalesGoods("", true, data.items)
         } else if (resStatus === 401){
           return auth.onLogout()
         }
@@ -80,7 +79,6 @@ function Stocktaking() {
             };
           });
           setItems(mergedItems)
-          // return RequestSalesGoods(data.stand.standID, false, data.items)
         } else if (resStatus === 401){
           return auth.onLogout()
         }
@@ -170,7 +168,7 @@ function Stocktaking() {
   async function SubmitImage(name) {
     var resStatus;
     const formData = new FormData();
-    const resizedImg = await ResizeImg(selectedImage)
+    const resizedImg = await ResizeImg(selectedImage, 300)
     formData.append('imageName', name);
     formData.append('standID', stand.standID)
     formData.append('imageType', resizedImg.type)
@@ -187,6 +185,8 @@ function Stocktaking() {
           RequestItems();
           setShowItem(false); setCheck(check => ({...check, item: false})); setEdit(false);
           setNewItem(""); setNewPrice(0); setNewStock(0);
+        } else if (resStatus === 401){
+          return auth.onLogout()
         }
       })
   }
@@ -223,7 +223,11 @@ function Stocktaking() {
   return (
     <div className="ST_background">
       <div className="ST_Header">
-        <h1>Inventário{stand.stand}</h1>
+        {auth.user.superuser === 1 ?
+          <h1>Inventário Geral</h1>
+        :
+          <h1>Inventário: {stand.stand}</h1>
+        }
         <div className="ST_Menu">
           <button onClick={() => {setShowItem(true)}}>Novo item</button>
           {auth.user.superuser === 1 &&

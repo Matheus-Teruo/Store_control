@@ -26,7 +26,6 @@ CREATE TABLE `associations` (
   `associationID` int NOT NULL AUTO_INCREMENT,
   `association` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `principal` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `association_img` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`associationID`),
   UNIQUE KEY `association` (`association`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

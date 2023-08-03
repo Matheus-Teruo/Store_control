@@ -2,32 +2,10 @@ const express = require("express");
 const database = require("../database");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const multer = require('multer');
-const path = require('path');
-
-const storageAssociation = multer.diskStorage({
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype === "image/png" ||
-      file.mimetype === "image/jpeg") {
-      cb(null, true)
-    } else {
-      cb(new Error ('Unaccepted file type'))
-    }
-  },
-  destination: (req, file, cb) => {
-    const destinationDir = path.join(__dirname, "../../images/associations");
-    cb(null, destinationDir)
-  },
-  filename: (req, file, cb) => {
-    const extension = path.extname(file.originalname);
-    cb(null, `${req.body.associationName}${extension}`)
-  }
-})
 
 const router = express();
 router.use(express.json());
 router.use(cookieParser());
-const uploadIcon = multer({storage: storageAssociation})
 
 const decodeJWT = (req, res) => {
   try {
@@ -162,28 +140,6 @@ router.post("/editassociation", (req, res) => {  // Change association property
             console.error(error)
             return res.status(501).json({ error: {error}});
           }
-        })
-    } else {
-      return res.status(401).end();
-    }
-  }
-})
-
-router.post("/associationimageupload", uploadIcon.single("imageAssociation"), (req, res) => {
-  const decoded = decodeJWT(req, res);
-  if (!decoded) {
-    return res.status(401).end();
-  } else {
-    if (decoded.superuser) {
-      database('associations')
-        .where({association: req.body.imageName})
-        .update({association_image: 1})
-        .then(() => {
-          console.log(`item image: ${req.body.imageName}`)
-          return res.json({message: "association image uploaded"});
-        })
-        .catch(error => {
-          return res.status(501).json({ error: {error}});
         })
     } else {
       return res.status(401).end();

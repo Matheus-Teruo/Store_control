@@ -35,7 +35,7 @@ export const getCroppedImg = (file, croppedAreaPixels) => {
   });
 };
 
-export const ResizeImg = (file) => {
+export const ResizeImg = (file, size) => {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.src = URL.createObjectURL(file);
@@ -44,15 +44,15 @@ export const ResizeImg = (file) => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
 
-      canvas.width = 300;
-      canvas.height = 300;
+      canvas.width = size;
+      canvas.height = size;
 
       ctx.drawImage(
         image,
         0,
         0,
-        300,
-        300,
+        size,
+        size,
         );
 
       canvas.toBlob((blob) => {
