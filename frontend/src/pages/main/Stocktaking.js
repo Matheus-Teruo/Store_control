@@ -1,9 +1,11 @@
 import "./Stocktaking.css"
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate  } from 'react-router-dom';
-import { DollarSign, Package, ShoppingBag } from 'react-feather';
+import { Image, DollarSign, Package, ShoppingBag, Crop } from 'react-feather';
+import { ResizeImg } from './inputs/utils.js';
 import AuthContext from '../../store/auth_context';
 import Item from './inputs/Item';
+import CropImage from "./inputs/CropImage";
 import StandID from '../admin/inputs/StandID';
 
 function Stocktaking() {
@@ -11,8 +13,6 @@ function Stocktaking() {
   const [stand, setStand] = useState({standID: 0,stand:""})
   const [stands, setStands] = useState([])
   const [associations, setAssociations] = useState([])
-  const [sales, setSales] = useState([])
-  const [goods, setGoods] = useState([])
   // New item
   const [showItem, setShowItem] = useState(false)
   const [edit, setEdit] = useState(false)
@@ -21,8 +21,10 @@ function Stocktaking() {
   const [newStock, setNewStock] = useState("")
   const [itemID, setItemID] = useState(0)
   const [filter, setFilter] = useState(0)
-  const [alreadyUsedI, setAlreadyUsedI] = useState("")
+  const [alreadyUsedItem, setAlreadyUsedItem] = useState("")
   const [selectedImage, setSelectedImage] = useState()
+  const [selectedImageURL, setSelectedImageURL] = useState()
+  const [showCrop, setShowCrop] = useState(false)
   const [check, setCheck] = useState({
     item: false,
     standID: false})
@@ -45,7 +47,17 @@ function Stocktaking() {
       .then(data => {
         if (resStatus === 200){
           RequestStands()
-          return RequestSalesGoods("", true, data.items)
+          console.log('items', data.items)
+          console.log("goods", data.goods)
+          const mergedItems = data.items.map((item) => {
+            const foundGood = data.goods.find((good) => good.itemID === item.itemID);
+            return {
+              ...item,
+              sold: foundGood ? foundGood.totalQuantity : 0,
+            };
+          });
+          setItems(mergedItems)
+          // return RequestSalesGoods("", true, data.items)
         } else if (resStatus === 401){
           return auth.onLogout()
         }
@@ -59,7 +71,16 @@ function Stocktaking() {
             return navigate('/')
           }
           setStand(data.stand)
-          return RequestSalesGoods(data.stand.standID, false, data.items)
+          setCheck(check => ({...check, standID: true}))
+          const mergedItems = data.items.map((item) => {
+            const foundGood = data.goods.find((good) => good.itemID === item.itemID);
+            return {
+              ...item,
+              sold: foundGood ? foundGood.totalQuantity : 0,
+            };
+          });
+          setItems(mergedItems)
+          // return RequestSalesGoods(data.stand.standID, false, data.items)
         } else if (resStatus === 401){
           return auth.onLogout()
         }
@@ -81,54 +102,6 @@ function Stocktaking() {
       })
   }
 
-  async function RequestSalesGoods(standID, permition, getitems) {  // List all stands
-    var resStatus;
-    if (permition) {
-      fetch('/api/salesitems')
-        .then(res => {resStatus = res.status; return res.json()})
-        .then(data => {
-          if (resStatus === 200){
-            // return setGoods(data.goods);
-            const mergedItems = getitems.map((item) => {
-              const foundGood = data.goods.find((good) => good.itemID === item.itemID);
-              return {
-                ...item,
-                sold: foundGood ? foundGood.totalQuantity : 0,
-                totalPrice: foundGood ? foundGood.totalPrice : 0,
-              };
-            });
-            setItems(mergedItems)
-          } else if (resStatus === 401){
-            return auth.onLogout()
-          }
-        })
-    } else {
-      fetch('/api/salesitemsperstand', {
-        method: "POST", headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          "standID": standID
-        })
-      })
-        .then(res => {resStatus = res.status; return res.json()})
-        .then(data => {
-          if (resStatus === 200){
-            const mergedItems = getitems.map((item) => {
-              const foundGood = data.goods.find((good) => good.itemID === item.itemID);
-              return {
-                ...item,
-                totalQuantity: foundGood ? foundGood.totalQuantity : 0,
-                totalPrice: foundGood ? foundGood.totalPrice : 0,
-              };
-            });
-            setItems(mergedItems)
-            // return setGoods(data.goods);
-          } else if (resStatus === 401){
-            return auth.onLogout()
-          }
-        })
-    }  
-  }
-
   async function SubmitNewItem() {  // Submit new item
     if (stand.standID > 1) {
       var resStatus;
@@ -144,12 +117,15 @@ function Stocktaking() {
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200){
-            RequestItems();
-            setShowItem(false); setCheck(check => ({...check, item: false}));
-            setNewItem(""); setNewPrice(0); setNewStock(0);
-            // LATER IT'S NEED submit the image in sequence
+            if (selectedImage) {
+              SubmitImage(data.ID)
+            } else {
+              RequestItems();
+              setShowItem(false); setCheck(check => ({...check, item: false}));
+              setNewItem(""); setNewPrice(0); setNewStock(0);
+            }
           } else if (resStatus === 409) {
-            return setAlreadyUsedI(data.value)
+            return setAlreadyUsedItem(data.value)
           } else if (resStatus === 401){
             return auth.onLogout()
           }
@@ -175,12 +151,15 @@ function Stocktaking() {
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200){
-            RequestItems();
-            setShowItem(false); setCheck(check => ({...check, item: false})); setEdit(false);
-            setNewItem(""); setNewPrice(0); setNewStock(0);
-            // LATER IT'S NEED submit the image in sequence
+            if (selectedImage) {
+              SubmitImage(itemID);
+            } else {
+              RequestItems();
+              setShowItem(false); setCheck(check => ({...check, item: false})); setEdit(false);
+              setNewItem(""); setNewPrice(0); setNewStock(0);
+            }
           } else if (resStatus === 409) {
-            return setAlreadyUsedI(data.value)
+            return setAlreadyUsedItem(data.value)
           } else if (resStatus === 401){
             return auth.onLogout()
           }
@@ -188,32 +167,57 @@ function Stocktaking() {
     }
   }
 
-  // async function submitImage{} {
-  //   var resStatus;
-  // }
+  async function SubmitImage(name) {
+    var resStatus;
+    const formData = new FormData();
+    const resizedImg = await ResizeImg(selectedImage)
+    formData.append('imageName', name);
+    formData.append('standID', stand.standID)
+    formData.append('imageType', resizedImg.type)
+    formData.append('imageItem', resizedImg);
+    fetch('/api/itemimageupload', {
+      method: 'POST',
+      body: formData,
+    })
+      .then(res => {resStatus = res.status; return res.json()})
+      .then(data => {
+        if (resStatus === 200){
+          setSelectedImage();
+          setSelectedImageURL();
+          RequestItems();
+          setShowItem(false); setCheck(check => ({...check, item: false})); setEdit(false);
+          setNewItem(""); setNewPrice(0); setNewStock(0);
+        }
+      })
+  }
   
-  function handleChange(event) {  // Handle Change
+  function handleChange(event) {  // Handle Change inputs from item
     if (event.target.id === "item") {  // Item
-      setNewItem(event.target.value)
+      setNewItem(event.target.value);
     } else if (event.target.id === "price") {  // Price
       setNewPrice(event.target.value);
     } else if (event.target.id === "stock") {  // Stock
       setNewStock(event.target.value);
     }
   };
+
   function handleChangeStandID(value) {  // Manage stand ID
     const aux = parseInt(value)
     if (aux === 0) {
-      setStand(stand => ({...stand, standID: null}))
+      setStand(stand => ({...stand, standID: null}));
     } else {
-      setStand(stand => ({...stand, standID: aux}))
+      setStand(stand => ({...stand, standID: aux}));
     }
-  }
-  function handleImage(event) {
-    setSelectedImage(event.target.value)
-  }
+  };
+
+  function handleImage(event) {  // Handle Change input image
+    setSelectedImage(event.target.files[0]);
+    setSelectedImageURL(URL.createObjectURL(event.target.files[0]));
+    setShowCrop(true);
+  };
+
   function h_Valid(value) {
-    setCheck(check => ({...check, item: value}))
+    setCheck(check => ({...check, item: value}));
   };
 
   return (
@@ -222,20 +226,28 @@ function Stocktaking() {
         <h1>Inventário{stand.stand}</h1>
         <div className="ST_Menu">
           <button onClick={() => {setShowItem(true)}}>Novo item</button>
-          <div className="Filtro">
-            <h3>filtro </h3>
-            <select value={filter} onChange={event => setFilter(parseInt(event.target.value))} id="filter" name="filter">
-              <option key={0} value={0}>Todos</option>
-              {stands.lenght !== 0 && stands.filter(item => item.standID !== 1).map((element) =>  (
-                <option key={element.standID} value={element.standID}>{element.stand}</option>
-              ))}
-            </select>
-          </div>
+          {auth.user.superuser === 1 &&
+            <div className="Filtro">
+              <h3>filtro </h3>
+              <select value={filter} onChange={event => setFilter(parseInt(event.target.value))} id="filter" name="filter">
+                <option key={0} value={0}>Todos</option>
+                {stands.length !== 0 && stands.filter(item => item.standID !== 1).map((element) =>  (
+                  <option key={element.standID} value={element.standID}>{element.stand}</option>
+                ))}
+              </select>
+            </div>
+          }
         </div>
       </div>
       <div className="ST_Main">
         <ul>
-          {auth.user.superuser ? (items.lenght !== 0 && items.filter(item => {
+          {auth.user.superuser ? (items.filter(item => {
+            if (filter === 0){
+              return true;
+            } else {
+              return item.standID === filter;
+            }
+          }).length !== 0 ? (items.filter(item => {
             if (filter === 0){
               return true;
             } else {
@@ -248,6 +260,13 @@ function Stocktaking() {
               setNewItem(item.item); setStand(stand => ({...stand, standID: item.standID}));
               setNewPrice(parseFloat(item.price));
               setNewStock(parseInt(item.stock));}}>
+              {item.item_img !== null?
+                <img alt={item.item} src={`/api/itemimages/${item.itemID}.${item.item_img}`}/>
+              :
+              <div className="ImageIcon">
+                <Image/>
+              </div>
+              }
               <p id="name">{item.item}</p>
               <p id="price"><DollarSign size={18}/>{item.price}</p>
               <div className="quantity">
@@ -256,13 +275,22 @@ function Stocktaking() {
               </div>
             </li>
           )))
-          : (items.lenght !== 0 && items.map((item) => (
+          :
+          <li><p>Nenhum Item</p></li> )
+          : (items.length !== 0 ? (items.map((item) => (
             <li key={item.itemID} onClick={() => {
               setItemID(item.itemID);
               setShowItem(true); setEdit(true);
               setNewItem(item.item);
               setNewPrice(parseFloat(item.price));
-              setNewStock(parseInt(item.stock));}}>
+              setNewStock(parseInt(item.stock))}}>
+              {item.item_img !== null ?
+                <img alt={item.item} src={`/api/itemimages/${item.itemID}.${item.item_img}`}/>
+              :
+              <div className="ImageIcon">
+                <Image/>
+              </div>
+              }
               <p id="name">{item.item}</p>
               <p id="price"><DollarSign size={18}/>{item.price}</p>
               <div className="quantity">
@@ -270,13 +298,17 @@ function Stocktaking() {
                 <p id="sold"><ShoppingBag size={18}/>{item.sold}</p>
               </div>
             </li>
-          )))}
+          ))): <li><p>Nenhum Item</p></li> )}
         </ul>
       </div>
 
       {showItem &&
       <>
-        <div className="BlackBackground" onClick={() => {setShowItem(false); setEdit(false)}}/>
+        <div className="BlackBackground" 
+          onClick={() => {
+            setShowItem(false); setEdit(false);
+            setNewItem("");setNewPrice("");setNewStock("");setItemID(0);
+            setSelectedImage(); setSelectedImageURL()}}/>
         <div className="ST_NewItem">
           {edit?
             <h3>Editar</h3>
@@ -288,25 +320,41 @@ function Stocktaking() {
             item={newItem}
             price={newPrice}
             stock={newStock}
-            dupliValue={alreadyUsedI}
+            dupliValue={alreadyUsedItem}
             valid={h_Valid}/>
-          {auth.user.superuser &&
+          {selectedImageURL &&
+            <div className="Image">
+              <img src={selectedImageURL}/>  
+            </div>
+          }
+          <input type="file" name="image" onChange={handleImage}/>
+          <button onClick={() => {setShowCrop(true)}} disabled={selectedImage ? false : true}><Crop size="18"/></button>
+          {auth.user.superuser === 1 &&
             <StandID
               output={handleChangeStandID}
               associations={associations}
               stands={stands}
-              valid={value => setCheck(check => ({...check, standID: value}))}
+              valid={(value) => setCheck(check => ({...check, standID: value}))}
               defaultValue={stand.standID}/>
           }
-          {/* {selectedImage &&
-            <img src={URL.createObjectURL(selectedImage)}/>  
-          }
-          <input type="file" value={selectedImage} onChange={handleImage}/> */}
           {!edit ?
             <button onClick={() => (SubmitNewItem())} disabled={check.item && check.standID ? false : true}>Criar Item</button>
           :
             <button onClick={() => (SubmitEditItem())} disabled={check.item && check.standID? false : true}>Editar Item</button>
           }  
+        </div>
+      </>
+      }
+      {showCrop &&
+      <>      
+        <div className="BlackBackgroundScanner"/>
+        <div className="ST_CropImage">
+          <CropImage
+            image={selectedImage}
+            imageURL={selectedImageURL}
+            setImageURL={(URL) => setSelectedImageURL(URL)}
+            setImageFile={(file) => setSelectedImage(file)}
+            setShow={() => setShowCrop(false)}/>
         </div>
       </>
       }

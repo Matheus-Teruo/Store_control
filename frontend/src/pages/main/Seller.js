@@ -1,7 +1,7 @@
 import './Seller.css'
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, Minimize2, Play, Pause, DollarSign, Package, Plus, Minus, ShoppingBag, ShoppingCart, Trash2 } from 'react-feather';
+import { CreditCard, Minimize2, Play, Pause, Image, DollarSign, Package, Plus, Minus, ShoppingBag, ShoppingCart, Trash2 } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Code from '../admin/inputs/Code'
 import Scanner from './inputs/Scanner';
@@ -39,6 +39,13 @@ function Seller() {
     }
   }, [auth, navigate])
 
+  useEffect(() => {
+    if (card.length === 12){
+      SubmitCardCheck()
+    }
+  }, [card])
+  
+
   async function RequestItemsPerStand() {  // List all itens by stand
     var resStatus;
       fetch('/api/listitemsperstand')
@@ -51,6 +58,22 @@ function Seller() {
             return auth.onLogout()
           }
         })
+  }
+
+  async function SubmitCardCheck() {  // Submit debit checker
+    fetch("/api/cardcheck", {  // Post form
+      method: "POST", headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({"cardID": card})
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.code){
+        setCustomer(data.customer)
+        return setCardBalance(data.value)
+      } else {
+        return setCardBalance("invalid")
+      }
+    })
   }
 
   async function SubmitPurchase() {  // Submit the purchase
@@ -70,12 +93,13 @@ function Seller() {
           .then(data => {
             if (resStatus === 200){
               RequestItemsPerStand()
-              setCart([]); setShowCard(true)
-              setConfirmPurchase(false); setCheck({purchase: false, card: false})
+              setCart([]); setShowCard(true); setAnimation(true);
+              setConfirmPurchase(false);
               SubmitCardCheck()
               return setTimeout(() => {
                 setShowCard(false);
                 setCard("")
+                setCheck({purchase: false, card: false})
               }, 4000);
             } else if (resStatus === 401){
               return auth.onLogout()
@@ -90,22 +114,6 @@ function Seller() {
         return setCheck(check => ({...check, purchase: false}))
       }
     }
-  }
-
-  async function SubmitCardCheck() {  // Submit debit checker
-      fetch("/api/cardcheck", {  // Post form
-        method: "POST", headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({"cardID": card})
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.code){
-          setCustomer(data.customer)
-          return setCardBalance(data.value)
-        } else {
-          return setCardBalance("invalid")
-        }
-      })
   }
 
   async function RequestLastSales() {  // Request Lasts Sales
@@ -138,6 +146,7 @@ function Seller() {
         RequestItemsPerStand()
         setShowLastSales(false)
         setShowCard(true)
+        setAnimation(true)
         RequestLastSales()
         return setTimeout(() => {
           setShowCard(false);
@@ -231,9 +240,6 @@ function Seller() {
 
   function h_Valid(value) {  // Card valid
     setCheck(check => ({...check, card: value}))
-    if (value) {
-      SubmitCardCheck()
-    }
   };
 
   return (
@@ -295,7 +301,11 @@ function Seller() {
             {items.map((item) => (
               <li key={item.itemID} className={`${item.stock === 0 && "unavailable"}`}>
                 <div className="ItemImage" onClick={() => handleCart(item)}>
-                  Image
+                  {item.item_img !== null ?
+                    <img alt={item.item} src={`/api/itemimages/${item.itemID}.${item.item_img}`}/>
+                  :
+                    <Image/>
+                  }
                 </div>
                 <div className="SellerItem" onClick={() => handleCart(item)}>
                   <p id="name">{item.item}</p>

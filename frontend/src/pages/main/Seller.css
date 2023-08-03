@@ -220,10 +220,18 @@
   color: var(--color-font-1);
 }
 .ItemImage{
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 100px;
   width: 100px;
   background-color: var(--color-primary-5);
 }
+.ItemImage img{
+  height: 100%;
+  width: 100%;
+}
+
 .SellerItem{
   width: 110px;
   display: flex;

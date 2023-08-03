@@ -3,20 +3,31 @@ const database = require("../database");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const multer = require('multer');
+const path = require('path');
 
-const storage = multer.diskStorage({
+const storageItem = multer.diskStorage({
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === "image/png" ||
+      file.mimetype === "image/jpeg") {
+      cb(null, true)
+    } else {
+      cb(new Error ('Unaccepted file type'))
+    }
+  },
   destination: (req, file, cb) => {
-    cb(null, "../../images")
+    const destinationDir = path.join(__dirname, "../../images/items");
+    cb(null, destinationDir)
   },
   filename: (req, file, cb) => {
-    cb(null, `${req.body.nameimage}${path.extname(file.originalname)}`)
+    const extension = path.extname(file.originalname);
+    cb(null, `${req.body.imageName}${extension}`)
   }
 })
 
 const router = express();
 router.use(express.json());
 router.use(cookieParser());
-const upload = multer({storage: storage})
+const uploadImage = multer({storage: storageItem})
 
 const decodeJWT = (req, res) => {
   try {
@@ -163,6 +174,46 @@ router.get("/main", (req, res) => {  // Get home info
         res.json(user)
       });
   }
+})
+
+router.post('/cardcheck', (req, res) => {  // Request card debit
+  const data = req.body;
+  Card(data.cardID)
+    .then((card) => {
+      database('recharges')
+        .select('rechargeID', 'payment')
+        .where({cardID: data.cardID})
+        .orderBy('recharge_t', 'desc')
+        .limit(1)
+        .then((rowsRecharges) => {
+          if (rowsRecharges.length > 0) {
+            const recharge = rowsRecharges[0];
+            database('customers')
+              .select('in_use')
+              .where({cardID: data.cardID})
+              .orderBy('control_t', 'desc')
+              .limit(1)
+              .then((customers) => {
+                const customer = customers[0];
+                return res.json({card: data.cardID, value: card.debit, payment: recharge.payment, customer: customer.in_use, code: true})
+              })
+              .catch((err) => {
+                console.error(err)
+                return res.json({card: "error: customer", value: 0, payment: "", customer: 0, code: false})
+              })
+          } else {
+            return res.json({card: data.cardID, value: card.debit, payment: "", customer: 0, code: true})
+          }
+        })
+        .catch((err) => {
+          console.error(err)
+          return res.json({card: "error: recharge", value: 0, payment: "", customer: 0, code: false})
+        })
+    })
+    .catch((err) => {
+      console.error(err)
+      return res.json({card: "error: card not found", value: 0, payment: "", customer: 0, code: false})
+    })
 })
 // Cashier
 router.get("/listitems", (req, res) => {  // Request items and stands
@@ -362,6 +413,8 @@ router.get("/listitemsperstand", (req, res) => {  // Request items by stand
   }
 })
 
+router.use("/itemimages", express.static(path.resolve(__dirname, "../../images/items")))
+
 router.post("/purchase", (req, res) => {  // Submit purchase
   const data = req.body;
   const decoded = decodeJWT(req, res);
@@ -408,46 +461,6 @@ router.post("/purchase", (req, res) => {  // Submit purchase
         return res.status(406).json({message: "error no card registred", error: "cards"})
       })
   }
-})
-
-router.post('/cardcheck', (req, res) => {  // Request card debit
-  const data = req.body;
-  Card(data.cardID)
-    .then((card) => {
-      database('recharges')
-        .select('rechargeID', 'payment')
-        .where({cardID: data.cardID})
-        .orderBy('recharge_t', 'desc')
-        .limit(1)
-        .then((rowsRecharges) => {
-          if (rowsRecharges.length > 0) {
-            const recharge = rowsRecharges[0];
-            database('customers')
-              .select('in_use')
-              .where({cardID: data.cardID})
-              .orderBy('control_t', 'desc')
-              .limit(1)
-              .then((customers) => {
-                const customer = customers[0];
-                return res.json({card: data.cardID, value: card.debit, payment: recharge.payment, customer: customer.in_use, code: true})
-              })
-              .catch((err) => {
-                console.error(err)
-                return res.json({card: "error: customer", value: 0, payment: "", customer: 0, code: false})
-              })
-          } else {
-            return res.json({card: data.cardID, value: card.debit, payment: "", customer: 0, code: true})
-          }
-        })
-        .catch((err) => {
-          console.error(err)
-          return res.json({card: "error: recharge", value: 0, payment: "", customer: 0, code: false})
-        })
-    })
-    .catch((err) => {
-      console.error(err)
-      return res.json({card: "error: card not found", value: 0, payment: "", customer: 0, code: false})
-    })
 })
 
 router.get('/checklastsales', (req, res) => {  // Request card debit
@@ -509,36 +522,36 @@ router.post('/deletesale', (req, res) => {  // Request card debit
       .where({saleID: data.saleID})
       .then(goods => {
         let totalSum = 0;
-        console.log(goods)
+        // console.log(goods)
         goods.forEach(good => {
           const product = good.quantity * good.unit_p;
           totalSum += product;
         });
-        Items(goods)
+        Items(goods)  // Increment stock in items
           .then(() => {
-            database('goods')
+            database('goods')  // Delete goods rows
               .where({saleID: data.saleID})
               .delete()
               .then(() => {
-                database('sales')
-                .where({saleID: data.saleID})
-                .delete()
-                .then(() => {
-                  database('cards')
-                    .where({cardID: data.cardID})
-                    .increment({debit: totalSum})
-                    .then(() => {
-                      return res.json({message: "undone purchase"})
-                    })
-                    .catch((err) => {
-                      console.error(err)
-                      return res.status(501).json({message: "card debit error"}); 
-                    })
-                })
-                .catch((err) => {
-                  console.error(err)
-                  return res.status(501).json({message: "sales delete error"}); 
-                })
+                database('sales')  // Delete sale
+                  .where({saleID: data.saleID})
+                  .delete()
+                  .then(() => {
+                    database('cards')  // Return cash to card
+                      .where({cardID: data.cardID})
+                      .increment({debit: totalSum})
+                      .then(() => {
+                        return res.json({message: "successfully undone purchase"})
+                      })
+                      .catch((err) => {
+                        console.error(err)
+                        return res.status(501).json({message: "card debit error"}); 
+                      })
+                  })
+                  .catch((err) => {
+                    console.error(err)
+                    return res.status(501).json({message: "sales delete error"}); 
+                  })
               })
               .catch((err) => {
                 console.error(err)
@@ -569,7 +582,25 @@ router.get("/stocktaking", (req, res) => {  // Request items from a standID
             .select()
             .where({standID: user.standID})
             .then((items) => {
-              return res.json({stand: {standID: user.standID, stand: user.stand}, items: items})
+              if (items.length !== 0){
+                console.log(items)
+                database('goods')
+                  .select('itemID')
+                  .sum('quantity as totalQuantity')
+                  .groupBy('itemID')
+                  .then((goods) => {
+                    console.log(goods)
+                    const filteredgoods = goods.filter((elements) => {
+                      return items.some((item) => item.itemID === elements.itemID);
+                    });
+                    return res.json({stand: {standID: user.standID, stand: user.stand}, items: items, goods: filteredgoods})
+                  })
+                  .catch(() => {
+                    return res.status(501).json({message: "goods error"}); 
+                  })
+              } else {
+                return res.json({stand: {standID: user.standID, stand: user.stand}, items: items, goods: []}) 
+              }
             })
             .catch(() => {
               return res.status(501).json({message: "user are in diferent stand, error table"}); 
@@ -593,60 +624,15 @@ router.get("/stocktakingall", (req, res) => {  // Request all items and standID
       database('items')
         .select()
         .then((items) => {
-          return res.json({items: items})
-        })
-        .catch(() => {
-          return res.status(501).json({message: "items error"}); 
-        })
-    } else {
-      return res.status(501).json({message: "Not superuser"}); 
-    }
-  }
-})
-
-router.get("/salesitems", (req, res) => {  // Request item sales
-  const decoded = decodeJWT(req, res);
-  if (!decoded) {
-    return res.status(401).end();
-  } else {
-    if (decoded.superuser) {
-      database('goods')
-        .select('itemID')
-        .sum('quantity as totalQuantity')
-        .groupBy('itemID')
-        .then((goods) => {
-          return res.json({goods: goods})
-        })
-        .catch((err) => {
-          console.error(err)
-          return res.status(501).json({message: "goods error"}); 
-        })
-    } else {
-      return res.status(501).json({message: "Not superuser"}); 
-    }
-  }
-})
-
-router.post("/salesitemsperstand", (req, res) => {  // Request item sales and total from one stand
-  const data = req.body;
-  const decoded = decodeJWT(req, res);
-  if (!decoded) {
-    return res.status(401).end();
-  } else {
-    if (data.standID > 1) {
-      database('items')
-        .where({standID: data.standID})
-        .select("itemID")
-        .then((rows) => {
           database('goods')
             .select('itemID')
-            .whereIn({itemID: rows})
             .sum('quantity as totalQuantity')
             .groupBy('itemID')
             .then((goods) => {
-              return res.json({goods: goods})
+              return res.json({items: items, goods: goods})
             })
-            .catch(() => {
+            .catch((err) => {
+              console.error(err)
               return res.status(501).json({message: "goods error"}); 
             })
         })
@@ -654,12 +640,12 @@ router.post("/salesitemsperstand", (req, res) => {  // Request item sales and to
           return res.status(501).json({message: "items error"}); 
         })
     } else {
-      return res.status(501).json({message: "No userID"}); 
+      return res.status(501).json({message: "Not superuser"}); 
     }
   }
 })
 
-router.post("/newitem", (req, res, next) => {  // Create new item
+router.post("/newitem", (req, res) => {  // Create new item
   const data = req.body;
   const decoded = decodeJWT(req, res);
   if (!decoded) {
@@ -674,30 +660,30 @@ router.post("/newitem", (req, res, next) => {  // Create new item
           if (user.standID === data.standID || decoded.superuser === 1){
             database('items')
               .insert(data)
-              .then(() => {
-                console.log(`new item created: ${data.item}`)
-                return res.json({message: "new item created"})
+              .then((rowsItems) => {
+                console.log(`new item created: ${data.item}, created by ${user.username}`)
+                return res.json({message: "new item created", ID: rowsItems[0]})
               })
               .catch(error => {
                 if (error.errno === 1062){  // Duplication error
                   const [ table , column ] = error.sqlMessage.match(/[^']\w+[.]\w+[^']/)[0].split(".");
                   return res.status(409).json({error: `error on create item '${data.item}'. Stand '${data.item}' already exist`, column: column, value: data.item});
                 } else {
-                console.error(error)
-                return res.status(501).json({ error: {error}});
+                  console.error(error)
+                  return res.status(501).json({ error: {error}});
                 }
               })
           } else {
-          return res.status(401).end();
+            return res.status(401).end();
           }
         })
     } else {
-    return res.status(401).end();
+      return res.status(501).end();
     }
   }
 })
 
-router.post("/edititem", (req, res, next) => {  // Change item property
+router.post("/edititem", (req, res) => {  // Change item property
   const data = req.body;
   const decoded = decodeJWT(req, res);
   if (!decoded) {
@@ -714,7 +700,7 @@ router.post("/edititem", (req, res, next) => {  // Change item property
               .where({itemID: data.itemID})
               .update({item: data.item, price: data.price, stock: data.stock})
               .then(() => {
-                console.log(`item edited: ${data.item}`)
+                console.log(`item edited: ${data.item}, changed by ${user.usarname}`)
                 return res.json({message: "item edited"})
               })
               .catch(error => {
@@ -727,7 +713,7 @@ router.post("/edititem", (req, res, next) => {  // Change item property
                 }
               })
           } else {
-            return res.status(501).json({message: "user are in diferent stand"}); 
+            return res.status(401).json({message: "user are in diferent stand"}); 
           }
         })
         .catch(error => {
@@ -739,16 +725,48 @@ router.post("/edititem", (req, res, next) => {  // Change item property
   }
 })
 
-router.post("/imageupload", upload.single("image"), (req, res) => {
-  const imageIdentifier = req.params.imageIdentifier;
+router.post("/itemimageupload", uploadImage.single("imageItem"), (req, res) => {
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
+    if (req.body.standID > 1) {
+      database('users')
+        .select('standID')
+        .where({userID: decoded.userID})
+        .then((rowsUsers) => {
+          const user = rowsUsers[0];
+          if (user.standID === req.body.standID || decoded.superuser === 1){
+            const imageType = req.body.imageType.split("/")
+            database('items')
+              .where({itemID: req.body.imageName})
+              .update({item_img: imageType[1]})
+              .then(() => {
+                console.log(`item image: ${req.body.imageName}, changed by ${user.username}`)
+                return res.json({message: "item image uploaded"})
+              })
+              .catch(error => {
+                return res.status(501).json({error: error});
+              })
+          } else {
+            return res.status(401).json({message: "user are in diferent stand"}); 
+          }
+        })
+        .catch(error => {
+          return res.status(501).json({message: "user are in diferent stand, error table"}); 
+        })
+    } else {
+      return res.status(501).json({message: "stand 1 can't have items"});
+    }
+  }
 })
 
-router.use((err, req, res, next) => {  // Cancel the upload of image
-  if (err) {
-    // Handle the error appropriately
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-  next();
-});
+// router.use((err, req, res, next) => {  // Cancel the upload of image
+//   if (err) {
+//     // Handle the error appropriately
+//     return res.status(401).json({ error: 'Unauthorized' });
+//   }
+//   next();
+// });
 
 module.exports = router;

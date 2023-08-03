@@ -62,7 +62,7 @@ function Home() {
             </div>
             }
           </div>
-          {user.standID !== null && user.standID !== 1 ? 
+          {(user.standID !== null && user.standID !== 1) || user.superuser === 1 ? 
           <Link className="MainStocktaking" to="/stocktaking">
             <Package alt="Stock"/>
             <p>Inventário</p>

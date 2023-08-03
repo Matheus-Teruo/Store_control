@@ -64,16 +64,10 @@ router.post("/signup", (req, res) => {  // Sign up request
     const firstname = data.fullname.split(' ')[0];
     database('users')
       .insert(data)
-      .then(() => {
+      .then((rowsUsers) => {
         console.log(`successful user register as: ${data.username}`);
-        database('users')
-          .select('userID')
-          .where({username: data.username})
-          .then(rowsUsers => {
-            const user  = rowsUsers[0];
-            res.cookie("jwt", createToken({userID: user.userID, firstname: firstname, superuser: 0}), { httpOnly: true, maxAge: maxAge * 1000 });
-            return res.status(201).json({ message: `successful sing-up as user: ${data.username}`});
-          })
+        res.cookie("jwt", createToken({userID: rowsUsers[0], firstname: firstname, superuser: 0}), { httpOnly: true, maxAge: maxAge * 1000 });
+        return res.status(201).json({ message: `successful sing-up as user: ${data.username}`});
       })
       .catch(error => {
         if (error.errno === 1062){  // Duplication error

@@ -61,7 +61,7 @@ function Stands(props) {
       <div className="AssociationID">
         <label htmlFor="association"><Flag/></label>
         <select value={props.associationID} onChange={event => props.output(event)} id="associationID" name="associationID">
-          <option value={0}>Associação</option>
+          <option value={0}>-</option>
           {props.associations.map((association) => (
             <option key={association.associationID} value={association.associationID}>{association.association}</option>
           ))}
