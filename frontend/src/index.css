@@ -83,15 +83,17 @@ input:focus{
   color: #00000050;
 }
 
-.Username,
-.Fullname,
+.UsernameInput,
+.FullnameInput,
 .PasswordPrimary,
 .PasswordCopy{
   width: 100%;
 }
-
-.PasswordCopy{
-  margin: 30px 0 0;
+.UsernameInput label,
+.FullnameInput label,
+.PasswordPrimary label,
+.PasswordCopy label{
+  display: flex;
 }
 
 .UsernameCheck,

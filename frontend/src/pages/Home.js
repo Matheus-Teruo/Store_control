@@ -31,70 +31,70 @@ function Home() {
   return (
     <>
     {auth.user.authenticated === true ?
-      <div className="Body">
-        <h1 className="MainTitle">
+      <div className="Home_Logged">
+        <h1 className="Title">
           Store Control
         </h1>
-        <div className="MainSection">
-          <div className="MainSubtitle">
+        <div className="Main">
+          <div className="Subtitle">
             <h2>Funções</h2>
           </div>
-          <div className="MainRole">
+          <div className="Section">
             {user.standID > 1 ?
-            <Link className="MainFrame" to="/seller">
+            <Link className="Frame1" to="/seller">
               <Clipboard alt="Vendedor"/>
-              <p>vendedor</p>
+              <p>Vendedor</p>
             </Link>
             :
-            <div className="MainFrame invalid">
+            <div className="Frame1 invalid">
               <Clipboard alt="Vendedor"/>
-              <p>vendedor</p>
+              <p>Vendedor</p>
             </div>
             }
             {user.standID === 1 || user.superuser === 1 ?
-            <Link className="MainFrame" to="/cashier">
+            <Link className="Frame1" to="/cashier">
               <DollarSign alt="Caixa"/>
               <p>Caixa</p>
             </Link>
             :
-            <div className="MainFrame invalid">
+            <div className="Frame1 invalid">
               <DollarSign alt="Caixa"/>
               <p>Caixa</p>
             </div>
             }
           </div>
           {(user.standID !== null && user.standID !== 1) || user.superuser === 1 ? 
-          <Link className="MainStocktaking" to="/stocktaking">
+          <Link className="Stocktaking" to="/stocktaking">
             <Package alt="Stock"/>
             <p>Inventário</p>
           </Link>
           :
-          <div className="MainStocktaking invalid">
+          <div className="Stocktaking invalid">
             <Package alt="Stock"/>
             <p>Inventário</p>
           </div>
           }
           {user.superuser === 1 &&
           <>
-          <div className="MainSubtitle">
+          <div className="Subtitle">
             <h2>Administrador</h2>
           </div>
-          <div className="MainAdmin">
-            <Link className="MainFrame2" to="/statistics">
+          <div className="Admin">
+            <Link className="Frame3" to="/statistics">
               <Chart alt="Statistics"/>
               <p>Estatística</p>
             </Link>
           </div>
-          <div className="MainAdmin">
-            <Link className="MainFrame3" to="/admin/allusers">
+          <div className="Admin">
+            <Link className="Frame4" to="/admin/allusers">
               <Users alt="Users"/>
               <p>Usuários</p>
             </Link>  
-            <Link className="MainFrame3" to="/admin/cards">
+            <Link className="Frame4" to="/admin/cards">
               <CreditCard alt="Cards"/>
               <p>Cartões</p>
             </Link>
-            <Link className="MainFrame3" to="/admin/database">
+            <Link className="Frame4" to="/admin/database">
               <Flag alt="Database"/>
               <p>Associações</p>
             </Link>
@@ -104,14 +104,14 @@ function Home() {
         </div>
       </div>
     :
-      <div className="Home">
-        <h1 className="HomeTitle">
+      <div className="Home_Unlogged">
+        <h1 className="Title">
           Store Control
         </h1>
-        <div className="HomeUser">
-          <Link className="HomeAuth" to="/login">Entre</Link>
-          <p className="Hometext">ou</p>
-          <Link className="HomeAuth" to="/signup">Cadastre-se</Link>
+        <div className="User">
+          <Link className="Auth" to="/login">Entre</Link>
+          <p className="Text">ou</p>
+          <Link className="Auth" to="/signup">Cadastre-se</Link>
         </div>
       </div>
     }

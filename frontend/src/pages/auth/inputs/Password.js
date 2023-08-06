@@ -109,7 +109,7 @@ function Password(props) {
   const classPasswordC = `SignupInput ${isFocPWC ? 'focused' : !props.requiredField > 0? (passwordC === "" ? "" : PW_D_Check  ? 'unfocOK' : 'unfocNO') : passwordC === "" ? 'unfocNO' : PW_D_Check  ? 'unfocOK' : 'unfocNO'}`
 
   return (
-    <div className="Password">
+    <div className="PasswordInput">
       <div className="PasswordPrimary">
         <div className={classPassword} onFocus={() => setIsFocPW(true)} onBlur={() => setIsFocPW(false)}>
           <label className={`${animationPW ? 'shake' : ''}`} htmlFor="password">

@@ -206,17 +206,20 @@ function UserPage() {
   const classPassword = `SignupInput ${isFoc ? 'focused' : (newPassword.oldpassword === "" ? "" : check.oldpassword ? 'unfocOK' : 'unfocNO')}`
 
   return (
-    <>
-      {auth.user.authenticated ?
-      <div className="Userbackground">
-        {!selected.username?
-          <div className="UserUN">
-            <User/>
-            <p>{user.username}</p>
-            <Edit3 onClick={() => handleSelected("username", true)}/>
+    <div className="UserPage">
+      <div className="Main">
+        {!selected.username ?
+          <div className="Username1">
+            <div className="Input">
+              <User/>
+              <p>{user.username}</p>
+            </div>
+            <div className="Input">
+              <Edit3 onClick={() => handleSelected("username", true)}/>
+            </div>
           </div>
         :
-          <div className="UserUN">
+          <div className="Username2">
             <Username
               output={handleChange}
               username={newUsername}
@@ -226,14 +229,18 @@ function UserPage() {
             <button onClick={() => SubmitEditUsername()} disabled={check.username ? false : true}><Check/></button>
           </div>
         }
-        {!selected.fullname?
-          <div className="UserFN">
-            <Smile/>
-            <p>{user.fullname}</p>
-            <Edit3 onClick={() => handleSelected("fullname", true)}/>
+        {!selected.fullname ?
+          <div className="Fullname1">
+            <div className="Input">
+              <Smile/>
+              <p>{user.fullname}</p>
+            </div>
+            <div className="Input">
+              <Edit3 onClick={() => handleSelected("fullname", true)}/>
+            </div>
           </div>
         :
-          <div className="UserFN">
+          <div className="Fullname2">
             <Fullname
               output={handleChange}
               fullname={newFullname}
@@ -243,15 +250,19 @@ function UserPage() {
             <button onClick={() => SubmitEditFullname()} disabled={check.fullname ? false : true}><Check/></button>
           </div>
         }
-        <div className="UserAS">
-          <Flag/>
-          <p title="Association">{user.association}</p>
-          <Award/>
-          <p title="Estande">{user.stand}</p>
+        <div className="AssociationStand">
+          <div className="Association">
+            <Flag/>
+            <p title="Association">{user.association}</p>
+          </div>
+          <div className="Stand">
+            <Award/>
+            <p title="Estande">{user.stand}</p>
+          </div>
         </div>
         {selected.password &&
-          <div className="UserPW">
-            <div className="UserPasswords">
+          <div className="Password">
+            <div className="InputPassword">
               <div className="UserOldPassword">
                 <div className={classPassword} onFocus={() => setIsFoc(true)} onBlur={() => setIsFoc(false)}>
                   <label htmlFor="password"><Lock/></label>
@@ -263,41 +274,36 @@ function UserPage() {
                 placeholder={"Nova Senha"}
                 valid={(value) => setCheck(check => ({...check, password:value}))}/>
             </div>
-            <div className="UserPasswordButtons">
+            <div className="PasswordMenu">
               <button onClick={() => handleSelected("password", false)}><X/></button>
               <button onClick={() => PreSubmitEditPassword()} disabled={check.password ? false : true}><Check/></button>
             </div>          
           </div>
         }
-        <div className="UserMenu">
-          {!selected.password &&
-          <button onClick={() => handleSelected("password", true)}>
-            Alterar Senha <Edit3/>
-          </button>
-          }
-          {!confirmLogout ?
-          <button onClick={() => setConfirmLogout(true)}>
-            Log out
-          </button>
-          :
-          <div className="LogoutConfirm">
-            <p>Log out</p>
-            <button  onClick={() => setConfirmLogout(false)}>
-              <X/>
-            </button>
-            <button onClick={() => SubmitLogout()}>
-              <Check/>
-            </button>
-          </div>
-          }
-        </div>  
       </div>
-      :
-      <div>
-        <p> Usuário deslogado </p>
-      </div>
-      }
-    </>
+      <div className="UserMenu">
+        {!selected.password &&
+        <button onClick={() => handleSelected("password", true)}>
+          Alterar Senha <Edit3/>
+        </button>
+        }
+        {!confirmLogout ?
+        <button onClick={() => setConfirmLogout(true)}>
+          Log out
+        </button>
+        :
+        <div className="LogoutConfirm">
+          <p>Log out</p>
+          <button  onClick={() => setConfirmLogout(false)}>
+            <X/>
+          </button>
+          <button onClick={() => SubmitLogout()}>
+            <Check/>
+          </button>
+        </div>
+        }
+      </div>  
+    </div>
   )
 }
 

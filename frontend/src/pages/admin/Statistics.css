@@ -2,6 +2,15 @@
   min-height: calc(100vh - var(--height-header));
 }
 
+.Statistics .Menu{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.Statistics .Menu h1{
+  margin: 2px 8px;
+}
 .Statistics .Menu button{
   display: flex;
   margin: 0 5px;
@@ -23,8 +32,14 @@
   background-color: var(--color-gray-100);
 }
 .Statistics .Main li{
+  margin: 2px 6px;
+  padding: 3px 8px;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-primary-2);
+}
+.Statistics .Main li#header{
+  background-color: var(--color-primary-3);
 }
 .Statistics .Main p{
   display: flex;
@@ -75,17 +90,67 @@
   background-color: var(--color-gray-100);
 }
 
-.Statistics .ListGoods li{
+.Statistics .ListGoods .List svg{
+  padding: 0 2px 0 0;
+}
+
+.Statistics .ListGoods .Header{
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.Statistics .ListGoods .Hour{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.Statistics .ListGoods .List{
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+.Statistics .ListGoods h2{
+  display: flex;
+  align-items: center;
+  padding: 2px 8px;
+  margin: 0 5px;
+}
+.Statistics .ListGoods h3{
+  display: flex;
+  align-items: center;
+  padding: 2px 8px;
+}
+
+.Statistics .ListGoods ul{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.Statistics .ListGoods li{
+  margin: 2px 6px;
+  padding: 3px 8px;
+  display: flex;
+  align-items: center;
+  background-color: var(--color-primary-2);
+}
+.Statistics .ListGoods li#header{
+  background-color: var(--color-primary-3);
 }
 .Statistics .ListGoods img{
   width: 36px;
+  padding: 0 4px 0 0;
 }
 .Statistics .ListGoods .ImageIcon{
   display: flex;
   align-items: center;
   justify-content: center;
   width: 36px;
+  padding: 0 4px 0 0;
 }
 .Statistics .ListGoods p{
   display: flex;
@@ -93,32 +158,21 @@
   justify-content: start;
 }
 .Statistics .ListGoods span{
+  display: flex;
+  align-items: center;
   font-weight: 700;
+  width: 100%;
+  justify-content: space-between;
 }
 
-.Statistics .ListGoods p#ID{
-  flex: 1;
-  min-width: 40px;
-}
-.Statistics .ListGoods p#stand{
-  flex: 2;
-  min-width: 80px;
-}
-.Statistics .ListGoods p#hour{
-  flex: 3;
-  min-width: 145px;
-}
-.Statistics .ListGoods p#user{
-  flex: 2;
-  min-width: 85px;
-}
 .Statistics .ListGoods p#card{
-  flex: 3;
+  flex: 6;
   min-width: 140px;
 }
 .Statistics .ListGoods p#total{
   flex: 1;
-  min-width: 65px;
+  min-width: 90px;
+  justify-content: space-between;
 }
 
 .Statistics .ListGoods p#ID{
@@ -126,19 +180,29 @@
   min-width: 40px;
 }
 .Statistics .ListGoods p#item{
-  flex: 1;
+  flex: 3;
   min-width: 40px;
+}
+.Statistics .ListGoods .List .Price{
+  flex: 2;
+  min-width: 180px;
+  padding: 2px 4px;
+  display: flex;
+  background-color: #ffffffa0;
 }
 .Statistics .ListGoods p#quantity{
   flex: 1;
-  min-width: 40px;
+  min-width: 110px;
+  justify-content: space-between;
 }
 .Statistics .ListGoods p#price{
   flex: 1;
-  min-width: 40px;
+  min-width: 70px;
+  justify-content: space-between;
 }
 .Statistics .ListGoods p#subtotal{
   flex: 1;
-  min-width: 40px;
+  min-width: 90px;
+  justify-content: space-between;
 }
 

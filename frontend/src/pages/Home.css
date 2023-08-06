@@ -1,55 +1,59 @@
-.Body {
+.Home_Logged {
   min-height: calc(100vh - var(--height-header));
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: var(--color-gray-100);
 }
-.MainTitle{
+.Home_Logged .Title{
   padding: 5px 0 15px 0;
 }
-.MainSection{
+.Home_Logged .Main{
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.MainSubtitle{
-  width: 92%;
-  margin: 0 0 8px 0;
-  padding: 5px 4vw;
+.Home_Logged .Subtitle{
+  width: 100%;
   display: flex;
   justify-content: start;
   background-color: var(--color-primary-1);
 }
-.MainRole{
-  width: 100%;
+.Home_Logged .Subtitle h2{
+  padding: 5px 15px;
 }
-.MainFrame{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-}
-.MainStocktaking{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-}
-.MainAdmin{
+.Home_Logged .Section{
+  width: 92%;
   display: flex;
   justify-content: space-between;
 }
-.MainFrame2{
+.Home_Logged .Frame1{
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-decoration: none;
 }
-.MainFrame3{
+.Home_Logged .Stocktaking{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+.Home_Logged .Admin{
+  display: flex;
+  justify-content: space-between;
+}
+.Home_Logged .Frame3{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+.Home_Logged .Frame4{
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -57,7 +61,7 @@
   text-decoration: none;
 }
 
-.Home {
+.Home_Unlogged {
   width: 100%;
   min-height: calc(100vh - var(--height-header));
   display: flex;
@@ -65,23 +69,24 @@
   align-items: center;
   background: var(--color-primary-5);
 }
-
-.HomeTitle {
+.Home_Unlogged .Title {
   margin: 68px 0 0;
 }
 
-.HomeSubtitle {
+.Home_Unlogged .Subtitle {
   margin: 78px 0 0 0;
 }
 
-.HomeUser {
+.Home_Unlogged .User {
   margin: 68px 0 0 0;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
-.HomeAuth {
+.Home_Unlogged .User p{
+  padding: 5px;
+}
+.Home_Unlogged .Auth {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -94,43 +99,41 @@
   color: var(--color-font-3);
 }
 
-.Hometext {
-  padding: 5px;
-}
-
 @media only screen and (max-width: 767px) {
   /* Styles for mobile devices */
-  .MainSection{
-    width: 100vw;
+  .Home_Logged .Section{
+    width: 92%;
+    margin: 4vw;
   }
-  .MainRole{
+  .Home_Logged .Role{
     display: flex;
     justify-content: space-around;
   }
-  .MainFrame{
+  .Home_Logged .Frame1{
     width: 42%;
     aspect-ratio: 1/1;
     border-radius: 10px;
     background-color: var(--color-primary-3);
   }
-  .MainStocktaking{
+  .Home_Logged .Stocktaking{
+    width: 92%;
+    aspect-ratio: 3;
+    margin: 4vw 0;
+    border-radius: 10px;
+    background-color: var(--color-primary-3);
+  }
+  .Home_Logged .Admin{
     width: 92%;
     margin: 4vw 0;
-    height: 30vw;
+  }
+  .Home_Logged .Frame3{
+    width: 100%;
+    aspect-ratio: 3;
     border-radius: 10px;
     background-color: var(--color-primary-3);
   }
-  .MainAdmin{
-    width: 92%;
-  }
-  .MainFrame2{
-    width: 28vw;
-    aspect-ratio: 1/1;
-    border-radius: 10px;
-    background-color: var(--color-primary-3);
-  }
-  .MainFrame3{
-    width: 28vw;
+  .Home_Logged .Frame4{
+    width: 30%;
     aspect-ratio: 1/1;
     border-radius: 10px;
     background-color: var(--color-primary-3);

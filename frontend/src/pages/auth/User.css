@@ -1,47 +1,122 @@
-.Userbackground{
-  width: 100%;
+.UserPage{
+  /* width: 100%; */
   min-height: calc(100vh - var(--height-header));
   display: flex;
   flex-direction: column;
-  padding: 0 15px;
+  background-color: var(--color-gray-100);
 }
 
-.UserUN,
-.UserFN,
-.UserAS,
-.UserPW{
+.UserPage .Main{
   display: flex;
-  padding: 30px 0 0;
-  /* background-color: green; */
+  flex-direction: column;
+  width: 100%;
 }
-.UserPW{
+.UserPage .Main button{
+  border: none;
+  background: transparent;
+  color: var(--color-font-1);
+}
+
+.UserPage .Username1,
+.UserPage .Fullname1,
+.UserPage .Username2,
+.UserPage .Fullname2,
+.UserPage .AssociationStand,
+.UserPage .Password{
+  display: flex;
+  align-items: center;
+  margin: 20px 10px 0;
+}
+.UserPage .Username1 .Input,
+.UserPage .Fullname1 .Input{
+  display: flex;
+  align-items: center;
+}
+.UserPage .Username1 .Input svg,
+.UserPage .Fullname1 .Input svg,
+.UserPage .AssociationStand .Association svg,
+.UserPage .AssociationStand .Stand svg{
+  padding: 0 6px;
+}
+.UserPage .Username1,
+.UserPage .Fullname1,
+.UserPage .AssociationStand{
+  justify-content: space-between;
+  background-color: white;
+  height: 30px;
+  border-bottom: solid 1px;
+  border-color: var(--color-gray-600);
+}
+.UserPage .Username2,
+.UserPage .Fullname2{
+  justify-content: space-between;
+  background-color: white;
+}
+
+.UserPage .Username2 .SignupInput,
+.UserPage .Fullname2 .SignupInput{
+  margin-right: -48px;
+}
+.UserPage .Password .SignupInput{
+  margin-right: -24px;
+}
+/* .Password input, */
+.UserPage .UsernameInput input,
+.UserPage .FullnameInput input{
+  font-size: 16px;
+}
+
+.UserPage .Association,
+.UserPage .Stand{
+  display: flex;
+  padding: 0 8px 0 0;
+}
+
+.UserPage .Password{
   display: flex;
   align-items: end;
 }
-.UserPasswords{
+.UserPage .InputPassword{
   width: 100%;
 }
-.UserOldPassword{
-  margin: 0 0 30px;
+.UserPage .UserOldPassword{
+  margin: 0 0 20px;
 }
-.UserMenu{
+
+.UserPage .PasswordCopy{
+  margin: 20px 0 0;
+}
+
+.UserPage .UserOldPassword label{
+  display: flex;
+}
+
+.UserPage .UserMenu{
   display: flex;
   padding: 15px 0;
+  justify-content: space-between;
   /* background-color: green; */
 }
-.UserPasswordButtons{
-  height: 153px;
+.UserPage .PasswordMenu{
+  height: 133px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
-
-.Userbackground button{
+.UserPage .UserMenu .LogoutConfirm{
+  display: flex;
+}
+.UserPage .UserMenu .LogoutConfirm p{
+  display: flex;
+  align-items: center;
+  margin: 0 10px;
+}
+.UserPage .UserMenu button{
   height: 31px;
   display: flex;
   align-items: center;
   padding: 5px 12px;
-  margin: 0 0 0 10px;
+  margin: 0 10px;
   border: none;
   border-radius: 10px;
   background: var(--color-primary-5);

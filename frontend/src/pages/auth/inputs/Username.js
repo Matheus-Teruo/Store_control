@@ -58,7 +58,7 @@ function Username(props) {
   const classUsername = `SignupInput ${isFoc ? 'focused' : !props.requiredField > 0? (props.username === "" ? "" : submitvalid  ? 'unfocOK' : 'unfocNO') : submitvalid  ? 'unfocOK' : 'unfocNO'}`
 
   return (
-    <div className="Username">
+    <div className="UsernameInput">
       <div className={classUsername} onFocus={() => setIsFoc(true)} onBlur={() => setIsFoc(false)}>
         <label className={`${animation ? 'shake' : ''}`} htmlFor="username">
           {props.username === "" ?
