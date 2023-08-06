@@ -48,10 +48,10 @@
   background-color: var(--color-primary-6);
   aspect-ratio: 8/5;
 }
-.CashierCardCompact.animation button{
+.CashierCardCompact button{
   animation: CardContract 1s;
 }
-.CashierCardCompact.animation button::after{
+.CashierCardCompact button::after{
   content: "";
   position: absolute;
   background-color: var(--color-primary-6);
@@ -69,9 +69,11 @@
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
+}
+.CashierCard .animation{
   animation: CardExpand 1s;
 }
-.CashierCard::after {
+.CashierCard.animation::after{
   content: "";
   position: absolute;
   background-color: var(--color-primary-6);
@@ -80,7 +82,7 @@
 .CashierCard.noUse{
   background-color: var(--color-gray-200);
 }
-.CashierCard.noUse::after {
+.CashierCard.noUse::after{
   content: "";
   position: absolute;
   background-color: var(--color-gray-200);
@@ -481,9 +483,11 @@
   .CashierCard{
     width: 62%;
     margin: 10px;
+  }
+  .CashierCard.animation{
     animation: CardExpandMobile 1s;
   }
-  .CashierCardCompact.animation button{
+  .CashierCardCompact button{
     animation: CardContractMobile 1s;
   }
 

@@ -18,7 +18,7 @@ function Cashier() {
     recharge: false,
     card: false})
   // Card
-  const [showCard, setShowCard] = useState(false)
+  const [showCard, setShowCard] = useState(true)
   const [cardBalance, setCardBalance] = useState(0)
   const [balanceType, setBalanceType] = useState("")
   const [customer, setCustomer] = useState("")
@@ -245,7 +245,7 @@ function Cashier() {
       <div className="CashierMain">
         <div className="CashierMenu">
           {showCard?
-          <div className={`CashierCard ${(check.card === true && cardBalance === "invalid")? "noUse" : "" }`}>
+          <div className={`CashierCard ${(check.card === true && cardBalance === "invalid")? "noUse" : "" }${animation? "animation" : ""}`}>
             <div className="CashierCardHead">
               <div className="CashierCardNumber">
                 <button onClick={() => setShowScanner(true)}><Barcode/></button>
@@ -275,7 +275,7 @@ function Cashier() {
             </div>
           </div>
           :
-          <div className={`CashierCardCompact ${animation? "animation" : ""}`}>
+          <div className={`CashierCardCompact`}>
             <button onClick={() => {setShowCard(true); setAnimation(true)}}><CreditCard/></button>
           </div>
           }

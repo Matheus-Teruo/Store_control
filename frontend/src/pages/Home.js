@@ -1,7 +1,8 @@
 import './Home.css';
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Clipboard, DollarSign, Package, Users, CreditCard, Flag } from 'react-feather';
+import { Clipboard, DollarSign, Package, BarChart2, Users, CreditCard, Flag } from 'react-feather';
+import Chart from '../midia/Chart.js';
 import AuthContext from '../store/auth_context';
 
 function Home() {
@@ -79,15 +80,21 @@ function Home() {
             <h2>Administrador</h2>
           </div>
           <div className="MainAdmin">
-            <Link className="MainFrame2" to="/admin/allusers">
+            <Link className="MainFrame2" to="/statistics">
+              <Chart alt="Statistics"/>
+              <p>Estatística</p>
+            </Link>
+          </div>
+          <div className="MainAdmin">
+            <Link className="MainFrame3" to="/admin/allusers">
               <Users alt="Users"/>
               <p>Usuários</p>
             </Link>  
-            <Link className="MainFrame2" to="/admin/cards">
+            <Link className="MainFrame3" to="/admin/cards">
               <CreditCard alt="Cards"/>
               <p>Cartões</p>
             </Link>
-            <Link className="MainFrame2" to="/admin/database">
+            <Link className="MainFrame3" to="/admin/database">
               <Flag alt="Database"/>
               <p>Associações</p>
             </Link>

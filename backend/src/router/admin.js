@@ -68,22 +68,24 @@ router.get("/liststands", (req, res) => {  // Request all stands and association
   } else {
     if (decoded.superuser) {
       database('associations')
-        .select('association', 'associationID', "principal")
+        .select()
         .orderBy('associationID', 'asc')
         .then(associations => {
           if (associations.length > 0) {
             database('stands')
-              .select('standID', 'stand', 'associationID')
+              .select()
               .orderBy('associationID', 'asc')
               .then(stands => {
                 if (stands.length > 0){
                   res.json({associations: associations, stands: stands}); 
                 } else {
                   res.json({associations: associations, stands: []});
-              }})
+                }
+              })
           } else {
             res.json({associations: [], stands: []});
-        }})
+          }
+        })
     } else {
       return res.status(401).end();
     }
@@ -377,4 +379,86 @@ router.post("/changestandid", (req, res) => {  // Change user stand
       }
   }
 })
+//Statistics
+router.get("/listsales", (req,res) =>{  // Request list of sales
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
+    if (decoded.superuser) {
+      database('stands')
+        .select()
+        .orderBy('associationID', 'asc')
+        .then(stands => {
+          if (stands.length > 0){
+            database('items')
+              .select()
+              .then(items => {
+                if (items.length > 0){
+                  database('sales')
+                    .innerJoin('stands', 'sales.standID', 'stands.standID')
+                    .select()
+                    .orderBy('saleID', 'asc')
+                    .then(sales => {
+                      if (sales.length > 0) {
+                        database('goods')
+                          .innerJoin('items', 'goods.itemID', 'items.itemID')
+                          .select()
+                          .orderBy('saleID', 'asc')
+                          .then(goods => {
+                            if (goods.length > 0){
+                              res.json({stands: stands, items: items, sales: sales, goods: goods}); 
+                            }
+                          })
+                      } else {
+                        res.json({stands: stands, items: items, sales: [], goods: []});
+                      }
+                    })   
+                } else {
+                  res.json({stands: stands, items: items, sales: [], goods: []});
+                }
+              })   
+          } else {
+            res.json({stands: [], items: [], sales: [], goods: []});
+          }
+        })
+    } else {
+      return res.status(401).end();
+    }
+  }
+})
+
+router.get("/listrecharges", (req,res) =>{  // Request list of recharges
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
+    if (decoded.superuser) {
+      database('recharges')
+        .select()
+        .then(recharges => {
+          if (recharges.length > 0){
+            database('customers')
+              .select()
+              .then(customers => {
+                database('donations')
+                  .select()
+                  .then(donations => {
+                    if (donations.length > 0) {
+                      res.json({recharges: recharges, customers: customers, donations: donations}); 
+                    } else {
+                      res.json({recharges: recharges, customers: customers, donations: []});
+                    }
+                  })  
+              })    
+          } else {
+            res.json({recharges: [], customers: [], donations: []});
+          }
+        })
+    } else {
+      return res.status(401).end();
+    }
+  }
+})
+
 module.exports = router;

@@ -57,7 +57,7 @@ function Cards() {
           if (resStatus === 200) {
             RequestCards()
             setNewCardID("")
-            setShowCard(false); setCheck(false); alreadyUsed(false)
+            setShowCard(false); setCheck(false); setAlreadyUsed("")
           } else if (resStatus === 409) {
             setAlreadyUsed(data.value);
           } else if (resStatus === 401){

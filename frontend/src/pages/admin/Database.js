@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../../store/auth_context';
 import Association from './inputs/Association';
-import Stands from './inputs/Stands';
+import Stand from './inputs/Stand';
 
 function Database() {
   const [associations, setAssociations] = useState([])
@@ -27,26 +27,26 @@ function Database() {
 
   useEffect(() => {  // Page requirements
     if (auth.user.authenticated === true && auth.user.superuser) {
-      RequestLists()
+      RequestStands()
     } else if (auth.user.authenticated === false) {
       navigate('/login');
-    } else if (auth.user.superuser === true && !auth.user.superuser){
+    } else if (auth.user.authenticated === true && !auth.user.superuser){
       navigate('/')
     }
   }, [auth, navigate])
 
-  async function RequestLists() {  // List all stand and associations
+  async function RequestStands() {  // List all stand and associations
     var resStatus;
-      fetch('/api/liststands')
-        .then(res => {resStatus = res.status; return res.json()})
-        .then(data => {
-          if (resStatus === 200){
-            setStands(data.stands)
-            return setAssociations(data.associations)
-          } else if (resStatus === 401){
-            return auth.onLogout()
-          }
-        })
+    fetch('/api/liststands')
+      .then(res => {resStatus = res.status; return res.json()})
+      .then(data => {
+        if (resStatus === 200){
+          setStands(data.stands)
+          return setAssociations(data.associations)
+        } else if (resStatus === 401){
+          return auth.onLogout()
+        }
+      })
   }
     
   async function SubmitNewAssociation() {  // Submit new association
@@ -62,7 +62,7 @@ function Database() {
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200) {
-            RequestLists()
+            RequestStands()
             setNewAssociation(""); setNewPrincipal("");
             setShowAssociation(false); setAlreadyUsedK("")
             setCheck(check => ({...check, association:false}))
@@ -90,7 +90,7 @@ function Database() {
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200) {
-            RequestLists()
+            RequestStands()
             setNewAssociation(""); setNewPrincipal("");
             setShowAssociation(false); setAlreadyUsedK(""); setEdit("");
             setCheck(check => ({...check, association:false}))  
@@ -114,7 +114,7 @@ function Database() {
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200){
-            RequestLists()
+            RequestStands()
             setNewAssociation(""); setNewPrincipal("");
             setShowAssociation(false); setAlreadyUsedK(""); setEdit(""); setConfirmDel(false);
             setCheck(check => ({...check, association:false}))
@@ -139,7 +139,7 @@ function Database() {
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200){
-            RequestLists()
+            RequestStands()
             setNewStand(""); setNewAssociationID(0);
             setShowStand(false); setAlreadyUsedS(false)
             setCheck(check => ({...check, stand:false}))
@@ -167,7 +167,7 @@ function Database() {
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200){
-            RequestLists()
+            RequestStands()
             setNewStand(""); setNewAssociationID(0);
             setShowStand(false); setAlreadyUsedS(false); setEdit("");
             setCheck(check => ({...check, stand:false}))
@@ -191,7 +191,7 @@ function Database() {
         .then(res => {resStatus = res.status; return res.json()})
         .then(data => {
           if (resStatus === 200) {
-            RequestLists()
+            RequestStands()
             setNewStand(""); setNewAssociationID(0);
             setShowStand(false); setAlreadyUsedS(false); setEdit(""); setConfirmDel(false);
             setCheck(check => ({...check, stand:false}))
@@ -319,7 +319,7 @@ function Database() {
             <h2>Criar estande</h2>
           </div>
         }
-        <Stands
+        <Stand
           output={handleSChange}
           stand={newStand}
           associationID={newAssociationID}

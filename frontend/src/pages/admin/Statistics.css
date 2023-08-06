@@ -1,0 +1,144 @@
+.Statistics{
+  min-height: calc(100vh - var(--height-header));
+}
+
+.Statistics .Menu button{
+  display: flex;
+  margin: 0 5px;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+
+.Statistics .Main{
+  display: flex;
+  flex-direction: column;
+  padding: 2px 8px;
+  background-color: var(--color-primary-1);
+}
+.Statistics .Main ul{
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-gray-100);
+}
+.Statistics .Main li{
+  display: flex;
+  justify-content: space-between;
+}
+.Statistics .Main p{
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+
+.Statistics .Main p#ID{
+  flex: 1;
+  min-width: 40px;
+}
+.Statistics .Main p#stand{
+  flex: 2;
+  min-width: 80px;
+}
+.Statistics .Main p#hour{
+  flex: 3;
+  min-width: 145px;
+}
+.Statistics .Main p#user{
+  flex: 2;
+  min-width: 85px;
+}
+.Statistics .Main p#card{
+  flex: 3;
+  min-width: 140px;
+}
+.Statistics .Main p#total{
+  flex: 1;
+  min-width: 65px;
+}
+.Statistics .Main p#items{
+  flex: 1;
+  min-width: 70px;
+}
+
+.Statistics .ListGoods{
+  z-index: 20;
+  position: fixed;
+  top: calc(50vh - 20vh);
+  left: calc(50vw - 40vw);
+  width: 80vw;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-gray-100);
+}
+
+.Statistics .ListGoods li{
+  display: flex;
+}
+.Statistics .ListGoods img{
+  width: 36px;
+}
+.Statistics .ListGoods .ImageIcon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+}
+.Statistics .ListGoods p{
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+.Statistics .ListGoods span{
+  font-weight: 700;
+}
+
+.Statistics .ListGoods p#ID{
+  flex: 1;
+  min-width: 40px;
+}
+.Statistics .ListGoods p#stand{
+  flex: 2;
+  min-width: 80px;
+}
+.Statistics .ListGoods p#hour{
+  flex: 3;
+  min-width: 145px;
+}
+.Statistics .ListGoods p#user{
+  flex: 2;
+  min-width: 85px;
+}
+.Statistics .ListGoods p#card{
+  flex: 3;
+  min-width: 140px;
+}
+.Statistics .ListGoods p#total{
+  flex: 1;
+  min-width: 65px;
+}
+
+.Statistics .ListGoods p#ID{
+  flex: 1;
+  min-width: 40px;
+}
+.Statistics .ListGoods p#item{
+  flex: 1;
+  min-width: 40px;
+}
+.Statistics .ListGoods p#quantity{
+  flex: 1;
+  min-width: 40px;
+}
+.Statistics .ListGoods p#price{
+  flex: 1;
+  min-width: 40px;
+}
+.Statistics .ListGoods p#subtotal{
+  flex: 1;
+  min-width: 40px;
+}
+

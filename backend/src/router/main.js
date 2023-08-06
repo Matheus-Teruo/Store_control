@@ -653,7 +653,7 @@ router.post("/newitem", (req, res) => {  // Create new item
   } else {
     if (data.standID > 1) {
       database('users')
-        .select('standID')
+        .select('standID', 'username')
         .where({userID: decoded.userID})
         .then((rowsUsers) => {
           const user = rowsUsers[0];
@@ -691,7 +691,7 @@ router.post("/edititem", (req, res) => {  // Change item property
   } else {
     if (data.standID > 1) {
       database('users')
-        .select('standID')
+        .select('standID', 'username')
         .where({userID: decoded.userID})
         .then((rowsUsers) => {
           const user = rowsUsers[0];
@@ -732,7 +732,7 @@ router.post("/itemimageupload", uploadImage.single("imageItem"), (req, res) => {
   } else {
     if (req.body.standID > 1) {
       database('users')
-        .select('standID')
+        .select('standID', 'username')
         .where({userID: decoded.userID})
         .then((rowsUsers) => {
           const user = rowsUsers[0];

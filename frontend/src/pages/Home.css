@@ -49,6 +49,13 @@
   justify-content: center;
   text-decoration: none;
 }
+.MainFrame3{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
 
 .Home {
   width: 100%;
@@ -117,6 +124,12 @@
     width: 92%;
   }
   .MainFrame2{
+    width: 28vw;
+    aspect-ratio: 1/1;
+    border-radius: 10px;
+    background-color: var(--color-primary-3);
+  }
+  .MainFrame3{
     width: 28vw;
     aspect-ratio: 1/1;
     border-radius: 10px;
