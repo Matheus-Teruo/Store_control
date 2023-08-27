@@ -82,8 +82,8 @@ function Cashier() {
             setConfirmRecharge(false); setCheck({recharge: false, card: false})
             SubmitCardCheck()
             return setTimeout(() => {
-              setShowCard(false);
-              setCard("")
+              setCard("");
+              setCart([]);
             }, 4000);
           } else if (resStatus === 401){
             return auth.onLogout()
