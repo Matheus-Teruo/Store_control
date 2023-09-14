@@ -92,10 +92,10 @@ function Seller() {
           .then(res => {resStatus = res.status; return res.json()})
           .then(data => {
             if (resStatus === 200){
-              RequestItemsPerStand()
+              RequestItemsPerStand();
               setCart([]); setShowCard(true); setAnimation(true);
               setConfirmPurchase(false);
-              SubmitCardCheck()
+              SubmitCardCheck();
               return setTimeout(() => {
                 setShowCard(false);
                 setCard("")
@@ -143,11 +143,12 @@ function Seller() {
     .then(res => {resStatus = res.status; return res.json()})
     .then(data => {
       if (resStatus === 200){
-        RequestItemsPerStand()
-        setShowLastSales(false)
-        setShowCard(true)
-        setAnimation(true)
-        RequestLastSales()
+        RequestItemsPerStand();
+        setShowLastSales(false);
+        setShowCard(true);
+        setAnimation(true);
+        RequestLastSales();
+        SubmitCardCheck();
         return setTimeout(() => {
           setShowCard(false);
           setCard("")
