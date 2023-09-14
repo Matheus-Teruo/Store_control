@@ -1,0 +1,1 @@
+This README is here to ensure that the "associations" folder will be in git
