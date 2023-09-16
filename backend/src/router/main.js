@@ -583,13 +583,11 @@ router.get("/stocktaking", (req, res) => {  // Request items from a standID
             .where({standID: user.standID})
             .then((items) => {
               if (items.length !== 0){
-                console.log(items)
                 database('goods')
                   .select('itemID')
                   .sum('quantity as totalQuantity')
                   .groupBy('itemID')
                   .then((goods) => {
-                    console.log(goods)
                     const filteredgoods = goods.filter((elements) => {
                       return items.some((item) => item.itemID === elements.itemID);
                     });
@@ -736,7 +734,7 @@ router.post("/itemimageupload", uploadImage.single("imageItem"), (req, res) => {
         .where({userID: decoded.userID})
         .then((rowsUsers) => {
           const user = rowsUsers[0];
-          if (user.standID === req.body.standID || decoded.superuser === 1){
+          if (user.standID === parseInt(req.body.standID) || decoded.superuser === 1){
             const imageType = req.body.imageType.split("/")
             database('items')
               .where({itemID: req.body.imageName})
