@@ -15,7 +15,6 @@ function Association(props) {
     haveMinChar: false,
     noNumber: true,
     noSpecialChar: true});
-  const [submitvalid, setSubmitvalid] = useState(false);
 
   useEffect(() => {  // Check all conditions
     if (K_Check.haveMinChar &&
@@ -26,10 +25,8 @@ function Association(props) {
         P_Check.noNumber &&
         P_Check.noSpecialChar &&
         props.dupliValue !== props.association){
-      setSubmitvalid(true);
       props.valid(true)
     } else {
-      setSubmitvalid(false);
       props.valid(false)
     }
   }, [K_Check, P_Check, props.association, props.dupliValue])

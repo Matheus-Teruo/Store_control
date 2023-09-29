@@ -1,6 +1,6 @@
 import './Statistics.css'
 import React, { useState, useEffect, useContext } from 'react'
-import { Hash, Award, Clock, User, CreditCard, Tag, Image, DollarSign, ShoppingBag, X } from 'react-feather';
+import { Hash, Award, Clock, User, CreditCard, Tag, Image, DollarSign, ShoppingBag } from 'react-feather';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../../store/auth_context';
 

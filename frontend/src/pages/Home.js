@@ -1,7 +1,7 @@
 import './Home.css';
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Clipboard, DollarSign, Package, BarChart2, Users, CreditCard, Flag } from 'react-feather';
+import { Clipboard, DollarSign, Package, Users, CreditCard, Flag } from 'react-feather';
 import Chart from '../midia/Chart.js';
 import AuthContext from '../store/auth_context';
 
