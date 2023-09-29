@@ -84,7 +84,7 @@
 .L_submit{
   margin: 0 10px 25px;
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
 }
 .L_submit button{
   display: flex;

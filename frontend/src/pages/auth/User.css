@@ -74,7 +74,7 @@
 
 .UserPage .Password{
   display: flex;
-  align-items: end;
+  align-items: flex-end;
 }
 .UserPage .InputPassword{
   width: 100%;

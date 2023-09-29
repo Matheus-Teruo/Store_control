@@ -4,7 +4,7 @@
 .Database .Menu{
   display: flex;
   flex-direction: column;
-  align-items: start;
+  align-items: flex-start;
   padding: 4px 10px;
 }
 .Database .Actions{
@@ -43,7 +43,7 @@
 .Database .Main p{
   padding: 0 2px;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
 }
 .Database .Main p#association{
   flex: 2;
@@ -56,7 +56,7 @@
 .Database .Main .ulStands{
   display: flex;
   flex-direction: column;
-  align-items: start;
+  align-items: flex-start;
   justify-content: center;
   flex: 3;
   min-width: 140px;

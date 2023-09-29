@@ -3,7 +3,7 @@
 }
 .AllUsers .Menu{
   display: flex;
-  align-items: end;
+  align-items: flex-end;
   justify-content: space-between;
   padding: 4px 10px;
 }
@@ -31,7 +31,7 @@
 .AllUsers .Main p{
   padding: 0 2px;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
 }
 .AllUsers .Main p#userID{
   flex: 1;

@@ -17,7 +17,7 @@
 .Home_Logged .Subtitle{
   width: 100%;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   background-color: var(--color-primary-1);
 }
 .Home_Logged .Subtitle h2{

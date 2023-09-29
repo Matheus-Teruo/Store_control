@@ -44,7 +44,7 @@
 .Statistics .Main p{
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: flex-start;
 }
 
 .Statistics .Main p#ID{
@@ -155,7 +155,7 @@
 .Statistics .ListGoods p{
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: flex-start;
 }
 .Statistics .ListGoods span{
   display: flex;
