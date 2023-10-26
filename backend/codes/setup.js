@@ -15,7 +15,7 @@ database('users')
     database('associations')
     .insert({
       'associationID': 1,
-      'association': "Cashier",
+      'association': "Caixa",
       'principal': "Root"
     })
     .then(() => {
@@ -23,7 +23,7 @@ database('users')
       database('stands')
         .insert({
           'standID': 1,
-          'stand': "Cashier",
+          'stand': "Caixa",
           'associationID': 1
         })
         .then(() => {

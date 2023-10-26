@@ -11,7 +11,7 @@ import Quagga from 'quagga';
 
 function Cashier() {
   // Main
-  const [recharge, setRecharge] = useState("")
+  const [recharge, setRecharge] = useState()
   const [payment, setPayment] = useState("cash")
   const [card, setCard] = useState("")
   const [check, setCheck] = useState({
@@ -270,7 +270,9 @@ function Cashier() {
                 </div>
               }
             <div className="CashierCardFooter">
-              {cardBalance !== "invalid" && check.card ? (customer === 1 ? <p>{balanceType}</p> : customer === 0 && <Pause/>) : <div/>}
+              {cardBalance !== "invalid" && check.card ? (customer === 1 ? 
+                (balanceType === "cash" ? <p>Dinheiro</p> : balanceType === "debit" ? <p>Débito</p> : balanceType === "credit" && <p>Crédito</p>)
+                : customer === 0 && <Pause/>) : <div/>}
               <button onClick={() => {setConfirmReset(true);SubmitCardCheck(); setShowCard(false)}} disabled={check.card && cardBalance !== "invalid" && customer === 1 ? false : true}><RefreshCw/></button>
             </div>
           </div>
@@ -342,7 +344,7 @@ function Cashier() {
             </>
             }
             <div className="CashierAuxButtons">
-              <button onClick={() => setRecharge(recharge + sumAux)} disabled={sumAux !== 0 ? false : true}><Plus/></button>
+              <button onClick={() => setRecharge(parseFloat(recharge) + parseFloat(sumAux))} disabled={sumAux !== 0 ? false : true}><Plus/></button>
               <button onClick={() => setRecharge(sumAux)} disabled={sumAux !== 0 ? false : true}><ArrowDown/></button>
             </div>
           </div>
@@ -418,7 +420,7 @@ function Cashier() {
               (cardBalance !== "invalid"?
                 <>
                 <p><DollarSign size={18}/>{cardBalance}</p>
-                <p>{balanceType}</p>
+                {balanceType === "cash" ? <p>Dinheiro</p> : balanceType === "debit" ? <p>Débito</p> : balanceType === "credit" && <p>Crédito</p>}
                 </>
               :
                 <p>{cardBalance}</p>
