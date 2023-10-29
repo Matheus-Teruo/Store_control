@@ -11,7 +11,7 @@ import Quagga from 'quagga';
 
 function Cashier() {
   // Main
-  const [recharge, setRecharge] = useState()
+  const [recharge, setRecharge] = useState(0)
   const [payment, setPayment] = useState("cash")
   const [card, setCard] = useState("")
   const [check, setCheck] = useState({
