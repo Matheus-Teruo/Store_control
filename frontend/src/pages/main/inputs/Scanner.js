@@ -49,12 +49,12 @@ function Scanner(props) {
 
     if (scanned === false){
       initQuagga();
-      console.log("debug2")
+      //console.log("debug2")
     }
     Quagga.onDetected(handleScan);
 
     return () => {
-      console.log("debug3")
+      //console.log("debug3")
       Quagga.offDetected(handleScan);
       Quagga.stop();
     };
@@ -71,10 +71,10 @@ function Scanner(props) {
       if (listResults.every(item => item === listResults[0])) {
         setListResults([])
         setScanned(true)
-        props.output(listResults[0])
+        return () => props.output(listResults[0])
       }
     }
-  }, [listResults])
+  }, [props.output,listResults])
 
   const handleScan = (result) => {  // Take result of scanner
     setResults([]);

@@ -70,7 +70,7 @@
   justify-content: space-between;
   overflow: hidden;
 }
-.CashierCard .animation{
+.CashierCard.animation{
   animation: CardExpand 1s;
 }
 .CashierCard.animation::after{
@@ -82,7 +82,7 @@
 .CashierCard.noUse{
   background-color: var(--color-gray-200);
 }
-.CashierCard.noUse::after{
+.CashierCard.noUse::after{ /* não está funcioando bem */
   content: "";
   position: absolute;
   background-color: var(--color-gray-200);

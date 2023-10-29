@@ -69,7 +69,7 @@ function Item(props) {
       </div>
       <div className="Price">
         <label id="price"><DollarSign/></label>
-        <input value={props.price} onChange={event => props.output(event)} id="price" type="number" name="price" min="0"/>
+        <input value={props.price} onChange={event => props.output(event)} id="price" inputMode="numeric" type="number" name="price" step="0.01" min="0"/>
       </div>
       <div className="Check">
         {!P_Check && <p>noZero</p>}

@@ -21,7 +21,8 @@ function Code(props) {
     } else {
       setCheck(false)
     };
-  }, [])
+  }, [props.card])
+
   function handleCard(event){  // Conditions logic
     if (event.target.value.length <= 12){
       props.output(event)
@@ -32,7 +33,6 @@ function Code(props) {
       };
     }
   }
-
 
   return (
     <>

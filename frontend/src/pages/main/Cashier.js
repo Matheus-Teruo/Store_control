@@ -125,21 +125,21 @@ function Cashier() {
     }
   }
 
-  async function SubmitCardCheck() {
-      fetch("/api/cardcheck", {  // Post form
-        method: "POST", headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({"cardID": card})
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.code){
-          setBalanceType(data.payment)
-          setCustomer(data.customer)
-          return setCardBalance(data.value)
-        } else {
-          return setCardBalance("invalid")
-        }
-      })
+  async function SubmitCardCheck(auxvalue = "") {
+    fetch("/api/cardcheck", {  // Post form
+      method: "POST", headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({"cardID": (auxvalue === ""? card : auxvalue)})
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.code){
+        setBalanceType(data.payment)
+        setCustomer(data.customer)
+        return setCardBalance(data.value)
+      } else {
+        return setCardBalance("invalid")
+      }
+    })
   }
 
   useEffect(() => {  // Handle select stand
@@ -151,6 +151,14 @@ function Cashier() {
       }
     }))
   }, [selectedID, allItems])
+
+  useEffect(() => {
+    if (card.length === 12){
+      setCheck(check => ({...check, card: true}));
+      SubmitCardCheck();
+    }
+  }, [card])
+  
 
   useEffect(() => {  // Sum the total auxiliary
     const subtotal = cart.reduce((accumulator, element) => {
@@ -166,11 +174,11 @@ function Cashier() {
       return setCheck(check => ({...check, recharge: false}))
     }
   }, [recharge])
-  
+
   const handleScan = (value) => {  // Take result of scanner
-    setCard(value)
-    Quagga.stop()
-    setShowScanner(false)
+    setCard(value);
+    Quagga.stop();
+    setShowScanner(false);
   };
 
   function handleCart(item) {  // Add item on cart
@@ -195,6 +203,7 @@ function Cashier() {
         amount:1}])
     }
   };
+
   function handleRemoveCart(itemID) {  // Remove item from cart
     const updatedCart = cart.map(element => {
       if (element.itemID === itemID) {
@@ -209,6 +218,7 @@ function Cashier() {
     }).filter(Boolean)
     setCart(updatedCart);
   }  
+
   function handleEditCartItem(itemID, field, value) {  // Edit item from cart
     const item = items.find(item => item.itemID === itemID);
     if (!item) {
@@ -245,7 +255,7 @@ function Cashier() {
       <div className="CashierMain">
         <div className="CashierMenu">
           {showCard?
-          <div className={`CashierCard ${(check.card === true && cardBalance === "invalid")? "noUse" : "" }${animation? "animation" : ""}`}>
+          <div className={`CashierCard ${(check.card === true && cardBalance === "invalid")? "noUse" : "" } ${animation? "animation" : ""}`}>
             <div className="CashierCardHead">
               <div className="CashierCardNumber">
                 <button onClick={() => setShowScanner(true)}><Barcode/></button>
@@ -273,7 +283,9 @@ function Cashier() {
               {cardBalance !== "invalid" && check.card ? (customer === 1 ? 
                 (balanceType === "cash" ? <p>Dinheiro</p> : balanceType === "debit" ? <p>Débito</p> : balanceType === "credit" && <p>Crédito</p>)
                 : customer === 0 && <Pause/>) : <div/>}
-              <button onClick={() => {setConfirmReset(true);SubmitCardCheck(); setShowCard(false)}} disabled={check.card && cardBalance !== "invalid" && customer === 1 ? false : true}><RefreshCw/></button>
+              <button onClick={() => {setConfirmReset(true);SubmitCardCheck(); setShowCard(false)}} disabled={check.card && cardBalance !== "invalid" && customer === 1 ? false : true}>
+                <RefreshCw/>
+              </button>
             </div>
           </div>
           :
@@ -354,7 +366,7 @@ function Cashier() {
           <div className="CashierTotalInput">
             <DollarSign size={20}/>
             <input
-              type="number" inputMode="numeric" id="recharge" name="recharge"
+              type="number" inputMode="numeric" id="recharge" name="recharge" step="0.01"
               value={recharge}
               onChange={event => setRecharge(event.target.value)}
             />
@@ -449,7 +461,7 @@ function Cashier() {
       {showScanner &&
       <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false); return Quagga.stop()}}>
         <div className="ScanPreview">
-          <Scanner DetectedCode={handleScan} output={handleScan}/>
+          <Scanner output={handleScan}/>
         </div>
       </div>
       }
