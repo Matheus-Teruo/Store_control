@@ -135,7 +135,7 @@ function Cashier() {
       if (data.code){
         setBalanceType(data.payment)
         setCustomer(data.customer)
-        return setCardBalance(data.value)
+        return setCardBalance(parseFloat(data.value))
       } else {
         return setCardBalance("invalid")
       }
@@ -243,6 +243,28 @@ function Cashier() {
     setCard(event.target.value)
   }
 
+  function handleRecharge(event, key = 0){
+    if(key === 0){
+      if (isNaN(event.target.value) || event.target.value === "" || event.target.value === "0"){
+        return setRecharge(0);
+      }
+      let num = event.target.value;
+      num = num.toString();
+      num = num.replace(/^0+/, '')
+      num = num.replace(".", "")
+      num = parseFloat(num);
+      num = (num/100).toFixed(2);
+      setRecharge(num);
+    }else if(key === 1){
+      if (isNaN(recharge) || recharge === 0){
+        return setRecharge(0 + sumAux);
+      }
+      setRecharge(recharge + sumAux)
+    }else if(key ===2){
+      setRecharge(sumAux)
+    }
+  }
+
   function h_Valid(value) {  // Card valid
     setCheck(check => ({...check, card: value}))
     if (value) {
@@ -273,7 +295,7 @@ function Cashier() {
                 </div>
               :(check.card) ?
                 <div className="CashierCardMain">
-                  <DollarSign size={19}/><h3>{cardBalance}</h3>
+                  <DollarSign size={19}/><h3>{parseFloat(cardBalance).toFixed(2)}</h3>
                 </div>
               :
                 <div className="CashierCardMain">
@@ -356,8 +378,8 @@ function Cashier() {
             </>
             }
             <div className="CashierAuxButtons">
-              <button onClick={() => setRecharge(parseFloat(recharge) + parseFloat(sumAux))} disabled={sumAux !== 0 ? false : true}><Plus/></button>
-              <button onClick={() => setRecharge(sumAux)} disabled={sumAux !== 0 ? false : true}><ArrowDown/></button>
+              <button onClick={() => handleRecharge(1,1)} disabled={sumAux !== 0 ? false : true}><Plus/></button>
+              <button onClick={() => handleRecharge(1,2)} disabled={sumAux !== 0 ? false : true}><ArrowDown/></button>
             </div>
           </div>
         </div>
@@ -366,9 +388,9 @@ function Cashier() {
           <div className="CashierTotalInput">
             <DollarSign size={20}/>
             <input
-              type="number" inputMode="numeric" id="recharge" name="recharge" step="0.01"
+              type="number" inputMode="numeric" id="recharge" name="recharge"
               value={recharge}
-              onChange={event => setRecharge(event.target.value)}
+              onChange={handleRecharge}
             />
           </div>
           <button type="submit" onClick={() => {setConfirmRecharge(true); setShowCard(false)}} disabled={check.recharge ? false : true}><CheckCircle size={20}/></button>
@@ -401,7 +423,7 @@ function Cashier() {
         </div>
         <div className="CashierRechargeFooter">
           <p>Recarregar</p>
-          <p id="recharge"><DollarSign size={20}/>{recharge}</p>
+          <p id="recharge"><DollarSign size={20}/>{parseFloat(recharge).toFixed(2)}</p>
           <Payment 
             output={(value) => setPayment(value)}/>
           <div className="CashierRechargeFooterButtons">
@@ -431,7 +453,7 @@ function Cashier() {
             {check.card &&
               (cardBalance !== "invalid"?
                 <>
-                <p><DollarSign size={18}/>{cardBalance}</p>
+                <p><DollarSign size={18}/>{parseFloat(cardBalance).toFixed(2)}</p>
                 {balanceType === "cash" ? <p>Dinheiro</p> : balanceType === "debit" ? <p>Débito</p> : balanceType === "credit" && <p>Crédito</p>}
                 </>
               :

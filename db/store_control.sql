@@ -40,7 +40,7 @@ DROP TABLE IF EXISTS `cards`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cards` (
   `cardID` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `debit` int NOT NULL,
+  `debit` float NOT NULL,
   PRIMARY KEY (`cardID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -72,7 +72,7 @@ DROP TABLE IF EXISTS `donations`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `donations` (
   `donationID` int NOT NULL AUTO_INCREMENT,
-  `value` int NOT NULL,
+  `value` float NOT NULL,
   `donation_t` datetime NOT NULL,
   `cardID` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `userID` int NOT NULL,
@@ -95,7 +95,7 @@ CREATE TABLE `goods` (
   `itemID` int NOT NULL,
   `saleID` int NOT NULL,
   `quantity` int NOT NULL,
-  `unit_p` int NOT NULL,
+  `unit_p` float NOT NULL,
   PRIMARY KEY (`itemID`,`saleID`),
   KEY `saleID` (`saleID`),
   CONSTRAINT `goods_ibfk_1` FOREIGN KEY (`itemID`) REFERENCES `items` (`itemID`),
@@ -113,7 +113,7 @@ DROP TABLE IF EXISTS `items`;
 CREATE TABLE `items` (
   `itemID` int NOT NULL AUTO_INCREMENT,
   `item` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `price` int NOT NULL,
+  `price` float NOT NULL,
   `stock` int NOT NULL,
   `item_img` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `standID` int NOT NULL,
@@ -133,7 +133,7 @@ DROP TABLE IF EXISTS `recharges`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `recharges` (
   `rechargeID` int NOT NULL AUTO_INCREMENT,
-  `recharge` int NOT NULL,
+  `recharge` float NOT NULL,
   `recharge_t` datetime NOT NULL,
   `payment` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL,
   `cardID` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
