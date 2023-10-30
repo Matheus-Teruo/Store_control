@@ -255,7 +255,7 @@ router.post("/recharge", (req, res) => {  // Submit recharge
           .then(() => {
             Customer({card: data.cardID, valid: true, time: card.time}) 
               .then(() => {
-                const aux = parseInt(parseFloat(card.debit) + parseFloat(data.recharge))
+                const aux = (parseFloat(card.debit) + parseFloat(data.recharge))
                 database('cards')
                   .where({cardID: data.cardID})
                   .update({debit: aux})

@@ -47,8 +47,8 @@ function Stocktaking() {
       .then(data => {
         if (resStatus === 200){
           RequestStands()
-          console.log('items', data.items)
-          console.log("goods", data.goods)
+          // console.log('items', data.items)
+          // console.log("goods", data.goods)
           const mergedItems = data.items.map((item) => {
             const foundGood = data.goods.find((good) => good.itemID === item.itemID);
             return {
@@ -195,7 +195,16 @@ function Stocktaking() {
     if (event.target.id === "item") {  // Item
       setNewItem(event.target.value);
     } else if (event.target.id === "price") {  // Price
-      setNewPrice(event.target.value);
+      if (isNaN(event.target.value) || event.target.value === 0){
+        return setNewPrice(0);
+      }
+      let num = event.target.value;
+      num = num.toString();
+      num = num.replace(/^0+/, '')
+      num = num.replace(".", "")
+      num = parseFloat(num);
+      num = (num/100).toFixed(2);
+      setNewPrice(num);
     } else if (event.target.id === "stock") {  // Stock
       setNewStock(event.target.value);
     }
@@ -262,7 +271,7 @@ function Stocktaking() {
               setItemID(item.itemID);
               setShowItem(true); setEdit(true);
               setNewItem(item.item); setStand(stand => ({...stand, standID: item.standID}));
-              setNewPrice(parseFloat(item.price));
+              setNewPrice(item.price.toFixed(2));
               setNewStock(parseInt(item.stock));}}>
               {item.item_img !== null?
                 <img alt={item.item} src={`/api/itemimages/${item.itemID}.${item.item_img}`}/>
@@ -272,7 +281,7 @@ function Stocktaking() {
               </div>
               }
               <p id="name">{item.item}</p>
-              <p id="price"><DollarSign size={18}/>{item.price}</p>
+              <p id="price"><DollarSign size={18}/>{item.price.toFixed(2)}</p>
               <div className="quantity">
                 <p id="stock" className={`${item.stock === 0 && "unavailable"}`}><Package size={18}/>{item.stock}</p>
                 <p id="sold"><ShoppingBag size={18}/>{item?.sold}</p>
@@ -286,7 +295,7 @@ function Stocktaking() {
               setItemID(item.itemID);
               setShowItem(true); setEdit(true);
               setNewItem(item.item);
-              setNewPrice(parseFloat(item.price));
+              setNewPrice(item.price.toFixed(2));
               setNewStock(parseInt(item.stock))}}>
               {item.item_img !== null ?
                 <img alt={item.item} src={`/api/itemimages/${item.itemID}.${item.item_img}`}/>

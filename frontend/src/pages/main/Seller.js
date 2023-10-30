@@ -274,7 +274,7 @@ function Seller() {
                   </div>
                 :(check.card) ?
                   <div className="SellerCardMain">
-                    <DollarSign size={19}/><h3>{cardBalance}</h3>
+                    <DollarSign size={19}/><h3>{parseFloat(cardBalance).toFixed(2)}</h3>
                   </div>
                 :
                   <div className="SellerCardMain">
@@ -326,7 +326,7 @@ function Seller() {
         </div>
         <div className="SellerFooter">
           <p>Total:</p>
-          <p id="total"><DollarSign size={20}/>{total}</p>
+          <p id="total"><DollarSign size={20}/>{parseFloat(total).toFixed(2)}</p>
           <button onClick={() => {setConfirmPurchase(true); setShowCard(false)}} disabled={check.purchase ? false : true}><ShoppingCart/></button>
         </div>
       </div>
@@ -349,7 +349,7 @@ function Seller() {
           <div className="SellerCardMiniBalance">
           {check.card &&
               (cardBalance !== "invalid"?
-                <p><DollarSign size={18}/>{cardBalance}</p>
+                <p><DollarSign size={18}/>{parseFloat(cardBalance).toFixed(2)}</p>
               :
                 <p>{cardBalance}</p>
               )
@@ -379,7 +379,7 @@ function Seller() {
               </li>
             ))}
           </ul>
-          <p id="total"><DollarSign size={20}/>{total}</p>
+          <p id="total"><DollarSign size={20}/>{parseFloat(total).toFixed(2)}</p>
         </div>
         <div className="SellerPurchaseFooter">
           <button onClick={() => setConfirmPurchase(false)}>Cancelar</button>
@@ -407,7 +407,7 @@ function Seller() {
           <div className="SellerCardMiniBalance">
           {check.card &&
               (cardBalance !== "invalid"?
-                <p><DollarSign size={18}/>{cardBalance}</p>
+                <p><DollarSign size={18}/>{parseFloat(cardBalance).toFixed(2)}</p>
               :
                 <p>{cardBalance}</p>
               )

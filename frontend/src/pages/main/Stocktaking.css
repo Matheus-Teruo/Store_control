@@ -55,8 +55,8 @@
 }
 .ST_Main p#price{
   margin: 0 8px;
-  min-width: 36px;
-  flex: 2;
+  min-width: 56px;
+  flex: 3;
   padding: 0 2px;
   border-radius: 2px;
   background-color: #ffffff50;
