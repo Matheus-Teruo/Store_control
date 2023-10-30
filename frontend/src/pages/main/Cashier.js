@@ -374,7 +374,7 @@ function Cashier() {
             :
             <>
               <p>Carrinho:</p>
-              <p id="SumAux"><DollarSign size={18}/>{sumAux}</p>
+              <p id="SumAux"><DollarSign size={18}/>{parseFloat(sumAux).toFixed(2)}</p>
             </>
             }
             <div className="CashierAuxButtons">
@@ -389,7 +389,7 @@ function Cashier() {
             <DollarSign size={20}/>
             <input
               type="number" inputMode="numeric" id="recharge" name="recharge"
-              value={recharge}
+              value={parseFloat(recharge).toFixed(2)}
               onChange={handleRecharge}
             />
           </div>
