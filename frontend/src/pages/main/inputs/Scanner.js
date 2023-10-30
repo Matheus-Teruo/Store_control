@@ -10,6 +10,23 @@ function Scanner(props) {
   useEffect(() => {
     const initQuagga = async () => {
       try {
+        var backCamID = null;
+        var last_camera = null;
+        navigator.mediaDevices.enumerateDevices()
+        .then(function(devices) {
+          devices.forEach(function(device) {  
+        if( device.kind == "videoinput" && device.label.match(/back/) !== null ){
+              backCamID = device.deviceId;
+            }
+        if( device.kind === "videoinput"){
+        last_camera = device.deviceId;
+        } 
+        });
+        if( backCamID === null){
+        backCamID = last_camera;
+        }
+        })
+        .catch(function(err) {});
         await Quagga.init({
           inputStream : {
             name : "Live",
@@ -18,7 +35,7 @@ function Scanner(props) {
               width: 1280,
               height: 720,
               facingMode: "environment",
-              deviceId: "7832475934759384534"
+              deviceId: backCamID
               }, 
           },
           area: { // defines rectangle of the detection/localization area
