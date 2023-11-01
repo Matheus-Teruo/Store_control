@@ -58,8 +58,6 @@ services:
       target: development
     ports:
       - 3000:3000
-    reservations:
-      memory: 1024M
     volumes:
       - frontend-node:/code/node_modules
       - ./frontend/src:/code/src
