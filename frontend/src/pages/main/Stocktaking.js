@@ -120,7 +120,7 @@ function Stocktaking() {
             } else {
               RequestItems();
               setShowItem(false); setCheck(check => ({...check, item: false}));
-              setNewItem(""); setNewPrice(0); setNewStock(0);
+              setNewItem(""); setNewPrice(""); setNewStock("");
             }
           } else if (resStatus === 409) {
             return setAlreadyUsedItem(data.value)
@@ -154,7 +154,7 @@ function Stocktaking() {
             } else {
               RequestItems();
               setShowItem(false); setCheck(check => ({...check, item: false})); setEdit(false);
-              setNewItem(""); setNewPrice(0); setNewStock(0);
+              setNewItem(""); setNewPrice(""); setNewStock("");
             }
           } else if (resStatus === 409) {
             return setAlreadyUsedItem(data.value)
