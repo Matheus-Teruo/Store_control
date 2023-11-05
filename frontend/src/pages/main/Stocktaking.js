@@ -1,5 +1,5 @@
 import "./Stocktaking.css"
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import { useNavigate  } from 'react-router-dom';
 import { Image, DollarSign, Package, ShoppingBag, Crop } from 'react-feather';
 import { ResizeImg } from './inputs/utils.js';
@@ -30,6 +30,7 @@ function Stocktaking() {
     standID: false})
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
+  const hiddenFileInput = useRef(null);
 
   useEffect(() => {  // Page requirements
     if (auth.user.authenticated === true) {
@@ -191,6 +192,10 @@ function Stocktaking() {
       })
   }
   
+  function handleClick(event) {  // Click the hidden file input element
+    hiddenFileInput.current.click();
+  };
+
   function handleChange(event) {  // Handle Change inputs from item
     if (event.target.id === "item") {  // Item
       setNewItem(event.target.value);
@@ -340,8 +345,11 @@ function Stocktaking() {
               <img src={selectedImageURL}/>  
             </div>
           }
-          <input type="file" name="image" onChange={handleImage}/>
-          <button onClick={() => {setShowCrop(true)}} disabled={selectedImage ? false : true}><Crop size="18"/></button>
+          <div className="ImageInput">
+            <button className="button-upload" onClick={handleClick}><Image size="18"/></button>
+            <input type="file" name="image" onChange={handleImage} ref={hiddenFileInput} style={{display: 'none'}}/>
+            <button onClick={() => {setShowCrop(true)}} disabled={selectedImage ? false : true}><Crop size="18"/></button>
+          </div>
           {auth.user.superuser === 1 &&
             <StandID
               output={handleChangeStandID}
