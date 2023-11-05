@@ -5,9 +5,10 @@ import { CreditCard, Minimize2, Pause, RefreshCw, DollarSign, Package, Minus, Pl
 import AuthContext from '../../store/auth_context';
 import Code from '../admin/inputs/Code';
 import Payment from "./inputs/Payment";
-import Scanner from './inputs/Scanner';
+import QRcodeScanner from "./inputs/QRcodeScanner";
 import Barcode from "../../midia/Barcode";
 import Quagga from 'quagga';
+
 
 function Cashier() {
   // Main
@@ -177,7 +178,6 @@ function Cashier() {
 
   const handleScan = (value) => {  // Take result of scanner
     setCard(value);
-    Quagga.stop();
     setShowScanner(false);
   };
 
@@ -483,7 +483,7 @@ function Cashier() {
       {showScanner &&
       <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false); return Quagga.stop()}}>
         <div className="ScanPreview">
-          <Scanner output={handleScan}/>
+          <QRcodeScanner output={handleScan}/>
         </div>
       </div>
       }
