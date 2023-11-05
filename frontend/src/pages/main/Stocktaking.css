@@ -132,6 +132,10 @@
   object-fit: contain;
 }
 
+.ST_NewItem .ImageInput{
+  display: flex;
+}
+
 .ST_CropImage{
   z-index: 30;
   position: fixed;

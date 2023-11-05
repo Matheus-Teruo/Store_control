@@ -9,10 +9,10 @@ const rl = readline.createInterface({
 rl.question('Digite o usuario para mudar a senha: ', (answer) => {
   database('users')
     .where({'username': answer})
-    .update({ password: "$2a$10$WQIrA4naM1x3cKgxdx.nJ.hh40QFDCPe0YQeWBbfF5LrVzaVYqRlq",
-              salt: "$2a$10$WQIrA4naM1x3cKgxdx.nJ."})
+    .update({ password: "$2a$10$EvPe8vrcVcE6fdXarQ1F1uJOghkZHuZwU.1gfpVbPi8Edm1WT73fO",
+              salt: "$2a$10$EvPe8vrcVcE6fdXarQ1F1u"})
     .then(() => {
-      console.log(`User ${answer} redefined password para shizuoka123`);
+      console.log(`User ${answer} redefined password para changeme123`);
       database.destroy();
     })
     .catch((error) => {

@@ -4,10 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { CreditCard, Minimize2, Play, Pause, Image, DollarSign, Package, Plus, Minus, ShoppingBag, ShoppingCart, Trash2 } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Code from '../admin/inputs/Code'
-import Scanner from './inputs/Scanner';
+import QRcodeScanner from './inputs/QRcodeScanner';
 import Barcode from '../../midia/Barcode';
 import History from '../../midia/History';
-import Quagga from 'quagga';
 
 function Seller() {
   const [cart, setCart] = useState([])
@@ -232,7 +231,6 @@ function Seller() {
 
   const handleScan = (value) => {  // Take result of scanner
     setCard(value)
-    Quagga.stop()
     setShowScanner(false)
   };
   function handleCard(event){
@@ -445,9 +443,9 @@ function Seller() {
       }
 
       {showScanner &&
-      <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false); return Quagga.stop()}}>
+      <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false)}}>
         <div className="ScanPreview">
-          <Scanner DetectedCode={handleScan} output={handleScan}/>
+          <QRcodeScanner output={handleScan}/>
         </div>
       </div>
       }

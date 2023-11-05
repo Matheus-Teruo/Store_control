@@ -60,7 +60,7 @@ function Item(props) {
     <div>
       <div className="Item">
         <label id="item"><Tag/></label>
-        <input value={props.item} onChange={event => props.output(event)} id="item" type="text" name="item"/>
+        <input value={props.item} onChange={event => props.output(event)} id="item" type="text" name="item" placeholder="Nome do item"/>
       </div>
       <div className="Check">
         {!I_Check.haveMinChar && <p>minChar</p>}
@@ -69,14 +69,14 @@ function Item(props) {
       </div>
       <div className="Price">
         <label id="price"><DollarSign/></label>
-        <input value={props.price} onChange={event => props.output(event)} id="price" inputMode="numeric" type="number" name="price" step="0.01" min="0"/>
+        <input value={props.price} onChange={event => props.output(event)} id="price" inputMode="numeric" type="number" name="price" min="0" placeholder="Preço"/>
       </div>
       <div className="Check">
         {!P_Check && <p>noZero</p>}
       </div>
       <div className="Stock">
         <label id="stock" ><Package/></label>
-        <input value={props.stock} onChange={event => props.output(event)} id="stock" inputMode="numeric" type="number" name="stock" min="0"/>
+        <input value={props.stock} onChange={event => props.output(event)} id="stock" inputMode="numeric" type="number" name="stock" min="0" placeholder="Quantidade no estoque"/>
       </div>
       <div className="Check">
         {!S_Check && <p>noZero</p>}

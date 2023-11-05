@@ -3,10 +3,9 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Play, Pause } from 'react-feather';
 import AuthContext from '../../store/auth_context';
-import Scanner from '../main/inputs/Scanner';
+import QRcodeScanner from '../main/inputs/QRcodeScanner';
 import Code from './inputs/Code';
 import Barcode from '../../midia/Barcode';
-import Quagga from 'quagga';
 
 function Cards() {
   const [cards, setCards] = useState([])
@@ -76,7 +75,6 @@ function Cards() {
 
   const handleScan = (value) => {  // Take result of scanner
     setNewCardID(value)
-    Quagga.stop()
     setShowScanner(false)
   };
 
@@ -137,9 +135,9 @@ function Cards() {
       }
 
       {showScanner &&
-      <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false); return Quagga.stop()}}>
+      <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false)}}>
         <div className="ScanPreview">
-          <Scanner DetectedCode={handleScan} output={handleScan}/>
+          <QRcodeScanner output={handleScan}/>
         </div>
       </div>
       }
