@@ -18,6 +18,9 @@ const QRcodeScanner = (props) => {
     <div className="QRcodeReader">
       <QrReader
         delay={300}
+        constraints={{
+          facingMode: 'environment'
+        }}
         onResult={(result, error) => {
           if (!!result) {
             setResult(result?.text);
