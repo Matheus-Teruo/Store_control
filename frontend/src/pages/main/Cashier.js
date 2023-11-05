@@ -7,7 +7,6 @@ import Code from '../admin/inputs/Code';
 import Payment from "./inputs/Payment";
 import QRcodeScanner from "./inputs/QRcodeScanner";
 import Barcode from "../../midia/Barcode";
-import Quagga from 'quagga';
 
 
 function Cashier() {
@@ -481,7 +480,7 @@ function Cashier() {
       }
 
       {showScanner &&
-      <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false); return Quagga.stop()}}>
+      <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false)}}>
         <div className="ScanPreview">
           <QRcodeScanner output={handleScan}/>
         </div>

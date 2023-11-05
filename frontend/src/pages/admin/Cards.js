@@ -6,7 +6,6 @@ import AuthContext from '../../store/auth_context';
 import QRcodeScanner from '../main/inputs/QRcodeScanner';
 import Code from './inputs/Code';
 import Barcode from '../../midia/Barcode';
-import Quagga from 'quagga';
 
 function Cards() {
   const [cards, setCards] = useState([])
@@ -136,7 +135,7 @@ function Cards() {
       }
 
       {showScanner &&
-      <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false); return Quagga.stop()}}>
+      <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false)}}>
         <div className="ScanPreview">
           <QRcodeScanner output={handleScan}/>
         </div>

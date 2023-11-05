@@ -7,7 +7,6 @@ import Code from '../admin/inputs/Code'
 import QRcodeScanner from './inputs/QRcodeScanner';
 import Barcode from '../../midia/Barcode';
 import History from '../../midia/History';
-import Quagga from 'quagga';
 
 function Seller() {
   const [cart, setCart] = useState([])
@@ -444,7 +443,7 @@ function Seller() {
       }
 
       {showScanner &&
-      <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false); return Quagga.stop()}}>
+      <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false)}}>
         <div className="ScanPreview">
           <QRcodeScanner output={handleScan}/>
         </div>
