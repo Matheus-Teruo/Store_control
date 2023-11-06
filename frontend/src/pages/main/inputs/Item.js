@@ -27,7 +27,7 @@ function Item(props) {
   }, [I_Check, P_Check, S_Check, props.item, props.dupliValue])
 
   useEffect(() => {  // Name conditions logic
-    if (props.item.trim().length >= 3) {  // Check min number of char
+    if (props.item.trim().length > 2 && props.stand.trim().length < 30) {  // Check min number of char
       setI_Check(I_Check => ({...I_Check, haveMinChar: true})
     )} else {
       setI_Check(I_Check => ({...I_Check, haveMinChar: false})
@@ -41,7 +41,7 @@ function Item(props) {
   }, [props.item])
   
   useEffect(() => {  // Price conditions logic
-    if (parseInt(props.price) >= 0) {  // Check positive not zero
+    if (parseFloat(props.price) >= 0) {  // Check positive not zero
       setP_Check(true)
     } else {
       setP_Check(false)
@@ -49,7 +49,7 @@ function Item(props) {
   }, [props.price])
   
   useEffect(() => {  // Stock conditions logic
-    if (parseInt(props.stock) >= 0) {  // Check positive not zero
+    if (parseInt(props.stock) > 0) {  // Check positive not zero
       setS_Check(true)
     } else {
       setS_Check(false)
@@ -63,23 +63,21 @@ function Item(props) {
         <input value={props.item} onChange={event => props.output(event)} id="item" type="text" name="item" placeholder="Nome do item"/>
       </div>
       <div className="Check">
-        {!I_Check.haveMinChar && <p>minChar</p>}
-        {!I_Check.noSpecialChar && <div>noSpecialChar</div>}
-        {props.dupliValue !== "" && (props.dupliValue === props.item) && <div>noUsed</div>}
+        {!I_Check.haveMinChar && props.item !== "" && <div><span>Entre 3 e 30 caractere</span></div>}
+        {!I_Check.noSpecialChar && props.item !== "" && <div><span>Proibído caracteres especiais</span></div>}
+        {props.dupliValue !== "" && (props.dupliValue === props.item) && <div><span>Nome já usado</span></div>}
       </div>
       <div className="Price">
         <label id="price"><DollarSign/></label>
         <input value={props.price} onChange={event => props.output(event)} id="price" inputMode="numeric" type="number" name="price" min="0" placeholder="Preço"/>
       </div>
-      <div className="Check">
-        {!P_Check && <p>noZero</p>}
-      </div>
+      <div className="Check"/>
       <div className="Stock">
         <label id="stock" ><Package/></label>
         <input value={props.stock} onChange={event => props.output(event)} id="stock" inputMode="numeric" type="number" name="stock" min="0" placeholder="Quantidade no estoque"/>
       </div>
       <div className="Check">
-        {!S_Check && <p>noZero</p>}
+        {!S_Check && props.stock !== "" && <div><span>Ao menos 1 item</span></div>}
       </div>
     </div>
   )

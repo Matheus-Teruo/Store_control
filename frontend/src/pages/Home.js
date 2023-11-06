@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Clipboard, DollarSign, Package, Users, CreditCard, Flag } from 'react-feather';
 import Chart from '../midia/Chart.js';
 import AuthContext from '../store/auth_context';
+import Logo from '../midia/LogoStoreControl.png';
 
 function Home() {
   const [user, setUser] = useState({
@@ -108,6 +109,7 @@ function Home() {
         <h1 className="Title">
           Store Control
         </h1>
+        <img src={Logo} alt="Logo"/>
         <div className="User">
           <Link className="Auth" to="/login">Entre</Link>
           <p className="Text">ou</p>

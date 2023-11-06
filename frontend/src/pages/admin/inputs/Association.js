@@ -32,7 +32,7 @@ function Association(props) {
   }, [K_Check, P_Check, props.association, props.dupliValue])
 
   useEffect(() => {  // Association conditions logic
-    if (props.association.trim().length >= 3) {  // Check min number of char
+    if (props.association.trim().length > 2 && props.association.trim().length < 30) {  // Check min number of char
       setK_Check(K_Check => ({...K_Check, haveMinChar: true})
     )} else {
       setK_Check(K_Check => ({...K_Check, haveMinChar: false})
@@ -58,7 +58,7 @@ function Association(props) {
   }, [props.association])
   
   useEffect(() => {  // Principal conditions logic
-    if (props.principal.trim().length >= 3) {  // Check min number of char
+    if (props.principal.trim().length > 2 && props.association.trim().length < 30) {  // Check min number of char
       setP_Check(P_Check => ({...P_Check, haveMinChar: true})
     )} else {
       setP_Check(P_Check => ({...P_Check, haveMinChar: false})
@@ -85,11 +85,11 @@ function Association(props) {
           id="association" type="text" name="association" placeholder="Associação"/>
       </div>
       <div className="Check">
-        {!K_Check.haveMinChar && <div>minChar</div>}
-        {!K_Check.noNumber && <div>nonumber</div>}
-        {!K_Check.noSpace && <div>noSpace</div>}
-        {!K_Check.noSpecialChar && <div>noSpecialChar</div>}
-        {props.dupliValue !== ""  && (props.dupliValue === props.association) && <div>noUsed</div>}
+        {props.association !== "" && !K_Check.haveMinChar && <div><span>Entre 3 e 30 caractere</span></div>}
+        {props.association !== "" && !K_Check.noNumber && <div><span>Não pode conter número</span></div>}
+        {props.association !== "" && !K_Check.noSpace && <div><span>Não pode conter espaço</span></div>}
+        {props.association !== "" && !K_Check.noSpecialChar && <div><span>Proibído caracteres especiais</span></div>}
+        {props.dupliValue !== ""  && (props.dupliValue === props.association) && <div><span>Nome já usado</span></div>}
       </div>
       <div className="Principal">
         <label><Star/></label>
@@ -97,9 +97,9 @@ function Association(props) {
           id="principal" type="text" name="principal" placeholder="Diretoria"/>
       </div>
       <div className="Check">
-        {!P_Check.haveMinChar && <div>minChar</div>}
-        {!P_Check.noNumber && <div>nonumber</div>}
-        {!P_Check.noSpecialChar && <div>noSpecialChar</div>}
+        {props.principal !== "" && !P_Check.haveMinChar && <div><span>Entre 3 e 30 caractere</span></div>}
+        {props.principal !== "" && !P_Check.noNumber && <div><span>Não pode conter número</span></div>}
+        {props.principal !== "" && !P_Check.noSpecialChar && <div><span>Proibído caracteres especiais</span></div>}
       </div>
     </div>
   )
