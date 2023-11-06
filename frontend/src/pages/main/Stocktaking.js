@@ -340,11 +340,13 @@ function Stocktaking() {
             stock={newStock}
             dupliValue={alreadyUsedItem}
             valid={h_Valid}/>
-          {selectedImageURL &&
-            <div className="Image">
-              <img src={selectedImageURL}/>  
-            </div>
-          }
+          <div className="Image">
+            {selectedImageURL ?
+              <img src={selectedImageURL}/>
+              :
+              <Image size="24"/>  
+            }
+          </div>
           <div className="ImageInput">
             <button className="button-upload" onClick={handleClick}><Image size="18"/></button>
             <input type="file" name="image" onChange={handleImage} ref={hiddenFileInput} style={{display: 'none'}}/>

@@ -70,7 +70,12 @@
   background: var(--color-primary-5);
 }
 .Home_Unlogged .Title {
-  margin: 68px 0 0;
+  margin: 68px 0 10px;
+  color: var(--color-font-2);
+}
+
+.Home_Unlogged img{
+  height: 35vh;
 }
 
 .Home_Unlogged .Subtitle {
