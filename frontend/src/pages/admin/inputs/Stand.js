@@ -26,7 +26,7 @@ function Stands(props) {
   }, [Check, props.stand, props.associationID, props.dupliValue])
 
   useEffect(() => {  // Conditions logic
-    if (props.stand.trim().length > 2) {  // Check min number of char
+    if (props.stand.trim().length > 2 && props.stand.trim().length < 30) {  // Check min number of char
       setCheck(Check => ({...Check, haveMinChar: true})
     )} else {
       setCheck(Check => ({...Check, haveMinChar: false})
@@ -53,10 +53,10 @@ function Stands(props) {
           id="stand" type="text" name="stand" placeholder="Estande"/>
       </div>
       <div className="Check">
-        {!Check.haveMinChar && <div>minChar</div>}
-        {!Check.noNumber && <div>nonumber</div>}
-        {!Check.noSpecialChar && <div>noSpecialChar</div>}
-        {props.dupliValue !== "" && (props.dupliValue === props.stand) && <div>noUsed</div>}
+        {props.stand !== "" && !Check.haveMinChar && <div><span>Entre 3 e 30 caractere</span></div>}
+        {props.stand !== "" && !Check.noNumber && <div><span>Não pode conter número</span></div>}
+        {props.stand !== "" && !Check.noSpecialChar && <div><span>Proibído caracteres especiais</span></div>}
+        {props.dupliValue !== "" && (props.dupliValue === props.stand) && <div><span>Nome já usado</span></div>}
       </div>
       <div className="AssociationID">
         <label htmlFor="association"><Flag/></label>
