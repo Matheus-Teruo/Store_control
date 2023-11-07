@@ -1,7 +1,7 @@
 import "./Stocktaking.css"
 import React, { useState, useEffect, useRef, useContext } from 'react'
 import { useNavigate  } from 'react-router-dom';
-import { Image, DollarSign, Package, ShoppingBag, Crop } from 'react-feather';
+import { Plus, Image, DollarSign, Package, ShoppingBag, Crop } from 'react-feather';
 import { ResizeImg } from './inputs/utils.js';
 import AuthContext from '../../store/auth_context';
 import Item from './inputs/Item';
@@ -238,12 +238,12 @@ function Stocktaking() {
     <div className="ST_background">
       <div className="ST_Header">
         {auth.user.superuser === 1 ?
-          <h1>Inventário Geral</h1>
+          <h2>Inventário Geral</h2>
         :
-          <h1>Inventário: {stand.stand}</h1>
+          <h2>Inventário: {stand.stand}</h2>
         }
         <div className="ST_Menu">
-          <button onClick={() => {setShowItem(true)}}>Novo item</button>
+          <button onClick={() => {setShowItem(true)}}><Plus size="24"/></button>
           {auth.user.superuser === 1 &&
             <div className="Filtro">
               <h3>filtro </h3>
@@ -361,9 +361,9 @@ function Stocktaking() {
               defaultValue={stand.standID}/>
           }
           {!edit ?
-            <button onClick={() => (SubmitNewItem())} disabled={check.item && check.standID ? false : true}>Criar Item</button>
+            <button onClick={() => (SubmitNewItem())} disabled={check.item && check.standID ? false : true}>Confirmar</button>
           :
-            <button onClick={() => (SubmitEditItem())} disabled={check.item && check.standID? false : true}>Editar Item</button>
+            <button onClick={() => (SubmitEditItem())} disabled={check.item && check.standID? false : true}>Confirmar</button>
           }  
         </div>
       </>
