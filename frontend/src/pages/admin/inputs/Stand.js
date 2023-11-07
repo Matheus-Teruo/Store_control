@@ -46,7 +46,7 @@ function Stands(props) {
   }, [props.stand])
 
   return (
-    <div>
+    <div className="Inputs">
       <div className="Stand">
         <label><Award/></label>
         <input value={props.stand} onChange={event => props.output(event)}
@@ -67,6 +67,7 @@ function Stands(props) {
           ))}
         </select>
       </div>
+      <div className="Check"/>
     </div>
   )
 }

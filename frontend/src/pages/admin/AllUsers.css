@@ -1,20 +1,29 @@
 .AllUsers{
   min-height: calc(100vh - var(--height-header));
+  background-color: var(--color-primary-2);
 }
 .AllUsers .Menu{
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  padding: 4px 10px;
+  background-color: var(--color-primary-1);
+}
+.AllUsers .Menu h2{
+  margin: 8px 10px 0;
 }
 .AllUsers .Filter{
   height: 24px;
+  margin: 5px 8px 2px;
   display: flex;
 }
+.AllUsers .Filter h3{
+  padding: 0 6px;
+}
+
 .AllUsers .Main{
   display: flex;
   padding: 2px 8px;
-  background-color: var(--color-primary-1);
+  background-color: var(--color-primary-2);
 }
 .AllUsers .Main ul{
   width: 100%;
@@ -25,8 +34,13 @@
   width: 100%;
   margin: 2px 0;
   display: flex;
+  border-radius: 6px;
   justify-content: space-between;
-  background-color: var(--color-primary-2);
+  background-color: var(--color-primary-3);
+}
+.AllUsers .Main li#header{
+  padding: 2px 0;
+  background-color: var(--color-primary-4);
 }
 .AllUsers .Main p{
   padding: 0 2px;
@@ -35,6 +49,7 @@
 }
 .AllUsers .Main p#userID{
   flex: 1;
+  padding: 0 2px 0 8px;
   min-width: 30px;
 }
 .AllUsers .Main p#username{

@@ -1,33 +1,44 @@
 .Cards{
   min-height: calc(100vh - var(--height-header));
+  background-color: var(--color-primary-2);
 }
 .Cards .Menu{
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  padding: 4px 10px;
+  background-color: var(--color-primary-1);
+}
+.Cards .Menu h2{
+  margin: 10px 10px 0;
 }
 .Cards .Filter{
   height: 24px;
+  margin: 5px 8px;
   display: flex;
+}
+.Cards .Filter h3{
+  padding: 0 6px;
 }
 .Cards .Actions{
   display: flex;
   justify-content: space-between;
-  margin: 3px 12px;
+  align-items: center;
+  background-color: var(--color-primary-1);
 }
 .Cards .Actions button{
   display: flex;
-  margin: 0 10px;
+  align-items: center;
+  margin: 5px 10px;
   padding: 5px 12px;
   border: none;
   border-radius: 8px;
+  background-color: var(--color-secundary-1);
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
 }
 .Cards .Main{
   display: flex;
   padding: 2px 8px;
-  background-color: var(--color-primary-1);
+  background-color: var(--color-primary-2);
 }
 .Cards .Main ul{
   width: 100%;
@@ -39,7 +50,12 @@
   margin: 2px 0;
   display: flex;
   justify-content: space-between;
-  background-color: var(--color-primary-2);
+  border-radius: 6px;
+  background-color: var(--color-primary-3);
+}
+.Cards .Main li#header{
+  padding: 2px 0;
+  background-color: var(--color-primary-4);
 }
 .Cards .Main p{
   padding: 0 2px;
@@ -48,6 +64,7 @@
 }
 .Cards .Main p#cardcode{
   flex: 2;
+  padding: 0 2px 0 8px;
   min-width: 140px;
 }
 .Cards .Main p#debit{
@@ -75,7 +92,7 @@
   background-color: var(--color-gray-100);
 }
 .Cards .Newcard.valid{
-  background-color: var(--color-primary-6);
+  background-color: var(--color-card);
 }
 .Cards .Newcard.valid input{
   background-color: transparent;
@@ -93,11 +110,15 @@
   border: none;
   width: 95px;
 }
+.Newcard span{
+  color:red;
+}
 .Newcard button#createcard{
   display: flex;
   margin: 0 10px;
   padding: 5px 12px;
   border: none;
   border-radius: 8px;
+  background-color: var(--color-secundary-1);
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
 }

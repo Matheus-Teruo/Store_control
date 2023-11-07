@@ -86,9 +86,9 @@ function AllUsers() {
   return (
     <div className="AllUsers">
       <div className="Menu">
-        <h1>Usuários</h1>
+        <h2>Usuários</h2>
         <div className="Filter">
-          <h3>filtro</h3>
+          <h3>Filtro</h3>
           <select value={filter} onChange={event => setFilter(parseInt(event.target.value))} id="filter" name="filter">
             <option value={0}>Todos</option>
             {stands.map((stand) => (
@@ -99,7 +99,7 @@ function AllUsers() {
       </div>
       <div className="Main">
         <ul>
-          <li><p id="userID">ID</p><p id="username">Usuário</p><p id="fullname">Nome</p><div className="AStand">Estande</div><p id="superuser">Admin</p></li>
+          <li id="header"><p id="userID">ID</p><p id="username">Usuário</p><p id="fullname">Nome</p><div className="AStand">Estande</div><p id="superuser">Admin</p></li>
           {users.length !== 0 && users.filter(user => {
             if (filter === 0){
               return true;

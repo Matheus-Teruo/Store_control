@@ -1,7 +1,7 @@
 import './Cards.css'
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { Play, Pause } from 'react-feather';
+import { Plus, Play, Pause } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import QRcodeScanner from '../main/inputs/QRcodeScanner';
 import Code from './inputs/Code';
@@ -81,10 +81,10 @@ function Cards() {
   return (
     <div className="Cards">
       <div className="Menu">
-        <h1>Cartões</h1>
+        <h2>Cartões</h2>
       </div>
       <div className="Actions">
-        <button onClick={() => {setShowCard(true)}}>Registrar cartão</button>
+        <button onClick={() => {setShowCard(true)}}><Plus/><p>Cartão</p></button>
         <div className="Filter">
           <h3>Filtro</h3>
           <select value={filter} onChange={event => setFilter(event.target.value)} id="filter" name="filter">
@@ -96,7 +96,7 @@ function Cards() {
       </div>
       <div className="Main">
         <ul>
-          <li><p id="cardcode">Código do Cartão</p><p id="debit">Débito</p><p id="in_use">Em uso</p></li>
+          <li id="header"><p id="cardcode">Código do Cartão</p><p id="debit">Débito</p><p id="in_use">Em uso</p></li>
           {cards.length !== 0 &&
           cards.filter(item => {
             if (filter === "1"){
@@ -128,8 +128,8 @@ function Cards() {
           dupliValue={alreadyUsed}
           valid={(value) => setCheck(value)}/>
         </div>
-        {alreadyUsed === newCardID && (newCardID.toString().length === 12) && <p>Cartão {newCardID} já utilizado</p>}
-        <button id="createcard" onClick={() => (SubmitNewCard())} disabled={check ? false : true}>Criar Cartões</button>
+        {alreadyUsed === newCardID && (newCardID.toString().length === 12) && <><p>Cartão</p><span>{newCardID}</span><p>já registrado</p></>}
+        <button id="createcard" onClick={() => (SubmitNewCard())} disabled={check ? false : true}>Criar</button>
       </div>
       </>
       }

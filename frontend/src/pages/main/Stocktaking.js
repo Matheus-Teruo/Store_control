@@ -246,7 +246,7 @@ function Stocktaking() {
           <button onClick={() => {setShowItem(true)}}><Plus size="24"/></button>
           {auth.user.superuser === 1 &&
             <div className="Filtro">
-              <h3>filtro </h3>
+              <h3>Filtro </h3>
               <select value={filter} onChange={event => setFilter(parseInt(event.target.value))} id="filter" name="filter">
                 <option key={0} value={0}>Todos</option>
                 {stands.length !== 0 && stands.filter(item => item.standID !== 1).map((element) =>  (
