@@ -1,3 +1,15 @@
+.ST_background{
+  display: flex;
+  min-height: calc(100vh - var(--height-header));
+  background-color: var(--color-primary-2);
+  flex-direction: column;
+}
+.ST_Header{
+  background-color: var(--color-primary-1);
+}
+.ST_Header h2{
+  padding: 10px 10px 0;
+}
 .ST_Menu{
   display: flex;
   align-items: center;
@@ -5,10 +17,11 @@
 }
 .ST_Menu button{
   display: flex;
-  margin: 5px 8px;
+  margin: 5px 10px;
   padding: 5px 12px;
   border: none;
   border-radius: 8px;
+  background-color: var(--color-secundary-1);
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
 }
 
@@ -19,17 +32,24 @@
   justify-content: space-between;
 }
 
+.ST_Menu .Filtro h3{
+  padding: 0 6px;
+}
+.ST_Main{
+  height: calc(100vh -(var(--height-header)) -96px);
+}
+
 .ST_Main ul{
   display: flex;
   flex-direction: column;
-  background-color: var(--color-gray-100);
+  background-color: var(--color-primary-2);
 }
 .ST_Main li{
   margin: 2px 6px;
   padding: 3px 8px;
   display: flex;
   align-items: center;
-  background-color: var(--color-primary-2);
+  background-color: var(--color-primary-3);
 }
 .ST_Main li .ImageIcon{
   display: flex;
@@ -99,6 +119,7 @@
   padding: 5px 12px;
   border: none;
   border-radius: 8px;
+  background-color: var(--color-secundary-1);
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
 }
 

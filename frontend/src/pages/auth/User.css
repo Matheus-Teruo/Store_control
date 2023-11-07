@@ -3,13 +3,19 @@
   min-height: calc(100vh - var(--height-header));
   display: flex;
   flex-direction: column;
-  background-color: var(--color-gray-100);
+  justify-content: center;
+  background-color: var(--color-primary-1);
 }
 
 .UserPage .Main{
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: calc(100% - 10px);
+  padding-bottom: 20px;
+  margin: -80px 5px 0;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 2px 3px 4px 2px rgba(4, 80, 113, 0.25);
 }
 .UserPage .Main button{
   border: none;
@@ -105,11 +111,18 @@
 }
 .UserPage .UserMenu .LogoutConfirm{
   display: flex;
+  align-items: center;
+  background-color: var(--color-secundary-1);
+  margin: 0 10px;
+  border-radius: 10px;
+  padding: 0 4px;
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
 }
 .UserPage .UserMenu .LogoutConfirm p{
   display: flex;
   align-items: center;
-  margin: 0 10px;
+  margin: 0 8px;
+  font-size: 14px;
 }
 .UserPage .UserMenu button{
   height: 31px;
@@ -119,6 +132,11 @@
   margin: 0 10px;
   border: none;
   border-radius: 10px;
-  background: var(--color-primary-5);
+  background: var(--color-secundary-1);
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+.UserPage .UserMenu .LogoutConfirm button{
+  padding: 2px 8px;
+  height: 26px;
+  background: var(--color-secundary-2);
 }

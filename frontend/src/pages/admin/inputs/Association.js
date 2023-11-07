@@ -58,7 +58,7 @@ function Association(props) {
   }, [props.association])
   
   useEffect(() => {  // Principal conditions logic
-    if (props.principal.trim().length > 2 && props.association.trim().length < 30) {  // Check min number of char
+    if (props.principal.trim().length > 2 && props.principal.trim().length < 30) {  // Check min number of char
       setP_Check(P_Check => ({...P_Check, haveMinChar: true})
     )} else {
       setP_Check(P_Check => ({...P_Check, haveMinChar: false})

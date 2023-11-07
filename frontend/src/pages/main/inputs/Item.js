@@ -27,7 +27,7 @@ function Item(props) {
   }, [I_Check, P_Check, S_Check, props.item, props.dupliValue])
 
   useEffect(() => {  // Name conditions logic
-    if (props.item.trim().length > 2 && props.stand.trim().length < 30) {  // Check min number of char
+    if (props.item.trim().length > 2 && props.item.trim().length < 30) {  // Check min number of char
       setI_Check(I_Check => ({...I_Check, haveMinChar: true})
     )} else {
       setI_Check(I_Check => ({...I_Check, haveMinChar: false})
