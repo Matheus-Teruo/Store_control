@@ -36,6 +36,7 @@ function Home() {
         <h1 className="Title">
           Store Control
         </h1>
+        <img src={Logo} alt="Logo"/>
         <div className="Main">
           <div className="Subtitle">
             <h2>Funções</h2>
@@ -65,12 +66,12 @@ function Home() {
             }
           </div>
           {(user.standID !== null && user.standID !== 1) || user.superuser === 1 ? 
-          <Link className="Stocktaking" to="/stocktaking">
+          <Link className="Frame2" to="/stocktaking">
             <Package alt="Stock"/>
             <p>Inventário</p>
           </Link>
           :
-          <div className="Stocktaking invalid">
+          <div className="Frame2 invalid">
             <Package alt="Stock"/>
             <p>Inventário</p>
           </div>

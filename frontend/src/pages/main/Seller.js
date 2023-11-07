@@ -248,7 +248,7 @@ function Seller() {
           <div className={`SellerTitle ${!showCard && animation? "animation" : ""}`}>
             <h2>Estande: {stand.stand}</h2>
             {!showCard &&
-              <div className={`SellerCardCompact ${animation? "animation" : ""}`}>
+              <div className={`SellerCardCompact ${(check.card === true && cardBalance === "invalid")? "noUse" : "" } ${animation? "animation" : ""}`}>
                 <button onClick={() => {setShowCard(true); setAnimation(true)}}><CreditCard/></button>
               </div>
             }
@@ -334,7 +334,7 @@ function Seller() {
       <>
       <div className="BlackBackground" onClick={() => setConfirmPurchase(false)}/>
       <div className="SellerPurchase">
-        <h2>Finalizar Compra</h2>
+        <h3>Finalizar Compra</h3>
         <div className={`SellerCardMini  ${(check.card === true && cardBalance === "invalid")? "noUse" : ""}`}>
           <div  className="SellerCardMiniCode">
             <button onClick={() => setShowScanner(true)}><Barcode/></button>
@@ -391,8 +391,9 @@ function Seller() {
       <>
       <div className="BlackBackground" onClick={() => setShowLastSales(false)}/>
       <div className="SellerLastSales">
-        <h2>Histórico de compra</h2>
-        <p>Identifique o cartão da última compra</p>
+        <h3>Histórico de compra</h3>
+        <p>Para desfazer ultima compra</p>
+        <p>identifique o cartão</p>
         <div className={`SellerCardMini  ${(check.card === true && cardBalance === "invalid")? "noUse" : ""}`}>
           <div  className="SellerCardMiniCode">
             <button onClick={() => setShowScanner(true)}><Barcode/></button>

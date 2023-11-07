@@ -289,11 +289,11 @@ function UserPage() {
         }
         {!confirmLogout ?
         <button onClick={() => setConfirmLogout(true)}>
-          Log out
+          Logout
         </button>
         :
         <div className="LogoutConfirm">
-          <p>Log out</p>
+          <p>Logout</p>
           <button  onClick={() => setConfirmLogout(false)}>
             <X/>
           </button>

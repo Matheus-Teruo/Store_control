@@ -3,25 +3,32 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--color-gray-100);
+  background-color: var(--color-grey-100);
 }
 .Home_Logged .Title{
-  padding: 5px 0 15px 0;
+  padding: 5px 0 5px 0;
+  color: var(--color-font-4);
+}
+.Home_Logged img{
+  height: 25vh;
+  padding-bottom: 16px;
 }
 .Home_Logged .Main{
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: var(--color-primary-1);
 }
 .Home_Logged .Subtitle{
   width: 100%;
   display: flex;
   justify-content: flex-start;
-  background-color: var(--color-primary-1);
+  background-color: var(--color-secundary-2);
 }
 .Home_Logged .Subtitle h2{
   padding: 5px 15px;
+  color: var(--color-font-3);
 }
 .Home_Logged .Section{
   width: 92%;
@@ -35,7 +42,7 @@
   justify-content: center;
   text-decoration: none;
 }
-.Home_Logged .Stocktaking{
+.Home_Logged .Frame2{
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -67,11 +74,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: var(--color-primary-5);
+  background: var(--color-secundary-1);
 }
 .Home_Unlogged .Title {
   margin: 68px 0 10px;
-  color: var(--color-font-2);
+  color: var(--color-font-3);
 }
 
 .Home_Unlogged img{
@@ -118,14 +125,14 @@
     width: 42%;
     aspect-ratio: 1/1;
     border-radius: 10px;
-    background-color: var(--color-primary-3);
+    background-color: var(--color-primary-4);
   }
-  .Home_Logged .Stocktaking{
+  .Home_Logged .Frame2{
     width: 92%;
     aspect-ratio: 3;
     margin: 4vw 0;
     border-radius: 10px;
-    background-color: var(--color-primary-3);
+    background-color: var(--color-primary-4);
   }
   .Home_Logged .Admin{
     width: 92%;
@@ -135,12 +142,24 @@
     width: 100%;
     aspect-ratio: 3;
     border-radius: 10px;
-    background-color: var(--color-primary-3);
+    background-color: var(--color-primary-4);
   }
   .Home_Logged .Frame4{
     width: 30%;
     aspect-ratio: 1/1;
     border-radius: 10px;
+    background-color: var(--color-primary-4);
+  }
+  .Home_Logged .Frame1 svg,.Home_Logged .Frame1 p,
+  .Home_Logged .Frame2 svg,.Home_Logged .Frame2 p,
+  .Home_Logged .Frame3 svg,.Home_Logged .Frame3 p,
+  .Home_Logged .Frame4 svg,.Home_Logged .Frame4 p{
+    color: var(--color-font-2);
+  }
+  .Home_Logged .invalid{
     background-color: var(--color-primary-3);
+  }
+  .Home_Logged .invalid svg,.Home_Logged .invalid p{
+    color: var(--color-font-2-5);
   }
 }

@@ -152,14 +152,13 @@ function Cashier() {
     }))
   }, [selectedID, allItems])
 
-  useEffect(() => {
+  useEffect(() => {  // Check card
     if (card.length === 12){
       setCheck(check => ({...check, card: true}));
       SubmitCardCheck();
     }
   }, [card])
   
-
   useEffect(() => {  // Sum the total auxiliary
     const subtotal = cart.reduce((accumulator, element) => {
       return accumulator + (element.price * element.amount);
@@ -310,16 +309,16 @@ function Cashier() {
             </div>
           </div>
           :
-          <div className={`CashierCardCompact`}>
+          <div className={`CashierCardCompact ${(check.card === true && cardBalance === "invalid")? "noUse" : "" }`}>
             <button onClick={() => {setShowCard(true); setAnimation(true)}}><CreditCard/></button>
           </div>
           }
           {stands.length === 0 ?
-          <div>Nenhum estande no banco de dados</div>
+          <div className="CashierStandsEmpty"><p>Nenhum estande no banco de dados</p></div>
           :
           <ul>
             {stands.map((stand) => (
-              <li key={stand.standID} onClick={() => setSelectedID(stand.standID)}>
+              <li className={`CashierStand${stand.standID === selectedID ? " Selected" : ""}`} key={stand.standID} onClick={() => setSelectedID(stand.standID)}>
                 {stand.stand}
               </li>
             ))}
@@ -338,9 +337,9 @@ function Cashier() {
             ))}
           </ul>
           :
-          <div>Nenhum item no estande</div>)
+          <div className="CashierItemsEmpty"><p>Nenhum item no estande</p></div>)
           :
-          <div>Selecione um estande</div>
+          <div className="CashierItemsEmpty"><p>Selecione um estande</p></div>
           }
         </div>
       </div>

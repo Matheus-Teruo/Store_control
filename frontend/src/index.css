@@ -42,23 +42,26 @@ body {
   --color-gray-800: #31302e;
   --color-gray-900: #1f1d1b;
 
-  --color-primary-1: #fcd8af;
-  --color-primary-2: #fec49b;
-  --color-primary-3: #fe9b91;
-  --color-primary-4: #fd6084;
-  --color-primary-5: #9BC1D1;
-  --color-primary-6: #fd8bc3;
+  --color-primary-1: #fef8f3;
+  --color-primary-2: #e3d2c3;
+  --color-primary-3: #ffb9b3;
+  --color-primary-4: #ff8a78;
+  --color-secundary-1: #AAC8F0;
+  --color-secundary-2: #80A6D9;
+  --color-secundary-3: #425670;
+  --color-card: #fa6b54;
+  --color-cardInv: #d19a94;
 
-  --color-correct-1: #9cd6a7;
+  --color-correct-1: #c0efd2;
   --color-correct-2: #e7ede6;
-  --color-incorrect-1: #dca2b7;
+  --color-incorrect-1: #d886a4;
   --color-incorrect-2: #f2e0df;
 
   --color-font-1: #045071;
-  --color-font-2: #021929;
-  --color-font-3: #045071;
-  --color-font-4: #045071;
-  --color-font-5: #045071;
+  --color-font-2: #43140d;
+  --color-font-2-5: #491f19A0;
+  --color-font-3: #041c2c;
+  --color-font-4: #384252;
 
   --height-header: 8vh;
 }
@@ -165,7 +168,6 @@ input#price::-webkit-outer-spin-button{
     bottom: 0;
     width: 100%;
     border-radius: 6px;
-    background-color: var(--color-primary-6);
   }
   65% {
     opacity: 100%;
@@ -174,7 +176,6 @@ input#price::-webkit-outer-spin-button{
     bottom: 0;
     width: 100%;
     border-radius: 10px;
-    background-color: var(--color-primary-6);
   }
   100% {
     opacity: 0%;
@@ -183,7 +184,6 @@ input#price::-webkit-outer-spin-button{
     bottom: 0;
     width: 100%;
     border-radius: 10px;
-    background-color: var(--color-primary-6);
   }
 }
 
@@ -195,7 +195,6 @@ input#price::-webkit-outer-spin-button{
     bottom: 0;
     width: 100%;
     border-radius: 10px;
-    background-color: var(--color-primary-6);
   }
   65% {
     opacity: 100%;
@@ -204,7 +203,6 @@ input#price::-webkit-outer-spin-button{
     bottom: 0;
     width: 100%;
     border-radius: 6px;
-    background-color: var(--color-primary-6);
   }
   100% {
     opacity: 0%;
@@ -213,6 +211,5 @@ input#price::-webkit-outer-spin-button{
     bottom: 0;
     width: 100%;
     border-radius: 6px;
-    background-color: var(--color-primary-6);
   }
 }

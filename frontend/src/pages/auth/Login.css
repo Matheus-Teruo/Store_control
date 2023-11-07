@@ -1,6 +1,6 @@
 .L_background {
   width: 100%;
-  background: var(--color-primary-5);
+  background: var(--color-secundary-1);
   min-height: calc(100vh - var(--height-header));
   display: flex;
   flex-direction: column;
@@ -37,10 +37,10 @@
   padding: 0 6px;
 }
 .LoginInput.focused{
-  border-color: var(--color-primary-5);
+  border-color: var(--color-secundary-1);
 }
 .LoginInput.focused label{
-  color: var(--color-primary-5);
+  color: var(--color-secundary-1);
 }
 .LoginInput.unfocOK{
   border-color: var(--color-correct-1);
@@ -72,7 +72,7 @@
 }
 
 .LoginInput input:focus{
-  color: var(--color-primary-5);
+  color: var(--color-secundary-1);
 }
 .LoginInput.unfocOK input{
   color: var(--color-correct-1);
@@ -92,7 +92,7 @@
   padding: 5px 12px;
   border: none;
   border-radius: 10px;
-  background: var(--color-primary-5);
+  background: var(--color-secundary-1);
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
 }
 .L_submit p{
