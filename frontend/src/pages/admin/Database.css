@@ -1,28 +1,36 @@
 .Database{
   min-height: calc(100vh - var(--height-header));
+  background-color: var(--color-primary-2);
 }
+
 .Database .Menu{
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 4px 10px;
+  background-color: var(--color-primary-1);
 }
+.Database .Menu h2{
+  margin: 10px 10px 0;
+}
+
 .Database .Actions{
   display: flex;
 }
 .Database .Menu button{
   display: flex;
-  margin: 0 5px;
+  align-items: center;
+  margin: 5px 10px;
   padding: 5px 12px;
   border: none;
   border-radius: 8px;
+  background-color: var(--color-secundary-1);
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
 }
 
 .Database .Main{
   display: flex;
   padding: 2px 8px;
-  background-color: var(--color-primary-1);
+  background-color: var(--color-primary-2);
 }
 .Database .Main ul.ulAssociation{
   width: 100%;
@@ -38,7 +46,7 @@
   margin: 2px 0;
   display: flex;
   justify-content: space-between;
-  background-color: var(--color-primary-2);
+  background-color: var(--color-primary-4);
 }
 .Database .Main p{
   padding: 0 2px;
@@ -47,10 +55,15 @@
 }
 .Database .Main p#association{
   flex: 2;
+  display: flex;
+  padding: 0 2px 0 8px;
+  align-items: center;
   min-width: 80px;
 }
 .Database .Main p#principal{
   flex: 2;
+  display: flex;
+  align-items: center;
   min-width: 70px;
 }
 .Database .Main .ulStands{
@@ -63,11 +76,14 @@
 }
 .Database .Main .ulStands button{
   display: flex;
-  margin: 0 5px;
-  padding: 2px 12px;
+  justify-content: center;
+  width: 100%;
+  margin: 3px 0;
+  padding: 5px 12px;
   border: none;
-  border-radius: 8px;
-  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+  border-radius: 5px;
+  background-color: var(--color-secundary-1);
+  /* box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25); */
 }
 .Database .Main li.liStands{
   width: 100%;
@@ -98,11 +114,22 @@
   display: flex;
   padding: 8px;
 }
+.NewEditAssociation .Inputs{
+  width: 80%;
+}
 
 .NewEditAssociation .Association{
   display: flex;
+  width: 100%;
   align-items: center;
 }
+
+.NewEditAssociation .Inputs input{
+  width: 100%;
+  margin-left: 2px;
+  padding: 0 4px;
+}
+
 .NewEditAssociation .Principal{
   display: flex;
   align-items: center;
@@ -110,7 +137,7 @@
 .NewEditAssociation .Check{
   display: flex;
   flex-direction: column;
-  padding: 2px 10px;
+  padding: 1px 0 10px 24px;
 }
 .NewEditAssociation .Check span{
   color: red;
@@ -123,6 +150,7 @@
   padding: 8px 12px;
   border: none;
   border-radius: 8px;
+  background-color: var(--color-secundary-1);
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
 }
 
@@ -152,6 +180,9 @@
   padding: 8px;
 }
 
+.NewEditStand .Inputs{
+  width: 80%;
+}
 .NewEditStand .Stand{
   display: flex;
   align-items: center;
@@ -160,10 +191,17 @@
   display: flex;
   align-items: center;
 }
+
+.NewEditStand .Inputs input{
+  width: 100%;
+  margin-left: 2px;
+  padding: 0 4px;
+}
+
 .NewEditStand .Check{
   display: flex;
   flex-direction: column;
-  padding: 2px 10px;
+  padding: 1px 0 10px 24px;
 }
 .NewEditStand .Check span{
   color: red;
@@ -176,6 +214,7 @@
   padding: 8px 12px;
   border: none;
   border-radius: 8px;
+  background-color: var(--color-secundary-1);
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
 }
 

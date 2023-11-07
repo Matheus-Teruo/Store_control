@@ -78,7 +78,7 @@ function Association(props) {
   }, [props.principal])
 
   return (
-    <div>
+    <div className="Inputs">
       <div className="Association">
         <label><Flag/></label>
         <input value={props.association} onChange={event => props.output(event)}

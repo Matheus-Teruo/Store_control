@@ -1,5 +1,6 @@
 import './Database.css'
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react';
+import { Plus } from 'react-feather';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../../store/auth_context';
 import Association from './inputs/Association';
@@ -222,10 +223,10 @@ function Database() {
   return (
     <div className="Database">
       <div className="Menu">
-        <h1>Associações e estandes</h1>
+        <h2>Associações e estandes</h2>
         <div className="Actions">
-          <button onClick={() => {setShowAssociation(true); setEdit(""); setNewAssociation(""); setNewPrincipal("")}}>Registrar Associação</button>
-          <button onClick={() => {setShowStand(true); setEdit(""); setNewStand(""); setNewAssociationID(0)}}>Novo Estande</button>
+          <button onClick={() => {setShowAssociation(true); setEdit(""); setNewAssociation(""); setNewPrincipal("")}}><Plus/><p>Associação</p></button>
+          <button onClick={() => {setShowStand(true); setEdit(""); setNewStand(""); setNewAssociationID(0)}}><Plus/><p>Estande</p></button>
         </div>
       </div>
       <div className="Main">
@@ -277,12 +278,12 @@ function Database() {
       <div className="NewEditAssociation">
         {edit === "association" ?
         <div className="Title">
-          <h2>Editar kenjinkai:</h2>
-          <h2>{associations.filter(item => item.associationID === newAssociationID)[0].association}</h2>
+          <h3>Editar associação:</h3>
+          <h3>{associations.filter(item => item.associationID === newAssociationID)[0].association}</h3>
         </div>
         : 
         <div className="Title"> 
-          <h2>Criar kenjinkai</h2>
+          <h3>Criar associação</h3>
         </div>
         }
         <Association
@@ -294,11 +295,11 @@ function Database() {
         <div className="Footer">
         {edit === "association" ?
         <>
-          <button onClick={() => (setConfirmDel(true))}>Excluir kenjinkai</button>
-          <button onClick={() => (SubmitEditAssociation())} disabled={check.association ? false : true}>Editar kenjinkai</button>
+          <button onClick={() => (setConfirmDel(true))}>Excluir</button>
+          <button onClick={() => (SubmitEditAssociation())} disabled={check.association ? false : true}>Editar</button>
         </>
         :
-          <button onClick={() => {SubmitNewAssociation()}} disabled={check.association ? false : true}>Registrar</button>
+          <button onClick={() => {SubmitNewAssociation()}} disabled={check.association ? false : true}>Criar</button>
         }
         </div>
       </div>
@@ -311,12 +312,12 @@ function Database() {
       <div className="NewEditStand">
         {edit === "stand" ?
           <div className="Title">
-            <h2>Editar estande:</h2>
-            <h2>{stands.filter(item => item.standID === standID)[0].stand}</h2>
+            <h3>Editar estande:</h3>
+            <h3>{stands.filter(item => item.standID === standID)[0].stand}</h3>
           </div>
         :
           <div className="Title">
-            <h2>Criar estande</h2>
+            <h3>Criar estande</h3>
           </div>
         }
         <Stand
@@ -329,11 +330,11 @@ function Database() {
         <div className="Footer">
         {edit === "stand" ?
         <>
-          <button onClick={() => (setConfirmDel(true))}>Excluir Estande</button>
-          <button onClick={() => (SubmitEditStand())} disabled={check.stand ? false : true}>Editar Estande</button>
+          <button onClick={() => (setConfirmDel(true))}>Excluir</button>
+          <button onClick={() => (SubmitEditStand())} disabled={check.stand ? false : true}>Editar</button>
         </>
         :
-          <button onClick={() => (SubmitNewStand())} disabled={check.stand ? false : true}>Criar Estande</button>
+          <button onClick={() => (SubmitNewStand())} disabled={check.stand ? false : true}>Criar</button>
         }
         </div>
       </div>
@@ -345,11 +346,11 @@ function Database() {
       <div className="BlackBackgroundScanner" onClick={() => setConfirmDel(false)}/>
       <div className="ConfirmDelete">
         <div className="Title">
-          <h2>Excluir: {edit === "association" ?
+          <h3>Excluir: {edit === "association" ?
             <>Kenjinkai {associations.filter(item => item.associationID === newAssociationID)[0].association}</>
           : edit === "stand" &&
             <>Estande {stands.filter(item => item.standID === standID)[0].stand}</>}
-          </h2>
+          </h3>
         </div>
         <div className="Footer">
           <button onClick={() => (setConfirmDel(false))}>Cancelar</button>
