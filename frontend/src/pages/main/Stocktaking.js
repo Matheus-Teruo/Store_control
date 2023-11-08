@@ -102,7 +102,7 @@ function Stocktaking() {
   }
 
   async function SubmitNewItem() {  // Submit new item
-    if (stand.standID > 1) {
+    if (stand.standID > 2) {
       var resStatus;
       fetch('/api/newitem', {
         method: "POST", headers: {'Content-Type': 'application/json'},
@@ -242,20 +242,20 @@ function Stocktaking() {
         :
           <h2>Inventário: {stand.stand}</h2>
         }
+        {auth.user.superuser === 1 &&
         <div className="ST_Menu">
           <button onClick={() => {setShowItem(true)}}><Plus size="24"/></button>
-          {auth.user.superuser === 1 &&
             <div className="Filtro">
               <h3>Filtro </h3>
               <select value={filter} onChange={event => setFilter(parseInt(event.target.value))} id="filter" name="filter">
                 <option key={0} value={0}>Todos</option>
-                {stands.length !== 0 && stands.filter(item => item.standID !== 1).map((element) =>  (
+                {stands.length !== 0 && stands.filter(item => item.standID > 2).map((element) =>  (
                   <option key={element.standID} value={element.standID}>{element.stand}</option>
                 ))}
               </select>
             </div>
-          }
         </div>
+        }
       </div>
       <div className="ST_Main">
         <ul>
@@ -296,12 +296,7 @@ function Stocktaking() {
           :
           <li><p>Nenhum Item</p></li> )
           : (items.length !== 0 ? (items.map((item) => (
-            <li key={item.itemID} onClick={() => {
-              setItemID(item.itemID);
-              setShowItem(true); setEdit(true);
-              setNewItem(item.item);
-              setNewPrice(item.price.toFixed(2));
-              setNewStock(parseInt(item.stock))}}>
+            <li key={item.itemID}>
               {item.item_img !== null ?
                 <img alt={item.item} src={`/api/itemimages/${item.itemID}.${item.item_img}`}/>
               :
@@ -358,7 +353,8 @@ function Stocktaking() {
               associations={associations}
               stands={stands}
               valid={(value) => setCheck(check => ({...check, standID: value}))}
-              defaultValue={stand.standID}/>
+              defaultValue={stand.standID}
+              noCashier={true}/>
           }
           {!edit ?
             <button onClick={() => (SubmitNewItem())} disabled={check.item && check.standID ? false : true}>Confirmar</button>

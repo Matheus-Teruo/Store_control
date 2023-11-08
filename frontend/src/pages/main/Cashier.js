@@ -79,7 +79,7 @@ function Cashier() {
           if (resStatus === 200){
             RequestLists()
             setRecharge(0); setShowCard(true);
-            setConfirmRecharge(false); setCheck({recharge: false, card: false})
+            setConfirmRecharge(false);
             SubmitCardCheck()
             return setTimeout(() => {
               setCard("");
@@ -110,7 +110,7 @@ function Cashier() {
           if (resStatus === 200){
             RequestLists()
             setRecharge(0); setShowCard(true);
-            setConfirmReset(false); setCheck({recharge: false, card: false}); setCardBalance(0)
+            setConfirmReset(false); setCardBalance(0)
             return setTimeout(() => {
               setShowCard(false);
               setCard("")
@@ -422,7 +422,8 @@ function Cashier() {
         <div className="CashierRechargeFooter">
           <p>Recarregar</p>
           <p id="recharge"><DollarSign size={20}/>{parseFloat(recharge).toFixed(2)}</p>
-          <Payment 
+          <Payment
+            input={payment}
             output={(value) => setPayment(value)}/>
           <div className="CashierRechargeFooterButtons">
             <button onClick={() => setConfirmRecharge(false)}>Cancelar</button>

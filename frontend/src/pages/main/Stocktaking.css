@@ -35,6 +35,13 @@
 .ST_Menu .Filtro h3{
   padding: 0 6px;
 }
+
+.ST_Menu select#filter{
+  height: 22px;
+  border-radius: 4px;
+  padding: 0 4px;
+}
+
 .ST_Main{
   height: calc(100vh -(var(--height-header)) -96px);
 }
@@ -113,6 +120,7 @@
   justify-content: center;
   background-color: white;
 }
+
 .ST_NewItem button{
   display: flex;
   margin: 5px 8px;
@@ -121,6 +129,17 @@
   border-radius: 8px;
   background-color: var(--color-secundary-1);
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+
+.ST_NewItem .Inputs{
+  width: 80%;
+}
+.ST_NewItem .Inputs input{
+  width: 100%;
+  height: 22px;
+  border-radius: 4px;
+  margin-left: 2px;
+  padding: 0 4px;
 }
 
 .ST_NewItem .Item{
@@ -163,6 +182,14 @@
 
 .ST_NewItem .ImageInput{
   display: flex;
+}
+
+.ST_NewItem .Select select{
+  min-width: 70px;
+  height: 22px;
+  border-radius: 4px;
+  margin: 2px;
+  padding: 0 4px;
 }
 
 .ST_CropImage{

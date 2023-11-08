@@ -57,7 +57,7 @@ function Item(props) {
   }, [props.stock])
   
   return (
-    <div>
+    <div className="Inputs">
       <div className="Item">
         <label id="item"><Tag/></label>
         <input value={props.item} onChange={event => props.output(event)} id="item" type="text" name="item" placeholder="Nome do item"/>

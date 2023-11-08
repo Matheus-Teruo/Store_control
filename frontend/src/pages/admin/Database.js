@@ -1,7 +1,7 @@
 import './Database.css'
 import React, { useState, useEffect, useContext } from 'react';
 import { Plus } from 'react-feather';
-import { useNavigate } from 'react-router-dom';
+import { Form ,useNavigate } from 'react-router-dom';
 import AuthContext from '../../store/auth_context';
 import Association from './inputs/Association';
 import Stand from './inputs/Stand';
@@ -50,7 +50,8 @@ function Database() {
       })
   }
     
-  async function SubmitNewAssociation() {  // Submit new association
+  async function SubmitNewAssociation(event) {  // Submit new association
+    event.preventDefault()
     if (auth.user.authenticated) {
       var resStatus;
       fetch("/api/newassociation", {  // Post form
@@ -77,7 +78,8 @@ function Database() {
     }
   }
 
-  async function SubmitEditAssociation() {  // Submite edit association
+  async function SubmitEditAssociation(event) {  // Submite edit association
+    event.preventDefault()
     if (auth.user.authenticated) {
       var resStatus;
       fetch("/api/editassociation", {  // Post form
@@ -105,7 +107,8 @@ function Database() {
     }
   }
 
-  async function SubmitDelAssociation() {  // Submit delete association
+  async function SubmitDelAssociation(event) {  // Submit delete association
+    event.preventDefault()
     if (auth.user.authenticated) {
       var resStatus;
       fetch("/api/delassociation", {  // Post form
@@ -127,7 +130,8 @@ function Database() {
     }
   }
 
-  async function SubmitNewStand() {  // Submit new stand
+  async function SubmitNewStand(event) {  // Submit new stand
+    event.preventDefault()
     if (auth.user.authenticated) {
       var resStatus;
       fetch("/api/newstand", {  // Post form
@@ -154,7 +158,8 @@ function Database() {
     }
   }
 
-  async function SubmitEditStand() {  // Submit edit stand
+  async function SubmitEditStand(event) {  // Submit edit stand
+    event.preventDefault()
     if (auth.user.authenticated) {
       var resStatus;
       fetch("/api/editstand", {  // Post form
@@ -182,7 +187,8 @@ function Database() {
     }
   }
 
-  async function SubmitDelStand() {  // Submit delete stand
+  async function SubmitDelStand(event) {  // Submit delete stand
+    event.preventDefault()
     if (auth.user.authenticated) {
       var resStatus;
       fetch("/api/delstand", {  // Post form
@@ -275,7 +281,7 @@ function Database() {
       {showAssociation &&
       <>
       <div className="BlackBackground" onClick={() => setShowAssociation(false)}/>
-      <div className="NewEditAssociation">
+      <Form className="NewEditAssociation" method="post">
         {edit === "association" ?
         <div className="Title">
           <h3>Editar associação:</h3>
@@ -296,20 +302,20 @@ function Database() {
         {edit === "association" ?
         <>
           <button onClick={() => (setConfirmDel(true))}>Excluir</button>
-          <button onClick={() => (SubmitEditAssociation())} disabled={check.association ? false : true}>Editar</button>
+          <button onClick={SubmitEditAssociation} disabled={check.association ? false : true} type="submit">Editar</button>
         </>
         :
-          <button onClick={() => {SubmitNewAssociation()}} disabled={check.association ? false : true}>Criar</button>
+          <button onClick={SubmitNewAssociation} disabled={check.association ? false : true} type="submit">Criar</button>
         }
         </div>
-      </div>
+      </Form>
       </>
       }
 
       {showStand &&
       <>
       <div className="BlackBackground" onClick={() => setShowStand(false)}/>
-      <div className="NewEditStand">
+      <Form className="NewEditStand" method="post">
         {edit === "stand" ?
           <div className="Title">
             <h3>Editar estande:</h3>
@@ -331,20 +337,20 @@ function Database() {
         {edit === "stand" ?
         <>
           <button onClick={() => (setConfirmDel(true))}>Excluir</button>
-          <button onClick={() => (SubmitEditStand())} disabled={check.stand ? false : true}>Editar</button>
+          <button onClick={SubmitEditStand} disabled={check.stand ? false : true} type="submit">Editar</button>
         </>
         :
-          <button onClick={() => (SubmitNewStand())} disabled={check.stand ? false : true}>Criar</button>
+          <button onClick={SubmitNewStand} disabled={check.stand ? false : true} type="submit">Criar</button>
         }
         </div>
-      </div>
+      </Form>
       </>
       }
 
       {confirmDel &&
       <>
       <div className="BlackBackgroundScanner" onClick={() => setConfirmDel(false)}/>
-      <div className="ConfirmDelete">
+      <Form className="ConfirmDelete" method="post">
         <div className="Title">
           <h3>Excluir: {edit === "association" ?
             <>Kenjinkai {associations.filter(item => item.associationID === newAssociationID)[0].association}</>
@@ -355,12 +361,12 @@ function Database() {
         <div className="Footer">
           <button onClick={() => (setConfirmDel(false))}>Cancelar</button>
           {edit === "association" ?
-            <button onClick={() => (SubmitDelAssociation())}>Excluir kenjinkai</button>
+            <button onClick={SubmitDelAssociation} type="submit">Excluir kenjinkai</button>
           : edit === "stand" &&
-            <button onClick={() => (SubmitDelStand())}>Excluir Estande</button>
+            <button onClick={SubmitDelStand} type="submit">Excluir Estande</button>
           }
         </div>
-      </div>
+      </Form>
       </>
       }
     </div>

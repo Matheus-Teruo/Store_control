@@ -1,7 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 function Payment(props) {
   const [payment, setPayment] = useState("cash")
+
+  useEffect(() => {
+    return setPayment(props.input)
+  }, [props.input])
 
   function handlePaymentChange(event) {
     props.output(event.target.value)

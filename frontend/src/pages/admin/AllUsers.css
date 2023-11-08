@@ -15,9 +15,15 @@
   height: 24px;
   margin: 5px 8px 2px;
   display: flex;
+  align-items: center;
 }
 .AllUsers .Filter h3{
   padding: 0 6px;
+}
+.AllUsers .Filter select{
+  height: 22px;
+  border-radius: 4px;
+  padding: 0 4px;
 }
 
 .AllUsers .Main{
@@ -60,12 +66,20 @@
   flex: 9;
   min-width: 80px;
 }
+
 .AllUsers .Main .AStand{
   flex: 3;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   min-width: 100px;
+}
+.AllUsers .Main .AStand select{
+  min-width: 70px;
+  height: 22px;
+  border-radius: 4px;
+  margin-left: 2px;
+  padding: 0 4px;
 }
 .AllUsers .Main .AStand button{
   margin: 0 2px;

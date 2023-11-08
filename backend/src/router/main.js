@@ -224,6 +224,7 @@ router.get("/listitems", (req, res) => {  // Request items and stands
     database('stands')
       .select("standID", "stand")
       .whereNot({standID: 1})
+      .whereNot({standID: 2})
       .then((rowsStands) => {
         if (rowsStands.length > 0){
           database('items')
@@ -649,13 +650,13 @@ router.post("/newitem", (req, res) => {  // Create new item
   if (!decoded) {
     return res.status(401).end();
   } else {
-    if (data.standID > 1) {
-      database('users')
-        .select('standID', 'username')
-        .where({userID: decoded.userID})
-        .then((rowsUsers) => {
-          const user = rowsUsers[0];
-          if (user.standID === data.standID || decoded.superuser === 1){
+    if (decoded.superuser === 1){
+      if (data.standID > 2) {
+        database('users')
+          .select('username')
+          .where({userID: decoded.userID})
+          .then((rowsUsers) => {
+            const user = rowsUsers[0];
             database('items')
               .insert(data)
               .then((rowsItems) => {
@@ -671,13 +672,13 @@ router.post("/newitem", (req, res) => {  // Create new item
                   return res.status(501).json({ error: {error}});
                 }
               })
-          } else {
-            return res.status(401).end();
-          }
-        })
+          })
+      } else {
+        return res.status(501).end();
+      }
     } else {
-      return res.status(501).end();
-    }
+      return res.status(501).json({message: "Not superuser"}); 
+    } 
   }
 })
 
@@ -687,13 +688,13 @@ router.post("/edititem", (req, res) => {  // Change item property
   if (!decoded) {
     return res.status(401).end();
   } else {
-    if (data.standID > 1) {
-      database('users')
-        .select('standID', 'username')
-        .where({userID: decoded.userID})
-        .then((rowsUsers) => {
-          const user = rowsUsers[0];
-          if (user.standID === data.standID || decoded.superuser === 1){
+    if (decoded.superuser === 1){
+      if (data.standID > 2) {
+        database('users')
+          .select('username')
+          .where({userID: decoded.userID})
+          .then((rowsUsers) => {
+            const user = rowsUsers[0];
             database('items')
               .where({itemID: data.itemID})
               .update({item: data.item, price: data.price, stock: data.stock})
@@ -710,15 +711,15 @@ router.post("/edititem", (req, res) => {  // Change item property
                   return res.status(501).json({ error: {error}});
                 }
               })
-          } else {
-            return res.status(401).json({message: "user are in diferent stand"}); 
-          }
-        })
-        .catch(error => {
-          return res.status(501).json({message: "user are in diferent stand, error table"}); 
-        })
+          })
+          .catch(error => {
+            return res.status(501).json({message: "user are in diferent stand, error table"}); 
+          })
+      } else {
+        return res.status(501).json({message: "stand 1 can't have items"});
+      }
     } else {
-      return res.status(501).json({message: "stand 1 can't have items"});
+      return res.status(501).json({message: "Not superuser"}); 
     }
   }
 })
@@ -728,13 +729,13 @@ router.post("/itemimageupload", uploadImage.single("imageItem"), (req, res) => {
   if (!decoded) {
     return res.status(401).end();
   } else {
-    if (req.body.standID > 1) {
-      database('users')
-        .select('standID', 'username')
-        .where({userID: decoded.userID})
-        .then((rowsUsers) => {
-          const user = rowsUsers[0];
-          if (user.standID === parseInt(req.body.standID) || decoded.superuser === 1){
+    if (decoded.superuser === 1){
+      if (req.body.standID > 2) {
+        database('users')
+          .select('username')
+          .where({userID: decoded.userID})
+          .then((rowsUsers) => {
+            const user = rowsUsers[0];
             const imageType = req.body.imageType.split("/")
             database('items')
               .where({itemID: req.body.imageName})
@@ -746,16 +747,16 @@ router.post("/itemimageupload", uploadImage.single("imageItem"), (req, res) => {
               .catch(error => {
                 return res.status(501).json({error: error});
               })
-          } else {
-            return res.status(401).json({message: "user are in diferent stand"}); 
-          }
-        })
-        .catch(error => {
-          return res.status(501).json({message: "user are in diferent stand, error table"}); 
-        })
+          })
+          .catch(error => {
+            return res.status(501).json({message: "user are in diferent stand, error table"}); 
+          })
+      } else {
+        return res.status(501).json({message: "stand 1 can't have items"});
+      }
     } else {
-      return res.status(501).json({message: "stand 1 can't have items"});
-    }
+      return res.status(501).json({message: "Not superuser"}); 
+    } 
   }
 })
 

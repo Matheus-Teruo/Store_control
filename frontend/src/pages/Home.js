@@ -42,7 +42,7 @@ function Home() {
             <h2>Funções</h2>
           </div>
           <div className="Section">
-            {user.standID > 1 ?
+            {user.standID > 2 ?
             <Link className="Frame1" to="/seller">
               <Clipboard alt="Vendedor"/>
               <p>Vendedor</p>
@@ -65,7 +65,7 @@ function Home() {
             </div>
             }
           </div>
-          {(user.standID !== null && user.standID !== 1) || user.superuser === 1 ? 
+          {(user.standID !== null && user.standID > 2) || user.superuser === 1 ? 
           <Link className="Frame2" to="/stocktaking">
             <Package alt="Stock"/>
             <p>Inventário</p>

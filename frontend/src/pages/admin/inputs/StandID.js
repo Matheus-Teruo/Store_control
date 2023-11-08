@@ -23,7 +23,7 @@ function StandID(props) {
   function handleStandChange(event) {  // handle stand
     props.output(event.target.value);
     setStandIndex(parseInt(event.target.value))
-    if (parseInt(event.target.value) <= 1){
+    if (parseInt(event.target.value) <= 2){
       props.valid(false)
     } else {
       props.valid(true)
@@ -38,10 +38,14 @@ function StandID(props) {
   }
 
   return (
-    <div>
+    <div className="Select">
       <select value={associationIndex} onChange={handleAssociationChange} id="association" name="association">
         <option value={0}> - </option>
-        {associations.map((association) => (
+        {props.noCashier ? associations.filter(item => item.associationID !== 1).map((association) => (
+          <option key={association.associationID} value={association.associationID}>{association.association}</option>
+        ))
+        :
+        associations.map((association) => (
           <option key={association.associationID} value={association.associationID}>{association.association}</option>
         ))}
       </select>

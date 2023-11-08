@@ -28,6 +28,21 @@ database('users')
         })
         .then(() => {
           console.log(`Created stand: Cashier`);
+          database('stands')
+            .insert({
+              'standID': 2,
+              'stand': "Caixa Entrega",
+              'associationID': 1
+            })
+            .then(() => {
+              console.log(`Created stand: Cashier Delivery`);
+              database.destroy();
+            })
+            .catch(error => {
+              console.error('Error on create cashier stand value:', error);
+              database.destroy();
+            })
+
           database.destroy();
         })
         .catch(error => {

@@ -123,7 +123,8 @@ function AllUsers() {
                   associations={associations}
                   stands={stands}
                   valid={() => {}}
-                  defaultValue={user.standID}/>
+                  defaultValue={user.standID}
+                  noCashier={false}/>
                 <button onClick={() => (SubmitEditStandID())}><CheckSquare size={20}/></button>
               </div>
               }
