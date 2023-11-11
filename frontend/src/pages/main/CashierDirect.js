@@ -12,7 +12,7 @@ function CashierDirect() {
   const [total, setTotal] = useState(0)
   const [check, setCheck] = useState({purchase: false})
   // Items
-  const [stands, setStands] = useState();
+  const [stands, setStands] = useState([]);
   const [selectedID, setSelectedID] = useState(0)
   const [allItems, setAllItems] = useState([]);
   const [standIDs,setStandIDs] = useState([]);
@@ -252,11 +252,14 @@ useEffect(() => {  // Handle select stand
             <button onClick={() => {setShowLastCustomers(true)}}><History/></button>
           </div>
           <ul>
-            {stands && stands.map((stand) => (
+            {stands.length > 0 ? (stands.map((stand) => (
               <li className={`Stand${stand.standID === selectedID ? " Selected" : ""}`} key={stand.standID} onClick={() => setSelectedID(stand.standID)}>
                 {stand.stand}
               </li>
-            ))}
+            )))
+            :
+              <div className="StandsEmpty"><p>Nenhum estande no banco de dados</p></div>
+            }
           </ul>
         </div>
         <div className="Items">

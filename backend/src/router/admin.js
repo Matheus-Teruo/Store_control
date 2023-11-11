@@ -156,12 +156,26 @@ router.post("/delassociation", (req, res) => {  // Delete association
   } else {
     if (decoded.superuser) {
       const data = req.body;
-      database('associations')
+      database('stands')
+        .select()
         .where({associationID: data.associationID})
-        .del()
-        .then(() => {
-          console.log(`successful deleted association`);
-          return res.json({message: `successful deleted association`});
+        .then((stands) => {
+          if (stands.length > 0){
+            console.log(`can't delete association`);
+            return res.status(406).json({message: `can't delete association`});
+          } else {
+            database('associations')
+              .where({associationID: data.associationID})
+              .del()
+              .then(() => {
+                console.log(`successful deleted association`);
+                return res.json({message: `successful deleted association`});
+              })
+              .catch(error => {
+                console.error(error)
+                return res.status(501).json({ error: {error}});
+              })
+          }
         })
         .catch(error => {
           console.error(error)
@@ -237,12 +251,26 @@ router.post("/delstand", (req, res) => {  // Delete stand
   } else {
     if (decoded.superuser) {
       const data = req.body;
-      database('stands')
+      database('items')
+        .select()
         .where({standID: data.standID})
-        .del()
-        .then(() => {
-          console.log(`successful deleted stand`);
-          return res.json({message: `successful deleted association`});
+        .then((items) => {
+          if (items.length > 0){
+            console.log(`can't delete stand`);
+            return res.status(406).json({message: `can't delete stand`});
+          } else {
+            database('stands')
+              .where({standID: data.standID})
+              .del()
+              .then(() => {
+                console.log(`successful deleted stand`);
+                return res.json({message: `successful deleted stand`});
+              })
+              .catch(error => {
+                console.error(error);
+                return res.status(501).json({ error: {error}});
+              })
+          }
         })
         .catch(error => {
           console.error(error);

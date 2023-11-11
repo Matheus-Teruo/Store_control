@@ -175,6 +175,35 @@ function Stocktaking() {
     }
   }
 
+  async function SubmitDeleteItem() {  // Delete Item
+    if (itemID !== 0) {
+      var resStatus;
+      fetch('/api/deleteitem', {
+        method: "POST", headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          "itemID": itemID,
+          "item": newItem,
+          "standID": stand.standID
+        })
+      })
+        .then(res => {resStatus = res.status; return res.json()})
+        .then(data => {
+          if (resStatus === 200){
+            if (selectedImage) {
+              SubmitImage(itemID);
+            } else {
+              RequestItems();
+              setShowItem(false); setCheck(check => ({...check, item: false})); setEdit(false);
+              setNewItem(""); setNewPrice(""); setNewStock("");
+              setAlreadyUsedItem("");setMessage("");
+            }
+          } else {
+            return setMessage("Erro")
+          }
+        })
+    }
+  }
+
   async function SubmitImage(name) {
     var resStatus;
     const formData = new FormData();
@@ -281,7 +310,7 @@ function Stocktaking() {
               return item.standID === filter;
             }
           }).map((item) => (
-            <li key={item.itemID} className={`${item.activated === 1 ? "deleted" : ""}`} onClick={() => {
+            <li key={item.itemID} className={`${item.activated !== 1 ? "deleted" : ""}`} onClick={() => {
               setItemID(item.itemID);
               setShowItem(true); setEdit(true);
               setNewItem(item.item); setStand(stand => ({...stand, standID: item.standID}));
@@ -374,7 +403,7 @@ function Stocktaking() {
             <button onClick={() => (setConfirmDelete(false))}>
               <X/>
             </button>
-            <button>
+            <button onClick={()=> (SubmitDeleteItem())}>
               <Check/>
             </button>
           </div>

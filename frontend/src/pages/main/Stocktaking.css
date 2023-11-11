@@ -58,8 +58,8 @@
   align-items: center;
   background-color: var(--color-primary-3);
 }
-.ST_Main li .deleted{
-  background-color: var(--color-gray-600);
+.ST_Main .deleted{
+  background-color: var(--color-gray-200);
 }
 
 .ST_Main li .ImageIcon{

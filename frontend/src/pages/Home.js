@@ -47,38 +47,25 @@ function Home() {
               <Clipboard alt="Vendedor"/>
               <p>Vendedor</p>
             </Link>
-            :
+            : (user.standID !== 2 || user.superuser === 1) &&
             <div className="Frame1 invalid">
               <Clipboard alt="Vendedor"/>
               <p>Vendedor</p>
             </div>
             }
-            {user.superuser === 1 ?
+            {(user.superuser === 1 || user.standID === 1) ?
             <Link className="Frame1" to="/cashier">
               <DollarSign alt="Caixa"/>
               <p>Caixa</p>
             </Link>
-            : user.standID === 1 ?
-            <Link className="Frame1" to="/cashier">
-              <DollarSign alt="Caixa"/>
-              <p>Caixa</p>
-            </Link>
-            : user.standID === 2 ?
-            <Link className="Frame1" to="/cashierdirect">
-              <div className="IconDouble">
-                <DollarSign alt="Caixa"/>
-                <Clipboard alt="Vendedor"/>
-              </div>
-              <p>Caixa Direto</p>
-            </Link>
-            :
+            : user.standID !== 2 &&
             <div className="Frame1 invalid">
               <DollarSign alt="Caixa"/>
               <p>Caixa</p>
             </div>
             }
           </div>
-          {user.superuser === 1 &&
+          {(user.superuser === 1 || user.standID === 2 ) &&
           <Link className="Frame2" to="/cashierdirect">
             <div className="IconDouble">
               <DollarSign alt="Caixa"/>

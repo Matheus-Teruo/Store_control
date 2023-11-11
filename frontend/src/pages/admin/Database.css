@@ -240,7 +240,7 @@
   z-index: 30;
   position: fixed;
   top: calc(50vh - 20vh);
-  left: calc(50vw - 125px);
+  left: calc(50vw - 175px);
   padding: 8px;
   width: 350px;
   aspect-ratio: 8/5;
@@ -267,5 +267,6 @@
   padding: 8px 12px;
   border: none;
   border-radius: 8px;
+  background-color: var(--color-secundary-1);
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
 }
