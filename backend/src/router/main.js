@@ -160,6 +160,32 @@ async function Items(parameter) {  // [{itemID: int, standID: int, amount: int, 
   })
 }
 
+
+async function Sales(parameter, user, card) {
+  return new Promise((resolve, reject) => {
+    const promise = parameter.standIDs.map(standID => {
+      return database('sales')  // Registre Sale
+        .insert({userID: user.userID, standID: standID, cardID: parameter.cardID, sale_t: card.time})
+        .then((saleID) => {
+          const filteredItems = parameter.items.filter(element => element.standID === standID)
+          Goods({saleID: saleID, items: filteredItems})  // Iterate all items to goods table
+            .catch(() => {
+              res.json({message: "error: item with no stock", error: "items"})
+            })
+        })
+        .catch(() => {  // Error on register sales
+          return res.status(500).json({message: "error on register sales", error: "sales"})
+        }) 
+    })
+    Promise.all(promise)
+      .then(() => {
+        resolve();
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  })
+}
 // Home
 router.get("/main", (req, res) => {  // Get home info
   const decoded = decodeJWT(req, res);
@@ -430,25 +456,19 @@ router.post("/purchase", (req, res) => {  // Submit purchase
         if (card.debit >= total) {
           database('sales')  // Registre Sale
             .insert({userID: decoded.userID, standID: data.standID, cardID: data.cardID, sale_t: card.time})
-            .then(() => {
-              database('sales')  // Take sale ID
-                .select('saleID')
-                .where({sale_t: card.time, userID: decoded.userID, cardID: data.cardID})
-                .then(rowsSales => {
-                  const saleID = rowsSales[0].saleID;
-                  Goods({saleID: saleID, items:data.items})  // Iterate all items to goods table
+            .then((saleID) => {
+              Goods({saleID: saleID, items:data.items})  // Iterate all items to goods table
+                .then(() => {
+                  const aux = card.debit - total;
+                  database('cards')  // Reduce client debit
+                    .where({cardID: data.cardID})
+                    .update({debit: aux})
                     .then(() => {
-                      const aux = card.debit - total;
-                      database('cards')  // Reduce client debit
-                        .where({cardID: data.cardID})
-                        .update({debit: aux})
-                        .then(() => {
-                          res.json({message: "successful purchase", cardID:data.cardID, newdebit: aux})
-                        })
+                      res.json({message: "successful purchase", cardID:data.cardID, newdebit: aux})
                     })
-                    .catch(() => {
-                      res.json({message: "error: item with no stock", error: "items"})
-                    })
+                })
+                .catch(() => {
+                  res.json({message: "error: item with no stock", error: "items"})
                 })
             })
             .catch(() => {  // Error on register sales
@@ -512,7 +532,7 @@ router.get('/checklastsales', (req, res) => {  // Request card debit
   }
 })
 
-router.post('/deletesale', (req, res) => {  // Request card debit
+router.post('/deletesale', (req, res) => {  // Delete last sale
   const data = req.body;
   const decoded = decodeJWT(req, res);
   if (!decoded) {
@@ -563,6 +583,80 @@ router.post('/deletesale', (req, res) => {  // Request card debit
             console.error(err)
             return res.status(501).json({message: "item error"}); 
           })
+      })
+  }
+})
+// ChashierDirect
+router.post("/purchasecustomer", (req, res) => {  // Submit purchase
+  const data = req.body;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
+    Card(data.cardID)  // Check debit and take now time
+      .then(card => {
+        const total = data.items.reduce((sum, item) => {
+          const subtotal = item.price * item.amount;
+          return sum + subtotal;}, 0);
+        if (card.debit >= total) {
+          Sales(data, decoded, card)
+            .then(() => {
+              const aux = card.debit - total;
+              database('cards')  // Reduce client debit
+                .where({cardID: data.cardID})
+                .update({debit: aux})
+                .then(() => {
+                  return res.json({message: "successful purchase"})
+                })
+            })
+            .catch(() => {
+              return res.status(500).json({message: "error on register sales", error: "sales"})
+            })
+        } else {
+          return res.json({message: "insuficient debit", error: "card"})
+        }
+      })
+      .catch(() => {  // No card resgistred
+        return res.status(406).json({message: "error no card registred", error: "cards"})
+      })
+  }
+})
+
+router.post("/cancelrecharge", (req, res) => {  // Submit recharge
+  const data = req.body;
+  const decoded = decodeJWT(req, res);
+  if (!decoded) {
+    return res.status(401).end();
+  } else {
+    Card(data.cardID)
+      .then(card => {
+        database('customers')
+          .where({ cardID: value.card })
+          .orderBy('control_t', 'desc')
+          .limit(2)
+          .del()
+          .then(() => {
+            database('recharges')
+              .where({ userID: decoded.userID })
+              .orderBy('recharge_t', 'desc')
+              .limit(1)
+              .del()
+              .then((rechargeDeleted) => {
+                console.log(`${rechargeDeleted} customers and recharge deleted`);
+                return res.json({message: "successfully undone purchase"})
+              })
+              .catch((error) => {
+                console.error(error);
+                return res.status(501).json({message: "recharges error"});
+              })
+          })
+          .catch((error) => {
+            console.error(error);
+            return res.status(501).json({message: "customers error"});
+          });
+      })
+      .catch(() => {  // No card resgistred
+        return res.status(406).json({message: "error, no card registred", error: "cards"})
       })
   }
 })

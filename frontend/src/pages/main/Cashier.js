@@ -367,7 +367,7 @@ function Cashier() {
             {cart.length > 0 ?
             <>
               <p>Carrinho: </p>
-              <p id="SumAux" onClick={() => {setShowCart(true)}}><DollarSign size={18}/>{sumAux}</p>
+              <p id="SumAux" onClick={() => {setShowCart(true)}}><DollarSign size={18}/>{parseFloat(sumAux).toFixed(2)}</p>
             </>
             :
             <>

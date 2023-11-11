@@ -42,8 +42,17 @@ function Navbar() {
             {pathname === '/cashier' &&
               <h2>Caixa</h2>
             }
+            {pathname === '/cashierdirect' &&
+              <h2>Caixa Direto</h2>
+            }
             {pathname === '/stocktaking' &&
               <h2>Inventário</h2>
+            }
+            {pathname === '/statistics' &&
+              <h2>Estatísticas</h2>
+            }
+            {(pathname === '/admin/allusers' || pathname === '/admin/cards' ||  pathname === '/admin/database') &&
+              <h2>Administador</h2>
             }
           </div>
           <div className="navUser">

@@ -85,7 +85,7 @@ function Statistics() {
     <div className="Statistics">
       <div className="Title">
         <div className="Menu">
-          <h2>Estatística</h2>
+          <h2>Ultimas vendas</h2>
           <button onClick={() => setShow("sales")}>Todas as vendas</button>
         </div>
       </div>
