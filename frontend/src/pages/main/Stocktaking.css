@@ -58,6 +58,10 @@
   align-items: center;
   background-color: var(--color-primary-3);
 }
+.ST_Main li .deleted{
+  background-color: var(--color-gray-600);
+}
+
 .ST_Main li .ImageIcon{
   display: flex;
   align-items: center;
@@ -192,6 +196,21 @@
   padding: 0 4px;
 }
 
+.ST_NewItem .ItemFooter{
+  display: flex;
+  align-items: center;
+}
+.ST_NewItem .ItemFooterDelete{
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  background-color: var(--color-secundary-2);
+}
+.ST_NewItem .ItemFooterDelete p{
+  padding: 0 4px 0 10px;
+}
+
+
 .ST_CropImage{
   z-index: 30;
   position: fixed;
@@ -219,10 +238,10 @@
 
 .ST_CropImage button{
   margin: 20px 10px 10px;
-  padding: 4px 8px;
+  padding: 5px 12px;
   display: flex;
   align-items: center;
   border-radius: 4px;
   border-width: 0;
-  background-color: var(--color-gray-200);
+  background-color: var(--color-secundary-1);
 }
