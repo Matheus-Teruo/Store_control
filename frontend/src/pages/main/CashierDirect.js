@@ -1,7 +1,7 @@
 import "./CashierDirect.css"
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { Image, DollarSign, Package, Plus, Minus, ShoppingBag, ShoppingCart, Trash2 } from 'react-feather';
+import { Image, DollarSign, Package, Plus, Minus, ShoppingBag, ShoppingCart, Trash2, Check, X } from 'react-feather';
 import AuthContext from '../../store/auth_context';
 import Payment from "./inputs/Payment";
 import History from '../../midia/History';
@@ -21,8 +21,10 @@ function CashierDirect() {
   const [donation, setDonation] = useState(0)
   const [payment, setPayment] = useState("cash")
   const [confirmPurchase, setConfirmPurchase] = useState(false)
+  const [doubleConfirmPurchase, setDoubleConfirmPurchase] = useState(false)
   // Last Sales
   const [showLastCustomers, setShowLastCustomers] = useState(false)
+  const [listLastCustomers, setListLastCustomers] = useState([])
   const [listLastSales, setListLastSales] = useState([])
   const [listLastGoods, setListLastGoods] = useState([])
   const [checkLastCustomer, setCheckLastCustomer] = useState(false)
@@ -51,23 +53,28 @@ function CashierDirect() {
         })
   }
 
-  async function SubmitRecharge() {  // Submit the recharge
+  async function SubmitPurchase() {  // Submit the purchase
     if (auth.user.authenticated) {
       const filteredItems = items.filter(item => item.amount !== 0);
       if (filteredItems.length > 0 && standIDs.length > 0){
         var resStatus;
-        fetch("/api/recharge", {  // Post form
+        fetch("/api/purchasecustomer", {  // Post form
           method: "POST", headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
-            "recharge": (total + donation),
+            "standIDs": standIDs,
             "cardID": 111111111111,
+            "items": cart,
+            "recharge": (parseFloat(total) + parseFloat(donation)),
             "payment": payment
           })
         })
           .then(res => {resStatus = res.status; return res.json()})
           .then(data => {
             if (resStatus === 200){
-              SubmitPurchase();
+              RequestLists();
+              setCart([]);
+              setDonation(0);
+              setConfirmPurchase(false);
             } else if (resStatus === 401){
               return auth.onLogout()
             }
@@ -83,59 +90,41 @@ function CashierDirect() {
     }
   }
 
-  async function SubmitPurchase() {  // Submit the purchase
-    if (auth.user.authenticated) {
-      var resStatus;
-      fetch("/api/purchasecustomer", {  // Post form
-        method: "POST", headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          "standIDs": standIDs,
-          "cardID": 111111111111,
-          "items": cart
-        })
+  async function RequestLastCustomers() {  // Request Lasts Sales
+    var resStatus;
+    fetch("/api/checklastcustomer")
+      .then(res => {resStatus = res.status; return res.json()})
+      .then(data => {
+        if (resStatus === 200){
+          setListLastCustomers(data.customers)
+          setListLastSales(data.sales)
+          setListLastGoods(data.goods)
+          return setCheckLastCustomer(data.customer)
+        } else if (resStatus === 401){
+          return auth.onLogout()
+        }
       })
-        .then(res => {resStatus = res.status; return res.json()})
-        .then(data => {
-          if (resStatus === 200){
-            RequestLists();
-            setCart([]);
-            SubmitReset();
-          } else if (resStatus === 401){
-            return auth.onLogout()
-          }
-        })
-        .catch((error) => {
-          console.error(error.message);
-        })
-    }
   }
 
-  async function SubmitReset() {  // Submit the recharge
-    var type = "refund"
-    if (donation > 0){type = "donation"}
-    if (auth.user.authenticated) {
-      var resStatus;
-      fetch("/api/resetcard", {  // Post form
-        method: "POST", headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          "cardID": 111111111111,
-          "finalization": type
-        })
-      })
-        .then(res => {resStatus = res.status; return res.json()})
-        .then(data => {
-          if (resStatus === 200){
-            setDonation(0);
-            setConfirmPurchase(false);
-          } else if (resStatus === 401){
-            return auth.onLogout()
-          }
-        })
-        .catch((error) => {
-          console.error(error.message);
-        })
-    }
-  }
+  async function SubmitDeleteCustomer(value) {  // Submit delete last sale
+    var resStatus;
+    fetch("/api/deletecustomer", {  // Post form
+      method: "POST", headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        "customerID": value,
+        "cardID": 111111111111
+    })
+    })
+    .then(res => {resStatus = res.status; return res.json()})
+    .then(data => {
+      if (resStatus === 200){
+        RequestLists();
+        return setShowLastCustomers(false);
+      } else if (resStatus === 401){
+        return auth.onLogout()
+      }
+    })
+}
 
 useEffect(() => {  // Handle select stand
   setItems(allItems.filter(item => {
@@ -244,12 +233,25 @@ useEffect(() => {  // Handle select stand
     setCart(updatedCart);
   }
 
+  function handleDonation(event){
+    if (isNaN(event.target.value) || event.target.value === "" || event.target.value === 0){
+      return setDonation(0);
+    }
+    let num = event.target.value;
+    num = num.toString();
+    num = num.replace(/^0+/, '')
+    num = num.replace(".", "")
+    num = parseFloat(num);
+    num = (num/100).toFixed(2);
+    setDonation(num);
+  }
+
   return (
     <div className="CD">
       <div className="Main">
         <div className="Menu">
           <div className="History">
-            <button onClick={() => {setShowLastCustomers(true)}}><History/></button>
+            <button onClick={() => {setShowLastCustomers(true); RequestLastCustomers()}}><History/></button>
           </div>
           <ul>
             {stands.length > 0 ? (stands.map((stand) => (
@@ -309,6 +311,7 @@ useEffect(() => {  // Handle select stand
       <div className="Purchase">
         <h3>Finalizar Compra</h3>
         <div className="Cart">
+          <p id="title">Carrinho</p>
           <ul>
             {cart.length !== 0 && cart.map(item => (
               <li key={item.itemID}>
@@ -333,16 +336,29 @@ useEffect(() => {  // Handle select stand
           </ul>
         </div>
         <div className="Payment">
-          <p>Recarregar</p>
-          <p id="total"><DollarSign size={20}/>{parseFloat(total).toFixed(2)}</p>
           <Payment
             input={payment}
             output={(value) => setPayment(value)}/>
+          <p>Doação</p>
+          <input 
+            id="donation" type="number" inputMode="numeric"
+            value={parseFloat(donation).toFixed(2)}
+            onChange={handleDonation}/>
+          <p>Total à pagar</p>
+          <p id="total"><DollarSign size={20}/>{(parseFloat(total) + parseFloat(donation)).toFixed(2)}</p>
         </div>
-        <div className="Footer">
-          <button onClick={() => setConfirmPurchase(false)}>Cancelar</button>
-          <button onClick={() => SubmitRecharge()}>Confirmar</button>
-        </div>
+        {doubleConfirmPurchase ?
+          <div className="FooterConfirm">
+            <p>Confirmar</p>
+            <button onClick={() => setDoubleConfirmPurchase(false)}><X/></button>
+            <button onClick={() => SubmitPurchase()}><Check/></button>
+          </div>
+            :
+          <div className="Footer">
+            <button onClick={() => setConfirmPurchase(false)}>Cancelar</button>
+            <button onClick={() => setDoubleConfirmPurchase(true)}>Confirmar</button>
+          </div>
+        }
       </div>
       </>
       }
@@ -353,18 +369,32 @@ useEffect(() => {  // Handle select stand
       <div className="LastSales">
         <h3>Histórico de compra</h3>
         <div className="MainSub">
-          <ul className="Sales">
-            <li key="1" className="ItemSale">
-              <ul className="ListofGoods">
-                  <li key="1" className="ItemGood">
-                    <p id="name">Item name</p>
-                    <p id="quantity"><ShoppingBag size={18}/>Shopping</p>
-                    <p id="price"><DollarSign size={18}/>Money</p>
-                  </li>
+          <ul className="ListofCustomers">
+            {listLastCustomers.map((customer) => (
+            <li key={customer.customerID} className="ItemCustomer">
+              <ul className="ListofSales">
+                {listLastSales.filter(element => element.sale_t === customer.control_t).map((sale) => (
+                <li key={sale.saleID} className="ItemSale">
+                  <p id="stand">{stands.filter(element => element.standID === sale.standID)[0].stand}</p>
+                  <ul className="ListofGoods">
+                    {listLastGoods.filter(element => element.saleID === sale.saleID).map((good) => (
+                    <li key={good.itemID} className="ItemGood">
+                      <p id="itemID">{good.item}</p>
+                      <p id="quantity"><ShoppingBag size={18}/>{good.quantity}</p>
+                      <p id="price"><DollarSign size={18}/>{good.unit_p}</p>
+                    </li>
+                    ))}
+                  </ul>
+                </li>
+                ))}
               </ul>
-                <button id="discard"><Trash2/></button>
-                <p id="discard"><Trash2/></p>
+                {checkLastCustomer === customer.customerID?
+                <button id="discard" onClick={() => SubmitDeleteCustomer(customer.customerID)}><Trash2/></button>
+                : 
+                <div id="discard"><Trash2/></div>
+                }
             </li>
+            ))}
           </ul>
         </div>
       </div>

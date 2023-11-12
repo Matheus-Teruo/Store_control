@@ -424,7 +424,7 @@
 .CashierRechargeFooter p#recharge{
   margin: 0 10px 0 0;
 }
-.CashierRechargeFooter .Payment{
+.CashierRechargeFooter .PaymentMethod{
   display: flex;
   padding: 3px 5px;
 }

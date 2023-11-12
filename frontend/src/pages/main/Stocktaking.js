@@ -9,6 +9,11 @@ import CropImage from "./inputs/CropImage";
 import StandID from '../admin/inputs/StandID';
 
 function Stocktaking() {
+  const [user, setUser] = useState({
+    standID: 0,
+    superuser: false,
+  })
+
   const [items, setItems] = useState([])
   const [stand, setStand] = useState({standID: 0,stand:""})
   const [stands, setStands] = useState([])
@@ -38,16 +43,34 @@ function Stocktaking() {
   const hiddenFileInput = useRef(null);
 
   useEffect(() => {  // Page requirements
+    if (auth.user.authenticated === true && user.standID === 0) {
+      var resStatus;
+      fetch("/api/main")
+        .then(res => {resStatus = res.status; return res.json()})
+        .then(data => {
+          if (resStatus === 200){
+            RequestItems(data.standID)
+            return setUser(data)
+          } else if (resStatus === 401){
+            return auth.onLogout()
+          }
+        })
+        .catch(console.error)
+    }
     if (auth.user.authenticated === true) {
-      RequestItems()
+      
     } else if (auth.user.authenticated === false) {
       navigate('/login');
     }
-  }, [auth, navigate])
+  }, [auth, navigate, user.standID])
 
-  async function RequestItems() {  // List all itens from stand
+  useEffect(() => {  // Page requirements
+    
+  }, [auth, ])
+
+  async function RequestItems(standID = user.standID) {  // List all itens from stand
     var resStatus;
-    if (auth.user.superuser) {
+    if (auth.user.superuser || standID === 2) {
       fetch('/api/stocktakingall')
       .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
@@ -167,7 +190,7 @@ function Stocktaking() {
           } else if (resStatus === 409) {
             return setAlreadyUsedItem(data.value)
           } else if (resStatus === 406){
-            return setMessage("Esse Item não pode mudar de estando, já vendas com esse item")
+            return setMessage("Esse Item não pode mudar de estande, já vendas com esse item")
           } else if (resStatus === 401){
             return auth.onLogout()
           }

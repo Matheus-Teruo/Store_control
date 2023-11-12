@@ -212,7 +212,7 @@
   justify-content: center;
 }
 .CD .Purchase h3{
-  margin-top: 8px;
+  margin: 8px 0 4px;
 }
 
 .CD .Purchase .Cart{
@@ -221,16 +221,27 @@
   flex-direction: column;
   align-items: center;
 }
+.CD .Purchase .Cart p#title{
+  width: 95%;
+  background-color: var(--color-primary-2);
+  border-radius: 4px;
+  padding: 2px 0;
+  justify-content: center;
+  font-weight: 600;
+}
+
 .CD .Purchase .Cart ul{
   width: 95%;
+  padding: 4px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-radius: 4px;
+  background-color: var(--color-primary-2);
 }
 .CD .Purchase .Cart li{
   width: 100%;
   margin: 3px;
-  padding: 2px 5px;
   border-radius: 4px;
   background-color: var(--color-primary-3);
   display: flex;
@@ -246,6 +257,7 @@
   background-color: #ffffff50;
 }
 .CD .Purchase .Cart p{
+  margin: 2px 5px;
   display: flex;
   align-items: center;
   color: var(--color-gray-800);
@@ -270,6 +282,7 @@
   display: flex;
   align-items: center;
   padding: 0 2px;
+  margin: 2px 5px 2px 0;
   border-radius: 4px;
   background-color: #ffffff50;
 }
@@ -282,6 +295,12 @@
   color: var(--color-font-3);
 }
 
+.CD .Purchase .Payment{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .CD .Purchase .Payment p{
   display: flex;
   justify-content: center;
@@ -290,23 +309,36 @@
 .CD .Purchase .Payment p#total{
   margin: 0 10px 0 0;
 }
-.CD .Purchase .Payment .Payment{
+.CD .Purchase .Payment input#donation{
+  font-size: 16px;
+  max-width: 100px;
+  padding: 2px 4px;
+  margin: 4px 0 8px;
+  text-align: center;
+  border: none;
+  background-color: var(--color-secundary-1);
+  border-radius: 4px;
+}
+.CD .Purchase .Payment .PaymentMethod{
   display: flex;
   padding: 3px 5px;
 }
-.CD .Purchase .Payment input{
+.CD .Purchase .PaymentMethod input{
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 }
-.CD .Purchase .Payment label{
+.CD .Purchase .PaymentMethod span{
+  margin: 0 5px 0 0;
+}
+.CD .Purchase .PaymentMethod label{
   margin: 3px 5px;
   padding: 3px 8px;
   border-radius: 6px;
   background-color: var(--color-primary-4);
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
 }
-.CD .Purchase .Payment label.check{
+.CD .Purchase .PaymentMethod label.check{
   background-color: var(--color-primary-3);
   box-shadow: none;
 }
@@ -317,12 +349,154 @@
   justify-content: center;
   padding: 6px 10px 10px;
 }
+.CD .Purchase .FooterConfirm{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  margin: 6px 0 10px;
+  border-radius: 4px;
+  background-color: var(--color-secundary-1);
+}
 .CD .Purchase .Footer button{
   display: flex;
-  margin: 0 10px;
-  padding: 5px 12px;
+  margin: 5px 10px;
+  padding: 8px 12px;
   border: none;
   border-radius: 8px;
   background-color: var(--color-secundary-1);
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
 }
+.CD .Purchase .FooterConfirm button{
+  display: flex;
+  margin: 0 10px;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--color-secundary-2);
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+
+.CD .LastSales{
+  z-index: 20;
+  position: fixed;
+  top: calc(50vh - 20vh);
+  left: calc(50vw - 45vw);
+  width: 90vw;
+  border-radius: 10px;
+  background-color: aliceblue;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.CD .LastSales h3{
+  margin: 8px 0 5px;
+}
+.CD .LastSales p{
+  font-size: 14px;
+}
+
+.CD .LastSales .MainSub{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0 6px;
+}
+.CD .LastSales .MainSub ul.ListofCustomers{
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.CD .LastSales .MainSub ul.ListofSales{
+  width: 100%;
+  padding: 5px 5px 5px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.CD .LastSales .MainSub ul.ListofGoods{
+  width: 100%;
+  padding: 5px 5px 5px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.CD .LastSales .MainSub li.ItemCustomer{
+  width: 100%;
+  padding: 0 4px 0 6px;
+  margin: 2px 0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-secundary-3);
+}
+.CD .LastSales .MainSub li.ItemSale{
+  width: 100%;
+  margin: 2px 0;
+  padding: 2px 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-radius: 5px;
+  background-color: var(--color-secundary-2);
+}
+.CD .LastSales .MainSub p#stand{
+  display: flex;
+  padding: 0 3px;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-primary-3);
+  border-radius: 4px;
+  margin: 4px 0 0;
+  padding: 2px 3px;
+}
+.CD .LastSales .MainSub li.ItemGood{
+  width: 100%;
+  margin: 2px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 5px;
+  background-color: var(--color-primary-1);
+}
+.CD .LastSales .MainSub p{
+  display: flex;
+  margin: 2px 3px;
+  padding: 0 3px;
+  align-items: center;
+  justify-content: space-between;
+}
+.CD .LastSales .MainSub p#name{
+  flex: 1;
+}
+.CD .LastSales .MainSub p#itemID{
+  flex: 1;
+} 
+.CD .LastSales .MainSub p#quantity{
+  min-width: 40px;
+  padding: 0 5px;
+}
+.CD .LastSales .MainSub p#price{
+  width: 40px;
+  padding: 0 5px;
+}
+.CD .LastSales .MainSub button#discard{
+  border: none;
+  border-radius: 4px;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  background-color: var(--color-primary-4);
+} 
+.CD .LastSales .MainSub div#discard{
+  padding: 3px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  background-color: var(--color-primary-3);
+} 

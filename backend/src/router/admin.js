@@ -365,29 +365,35 @@ router.get("/liststand", (req, res) => {  // Request user stands
   if (!decoded) {
     return res.status(401).end();
   } else {
-    if (decoded.superuser) {
-      database('associations')
-      .select('association', 'associationID')
-      .orderBy('associationID', 'asc')
-      .then(associations => {
-        if (associations.length > 0) {
-          database('stands')
-            .select('standID', 'stand', 'associationID')
-            .orderBy('associationID', 'asc')
-            .then(stands => {
-              if (stands.length > 0){
-                return res.json({associations: associations, stands: stands}); 
-              } else {
-              return res.json({associations: associations, stands: []}); 
-              }
-            })
+    database('users')
+      .select('standID')  
+      .where({userID:  decoded.userID})
+      .then((users) => {
+        const user = users[0];
+        if (decoded.superuser === 1 || user.standID === 2){
+          database('associations')
+          .select('association', 'associationID')
+          .orderBy('associationID', 'asc')
+          .then(associations => {
+            if (associations.length > 0) {
+              database('stands')
+                .select('standID', 'stand', 'associationID')
+                .orderBy('associationID', 'asc')
+                .then(stands => {
+                  if (stands.length > 0){
+                    return res.json({associations: associations, stands: stands}); 
+                  } else {
+                  return res.json({associations: associations, stands: []}); 
+                  }
+                })
+            } else {
+              return res.json({associations: [], stands: []}); 
+            }
+          })
         } else {
-          return res.json({associations: [], stands: []}); 
+          return res.status(401).end();
         }
-      })
-    } else {
-      return res.status(401).end();
-    }
+    })
   }
 })
 
