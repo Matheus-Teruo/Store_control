@@ -1,7 +1,7 @@
 import "./Stocktaking.css"
 import React, { useState, useEffect, useRef, useContext } from 'react'
 import { useNavigate  } from 'react-router-dom';
-import { Plus, Image, DollarSign, Package, ShoppingBag, Crop } from 'react-feather';
+import { Plus, Image, DollarSign, Package, ShoppingBag, Crop, X, Check } from 'react-feather';
 import { ResizeImg } from './inputs/utils.js';
 import AuthContext from '../../store/auth_context';
 import Item from './inputs/Item';
@@ -9,40 +9,68 @@ import CropImage from "./inputs/CropImage";
 import StandID from '../admin/inputs/StandID';
 
 function Stocktaking() {
+  const [user, setUser] = useState({
+    standID: 0,
+    superuser: false,
+  })
+
   const [items, setItems] = useState([])
   const [stand, setStand] = useState({standID: 0,stand:""})
   const [stands, setStands] = useState([])
   const [associations, setAssociations] = useState([])
+  const [filter, setFilter] = useState(0)
   // New item
   const [showItem, setShowItem] = useState(false)
   const [edit, setEdit] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const [newItem, setNewItem] = useState("")
   const [newPrice, setNewPrice] = useState("")
   const [newStock, setNewStock] = useState("")
   const [itemID, setItemID] = useState(0)
-  const [filter, setFilter] = useState(0)
-  const [alreadyUsedItem, setAlreadyUsedItem] = useState("")
+  // Image
   const [selectedImage, setSelectedImage] = useState()
   const [selectedImageURL, setSelectedImageURL] = useState()
   const [showCrop, setShowCrop] = useState(false)
+  // Check and Results
+  const [alreadyUsedItem, setAlreadyUsedItem] = useState("")
   const [check, setCheck] = useState({
     item: false,
     standID: false})
+  const [message, setMessage] = useState("")
+
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
   const hiddenFileInput = useRef(null);
 
   useEffect(() => {  // Page requirements
+    if (auth.user.authenticated === true && user.standID === 0) {
+      var resStatus;
+      fetch("/api/main")
+        .then(res => {resStatus = res.status; return res.json()})
+        .then(data => {
+          if (resStatus === 200){
+            RequestItems(data.standID)
+            return setUser(data)
+          } else if (resStatus === 401){
+            return auth.onLogout()
+          }
+        })
+        .catch(console.error)
+    }
     if (auth.user.authenticated === true) {
-      RequestItems()
+      
     } else if (auth.user.authenticated === false) {
       navigate('/login');
     }
-  }, [auth, navigate])
+  }, [auth, navigate, user.standID])
 
-  async function RequestItems() {  // List all itens from stand
+  useEffect(() => {  // Page requirements
+    
+  }, [auth, ])
+
+  async function RequestItems(standID = user.standID) {  // List all itens from stand
     var resStatus;
-    if (auth.user.superuser) {
+    if (auth.user.superuser || standID === 2) {
       fetch('/api/stocktakingall')
       .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
@@ -102,7 +130,7 @@ function Stocktaking() {
   }
 
   async function SubmitNewItem() {  // Submit new item
-    if (stand.standID > 1) {
+    if (stand.standID > 2) {
       var resStatus;
       fetch('/api/newitem', {
         method: "POST", headers: {'Content-Type': 'application/json'},
@@ -122,6 +150,7 @@ function Stocktaking() {
               RequestItems();
               setShowItem(false); setCheck(check => ({...check, item: false}));
               setNewItem(""); setNewPrice(""); setNewStock("");
+              setAlreadyUsedItem("");setMessage("");
             }
           } else if (resStatus === 409) {
             return setAlreadyUsedItem(data.value)
@@ -156,11 +185,43 @@ function Stocktaking() {
               RequestItems();
               setShowItem(false); setCheck(check => ({...check, item: false})); setEdit(false);
               setNewItem(""); setNewPrice(""); setNewStock("");
+              setAlreadyUsedItem("");setMessage("");
             }
           } else if (resStatus === 409) {
             return setAlreadyUsedItem(data.value)
+          } else if (resStatus === 406){
+            return setMessage("Esse Item não pode mudar de estande, já vendas com esse item")
           } else if (resStatus === 401){
             return auth.onLogout()
+          }
+        })
+    }
+  }
+
+  async function SubmitDeleteItem() {  // Delete Item
+    if (itemID !== 0) {
+      var resStatus;
+      fetch('/api/deleteitem', {
+        method: "POST", headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          "itemID": itemID,
+          "item": newItem,
+          "standID": stand.standID
+        })
+      })
+        .then(res => {resStatus = res.status; return res.json()})
+        .then(data => {
+          if (resStatus === 200){
+            if (selectedImage) {
+              SubmitImage(itemID);
+            } else {
+              RequestItems();
+              setShowItem(false); setCheck(check => ({...check, item: false})); setEdit(false);
+              setNewItem(""); setNewPrice(""); setNewStock("");
+              setAlreadyUsedItem("");setMessage("");
+            }
+          } else {
+            return setMessage("Erro")
           }
         })
     }
@@ -242,20 +303,20 @@ function Stocktaking() {
         :
           <h2>Inventário: {stand.stand}</h2>
         }
+        {auth.user.superuser === 1 &&
         <div className="ST_Menu">
           <button onClick={() => {setShowItem(true)}}><Plus size="24"/></button>
-          {auth.user.superuser === 1 &&
             <div className="Filtro">
               <h3>Filtro </h3>
               <select value={filter} onChange={event => setFilter(parseInt(event.target.value))} id="filter" name="filter">
                 <option key={0} value={0}>Todos</option>
-                {stands.length !== 0 && stands.filter(item => item.standID !== 1).map((element) =>  (
+                {stands.length !== 0 && stands.filter(item => item.standID > 2).map((element) =>  (
                   <option key={element.standID} value={element.standID}>{element.stand}</option>
                 ))}
               </select>
             </div>
-          }
         </div>
+        }
       </div>
       <div className="ST_Main">
         <ul>
@@ -272,7 +333,7 @@ function Stocktaking() {
               return item.standID === filter;
             }
           }).map((item) => (
-            <li key={item.itemID} onClick={() => {
+            <li key={item.itemID} className={`${item.activated !== 1 ? "deleted" : ""}`} onClick={() => {
               setItemID(item.itemID);
               setShowItem(true); setEdit(true);
               setNewItem(item.item); setStand(stand => ({...stand, standID: item.standID}));
@@ -296,12 +357,7 @@ function Stocktaking() {
           :
           <li><p>Nenhum Item</p></li> )
           : (items.length !== 0 ? (items.map((item) => (
-            <li key={item.itemID} onClick={() => {
-              setItemID(item.itemID);
-              setShowItem(true); setEdit(true);
-              setNewItem(item.item);
-              setNewPrice(item.price.toFixed(2));
-              setNewStock(parseInt(item.stock))}}>
+            <li key={item.itemID}>
               {item.item_img !== null ?
                 <img alt={item.item} src={`/api/itemimages/${item.itemID}.${item.item_img}`}/>
               :
@@ -358,13 +414,40 @@ function Stocktaking() {
               associations={associations}
               stands={stands}
               valid={(value) => setCheck(check => ({...check, standID: value}))}
-              defaultValue={stand.standID}/>
+              defaultValue={stand.standID}
+              noCashier={true}/>
           }
-          {!edit ?
-            <button onClick={() => (SubmitNewItem())} disabled={check.item && check.standID ? false : true}>Confirmar</button>
+          {message !== "" &&
+            <p>{message}</p>
+          }
+          {confirmDelete ?
+          <div className="ItemFooterDelete">
+            <p>Excluir:</p>
+            <button onClick={() => (setConfirmDelete(false))}>
+              <X/>
+            </button>
+            <button onClick={()=> (SubmitDeleteItem())}>
+              <Check/>
+            </button>
+          </div>
           :
-            <button onClick={() => (SubmitEditItem())} disabled={check.item && check.standID? false : true}>Confirmar</button>
-          }  
+          <div className="ItemFooter">
+          <button onClick={() => {setMessage("");setAlreadyUsedItem("");
+                                  setShowItem(false); setEdit(false);
+                                  setNewItem("");setNewPrice("");setNewStock("");setItemID(0);
+                                  setSelectedImage(); setSelectedImageURL()}}>
+            Cancelar
+          </button>
+          {!edit ?
+            <button onClick={() => {SubmitNewItem();setMessage("")}} disabled={check.item && check.standID ? false : true}>Confirmar</button>
+          :
+          <>
+            <button onClick={() => (setConfirmDelete(true))}>Excluir</button>
+            <button onClick={() => {SubmitEditItem()}} disabled={check.item && check.standID? false : true}>Confirmar</button>
+          </>
+          }
+          </div>
+          }
         </div>
       </>
       }

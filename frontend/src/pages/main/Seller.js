@@ -146,7 +146,6 @@ function Seller() {
         setShowLastSales(false);
         setShowCard(true);
         setAnimation(true);
-        RequestLastSales();
         SubmitCardCheck();
         return setTimeout(() => {
           setShowCard(false);
@@ -420,11 +419,7 @@ function Seller() {
               <ul className="ListofGoods">
                 {listLastGoods.filter(element => element.saleID === sale.saleID).map((good) => (
                   <li key={good.itemID} className="ItemGood">
-                    {stand.standID === sale.standID ?
-                      <p id="name">{items.filter(element => element.itemID === good.itemID)[0].item}</p>
-                    :
-                      <p id="itemID">{good.itemID}</p>
-                    }
+                    <p id="itemID">{good.item}</p>
                     <p id="quantity"><ShoppingBag size={18}/>{good.quantity}</p>
                     <p id="price"><DollarSign size={18}/>{good.unit_p}</p>
                   </li>

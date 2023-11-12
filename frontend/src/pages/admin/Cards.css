@@ -15,10 +15,17 @@
   height: 24px;
   margin: 5px 8px;
   display: flex;
+  align-items: center;
 }
 .Cards .Filter h3{
   padding: 0 6px;
 }
+.Cards .Filter select{
+  height: 22px;
+  border-radius: 4px;
+  padding: 0 4px;
+}
+
 .Cards .Actions{
   display: flex;
   justify-content: space-between;

@@ -35,6 +35,13 @@
 .ST_Menu .Filtro h3{
   padding: 0 6px;
 }
+
+.ST_Menu select#filter{
+  height: 22px;
+  border-radius: 4px;
+  padding: 0 4px;
+}
+
 .ST_Main{
   height: calc(100vh -(var(--height-header)) -96px);
 }
@@ -51,6 +58,10 @@
   align-items: center;
   background-color: var(--color-primary-3);
 }
+.ST_Main .deleted{
+  background-color: var(--color-gray-200);
+}
+
 .ST_Main li .ImageIcon{
   display: flex;
   align-items: center;
@@ -113,6 +124,7 @@
   justify-content: center;
   background-color: white;
 }
+
 .ST_NewItem button{
   display: flex;
   margin: 5px 8px;
@@ -121,6 +133,17 @@
   border-radius: 8px;
   background-color: var(--color-secundary-1);
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+
+.ST_NewItem .Inputs{
+  width: 80%;
+}
+.ST_NewItem .Inputs input{
+  width: 100%;
+  height: 22px;
+  border-radius: 4px;
+  margin-left: 2px;
+  padding: 0 4px;
 }
 
 .ST_NewItem .Item{
@@ -165,6 +188,29 @@
   display: flex;
 }
 
+.ST_NewItem .Select select{
+  min-width: 70px;
+  height: 22px;
+  border-radius: 4px;
+  margin: 2px;
+  padding: 0 4px;
+}
+
+.ST_NewItem .ItemFooter{
+  display: flex;
+  align-items: center;
+}
+.ST_NewItem .ItemFooterDelete{
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  background-color: var(--color-secundary-2);
+}
+.ST_NewItem .ItemFooterDelete p{
+  padding: 0 4px 0 10px;
+}
+
+
 .ST_CropImage{
   z-index: 30;
   position: fixed;
@@ -192,10 +238,10 @@
 
 .ST_CropImage button{
   margin: 20px 10px 10px;
-  padding: 4px 8px;
+  padding: 5px 12px;
   display: flex;
   align-items: center;
   border-radius: 4px;
   border-width: 0;
-  background-color: var(--color-gray-200);
+  background-color: var(--color-secundary-1);
 }

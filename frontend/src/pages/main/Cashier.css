@@ -424,7 +424,7 @@
 .CashierRechargeFooter p#recharge{
   margin: 0 10px 0 0;
 }
-.CashierRechargeFooter .Payment{
+.CashierRechargeFooter .PaymentMethod{
   display: flex;
   padding: 3px 5px;
 }
@@ -438,15 +438,17 @@
   padding: 3px 8px;
   border-radius: 6px;
   background-color: var(--color-primary-4);
+  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+}
+.CashierRechargeFooter label.check{
+  background-color: var(--color-primary-3);
+  box-shadow: none;
 }
 .CashierRechargeFooterButtons{
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 10px 0;
-}
-.CashierRechargeFooter label.check{
-  background-color: var(--color-primary-3);
 }
 .CashierRechargeFooterButtons button{
   display: flex;
@@ -498,6 +500,7 @@
   padding: 5px 12px;
   border: none;
   border-radius: 8px;
+  background-color: var(--color-secundary-1);
   box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
 }
 

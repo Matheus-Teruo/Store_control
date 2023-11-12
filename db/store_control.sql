@@ -57,9 +57,12 @@ CREATE TABLE `customers` (
   `cardID` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `control_t` datetime NOT NULL,
   `in_use` tinyint(1) NOT NULL DEFAULT '1',
+  `userID` int NOT NULL,
   PRIMARY KEY (`customerID`),
   KEY `cardID` (`cardID`),
-  CONSTRAINT `customers_ibfk_1` FOREIGN KEY (`cardID`) REFERENCES `cards` (`cardID`)
+  KEY `userID` (`userID`),
+  CONSTRAINT `customers_ibfk_1` FOREIGN KEY (`cardID`) REFERENCES `cards` (`cardID`),
+  CONSTRAINT `customers_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -117,6 +120,7 @@ CREATE TABLE `items` (
   `stock` int NOT NULL,
   `item_img` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `standID` int NOT NULL,
+  `activated` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`itemID`),
   UNIQUE KEY `item` (`item`),
   KEY `standID` (`standID`),

@@ -28,7 +28,29 @@ database('users')
         })
         .then(() => {
           console.log(`Created stand: Cashier`);
-          database.destroy();
+          database('stands')
+            .insert({
+              'standID': 2,
+              'stand': "Caixa Direto",
+              'associationID': 1
+            })
+            .then(() => {
+              console.log(`Created stand: Cashier Direct`);
+              database('cards')
+                .insert({'cardID': 111111111111, 'debit': 0})
+                .then(() => {
+                  console.log(`Created card: 111111111111`);
+                  database.destroy();
+                })
+                .catch(error => {
+                  console.error('Error on create card value:', error);
+                  database.destroy();
+                })
+            })
+            .catch(error => {
+              console.error('Error on create cashier direct stand value:', error);
+              database.destroy();
+            })
         })
         .catch(error => {
           console.error('Error on create cashier stand value:', error);

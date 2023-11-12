@@ -275,7 +275,7 @@ function Database() {
       {showAssociation &&
       <>
       <div className="BlackBackground" onClick={() => setShowAssociation(false)}/>
-      <div className="NewEditAssociation">
+      <div className="NewEditAssociation" method="post">
         {edit === "association" ?
         <div className="Title">
           <h3>Editar associação:</h3>
@@ -299,7 +299,7 @@ function Database() {
           <button onClick={() => (SubmitEditAssociation())} disabled={check.association ? false : true}>Editar</button>
         </>
         :
-          <button onClick={() => {SubmitNewAssociation()}} disabled={check.association ? false : true}>Criar</button>
+          <button onClick={() => (SubmitNewAssociation())} disabled={check.association ? false : true}>Criar</button>
         }
         </div>
       </div>
@@ -309,7 +309,7 @@ function Database() {
       {showStand &&
       <>
       <div className="BlackBackground" onClick={() => setShowStand(false)}/>
-      <div className="NewEditStand">
+      <div className="NewEditStand" method="post">
         {edit === "stand" ?
           <div className="Title">
             <h3>Editar estande:</h3>
@@ -344,7 +344,7 @@ function Database() {
       {confirmDel &&
       <>
       <div className="BlackBackgroundScanner" onClick={() => setConfirmDel(false)}/>
-      <div className="ConfirmDelete">
+      <div className="ConfirmDelete" method="post">
         <div className="Title">
           <h3>Excluir: {edit === "association" ?
             <>Kenjinkai {associations.filter(item => item.associationID === newAssociationID)[0].association}</>

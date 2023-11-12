@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 
 import Seller from "./pages/main/Seller";
 import Cashier from "./pages/main/Cashier";
+import CashierDirect from "./pages/main/CashierDirect";
 import Stocktaking from "./pages/main/Stocktaking";
 
 import User from "./pages/auth/User";
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
       { path: '/', element: <Home/>},
       { path: '/seller', element: <Seller/>},
       { path: '/cashier', element: <Cashier/>},
+      { path: '/cashierdirect', element: <CashierDirect/>},
       { path: '/user', element: <User/>},
       { path: '/login', element: <Login/>},
       { path: '/signup', element: <Signup/>},
