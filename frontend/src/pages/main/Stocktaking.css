@@ -22,7 +22,7 @@
   border: none;
   border-radius: 8px;
   background-color: var(--color-secundary-1);
-  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+  box-shadow: 2px 4px 4px 0px var(--color-shadow-1);
 }
 
 .ST_Menu .Filtro{
@@ -92,6 +92,10 @@
   border-radius: 2px;
   background-color: #ffffff50;
 }
+.ST_Main .quantity{
+  min-width: 53px;
+  flex: 3;
+}
 .ST_Main p#stock{
   min-width: 53px;
   flex: 3;
@@ -132,7 +136,7 @@
   border: none;
   border-radius: 8px;
   background-color: var(--color-secundary-1);
-  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+  box-shadow: 2px 4px 4px 0px var(--color-shadow-1);
 }
 
 .ST_NewItem .Inputs{

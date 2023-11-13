@@ -369,7 +369,6 @@ function Stocktaking() {
               <p id="price"><DollarSign size={18}/>{item.price}</p>
               <div className="quantity">
                 <p id="stock" className={`${item.stock === 0 && "unavailable"}`}><Package size={18}/>{item.stock}</p>
-                <p id="sold"><ShoppingBag size={18}/>{item.sold}</p>
               </div>
             </li>
           ))): <li><p>Nenhum Item</p></li> )}

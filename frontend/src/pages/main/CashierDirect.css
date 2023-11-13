@@ -28,7 +28,7 @@
   border: none;
   border-radius: 8px;
   background-color: var(--color-secundary-1);
-  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+  box-shadow: 2px 4px 4px 0px var(--color-shadow-1);
 }
 
 .CD .Main .Menu ul{
@@ -194,14 +194,14 @@
   padding: 5px 12px;
   border: none;
   border-radius: 8px;
-  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+  box-shadow: 2px 4px 4px 0px var(--color-shadow-1);
 }
 
 /* === Pop up === */
 .CD .Purchase{
   z-index: 20;
   position: fixed;
-  top: calc(50vh - 20vh);
+  top: calc(50vh - 45vh);
   left: calc(50vw - 45vw);
   width: 90vw;
   border-radius: 10px;
@@ -232,16 +232,20 @@
 
 .CD .Purchase .Cart ul{
   width: 95%;
+  max-height: 40vh;
   padding: 4px;
   display: flex;
   flex-direction: column;
   align-items: center;
   border-radius: 4px;
   background-color: var(--color-primary-2);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .CD .Purchase .Cart li{
   width: 100%;
-  margin: 3px;
+  height: 28px;
+  margin: 5px 3px;
   border-radius: 4px;
   background-color: var(--color-primary-3);
   display: flex;
@@ -252,9 +256,10 @@
   display: flex;
   align-items: center;
   border: none;
+  height: 19px;
   border-radius: 2px;
   padding: 0 2px;
-  background-color: #ffffff50;
+  background-color: #ffffff80;
 }
 .CD .Purchase .Cart p{
   margin: 2px 5px;
@@ -275,8 +280,19 @@
 }
 .CD .Purchase .Cart input#price{
   width: 30px;
+  margin: 0 5px 0 2px;
   display: flex;
   align-items: center;
+}
+.CD .Purchase .Cart span#price{
+  width: 30px;
+  margin: 0 5px 0 2px;
+  padding: 0 4px;
+  font-size: 14px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff80;
 }
 .CD .Purchase .Cart div#amount{
   display: flex;
@@ -288,6 +304,7 @@
 }
 .CD .Purchase .Cart input#amount{
   width: 20px;
+  margin: 0 2px;
   display: flex;
   align-items: center;
 }
@@ -336,11 +353,11 @@
   padding: 3px 8px;
   border-radius: 6px;
   background-color: var(--color-primary-4);
-  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+  box-shadow: 2px 4px 4px 0px var(--color-shadow-2);
 }
 .CD .Purchase .PaymentMethod label.check{
   background-color: var(--color-primary-3);
-  box-shadow: none;
+  box-shadow: inset 1px 2px 2px 0px var(--color-shadow-2);
 }
 
 .CD .Purchase .Footer{
@@ -365,7 +382,7 @@
   border: none;
   border-radius: 8px;
   background-color: var(--color-secundary-1);
-  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+  box-shadow: 2px 4px 4px 0px var(--color-shadow-1);
 }
 .CD .Purchase .FooterConfirm button{
   display: flex;
@@ -374,7 +391,7 @@
   border: none;
   border-radius: 8px;
   background-color: var(--color-secundary-2);
-  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+  box-shadow: 2px 4px 4px 0px var(--color-shadow-1);
 }
 
 .CD .LastSales{

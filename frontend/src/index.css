@@ -63,6 +63,9 @@ body {
   --color-font-3: #041c2c;
   --color-font-4: #384252;
 
+  --color-shadow-1: #041c2c60;
+  --color-shadow-2: #42241F60;
+
   --height-header: 8vh;
 }
 

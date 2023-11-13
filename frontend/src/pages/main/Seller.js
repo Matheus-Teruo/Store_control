@@ -355,26 +355,46 @@ function Seller() {
         </div>
         <div className="SellerPurchaseCart">
           <ul>
-            {cart.map(item => (
+            {auth.user.superuser ? 
+            (cart.map(item => (
               <li key={item.itemID}>
-                <p id="name" onClick={() => handleEditCartItem(item.itemID, 'amount', (item.amount + 1))}>{item.item}</p>
+                <p id="name">{item.item}</p>
                 <div id="price">
-                  <DollarSign size={20}/>
+                  <DollarSign size={22}/>
                   <input
                     id="price" type="number" inputMode="numeric"
                     value={item.price}
                     onChange={event => handleEditCartItem(item.itemID, 'price', event.target.value)}/>
                 </div>
                 <div id="amount">
-                  <Plus size={20} onClick={() => handleEditCartItem(item.itemID, 'amount', (item.amount + 1))}/>
+                  <Minus size={22} onClick={() => handleRemoveCart(item.itemID)}/>
                   <input
                     id="amount" type="number" inputMode="numeric"
                     value={item.amount}
                     onChange={event => handleEditCartItem(item.itemID, 'amount', event.target.value)}/>
-                  <Minus size={20} onClick={() => handleRemoveCart(item.itemID)}/>
+                  <Plus size={22} onClick={() => handleEditCartItem(item.itemID, 'amount', (item.amount + 1))}/>
                 </div>
               </li>
-            ))}
+            )))
+            :
+            (cart.map(item => (
+              <li key={item.itemID}>
+                <p id="name">{item.item}</p>
+                <div id="price">
+                  <DollarSign size={22}/>
+                  <span id="price">{item.price}</span>
+                </div>
+                <div id="amount">
+                  <Minus size={22} onClick={() => handleRemoveCart(item.itemID)}/>
+                  <input
+                    id="amount" type="number" inputMode="numeric"
+                    value={item.amount}
+                    onChange={event => handleEditCartItem(item.itemID, 'amount', event.target.value)}/>
+                  <Plus size={22} onClick={() => handleEditCartItem(item.itemID, 'amount', (item.amount + 1))}/>
+                </div>
+              </li>
+            )))
+            }
           </ul>
           <p id="total"><DollarSign size={20}/>{parseFloat(total).toFixed(2)}</p>
         </div>

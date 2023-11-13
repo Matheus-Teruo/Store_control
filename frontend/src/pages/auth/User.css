@@ -15,7 +15,7 @@
   margin: -80px 5px 0;
   border-radius: 8px;
   background-color: white;
-  box-shadow: 2px 3px 4px 2px rgba(4, 80, 113, 0.25);
+  box-shadow: 2px 3px 4px 2px var(--color-shadow-1);
 }
 .UserPage .Main button{
   border: none;
@@ -116,7 +116,7 @@
   margin: 0 10px;
   border-radius: 10px;
   padding: 0 4px;
-  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+  box-shadow: 2px 4px 4px 0px var(--color-shadow-1);
 }
 .UserPage .UserMenu .LogoutConfirm p{
   display: flex;
@@ -133,7 +133,7 @@
   border: none;
   border-radius: 10px;
   background: var(--color-secundary-1);
-  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+  box-shadow: 2px 4px 4px 0px var(--color-shadow-1);
 }
 .UserPage .UserMenu .LogoutConfirm button{
   padding: 2px 8px;
