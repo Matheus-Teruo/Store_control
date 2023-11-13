@@ -40,7 +40,7 @@
   border: none;
   border-radius: 8px;
   background-color: var(--color-secundary-1);
-  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+  box-shadow: 2px 4px 4px 0px var(--color-shadow-1);
 }
 .Cards .Main{
   display: flex;
@@ -127,5 +127,5 @@
   border: none;
   border-radius: 8px;
   background-color: var(--color-secundary-1);
-  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+  box-shadow: 2px 4px 4px 0px var(--color-shadow-1);
 }

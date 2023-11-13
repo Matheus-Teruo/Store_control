@@ -19,7 +19,7 @@
   padding: 5px 12px;
   border: none;
   border-radius: 8px;
-  box-shadow: 2px 4px 4px 0px rgba(4, 80, 113, 0.25);
+  box-shadow: 2px 4px 4px 0px var(--color-shadow-1);
 }
 
 .Statistics .Main{
