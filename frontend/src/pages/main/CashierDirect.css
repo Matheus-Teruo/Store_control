@@ -397,9 +397,10 @@
 .CD .LastSales{
   z-index: 20;
   position: fixed;
-  top: calc(50vh - 20vh);
+  top: calc(50vh - 40vh);
   left: calc(50vw - 45vw);
   width: 90vw;
+  padding: 0 4px;
   border-radius: 10px;
   background-color: aliceblue;
   display: flex;
@@ -422,10 +423,14 @@
   padding: 0 0 6px;
 }
 .CD .LastSales .MainSub ul.ListofCustomers{
-  width: 95%;
+  width: 98%;
+  padding: 0 5px;
+  max-height: 75vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .CD .LastSales .MainSub ul.ListofSales{
   width: 100%;

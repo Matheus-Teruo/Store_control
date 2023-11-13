@@ -449,10 +449,11 @@
 .SellerLastSales{
   z-index: 20;
   position: fixed;
-  top: calc(50vh - 20vh);
+  top: calc(50vh - 40vh);
   left: calc(50vw - 45vw);
   width: 90vw;
   border-radius: 10px;
+  padding: 0 4px;
   background-color: aliceblue;
   display: flex;
   flex-direction: column;
@@ -474,10 +475,14 @@
   padding: 0 0 6px;
 }
 .SellerListLastSales ul.ListLastSales{
-  width: 95%;
+  width: 98%;
+  padding: 0 5px;
+  max-height: 60vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .SellerListLastSales ul.ListofGoods{
   width: 100%;
