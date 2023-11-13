@@ -165,10 +165,12 @@ async function Items(parameter) {  // [{itemID: int, standID: int, amount: int, 
 async function Sales(parameter, user, card) {
   return new Promise((resolve, reject) => {
     const promise = parameter.standIDs.map(standID => {
-      return database('sales')  // Registre Sale
+      const filteredItems = parameter.items.filter(element => element.standID === standID)
+      if (filteredItems.length > 0){
+        return database('sales')  // Registre Sale
         .insert({userID: user.userID, standID: standID, cardID: parameter.cardID, sale_t: card.time})
         .then((saleID) => {
-          const filteredItems = parameter.items.filter(element => element.standID === standID)
+          
           Goods({saleID: saleID, items: filteredItems})  // Iterate all items to goods table
             .catch(() => {
               res.json({message: "error: item with no stock", error: "items"})
@@ -176,7 +178,8 @@ async function Sales(parameter, user, card) {
         })
         .catch(() => {  // Error on register sales
           return res.status(500).json({message: "error on register sales", error: "sales"})
-        }) 
+        })
+      } 
     })
     Promise.all(promise)
       .then(() => {
