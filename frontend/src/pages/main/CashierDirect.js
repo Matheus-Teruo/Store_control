@@ -402,9 +402,13 @@ useEffect(() => {  // Handle select stand
                     <li key={good.itemID} className="ItemGood">
                       <p id="itemID">{good.item}</p>
                       <p id="quantity"><ShoppingBag size={18}/>{good.quantity}</p>
-                      <p id="price"><DollarSign size={18}/>{good.unit_p}</p>
+                      <p id="price"><DollarSign size={18}/>{good.unit_p * good.quantity}</p>
                     </li>
                     ))}
+                    <li key='total' className="ItemGood">
+                      <p id="titletotal"><span>Total:</span></p>
+                      <p id="price"> <DollarSign size={18}/><span>{listLastGoods.filter(element => element.saleID === sale.saleID).reduce((total, good) => total + (good.quantity * good.unit_p), 0)}</span></p>
+                    </li>
                   </ul>
                 </li>
                 ))}

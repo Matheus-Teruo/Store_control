@@ -507,6 +507,12 @@
   width: 40px;
   padding: 0 5px;
 }
+
+.CD .LastSales .MainSub span{
+  font-weight: 600;
+  font-size: 16px;
+}
+
 .CD .LastSales .MainSub button#discard{
   border: none;
   border-radius: 4px;
