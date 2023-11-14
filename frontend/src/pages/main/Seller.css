@@ -531,6 +531,10 @@
   width: 40px;
   padding: 0 5px;
 }
+.SellerListLastSales span{
+  font-weight: 600;
+  font-size: 16px;
+}
 .SellerListLastSales button#discard{
   border: none;
   border-radius: 4px;
