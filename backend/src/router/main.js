@@ -743,7 +743,16 @@ router.post("/deletecustomer", (req, res) => {  // Submit recharge
                                   .where({userID: decoded.userID, control_t: customer.control_t})
                                   .del()
                                   .then(() => {
-                                    return res.json({message: "successful purchase customer", cardID: data.cardID});
+                                    database('recharges')
+                                      .where({userID: decoded.userID, recharge_t: customer.control_t})
+                                      .del()
+                                      .then(() => {
+                                        return res.json({message: "successful purchase customer", cardID: data.cardID});
+                                      })
+                                      .catch((err) => {
+                                        console.error(err)
+                                        return res.status(501).json({message: "sales delete error"}); 
+                                      })
                                   })
                               })
                               .catch((err) => {
