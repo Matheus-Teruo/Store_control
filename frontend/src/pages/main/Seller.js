@@ -9,23 +9,29 @@ import Barcode from '../../midia/Barcode';
 import History from '../../midia/History';
 
 function Seller() {
+  // Cart
   const [cart, setCart] = useState([])
   const [total, setTotal] = useState(0)
+  // Card
   const [showScanner, setShowScanner] = useState(false)
   const [showCard, setShowCard] = useState(false)
   const [card, setCard] = useState("")
+  const [cardBalance, setCardBalance] = useState(0)
+  const [customer, setCustomer] = useState("")
+  // Items
   const [stand, setStand] = useState({standID:0 ,stand:""})
   const [items, setItems] = useState([])
   const [check, setCheck] = useState({
     purchase: false,
     card: false})
   const [confirmPurchase, setConfirmPurchase] = useState(false)
-  const [cardBalance, setCardBalance] = useState(0)
-  const [customer, setCustomer] = useState("")
+  const [processing, setProcessing] = useState(false)
+  // LastSales
   const [showLastSales, setShowLastSales] = useState(false)
   const [listLastSales, setListLastSales] = useState([])
   const [listLastGoods, setListLastGoods] = useState([])
   const [checkLastCustomer, setCheckLastCustomer] = useState(false)
+  // Aux
   const [animation, setAnimation] = useState(false)
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
@@ -93,7 +99,7 @@ function Seller() {
             if (resStatus === 200){
               RequestItemsPerStand();
               setCart([]); setShowCard(true); setAnimation(true);
-              setConfirmPurchase(false);
+              setConfirmPurchase(false);setProcessing(false);
               SubmitCardCheck();
               return setTimeout(() => {
                 setShowCard(false);
@@ -109,7 +115,7 @@ function Seller() {
           })
       } else {
         setCart([]);
-        setConfirmPurchase(false);
+        setConfirmPurchase(false);setProcessing(false);
         return setCheck(check => ({...check, purchase: false}))
       }
     }
@@ -400,7 +406,7 @@ function Seller() {
         </div>
         <div className="SellerPurchaseFooter">
           <button onClick={() => setConfirmPurchase(false)}>Cancelar</button>
-          <button onClick={() => SubmitPurchase()} disabled={(check.purchase && check.card && total <= cardBalance) ? false : true}>Confirmar</button>
+          <button onClick={() => {setProcessing(true);SubmitPurchase()}} disabled={(check.purchase && check.card && total <= cardBalance && !processing) ? false : true}>Confirmar</button>
         </div>
       </div>
       </>

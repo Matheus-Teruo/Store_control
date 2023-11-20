@@ -6,6 +6,7 @@ import { ResizeImg } from './inputs/utils.js';
 import AuthContext from '../../store/auth_context';
 import Item from './inputs/Item';
 import CropImage from "./inputs/CropImage";
+import Register from "../../midia/Register.js";
 import StandID from '../admin/inputs/StandID';
 
 function Stocktaking() {
@@ -83,8 +84,10 @@ function Stocktaking() {
             return {
               ...item,
               sold: foundGood ? foundGood.totalQuantity : 0,
+              total: foundGood ? foundGood.totalAmount : 0,
             };
           });
+          console.log(mergedItems)
           setItems(mergedItems)
         } else if (resStatus === 401){
           return auth.onLogout()
@@ -100,14 +103,7 @@ function Stocktaking() {
           }
           setStand(data.stand)
           setCheck(check => ({...check, standID: true}))
-          const mergedItems = data.items.map((item) => {
-            const foundGood = data.goods.find((good) => good.itemID === item.itemID);
-            return {
-              ...item,
-              sold: foundGood ? foundGood.totalQuantity : 0,
-            };
-          });
-          setItems(mergedItems)
+          setItems(data.items)
         } else if (resStatus === 401){
           return auth.onLogout()
         }
@@ -352,6 +348,7 @@ function Stocktaking() {
                 <p id="stock" className={`${item.stock === 0 && "unavailable"}`}><Package size={18}/>{item.stock}</p>
                 <p id="sold"><ShoppingBag size={18}/>{item?.sold}</p>
               </div>
+              <p id="total"><Register size={18}/>{item?.total.toFixed(2)}</p>
             </li>
           )))
           :
@@ -366,7 +363,7 @@ function Stocktaking() {
               </div>
               }
               <p id="name">{item.item}</p>
-              <p id="price"><DollarSign size={18}/>{item.price}</p>
+              <p id="price"><DollarSign size={18}/>{item.price.toFixed(2)}</p>
               <div className="quantity">
                 <p id="stock" className={`${item.stock === 0 && "unavailable"}`}><Package size={18}/>{item.stock}</p>
               </div>
@@ -399,7 +396,7 @@ function Stocktaking() {
             {selectedImageURL ?
               <img src={selectedImageURL}/>
               :
-              <Image size="24"/>  
+              <Image size="24" onClick={handleClick}/>  
             }
           </div>
           <div className="ImageInput">
