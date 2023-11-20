@@ -46,7 +46,7 @@ services:
     volumes:
       - db-data:/var/lib/mysql
       - ./db/store_control.sql:/docker-entrypoint-initdb.d/store_control.sql:ro
-      - ./db/export:/var/lib/export
+      - ./db/export:/var/lib/mysql-files
     networks:
       - private
     environment:
