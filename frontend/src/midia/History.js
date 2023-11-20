@@ -6,7 +6,7 @@ function History(props) {
     width={`${props.size || "24"}px`}
     height={`${props.size || "24"}px`}
     viewBox="0 0 24 24"
-    stroke="#000000"
+    stroke="currentColor"
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round">

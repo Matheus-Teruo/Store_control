@@ -848,7 +848,7 @@ router.get("/stocktakingall", (req, res) => {  // Request all items and standID
             .then((items) => {
               database('goods')
                 .select('itemID')
-                .sum('quantity as totalQuantity')
+                .sum({ totalQuantity: 'quantity', totalAmount: database.raw('quantity * unit_p') })
                 .groupBy('itemID')
                 .then((goods) => {
                   return res.json({items: items, goods: goods})

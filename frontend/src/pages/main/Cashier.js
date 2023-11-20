@@ -35,6 +35,7 @@ function Cashier() {
   const [items, setItems] = useState([]);
   // Message
   const [confirmRecharge, setConfirmRecharge] = useState(false)
+  const [processing, setProcessing] = useState(false)
   const [confirmReset, setConfirmReset] = useState(false)
   // Aux to css
   const [animation, setAnimation] = useState(false)
@@ -79,8 +80,8 @@ function Cashier() {
           if (resStatus === 200){
             RequestLists()
             setRecharge(0); setShowCard(true);
-            setConfirmRecharge(false);
-            SubmitCardCheck()
+            setConfirmRecharge(false);setProcessing(false);
+            SubmitCardCheck();
             return setTimeout(() => {
               setCard("");
               setCart([]);
@@ -427,7 +428,7 @@ function Cashier() {
             output={(value) => setPayment(value)}/>
           <div className="CashierRechargeFooterButtons">
             <button onClick={() => setConfirmRecharge(false)}>Cancelar</button>
-            <button onClick={() => SubmitRecharge()} disabled={check.recharge && check.card && cardBalance !== "invalid"? false : true}>Confirmar</button>
+            <button onClick={() => {setProcessing(true);SubmitRecharge()}} disabled={check.recharge && check.card && cardBalance !== "invalid" && !processing? false : true}>Confirmar</button>
           </div>
         </div>
       </div>

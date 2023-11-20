@@ -113,6 +113,14 @@
   border-radius: 2px;
   background-color: #ffffff50;
 }
+.ST_Main p#total{
+  margin: 0 0 0 8px;
+  min-width: 53px;
+  flex: 3;
+  padding: 0 2px;
+  border-radius: 2px;
+  background-color: #ffffff50;
+}
 
 .ST_NewItem{
   z-index: 20;

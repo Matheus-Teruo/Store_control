@@ -22,6 +22,7 @@ function CashierDirect() {
   const [payment, setPayment] = useState("cash")
   const [confirmPurchase, setConfirmPurchase] = useState(false)
   const [doubleConfirmPurchase, setDoubleConfirmPurchase] = useState(false)
+  const [processing, setProcessing] = useState(false)
   // Last Sales
   const [showLastCustomers, setShowLastCustomers] = useState(false)
   const [listLastCustomers, setListLastCustomers] = useState([])
@@ -75,6 +76,8 @@ function CashierDirect() {
               setCart([]);
               setDonation(0);
               setConfirmPurchase(false);
+              setDoubleConfirmPurchase(false);
+              setProcessing(false);
             } else if (resStatus === 401){
               return auth.onLogout()
             }
@@ -85,6 +88,8 @@ function CashierDirect() {
       }else{
         setCart([]);
         setConfirmPurchase(false);
+        setDoubleConfirmPurchase(false);
+        setProcessing(false);
         return setCheck(check => ({...check, purchase: false}))
       }
     }
@@ -307,7 +312,7 @@ useEffect(() => {  // Handle select stand
 
       {confirmPurchase &&
       <>
-      <div className="BlackBackground" onClick={() => setConfirmPurchase(false)}/>
+      <div className="BlackBackground" onClick={() => {setConfirmPurchase(false);setDoubleConfirmPurchase(false);}}/>
       <div className="Purchase">
         <h3>Finalizar Compra</h3>
         <div className="Cart">
@@ -372,7 +377,7 @@ useEffect(() => {  // Handle select stand
           <div className="FooterConfirm">
             <p>Confirmar</p>
             <button onClick={() => setDoubleConfirmPurchase(false)}><X/></button>
-            <button onClick={() => SubmitPurchase()}><Check/></button>
+            <button onClick={() => {setProcessing(true);SubmitPurchase()}} disabled={!processing ? false : true}><Check/></button>
           </div>
             :
           <div className="Footer">
