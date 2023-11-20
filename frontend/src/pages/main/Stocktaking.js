@@ -10,11 +10,6 @@ import Register from "../../midia/Register.js";
 import StandID from '../admin/inputs/StandID';
 
 function Stocktaking() {
-  const [user, setUser] = useState({
-    standID: 0,
-    superuser: false,
-  })
-
   const [items, setItems] = useState([])
   const [stand, setStand] = useState({standID: 0,stand:""})
   const [stands, setStands] = useState([])
@@ -44,71 +39,42 @@ function Stocktaking() {
   const hiddenFileInput = useRef(null);
 
   useEffect(() => {  // Page requirements
-    if (auth.user.authenticated === true && user.standID === 0) {
-      var resStatus;
-      fetch("/api/main")
-        .then(res => {resStatus = res.status; return res.json()})
-        .then(data => {
-          if (resStatus === 200){
-            RequestItems(data.standID)
-            return setUser(data)
-          } else if (resStatus === 401){
-            return auth.onLogout()
-          }
-        })
-        .catch(console.error)
-    }
     if (auth.user.authenticated === true) {
-      
+      RequestItems()
     } else if (auth.user.authenticated === false) {
       navigate('/login');
     }
-  }, [auth, navigate, user.standID])
+  }, [auth, navigate])
 
-  useEffect(() => {  // Page requirements
-    
-  }, [auth, ])
-
-  async function RequestItems(standID = user.standID) {  // List all itens from stand
+  async function RequestItems() {  // List all itens from stand
     var resStatus;
-    if (auth.user.superuser || standID === 2) {
-      fetch('/api/stocktakingall')
-      .then(res => {resStatus = res.status; return res.json()})
-      .then(data => {
-        if (resStatus === 200){
-          RequestStands()
-          // console.log('items', data.items)
-          // console.log("goods", data.goods)
-          const mergedItems = data.items.map((item) => {
-            const foundGood = data.goods.find((good) => good.itemID === item.itemID);
-            return {
-              ...item,
-              sold: foundGood ? foundGood.totalQuantity : 0,
-              total: foundGood ? foundGood.totalAmount : 0,
-            };
-          });
-          console.log(mergedItems)
-          setItems(mergedItems)
-        } else if (resStatus === 401){
-          return auth.onLogout()
-        }
-      })
-    } else {
       fetch('/api/stocktaking')
       .then(res => {resStatus = res.status; return res.json()})
       .then(data => {
         if (resStatus === 200){
-          if (data.stand === null) {
-            return navigate('/')
+          if (data.flag){
+            RequestStands()
+            const mergedItems = data.items.map((item) => {
+              const foundGood = data.goods.find((good) => good.itemID === item.itemID);
+              return {
+                ...item,
+                sold: foundGood ? foundGood.totalQuantity : 0,
+                total: foundGood ? foundGood.totalAmount : 0,
+              };
+            });
+            setItems(mergedItems)
+          } else {
+            if (data.stand === null) {
+              return navigate('/')
+            }
+            setStand(data.stand)
+            setCheck(check => ({...check, standID: true}))
+            setItems(data.items)
           }
-          setStand(data.stand)
-          setCheck(check => ({...check, standID: true}))
-          setItems(data.items)
         } else if (resStatus === 401){
           return auth.onLogout()
         }
       })
-    }
   }
 
   async function RequestStands() {  // List all stands

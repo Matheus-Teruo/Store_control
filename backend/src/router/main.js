@@ -790,38 +790,54 @@ router.get("/stocktaking", (req, res) => {  // Request items from a standID
   if (!decoded) {
     return res.status(401).end();
   } else {
-    database('users')
+    if (decoded.superuser === 1){
+      database('items')
+      .select()
+      .then((items) => {
+        database('goods')
+          .select('itemID')
+          .sum({ totalQuantity: 'quantity', totalAmount: database.raw('quantity * unit_p') })
+          .groupBy('itemID')
+          .then((goods) => {
+            return res.json({flag: true, items: items, goods: goods})
+          })
+          .catch((err) => {
+            console.error(err)
+            return res.status(501).json({message: "goods error"}); 
+          })
+      })
+      .catch(() => {
+        return res.status(501).json({message: "items error"}); 
+      })
+    } else {
+      database('users')
       .select('stands.standID', 'stands.stand')
       .join('stands', 'users.standID', 'stands.standID')
       .where({userID: decoded.userID})
-      .then((rowsUsers) => {
-        if (rowsUsers.length > 0){
-          const user = rowsUsers[0];
-          database('items')
+      .then((Users) => {
+        if (Users.length > 0){
+          const user = Users[0];
+          if (user.standID === 2){
+            database('items')
+            .select()
+            .where({activated: 1})
+            .then((items) => {
+              return res.json({flag: false, stand: {standID: user.standID, stand: user.stand}, items: items})
+            })
+            .catch(() => {
+              return res.status(501).json({message: "items error"}); 
+            })
+          } else {
+            database('items')
             .select()
             .where({standID: user.standID, activated: 1})
             .then((items) => {
-              if (items.length !== 0){
-                database('goods')
-                  .select('itemID')
-                  .sum('quantity as totalQuantity')
-                  .groupBy('itemID')
-                  .then((goods) => {
-                    const filteredgoods = goods.filter((elements) => {
-                      return items.some((item) => item.itemID === elements.itemID);
-                    });
-                    return res.json({stand: {standID: user.standID, stand: user.stand}, items: items, goods: filteredgoods})
-                  })
-                  .catch(() => {
-                    return res.status(501).json({message: "goods error"}); 
-                  })
-              } else {
-                return res.json({stand: {standID: user.standID, stand: user.stand}, items: items, goods: []}) 
-              }
+              return res.json({flag: false, stand: {standID: user.standID, stand: user.stand}, items: items})
             })
             .catch(() => {
               return res.status(501).json({message: "user are in diferent stand, error table"}); 
             })
+          }
         } else {  // User without stand
           return res.json({stand: {standID:0, stand:""}, items: []})
         }
@@ -829,62 +845,7 @@ router.get("/stocktaking", (req, res) => {  // Request items from a standID
       .catch(() => {
         return res.status(501).json({message: "user are in diferent stand, error table"}); 
       })
-  }
-})
-
-router.get("/stocktakingall", (req, res) => {  // Request all items and standID
-  const decoded = decodeJWT(req, res);
-  if (!decoded) {
-    return res.status(401).end();
-  } else {
-    database('users')
-      .select('standID')  
-      .where({userID:  decoded.userID})
-      .then((users) => {
-        const user = users[0];
-        if (decoded.superuser === 1){
-          database('items')
-            .select()
-            .then((items) => {
-              database('goods')
-                .select('itemID')
-                .sum({ totalQuantity: 'quantity', totalAmount: database.raw('quantity * unit_p') })
-                .groupBy('itemID')
-                .then((goods) => {
-                  return res.json({items: items, goods: goods})
-                })
-                .catch((err) => {
-                  console.error(err)
-                  return res.status(501).json({message: "goods error"}); 
-                })
-            })
-            .catch(() => {
-              return res.status(501).json({message: "items error"}); 
-            })
-        }else if(user.standID === 2){
-          database('items')
-            .select()
-            .where({activated: 1})
-            .then((items) => {
-              database('goods')
-                .select('itemID')
-                .sum('quantity as totalQuantity')
-                .groupBy('itemID')
-                .then((goods) => {
-                  return res.json({items: items, goods: goods})
-                })
-                .catch((err) => {
-                  console.error(err)
-                  return res.status(501).json({message: "goods error"}); 
-                })
-            })
-            .catch(() => {
-              return res.status(501).json({message: "items error"}); 
-            })
-        } else {
-          return res.status(501).json({message: "Not superuser"}); 
-        }
-      })
+    }
   }
 })
 
