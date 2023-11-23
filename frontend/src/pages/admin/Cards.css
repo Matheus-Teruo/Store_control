@@ -67,7 +67,7 @@
 .Cards .Main p{
   padding: 0 2px;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
 }
 .Cards .Main p#cardcode{
   flex: 2;

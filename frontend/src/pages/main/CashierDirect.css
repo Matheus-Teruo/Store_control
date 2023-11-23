@@ -160,7 +160,7 @@
   padding: 8px;
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
   background-color: var(--color-primary-2);
   height: calc(100vh - calc(var(--height-header) + 16px + 45px + 80px));
