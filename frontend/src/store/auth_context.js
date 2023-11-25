@@ -28,7 +28,7 @@ export const AuthContextProvider = (props) => {
         return setUser({authenticated: false, firstname: "", superuser: false});
       })
       .catch(() => {
-        return console.error
+        return console.error;
       })
   }
 

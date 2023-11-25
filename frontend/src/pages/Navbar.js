@@ -15,7 +15,7 @@ function Navbar() {
   useEffect(() => {  // Page requirements
     if (auth.user.authenticated === 2 && user.firstTime){
       setUser((user) => ({...user, firstTime: false}))
-      return auth.onLogin()
+      auth.onLogin()
     } else if (auth.user.authenticated === true && !user.firstTime){
       setUser((user) => ({...user, firstTime: true}))
     }

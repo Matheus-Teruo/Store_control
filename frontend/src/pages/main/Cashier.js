@@ -483,7 +483,7 @@ function Cashier() {
       {showScanner &&
       <div className="BlackBackgroundScanner" onClick={() => {setShowScanner(false)}}>
         <div className="ScanPreview">
-          <QRcodeScanner output={handleScan}/>
+          {/* <QRcodeScanner output={handleScan}/> */}
         </div>
       </div>
       }
