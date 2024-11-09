@@ -1,7 +1,22 @@
 package com.storecontrol.backend.models.enumerate;
 
 public enum PaymentType {
-    CASH,
-    DEBITCARD,
-    CREDITCARD,
+    CREDIT("credit"),
+    DEBIT("debit"),
+    CASH("cash");
+
+    private String paymentTypeLower;
+
+    PaymentType(String paymentTypeLower) {
+        this.paymentTypeLower = paymentTypeLower;
+    }
+
+    public static PaymentType fromString(String type) {
+        for(PaymentType paymentType : PaymentType.values()) {
+            if (paymentType.paymentTypeLower.equalsIgnoreCase(type)){
+                return paymentType;
+            }
+        }
+        throw new IllegalArgumentException("Nenhum tipo de pagamento encontrado a partir da String passada");
+    }
 }

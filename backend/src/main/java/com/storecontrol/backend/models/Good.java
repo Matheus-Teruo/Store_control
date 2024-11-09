@@ -1,10 +1,19 @@
 package com.storecontrol.backend.models;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
+@Entity
+@Table(name = "goods")
+@Getter
+@NoArgsConstructor
 public class Good {
-    private Item item;
-    private Sale sale;
+    @EmbeddedId
+    private GoodID goodId;
     private Integer quantity;
-    private BigDecimal unit_price;
+    @Column(name = "unit_price")
+    private BigDecimal unitPrice;
 }
