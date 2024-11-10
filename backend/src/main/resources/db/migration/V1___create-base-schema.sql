@@ -5,7 +5,8 @@ CREATE TABLE associations (
     uuid BINARY(16) PRIMARY KEY,
     association VARCHAR(255) NOT NULL,
     principal_name VARCHAR(255),
-    principal_id BINARY(16)
+    principal_id BINARY(16),
+    valid TINYINT(1)
 );
 
 -- Table for customers
@@ -14,7 +15,7 @@ CREATE TABLE customers (
     card_id CHAR(15),
     customer_start TIMESTAMP,
     customer_end TIMESTAMP,
-    in_use BOOLEAN,
+    in_use TINYINT(1),
     voluntary_id BINARY(16)
 );
 
@@ -25,7 +26,7 @@ CREATE TABLE donations (
     donation_time_stamp TIMESTAMP,
     customer_id BINARY(16),
     voluntary_id BINARY(16),
-    active BOOLEAN
+    valid TINYINT(1)
 );
 
 -- Table for goods
@@ -34,6 +35,7 @@ CREATE TABLE goods (
     sale_id BINARY(16),
     quantity INT,
     unit_price DECIMAL(19, 2),
+    valid TINYINT(1),
     PRIMARY KEY (item_id, sale_id)
 );
 
@@ -45,14 +47,14 @@ CREATE TABLE items (
     stock INT,
     item_img VARCHAR(255),
     stand_id BINARY(16),
-    active BOOLEAN
+    valid TINYINT(1)
 );
 
 -- Table for order_cards
 CREATE TABLE order_cards (
     card_id CHAR(15) PRIMARY KEY,
     debit DECIMAL(19, 2),
-    active BOOLEAN
+    active TINYINT(1)
 );
 
 -- Table for recharges
@@ -63,7 +65,7 @@ CREATE TABLE recharges (
     payment_type ENUM('CREDIT', 'DEBIT', 'CASH') NOT NULL,
     customer_id BINARY(16),
     voluntary_id BINARY(16),
-    active BOOLEAN
+    valid TINYINT(1)
 );
 
 -- Table for sales
@@ -73,14 +75,15 @@ CREATE TABLE sales (
     sale_time_stamp TIMESTAMP,
     customer_id BINARY(16),
     voluntary_id BINARY(16),
-    valid BOOLEAN
+    valid TINYINT(1)
 );
 
 -- Table for stands
 CREATE TABLE stands (
     uuid BINARY(16) PRIMARY KEY,
     stand VARCHAR(255),
-    association_id BINARY(16)
+    association_id BINARY(16),
+    valid TINYINT(1)
 );
 
 -- Table for volunteers
@@ -91,6 +94,6 @@ CREATE TABLE volunteers (
     salt VARCHAR(255),
     fullname VARCHAR(255),
     stand_id BINARY(16),
-    super_user BOOLEAN,
-    active BOOLEAN
+    super_user TINYINT(1),
+    valid TINYINT(1)
 );

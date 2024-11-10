@@ -1,6 +1,9 @@
 package com.storecontrol.backend.models;
 
+import com.storecontrol.backend.controllers.request.voluntary.RequestUpdateVoluntary;
+import com.storecontrol.backend.controllers.request.voluntary.RequestVoluntary;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,5 +33,33 @@ public class Voluntary {
   @OneToMany(mappedBy = "voluntary")
   private List<Donation> donations;
   private Boolean superUser;
-  private Boolean active;
+  private Boolean valid;
+
+  public Voluntary(@Valid RequestVoluntary request) {
+    this.user = new User(request.username(), request.password(), request.salt());
+    this.fullname = request.fullname();
+    this.valid = true;
+  }
+
+  public void updateVoluntary(RequestUpdateVoluntary request, Association association, Stand stand) {
+    if (request.username() != null || request.password() != null || request.salt() != null) {
+      this.user.updateUser(request.username(), request.password(), request.salt());
+    }
+    if (request.fullname() != null) {
+      this.fullname = request.fullname();
+    }
+    if (request.associationId() != null) {
+      this.association = association;
+    }
+    if (request.standId() != null) {
+      this.stand = stand;
+    }
+    if (request.superUser() != null) {
+      this.superUser = request.superUser();
+    }
+  }
+
+  public void deleteVoluntary() {
+    this.valid = false;
+  }
 }

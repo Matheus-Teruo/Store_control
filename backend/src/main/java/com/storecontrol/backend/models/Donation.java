@@ -23,5 +23,5 @@ public class Donation {
     private Customer customer;
     @ManyToOne @JoinColumn(name = "voluntary_id")
     private Voluntary voluntary;
-    private Boolean active;
+    private Boolean valid;
 }

@@ -1,5 +1,7 @@
 package com.storecontrol.backend.models;
 
+import com.storecontrol.backend.controllers.request.stand.RequestStand;
+import com.storecontrol.backend.controllers.request.stand.RequestUpdateStand;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,4 +23,24 @@ public class Stand {
     private List<Voluntary> volunteers;
     @OneToMany(mappedBy = "stand")
     private List<Item> items;
+    private Boolean valid;
+
+    public Stand(RequestStand request) {
+        this.stand = request.stand();
+        this.association = request.association();
+        this.valid = true;
+    }
+
+    public void updateStand(RequestUpdateStand request) {
+        if (request.stand() != null) {
+            this.stand = request.stand();
+        }
+        if (request.association() != null) {
+            this.association = request.association();
+        }
+    }
+
+    public void deleteStand() {
+        this.valid = false;
+    }
 }

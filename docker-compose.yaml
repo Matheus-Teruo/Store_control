@@ -28,6 +28,8 @@ services:
     volumes:
       - db-data:/var/lib/mysql
       - ./db/export:/var/lib/mysql-files
+    ports:
+      - 3307:3306
     networks:
       - private
     environment:

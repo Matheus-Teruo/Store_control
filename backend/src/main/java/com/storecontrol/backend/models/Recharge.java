@@ -27,5 +27,5 @@ public class Recharge {
     private Customer customer;
     @ManyToOne @JoinColumn(name = "voluntary_id")
     private Voluntary voluntary;
-    private Boolean active;
+    private Boolean valid;
 }

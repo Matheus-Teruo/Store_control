@@ -16,4 +16,5 @@ public class Good {
     private Integer quantity;
     @Column(name = "unit_price")
     private BigDecimal unitPrice;
+    private Boolean valid;
 }
