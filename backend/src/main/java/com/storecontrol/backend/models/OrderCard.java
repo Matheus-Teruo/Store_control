@@ -1,7 +1,7 @@
 package com.storecontrol.backend.models;
 
-import com.storecontrol.backend.controllers.request.orderCard.RequestCard;
-import com.storecontrol.backend.controllers.request.orderCard.RequestUpdateCard;
+import com.storecontrol.backend.controllers.request.orderCard.RequestOrderCard;
+import com.storecontrol.backend.controllers.request.orderCard.RequestUpdateOrderCard;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,17 +21,22 @@ public class OrderCard {
     private List<Customer> curtomers;
     private Boolean active;
 
-    public OrderCard(RequestCard request) {
+    public OrderCard(RequestOrderCard request) {
         this.id = request.id();
         this.debit = BigDecimal.ZERO;
+        this.active = false;
     }
 
-    public void updateOrderCard(RequestUpdateCard request) {
+    public void updateOrderCard(RequestUpdateOrderCard request) {
         if (request.debit() != null) {
             this.debit = new BigDecimal(request.debit());
         }
         if (request.active() != null) {
             this.active = request.active();
         }
+    }
+
+    public void incrementDebit(String value) {
+        this.debit = debit.add(new BigDecimal(value));
     }
 }

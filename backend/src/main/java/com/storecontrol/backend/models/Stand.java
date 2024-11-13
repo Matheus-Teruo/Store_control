@@ -16,8 +16,9 @@ import java.util.UUID;
 public class Stand {
     @Id @GeneratedValue(generator = "UUID")
     private UUID uuid;
-    private String stand;
-    @ManyToOne @JoinColumn(name = "association_id")
+    @Column(name = "stand_name")
+    private String standName;
+    @ManyToOne @JoinColumn(name = "association_uuid")
     private Association association;
     @OneToMany(mappedBy = "stand")
     private List<Voluntary> volunteers;
@@ -25,19 +26,20 @@ public class Stand {
     private List<Item> items;
     private Boolean valid;
 
-    public Stand(RequestStand request) {
-        this.stand = request.stand();
-        this.association = request.association();
+    public Stand(RequestStand request, Association association) {
+        this.standName = request.standName();
+        this.association = association;
         this.valid = true;
     }
 
     public void updateStand(RequestUpdateStand request) {
-        if (request.stand() != null) {
-            this.stand = request.stand();
+        if (request.standName() != null) {
+            this.standName = request.standName();
         }
-        if (request.association() != null) {
-            this.association = request.association();
-        }
+    }
+
+    public void updateStand(Association association) {
+        this.association = association;
     }
 
     public void deleteStand() {

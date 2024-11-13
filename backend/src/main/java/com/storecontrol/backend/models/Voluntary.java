@@ -1,7 +1,7 @@
 package com.storecontrol.backend.models;
 
+import com.storecontrol.backend.controllers.request.voluntary.RequestCreateVoluntary;
 import com.storecontrol.backend.controllers.request.voluntary.RequestUpdateVoluntary;
-import com.storecontrol.backend.controllers.request.voluntary.RequestVoluntary;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.Getter;
@@ -20,43 +20,35 @@ public class Voluntary {
   @Embedded
   private User user;
   private String fullname;
-  @OneToOne(mappedBy = "principal")
-  private Association association;
-  @ManyToOne @JoinColumn(name = "stand_id")
+  @ManyToOne @JoinColumn(name = "stand_uuid")
   private Stand stand;
   @OneToMany(mappedBy = "voluntary")
   private List<Sale> sales;
   @OneToMany(mappedBy = "voluntary")
-  private List<Customer> customers;
-  @OneToMany(mappedBy = "voluntary")
   private List<Recharge> recharges;
   @OneToMany(mappedBy = "voluntary")
   private List<Donation> donations;
-  private Boolean superUser;
+  private Boolean superuser;
   private Boolean valid;
 
-  public Voluntary(@Valid RequestVoluntary request) {
+  public Voluntary(@Valid RequestCreateVoluntary request) {
     this.user = new User(request.username(), request.password(), request.salt());
     this.fullname = request.fullname();
+    this.superuser = false;
     this.valid = true;
   }
 
-  public void updateVoluntary(RequestUpdateVoluntary request, Association association, Stand stand) {
+  public void updateVoluntary(RequestUpdateVoluntary request) {
     if (request.username() != null || request.password() != null || request.salt() != null) {
       this.user.updateUser(request.username(), request.password(), request.salt());
     }
     if (request.fullname() != null) {
       this.fullname = request.fullname();
     }
-    if (request.associationId() != null) {
-      this.association = association;
-    }
-    if (request.standId() != null) {
-      this.stand = stand;
-    }
-    if (request.superUser() != null) {
-      this.superUser = request.superUser();
-    }
+  }
+
+  public void updateVoluntary(Stand stand){
+    this.stand = stand;
   }
 
   public void deleteVoluntary() {

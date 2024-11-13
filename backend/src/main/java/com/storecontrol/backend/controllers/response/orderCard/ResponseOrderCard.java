@@ -4,13 +4,16 @@ import com.storecontrol.backend.models.OrderCard;
 
 import java.math.BigDecimal;
 
-public record ResponseCard(
+public record ResponseOrderCard(
     String id,
-    BigDecimal debit
+    BigDecimal debit,
+    Boolean active
 ) {
 
-  public ResponseCard(OrderCard orderCard) {
+  public ResponseOrderCard(OrderCard orderCard) {
     this(orderCard.getId(),
-        orderCard.getDebit());
+        orderCard.getDebit(),
+        orderCard.getActive()
+    );
   }
 }

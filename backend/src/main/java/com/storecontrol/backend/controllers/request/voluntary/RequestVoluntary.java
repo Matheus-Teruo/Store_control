@@ -4,11 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 
 public record RequestVoluntary(
     @NotBlank
+    String uuid,
+    @NotBlank
     String username,
-    @NotBlank
-    String password,
-    @NotBlank
-    String salt,
     @NotBlank
     String fullname
 ) {

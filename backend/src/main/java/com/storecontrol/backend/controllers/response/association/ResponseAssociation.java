@@ -1,19 +1,19 @@
 package com.storecontrol.backend.controllers.response.association;
 
 import com.storecontrol.backend.models.Association;
-import com.storecontrol.backend.models.Voluntary;
+
+import java.util.UUID;
 
 public record ResponseAssociation(
-    String uuid,
+    UUID uuid,
     String association,
-    String principalName,
-    Voluntary principal
+    String principalName
 ) {
 
   public ResponseAssociation(Association association) {
-    this(association.getUuid().toString(),
-        association.getAssociation(),
-        association.getPrincipalName(),
-        association.getPrincipal());
+    this(association.getUuid(),
+        association.getAssociationName(),
+        association.getPrincipalName()
+    );
   }
 }

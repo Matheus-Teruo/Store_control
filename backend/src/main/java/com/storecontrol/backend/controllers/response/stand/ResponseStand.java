@@ -1,17 +1,20 @@
 package com.storecontrol.backend.controllers.response.stand;
 
-import com.storecontrol.backend.models.Association;
+import com.storecontrol.backend.controllers.response.association.ResponseAssociation;
 import com.storecontrol.backend.models.Stand;
 
+import java.util.UUID;
+
 public record ResponseStand(
-    String uuid,
+    UUID uuid,
     String stand,
-    Association association
+    ResponseAssociation association
 ) {
 
   public ResponseStand(Stand stand) {
-    this(stand.getUuid().toString(),
-        stand.getStand(),
-        stand.getAssociation());
+    this(stand.getUuid(),
+        stand.getStandName(),
+        new ResponseAssociation(stand.getAssociation())
+    );
   }
 }

@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ItemRepository extends JpaRepository<Item, UUID> {
-  @Query("select i from Item i where i.valid = true and i.id = :id")
-  Item findByIdValidTrue(UUID id);
+  @Query("select i from Item i where i.valid = true and i.uuid = :uuid")
+  Item findByIdValidTrue(UUID uuid);
 
   @Query("select i from Item i where i.valid = true")
   List<Item> findAllByValidTrue();

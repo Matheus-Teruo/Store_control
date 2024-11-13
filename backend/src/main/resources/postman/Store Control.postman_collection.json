@@ -1,0 +1,1016 @@
+{
+	"info": {
+		"_postman_id": "2936cf9a-c773-4119-b5e7-13623ee58a54",
+		"name": "Store Control",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38885305"
+	},
+	"item": [
+		{
+			"name": "Association",
+			"item": [
+				{
+					"name": "Create Association",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseBody = pm.response.json();\r",
+									"\r",
+									"if (responseBody && responseBody.uuid) {\r",
+									"    pm.collectionVariables.set(\"association_id\", responseBody.uuid);\r",
+									"    // console.log(\"association ID (UUID) saved as:\", responseBody.uuid);\r",
+									"} else {\r",
+									"    console.error(\"UUID not found in the response body\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"associationName\": \"Association_example10\",\r\n    \"principalName\": \"principal_example\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}associations",
+							"host": [
+								"{{hostPath}}associations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Association",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}associations/{{association_id}}",
+							"host": [
+								"{{hostPath}}associations"
+							],
+							"path": [
+								"{{association_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Associations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}associations",
+							"host": [
+								"{{hostPath}}associations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Association",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{association_id}}\",\r\n    \"associationName\": \"AssociationExample\",\r\n    \"principalName\": \"PrincipalNameExample\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}associations",
+							"host": [
+								"{{hostPath}}associations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Association",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{association_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}associations",
+							"host": [
+								"{{hostPath}}associations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer",
+			"item": [
+				{
+					"name": "Read Customer",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}customers/{{customer_id}}",
+							"host": [
+								"{{hostPath}}customers"
+							],
+							"path": [
+								"{{customer_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Customers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const customers = pm.response.json();\r",
+									"\r",
+									"if (Array.isArray(customers) && customers.length > 0) {\r",
+									"    const randomIndex = Math.floor(Math.random() * customers.length);\r",
+									"\r",
+									"    const randomUUID = customers[randomIndex].uuid;\r",
+									"\r",
+									"    pm.collectionVariables.set(\"customer_id\", randomUUID);\r",
+									"    console.log(\"UUID aleatório salvo:\", randomUUID);\r",
+									"} else {\r",
+									"    console.warn(\"A resposta não contém dados de customers.\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}customers",
+							"host": [
+								"{{hostPath}}customers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Item",
+			"item": [
+				{
+					"name": "Create Item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseBody = pm.response.json();\r",
+									"\r",
+									"if (responseBody && responseBody.uuid) {\r",
+									"    pm.collectionVariables.set(\"item_id\", responseBody.uuid);\r",
+									"    // console.log(\"item ID (UUID) saved as:\", responseBody.uuid);\r",
+									"} else {\r",
+									"    console.error(\"UUID not found in the response body\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"itemName\": \"ItemExample2\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1,\r\n    \"itemImg\": null,\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}items",
+							"host": [
+								"{{hostPath}}items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Item",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}items/{{item_id}}",
+							"host": [
+								"{{hostPath}}items"
+							],
+							"path": [
+								"{{item_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Items",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}items",
+							"host": [
+								"{{hostPath}}items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Item",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{item_id}}\",\r\n    \"itemName\": \"ExampleItemName\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 10,\r\n    \"itemImg\": \"\",\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}items",
+							"host": [
+								"{{hostPath}}items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Item",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{item_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}items",
+							"host": [
+								"{{hostPath}}items"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "OrderCard",
+			"item": [
+				{
+					"name": "Create OrderCard",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\r",
+									"\r",
+									"function generateRandomId(length) {\r",
+									"    let result = '';\r",
+									"    for (let i = 0; i < length; i++) {\r",
+									"        const randomIndex = Math.floor(Math.random() * characters.length);\r",
+									"        result += characters[randomIndex];\r",
+									"    }\r",
+									"    return result;\r",
+									"}\r",
+									"\r",
+									"const generatedId = generateRandomId(15);\r",
+									"pm.collectionVariables.set(\"card_id\", generatedId);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"{{card_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}cards",
+							"host": [
+								"{{hostPath}}cards"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List OrderCard",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}cards",
+							"host": [
+								"{{hostPath}}cards"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read OrderCard Active",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}cards/{{card_id}}",
+							"host": [
+								"{{hostPath}}cards"
+							],
+							"path": [
+								"{{card_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List OrderCard Active",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}cards/active",
+							"host": [
+								"{{hostPath}}cards"
+							],
+							"path": [
+								"active"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Sale",
+			"item": [
+				{
+					"name": "Create Sale",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseBody = pm.response.json();\r",
+									"\r",
+									"if (responseBody && responseBody.uuid) {\r",
+									"    pm.collectionVariables.set(\"sale_id\", responseBody.uuid);\r",
+									"    // console.log(\"sale ID (UUID) saved as:\", responseBody.uuid);\r",
+									"} else {\r",
+									"    console.error(\"UUID not found in the response body\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"onOrder\": false,\r\n    \"requestGoods\": [\r\n        {\"itemId\": \"{{item_id}}\",\"quantity\": 1,\"unitPrice\": \"1.00\"}\r\n    ],\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}sales",
+							"host": [
+								"{{hostPath}}sales"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Sale",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}sales/{{sale_id}}",
+							"host": [
+								"{{hostPath}}sales"
+							],
+							"path": [
+								"{{sale_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Sales",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}sales",
+							"host": [
+								"{{hostPath}}sales"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Sale",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{sale_id}}\",\r\n    \"onOrder\": false,\r\n    \"requestUpdateGoods\": [\r\n        {\"itemId\": \"{{item_id}}\",\"delivered\": 1}\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}sales",
+							"host": [
+								"{{hostPath}}sales"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Sale",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{sale_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}sales",
+							"host": [
+								"{{hostPath}}sales"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Recharge",
+			"item": [
+				{
+					"name": "Create Recharge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseBody = pm.response.json();\r",
+									"\r",
+									"if (responseBody && responseBody.uuid) {\r",
+									"    pm.collectionVariables.set(\"recharge_id\", responseBody.uuid);\r",
+									"    // console.log(\"Recharge ID (UUID) saved as:\", responseBody.uuid);\r",
+									"} else {\r",
+									"    console.error(\"UUID not found in the response body\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rechargeValue\": \"2.00\",\r\n    \"paymentTypeEnum\": \"cash\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}recharges",
+							"host": [
+								"{{hostPath}}recharges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Recharge",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}recharges/{{recharge_id}}",
+							"host": [
+								"{{hostPath}}recharges"
+							],
+							"path": [
+								"{{recharge_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Recharges",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}recharges",
+							"host": [
+								"{{hostPath}}recharges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Recharge",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{recharge_id}}\",\r\n    \"rechargeValue\": \"1.00\",\r\n    \"paymentTypeEnum\": \"DEBIT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}recharges",
+							"host": [
+								"{{hostPath}}recharges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Recharge",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{recharge_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}recharges",
+							"host": [
+								"{{hostPath}}recharges"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Stand",
+			"item": [
+				{
+					"name": "Create Stand",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseBody = pm.response.json();\r",
+									"\r",
+									"if (responseBody && responseBody.uuid) {\r",
+									"    pm.collectionVariables.set(\"stand_id\", responseBody.uuid);\r",
+									"    // console.log(\"stand ID (UUID) saved as:\", responseBody.uuid);\r",
+									"} else {\r",
+									"    console.error(\"UUID not found in the response body\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"standName\": \"StandExample\",\r\n    \"associationId\": \"{{association_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}stands",
+							"host": [
+								"{{hostPath}}stands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Stand",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}stands/{{stand_id}}",
+							"host": [
+								"{{hostPath}}stands"
+							],
+							"path": [
+								"{{stand_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Stands",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}stands",
+							"host": [
+								"{{hostPath}}stands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Stand",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{stand_id}}\",\r\n    \"standName\": \"StandExample1\",\r\n    \"associationId\": \"{{association_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}stands",
+							"host": [
+								"{{hostPath}}stands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Stand",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{stand_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}stands",
+							"host": [
+								"{{hostPath}}stands"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Voluntary",
+			"item": [
+				{
+					"name": "Create Voluntary",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseBody = pm.response.json();\r",
+									"\r",
+									"if (responseBody && responseBody.uuid) {\r",
+									"    pm.collectionVariables.set(\"voluntary_id\", responseBody.uuid);\r",
+									"    // console.log(\"volunteers ID (UUID) saved as:\", responseBody.uuid);\r",
+									"} else {\r",
+									"    console.error(\"UUID not found in the response body\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"UsernameExample3\",\r\n    \"password\": \"PasswordExample\",\r\n    \"salt\": \"SaltExample\",\r\n    \"fullname\": \"Full Name Example3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}volunteers",
+							"host": [
+								"{{hostPath}}volunteers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Voluntary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}volunteers/{{voluntary_id}}",
+							"host": [
+								"{{hostPath}}volunteers"
+							],
+							"path": [
+								"{{voluntary_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Volunteers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}volunteers",
+							"host": [
+								"{{hostPath}}volunteers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Voluntary",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"username\": \"UsernameExample4\",\r\n    \"password\": \"PasswordExample\",\r\n    \"salt\": \"SaltExample\",\r\n    \"fullname\": \"Full Name Example4\",\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}volunteers",
+							"host": [
+								"{{hostPath}}volunteers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Voluntary",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}volunteers",
+							"host": [
+								"{{hostPath}}volunteers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "hostPath",
+			"value": "http://localhost:8080/",
+			"type": "string"
+		},
+		{
+			"key": "association_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "customer_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "item_id",
+			"value": ""
+		},
+		{
+			"key": "card_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "recharge_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "sale_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "stand_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "voluntary_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

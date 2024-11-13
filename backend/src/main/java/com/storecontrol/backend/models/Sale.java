@@ -1,5 +1,7 @@
 package com.storecontrol.backend.models;
 
+import com.storecontrol.backend.controllers.request.sale.RequestSale;
+import com.storecontrol.backend.controllers.request.sale.RequestUpdateSale;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,11 +21,37 @@ public class Sale {
     private Boolean onOrder;
     @Column(name = "sale_time_stamp")
     private LocalDateTime saleTimeStamp;
-    @OneToMany(mappedBy = "goodId.sale", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "goodId.sale", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Good> goods;
-    @ManyToOne @JoinColumn(name = "customer_id")
+    @ManyToOne(fetch = FetchType.EAGER) @JoinColumn(name = "customer_uuid")
     private Customer customer;
-    @ManyToOne @JoinColumn(name = "voluntary_id")
+    @ManyToOne(fetch = FetchType.EAGER) @JoinColumn(name = "voluntary_uuid")
     private Voluntary voluntary;
     private Boolean valid;
+
+    public Sale(RequestSale request, Customer customer, Voluntary voluntary) {
+        this.onOrder = request.onOrder();
+        this.saleTimeStamp = LocalDateTime.now();
+        this.customer = customer;
+        this.voluntary = voluntary;
+        this.valid = true;
+    }
+
+    public void updateSale(RequestUpdateSale request) {
+        if (request.onOrder() != null){
+            this.onOrder = request.onOrder();
+        }
+    }
+
+    public void updateSale(List<Good> goods) {
+        this.goods = goods;
+    }
+
+    public void updateSale(Customer customer) {
+        this.customer = customer;
+    }
+
+    public void deleteSale() {
+        this.valid = false;
+    }
 }

@@ -17,34 +17,26 @@ import java.util.UUID;
 public class Association {
     @Id @GeneratedValue(generator = "UUID")
     private UUID uuid;
-    private String association;
+    @Column(name = "association_name")
+    private String associationName;
     @Column(name = "principal_name")
     private String principalName;
-    @OneToOne @JoinColumn(name = "principal_id")
-    private Voluntary principal;
     @OneToMany(mappedBy = "association")
     private List<Stand> stands;
     private Boolean valid;
 
     public Association(@Valid RequestAssociation request) {
-        this.association = request.association();
+        this.associationName = request.associationName();
         this.principalName = request.principalName();
-        this.principal = request.principal();
         this.valid = true;
     }
 
     public void updateAssociation(RequestUpdateAssociation request) {
-        if (request.association() != null) {
-            this.association = request.association();
+        if (request.associationName() != null) {
+            this.associationName = request.associationName();
         }
         if (request.principalName() != null) {
             this.principalName = request.principalName();
-        }
-        if (request.principal() != null) {
-            this.principal = request.principal();
-        }
-        if (request.stands() != null) {
-            this.stands = request.stands();
         }
     }
 

@@ -19,9 +19,9 @@ public class Donation {
     private BigDecimal donationValue;
     @Column(name = "donation_time_stamp")
     private LocalDateTime donationTimeStamp;
-    @OneToOne @JoinColumn(name = "customer_id")
+    @OneToOne @JoinColumn(name = "customer_uuid")
     private Customer customer;
-    @ManyToOne @JoinColumn(name = "voluntary_id")
+    @ManyToOne @JoinColumn(name = "voluntary_uuid")
     private Voluntary voluntary;
     private Boolean valid;
 }

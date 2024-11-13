@@ -1,13 +1,14 @@
 package com.storecontrol.backend.services;
 
+import com.storecontrol.backend.controllers.request.association.RequestAssociation;
 import com.storecontrol.backend.controllers.request.association.RequestUpdateAssociation;
-import com.storecontrol.backend.controllers.response.association.ResponseAssociation;
 import com.storecontrol.backend.models.Association;
 import com.storecontrol.backend.repositories.AssociationRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,18 +19,45 @@ public class AssociationService {
   AssociationRepository repository;
 
   @Transactional
-  public ResponseAssociation serviceUptadeAssociation(RequestUpdateAssociation request) {
-    Optional<Association> association = repository.findById(UUID.fromString(request.uuid()));
+  public Association createAssociation(RequestAssociation request) {
+    var association = new Association(request);
+    repository.save(association);
 
-    if (association.isPresent()) {
-      association.get().updateAssociation(request);
-      return new ResponseAssociation(association.get());
+    return association;
+  }
+
+  public Association takeAssociationByUuid(String uuid) {
+    var associationOptional = repository.findByIdValidTrue(UUID.fromString(uuid));
+
+    if (associationOptional.isPresent()) {
+      return associationOptional.get();
     } else {
-      return new ResponseAssociation(new Association());
+      // TODO: ERROR: association_uuid invalid
+      return new Association();
     }
   }
 
-  public void serviceDeleteAssociation(RequestUpdateAssociation request) {
+  public List<Association> listAssociations() {
+    return repository.findAllByValidTrue();
+  }
+
+  @Transactional
+  public Association updateAssociation(RequestUpdateAssociation request) {
+    Optional<Association> associationOptional = repository.findById(UUID.fromString(request.uuid()));
+
+    if (associationOptional.isPresent()) {
+      var association = associationOptional.get();
+      association.updateAssociation(request);
+
+      return association;
+    } else {
+      // TODO: error: input error field id
+      return new Association();
+    }
+  }
+
+  @Transactional
+  public void deleteAssociation(RequestUpdateAssociation request) {
     Optional<Association> association = repository.findById(UUID.fromString(request.uuid()));
 
     association.ifPresent(Association::deleteAssociation);

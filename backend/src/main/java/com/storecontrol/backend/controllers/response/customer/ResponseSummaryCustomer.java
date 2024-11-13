@@ -1,22 +1,22 @@
 package com.storecontrol.backend.controllers.response.customer;
 
+import com.storecontrol.backend.controllers.response.orderCard.ResponseSummaryOrderCard;
 import com.storecontrol.backend.models.Customer;
-import com.storecontrol.backend.models.OrderCard;
-import com.storecontrol.backend.models.Voluntary;
+
+import java.util.UUID;
 
 public record ResponseSummaryCustomer(
-    String uuid,
-    OrderCard orderCard,
+    UUID uuid,
+    ResponseSummaryOrderCard summaryOrderCard,
     String customerStart,
-    String customerEnd,
-    Voluntary voluntary
+    String customerEnd
 ) {
 
   public ResponseSummaryCustomer(Customer customer) {
-    this(customer.getUuid().toString(),
-        customer.getOrderCard(),
+    this(customer.getUuid(),
+        new ResponseSummaryOrderCard(customer.getOrderCard()),
         customer.getCustomerStart().toString(),
-        customer.getCustomerEnd().toString(),
-        customer.getVoluntary());
+        customer.getCustomerEnd() != null ? customer.getCustomerEnd().toString() : null
+    );
   }
 }

@@ -3,7 +3,6 @@ package com.storecontrol.backend.models;
 import com.storecontrol.backend.controllers.request.item.RequestItem;
 import com.storecontrol.backend.controllers.request.item.RequestUpdateItem;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,18 +23,20 @@ public class Item {
     private Integer stock;
     @Column(name = "item_img")
     private String itemImg;
-    @ManyToOne @JoinColumn(name = "stand_id")
+    @ManyToOne @JoinColumn(name = "stand_uuid")
     private Stand stand;
     @OneToMany(mappedBy = "goodId.item")
     private List<Good> goods;
     private Boolean valid;
 
-    public Item(@Valid RequestItem request) {
+    public Item(RequestItem request, Stand stand) {
         this.itemName = request.itemName();
-        this.price = request.price();
+        this.price = new BigDecimal(request.price());
         this.stock = request.stock();
-        this.itemImg = request.itemImg();
-        this.stand = request.stand();
+        if (request.itemImg() != null) {
+            this.itemImg = request.itemImg();
+        }
+        this.stand = stand;
         this.valid = true;
     }
 
@@ -44,7 +45,7 @@ public class Item {
             this.itemName = request.itemName();
         }
         if (request.price() != null) {
-            this.price = request.price();
+            this.price = new BigDecimal(request.price());
         }
         if (request.stock() != null) {
             this.stock = request.stock();
@@ -52,9 +53,10 @@ public class Item {
         if (request.itemImg() != null) {
             this.itemImg = request.itemImg();
         }
-        if (request.stand() != null) {
-            this.stand = request.stand();
-        }
+    }
+
+    public void updateItem(Stand stand) {
+        this.stand = stand;
     }
 
     public void deleteItem() {

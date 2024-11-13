@@ -1,5 +1,6 @@
 package com.storecontrol.backend.models;
 
+import com.storecontrol.backend.controllers.request.customer.RequestCustomer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.UUID;
 public class Customer {
     @Id @GeneratedValue(generator = "UUID")
     private UUID uuid;
-    @ManyToOne @JoinColumn(name = "card_id")
+    @ManyToOne @JoinColumn(name = "order_card_id")
     private OrderCard orderCard;
     @Column(name = "customer_start")
     private LocalDateTime customerStart;
@@ -23,12 +24,21 @@ public class Customer {
     private LocalDateTime customerEnd;
     @OneToMany(mappedBy = "customer")
     private List<Recharge> recharges;
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "customer")
     private List<Sale> sales;
     @OneToOne(mappedBy = "customer")
     private Donation donation;
     @Column(name = "in_use")
     private Boolean inUse;
-    @ManyToOne @JoinColumn(name = "voluntary_id")
-    private Voluntary voluntary;
+
+    public Customer(RequestCustomer request, OrderCard orderCard) {
+        this.orderCard = orderCard;
+        this.customerStart = LocalDateTime.now();
+        this.inUse = true;
+    }
+
+    public void finalizeCustomer() {
+        this.customerEnd = LocalDateTime.now();
+        this.inUse = false;
+    }
 }

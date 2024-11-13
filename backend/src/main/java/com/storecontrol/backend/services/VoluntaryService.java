@@ -1,17 +1,14 @@
 package com.storecontrol.backend.services;
 
+import com.storecontrol.backend.controllers.request.voluntary.RequestCreateVoluntary;
 import com.storecontrol.backend.controllers.request.voluntary.RequestUpdateVoluntary;
-import com.storecontrol.backend.controllers.response.voluntary.ResponseVoluntary;
-import com.storecontrol.backend.models.Association;
-import com.storecontrol.backend.models.Stand;
 import com.storecontrol.backend.models.Voluntary;
-import com.storecontrol.backend.repositories.AssociationRepository;
-import com.storecontrol.backend.repositories.StandRepository;
 import com.storecontrol.backend.repositories.VoluntaryRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,37 +19,45 @@ public class VoluntaryService {
   VoluntaryRepository repository;
 
   @Autowired
-  AssociationRepository associationRepository;
-
-  @Autowired
-  StandRepository standRepository;
+  StandService standService;
 
   @Transactional
-  public ResponseVoluntary serviceUptadeVoluntary(RequestUpdateVoluntary request) {
-    Optional<Voluntary> voluntary = repository.findById(UUID.fromString(request.uuid()));
+  public Voluntary createVoluntary(RequestCreateVoluntary request) {
+    var voluntary = new Voluntary(request);
+    repository.save(voluntary);
 
-    Optional<Association> association = associationRepository.findById(UUID.fromString(request.associationId()));
-    Optional<Stand> stand = standRepository.findById(UUID.fromString(request.standId()));
+    return voluntary;
+  }
 
-    if (voluntary.isPresent()) {
-      var selectedVoluntary = voluntary.get();
-      var selectedAssociation = new Association();
-      var selectedStand = new Stand();
+  public Voluntary takeVoluntary(String uuid){
+    return repository.findByIdValidTrue(UUID.fromString(uuid));
+  }
 
-      if (association.isPresent()) {
-        selectedAssociation = association.get();
+  public List<Voluntary> listVolunteers() {
+    return repository.findAllByValidTrue();
+  }
+
+  @Transactional
+  public Voluntary uptadeVoluntary(RequestUpdateVoluntary request) {
+    Optional<Voluntary> voluntaryOptional = repository.findById(UUID.fromString(request.uuid()));
+
+    if (voluntaryOptional.isPresent()) {
+      var voluntary = voluntaryOptional.get();
+      voluntary.updateVoluntary(request);
+
+      if (request.standId() != null) {
+        var stand = standService.takeStand(request.standId());
+        voluntary.updateVoluntary(stand);
       }
-      if (stand.isPresent()) {
-        selectedStand = stand.get();
-      }
-      selectedVoluntary.updateVoluntary(request, selectedAssociation, selectedStand);
-      return new ResponseVoluntary(selectedVoluntary);
+
+      return voluntary;
     } else {
-      return new ResponseVoluntary(new Voluntary());
+      return new Voluntary();
     }
   }
 
-  public void serviceDeleteVoluntary(RequestUpdateVoluntary request) {
+  @Transactional
+  public void deleteVoluntary(RequestUpdateVoluntary request) {
     Optional<Voluntary> voluntary = repository.findById(UUID.fromString(request.uuid()));
 
     voluntary.ifPresent(Voluntary::deleteVoluntary);

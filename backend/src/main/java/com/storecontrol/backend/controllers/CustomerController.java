@@ -1,9 +1,9 @@
 package com.storecontrol.backend.controllers;
 
-import com.storecontrol.backend.controllers.response.association.ResponseSummaryAssociation;
 import com.storecontrol.backend.controllers.response.customer.ResponseCustomer;
 import com.storecontrol.backend.controllers.response.customer.ResponseSummaryCustomer;
 import com.storecontrol.backend.repositories.CustomerRepository;
+import com.storecontrol.backend.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("customers")
@@ -21,21 +20,19 @@ public class CustomerController {
   @Autowired
   CustomerRepository repository;
 
-  @GetMapping("/{id}")
-  public ResponseEntity<ResponseCustomer> readCustomer(@PathVariable UUID id) {
-    var customer = repository.findById(id);
+  @Autowired
+  CustomerService service;
 
-    if (customer.isPresent()){
-      var response = new ResponseCustomer(customer.get());
-      return ResponseEntity.ok(response);
-    } else {
-      return ResponseEntity.badRequest().build();
-    }
+  @GetMapping("/{uuid}")
+  public ResponseEntity<ResponseCustomer> readCustomer(@PathVariable String uuid) {
+    var response = new ResponseCustomer(service.takeAnyCustomer(uuid));
+
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping
   public ResponseEntity<List<ResponseSummaryCustomer>> readCustomersActive() {
-    var customers = repository.findAllByValidTrue();
+    var customers = service.listCustomers();
 
     var response = customers.stream().map(ResponseSummaryCustomer::new).toList();
     return ResponseEntity.ok(response);

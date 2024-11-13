@@ -2,13 +2,16 @@ package com.storecontrol.backend.controllers.response.stand;
 
 import com.storecontrol.backend.models.Stand;
 
+import java.util.UUID;
+
 public record ResponseSummaryStand(
-    String uuid,
+    UUID uuid,
     String stand
 ) {
 
   public ResponseSummaryStand(Stand stand) {
-    this(stand.getUuid().toString(),
-        stand.getStand());
+    this(stand.getUuid(),
+        stand.getStandName()
+    );
   }
 }

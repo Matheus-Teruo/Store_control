@@ -1,20 +1,24 @@
 package com.storecontrol.backend.controllers.response.voluntary;
 
+import com.storecontrol.backend.controllers.response.stand.ResponseStand;
 import com.storecontrol.backend.models.Voluntary;
 
+import java.util.UUID;
+
 public record ResponseVoluntary(
-    String uuid,
+    UUID uuid,
     String username,
-    String password,
-    String salt,
-    String fullname
+    String fullname,
+    ResponseStand Stand,
+    Boolean superuser
 ) {
 
   public ResponseVoluntary(Voluntary voluntary) {
-    this(voluntary.getUuid().toString(),
+    this(voluntary.getUuid(),
         voluntary.getUser().getUsername(),
-        voluntary.getUser().getPassword(),
-        voluntary.getUser().getSalt(),
-        voluntary.getFullname());
+        voluntary.getFullname(),
+        voluntary.getStand() != null ? new ResponseStand(voluntary.getStand()) : null,
+        voluntary.getSuperuser()
+    );
   }
 }
