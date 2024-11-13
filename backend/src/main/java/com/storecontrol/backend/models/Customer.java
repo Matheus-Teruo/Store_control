@@ -1,6 +1,5 @@
 package com.storecontrol.backend.models;
 
-import com.storecontrol.backend.controllers.request.customer.RequestCustomer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +24,7 @@ public class Customer {
     @OneToMany(mappedBy = "customer")
     private List<Recharge> recharges;
     @OneToMany(mappedBy = "customer")
-    private List<Sale> sales;
+    private List<Purchase> purchases;
     @OneToOne(mappedBy = "customer")
     private Donation donation;
     @Column(name = "in_use")

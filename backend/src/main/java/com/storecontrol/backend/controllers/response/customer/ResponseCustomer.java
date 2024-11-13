@@ -3,7 +3,7 @@ package com.storecontrol.backend.controllers.response.customer;
 import com.storecontrol.backend.controllers.response.donation.ResponseSummaryDonation;
 import com.storecontrol.backend.controllers.response.orderCard.ResponseOrderCard;
 import com.storecontrol.backend.controllers.response.recharge.ResponseSummaryRecharge;
-import com.storecontrol.backend.controllers.response.sale.ResponseSummarySale;
+import com.storecontrol.backend.controllers.response.purchase.ResponseSummaryPurchase;
 import com.storecontrol.backend.models.Customer;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public record ResponseCustomer(
     String customerStart,
     String customerEnd,
     List<ResponseSummaryRecharge> recharges,
-    List<ResponseSummarySale> sales,
+    List<ResponseSummaryPurchase> sales,
     ResponseSummaryDonation donation
 ) {
 
@@ -25,7 +25,7 @@ public record ResponseCustomer(
         customer.getCustomerStart().toString(),
         customer.getCustomerEnd() != null ? customer.getCustomerEnd().toString() : null,
         customer.getRecharges().stream().map(ResponseSummaryRecharge::new).toList(),
-        customer.getSales().stream().map(ResponseSummarySale::new).toList(),
+        customer.getPurchases().stream().map(ResponseSummaryPurchase::new).toList(),
         customer.getDonation() != null ? new ResponseSummaryDonation(customer.getDonation()) : null
     );
   }

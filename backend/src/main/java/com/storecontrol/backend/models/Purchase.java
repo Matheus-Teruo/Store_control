@@ -1,8 +1,8 @@
 package com.storecontrol.backend.models;
 
 import com.storecontrol.backend.controllers.request.good.RequestUpdateGood;
-import com.storecontrol.backend.controllers.request.sale.RequestSale;
-import com.storecontrol.backend.controllers.request.sale.RequestUpdateSale;
+import com.storecontrol.backend.controllers.request.purchase.RequestPurchase;
+import com.storecontrol.backend.controllers.request.purchase.RequestUpdatePurchase;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,17 +13,17 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "sales")
+@Table(name = "purchases")
 @Getter
 @NoArgsConstructor
-public class Sale {
+public class Purchase {
     @Id @GeneratedValue(generator = "UUID")
     private UUID uuid;
     @Column(name = "on_order")
     private Boolean onOrder;
-    @Column(name = "sale_time_stamp")
-    private LocalDateTime saleTimeStamp;
-    @OneToMany(mappedBy = "goodId.sale", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Column(name = "purchase_time_stamp")
+    private LocalDateTime purchaseTimeStamp;
+    @OneToMany(mappedBy = "goodId.purchase", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Good> goods;
     @ManyToOne(fetch = FetchType.EAGER) @JoinColumn(name = "customer_uuid")
     private Customer customer;
@@ -31,25 +31,25 @@ public class Sale {
     private Voluntary voluntary;
     private Boolean valid;
 
-    public Sale(RequestSale request, Customer customer, Voluntary voluntary) {
+    public Purchase(RequestPurchase request, Customer customer, Voluntary voluntary) {
         this.onOrder = request.onOrder();
-        this.saleTimeStamp = LocalDateTime.now();
+        this.purchaseTimeStamp = LocalDateTime.now();
         this.customer = customer;
         this.voluntary = voluntary;
         this.valid = true;
     }
 
-    public void allocateGoodsToSale(List<Good> goods) {
+    public void allocateGoodsToPurchase(List<Good> goods) {
         this.goods = goods;
     }
 
-    public void updateSale(RequestUpdateSale request) {
+    public void updatePurchase(RequestUpdatePurchase request) {
         if (request.onOrder() != null){
             this.onOrder = request.onOrder();
         }
     }
 
-    public void updateGoodsFromSale(List<RequestUpdateGood> request) {
+    public void updateGoodsFromPurchase(List<RequestUpdateGood> request) {
         if (request != null && !request.isEmpty()) {
 
             var goodsMap = this.goods.stream().collect(Collectors.toMap(
@@ -62,15 +62,15 @@ public class Sale {
                 if (good != null) {
                     good.updateGood(requestUpdateGood);
                 } else {
-                    // TODO: error. this item is not allocate in this sale like good
+                    // TODO: error. this item is not allocate in this purchase like good
                 }
             });
         }
     }
 
-    public void deleteSale() {
+    public void deletePurchase() {
         this.valid = false;
 
-        this.goods.forEach(Good::deleteSale);
+        this.goods.forEach(Good::deleteGood);
     }
 }

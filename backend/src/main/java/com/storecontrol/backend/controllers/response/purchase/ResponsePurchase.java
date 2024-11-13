@@ -1,15 +1,15 @@
-package com.storecontrol.backend.controllers.response.sale;
+package com.storecontrol.backend.controllers.response.purchase;
 
 import com.storecontrol.backend.controllers.response.customer.ResponseSummaryCustomer;
 import com.storecontrol.backend.controllers.response.good.ResponseGood;
 import com.storecontrol.backend.controllers.response.voluntary.ResponseSummaryVoluntary;
-import com.storecontrol.backend.models.Sale;
+import com.storecontrol.backend.models.Purchase;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public record ResponseSale(
+public record ResponsePurchase(
     UUID uuid,
     Boolean onOrder,
     LocalDateTime saleTimeStamp,
@@ -18,14 +18,14 @@ public record ResponseSale(
     ResponseSummaryVoluntary summaryVoluntary
 ) {
 
-  public ResponseSale(Sale sale) {
+  public ResponsePurchase(Purchase purchase) {
     this(
-        sale.getUuid(),
-        sale.getOnOrder(),
-        sale.getSaleTimeStamp(),
-        sale.getGoods().stream().map(ResponseGood::new).toList(),
-        new ResponseSummaryCustomer(sale.getCustomer()),
-        new ResponseSummaryVoluntary(sale.getVoluntary())
+        purchase.getUuid(),
+        purchase.getOnOrder(),
+        purchase.getPurchaseTimeStamp(),
+        purchase.getGoods().stream().map(ResponseGood::new).toList(),
+        new ResponseSummaryCustomer(purchase.getCustomer()),
+        new ResponseSummaryVoluntary(purchase.getVoluntary())
     );
   }
 }

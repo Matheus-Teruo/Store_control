@@ -1,4 +1,4 @@
-package com.storecontrol.backend.controllers.request.sale;
+package com.storecontrol.backend.controllers.request.purchase;
 
 import com.storecontrol.backend.controllers.request.good.RequestGood;
 import jakarta.validation.constraints.NotNull;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 
 import java.util.List;
 
-public record RequestSale(
+public record RequestPurchase(
     @NotNull
     Boolean onOrder,
     @NotNull

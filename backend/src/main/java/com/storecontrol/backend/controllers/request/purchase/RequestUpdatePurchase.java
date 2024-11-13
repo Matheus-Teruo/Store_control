@@ -1,11 +1,11 @@
-package com.storecontrol.backend.controllers.request.sale;
+package com.storecontrol.backend.controllers.request.purchase;
 
 import com.storecontrol.backend.controllers.request.good.RequestUpdateGood;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
-public record RequestUpdateSale(
+public record RequestUpdatePurchase(
     @NotNull
     String uuid,
     Boolean onOrder,

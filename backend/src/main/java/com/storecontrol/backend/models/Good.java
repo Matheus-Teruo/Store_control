@@ -44,7 +44,7 @@ public class Good {
         }
     }
 
-    public void deleteSale() {
+    public void deleteGood() {
         this.valid = false;
     }
 }

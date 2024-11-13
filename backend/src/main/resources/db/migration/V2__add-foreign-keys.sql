@@ -16,8 +16,8 @@ FOREIGN KEY (voluntary_uuid) REFERENCES volunteers (uuid);
 ALTER TABLE goods
 ADD CONSTRAINT fk_goods_item_uuid
 FOREIGN KEY (item_uuid) REFERENCES items (uuid),
-ADD CONSTRAINT fk_goods_sale_uuid
-FOREIGN KEY (sale_uuid) REFERENCES sales (uuid);
+ADD CONSTRAINT fk_goods_purchase_uuid
+FOREIGN KEY (purchase_uuid) REFERENCES purchases (uuid);
 
 -- Foreign key for items table
 ALTER TABLE items
@@ -31,11 +31,11 @@ FOREIGN KEY (customer_uuid) REFERENCES customers (uuid),
 ADD CONSTRAINT fk_recharges_voluntary_uuid
 FOREIGN KEY (voluntary_uuid) REFERENCES volunteers (uuid);
 
--- Foreign keys for sales table
-ALTER TABLE sales
-ADD CONSTRAINT fk_sales_customer_uuid
+-- Foreign keys for purchases table
+ALTER TABLE purchases
+ADD CONSTRAINT fk_purchases_customer_uuid
 FOREIGN KEY (customer_uuid) REFERENCES customers (uuid),
-ADD CONSTRAINT fk_sales_voluntary_uuid
+ADD CONSTRAINT fk_purchases_voluntary_uuid
 FOREIGN KEY (voluntary_uuid) REFERENCES volunteers (uuid);
 
 -- Foreign key for stands table

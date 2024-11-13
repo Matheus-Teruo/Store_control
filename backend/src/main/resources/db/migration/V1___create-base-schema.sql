@@ -5,7 +5,7 @@ CREATE TABLE associations (
     uuid BINARY(16) PRIMARY KEY,
     association_name VARCHAR(255) UNIQUE NOT NULL,
     principal_name VARCHAR(255) NOT NULL,
-    valid TINYINT(1) NOT NULL
+    valid TINYINT NOT NULL
 );
 
 -- Table for customers
@@ -14,7 +14,7 @@ CREATE TABLE customers (
     order_card_id CHAR(15) NOT NULL,
     customer_start TIMESTAMP NOT NULL,
     customer_end TIMESTAMP,
-    in_use TINYINT(1) NOT NULL
+    in_use TINYINT NOT NULL
 );
 
 -- Table for donations
@@ -24,18 +24,18 @@ CREATE TABLE donations (
     donation_time_stamp TIMESTAMP NOT NULL,
     customer_uuid BINARY(16) NOT NULL,
     voluntary_uuid BINARY(16) NOT NULL,
-    valid TINYINT(1) NOT NULL
+    valid TINYINT NOT NULL
 );
 
 -- Table for goods
 CREATE TABLE goods (
     item_uuid BINARY(16),
-    sale_uuid BINARY(16),
+    purchase_uuid BINARY(16),
     quantity INT NOT NULL,
     delivered INT,
     unit_price DECIMAL(19, 2) NOT NULL,
-    valid TINYINT(1) NOT NULL,
-    PRIMARY KEY (item_uuid, sale_uuid)
+    valid TINYINT NOT NULL,
+    PRIMARY KEY (item_uuid, purchase_uuid)
 );
 
 -- Table for items
@@ -46,14 +46,14 @@ CREATE TABLE items (
     stock INT NOT NULL,
     item_img VARCHAR(255),
     stand_uuid BINARY(16) NOT NULL,
-    valid TINYINT(1) NOT NULL
+    valid TINYINT NOT NULL
 );
 
 -- Table for order_cards
 CREATE TABLE order_cards (
     card_id CHAR(15) PRIMARY KEY,
     debit DECIMAL(19, 2) NOT NULL,
-    active TINYINT(1) NOT NULL
+    active TINYINT NOT NULL
 );
 
 -- Table for recharges
@@ -64,17 +64,17 @@ CREATE TABLE recharges (
     payment_type ENUM('CREDIT', 'DEBIT', 'CASH') NOT NULL,
     customer_uuid BINARY(16) NOT NULL,
     voluntary_uuid BINARY(16) NOT NULL,
-    valid TINYINT(1) NOT NULL
+    valid TINYINT NOT NULL
 );
 
--- Table for sales
-CREATE TABLE sales (
+-- Table for purchases
+CREATE TABLE purchases (
     uuid BINARY(16) PRIMARY KEY,
     on_order BOOLEAN,
-    sale_time_stamp TIMESTAMP NOT NULL,
+    purchase_time_stamp TIMESTAMP NOT NULL,
     customer_uuid BINARY(16) NOT NULL,
     voluntary_uuid BINARY(16) NOT NULL,
-    valid TINYINT(1) NOT NULL
+    valid TINYINT NOT NULL
 );
 
 -- Table for stands
@@ -82,7 +82,7 @@ CREATE TABLE stands (
     uuid BINARY(16) PRIMARY KEY,
     stand_name VARCHAR(255) UNIQUE NOT NULL,
     association_uuid BINARY(16) NOT NULL,
-    valid TINYINT(1) NOT NULL
+    valid TINYINT NOT NULL
 );
 
 -- Table for volunteers
@@ -93,6 +93,6 @@ CREATE TABLE volunteers (
     salt VARCHAR(255) NOT NULL,
     fullname VARCHAR(255) UNIQUE NOT NULL,
     stand_uuid BINARY(16),
-    superuser TINYINT(1) NOT NULL,
-    valid TINYINT(1) NOT NULL
+    superuser TINYINT NOT NULL,
+    valid TINYINT NOT NULL
 );

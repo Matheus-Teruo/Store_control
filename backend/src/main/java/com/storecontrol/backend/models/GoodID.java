@@ -13,10 +13,10 @@ public class GoodID {
   @ManyToOne @JoinColumn(name = "item_uuid")
   private Item item;
   @ManyToOne @JoinColumn(name = "sale_uuid")
-  private Sale sale;
+  private Purchase purchase;
 
-  public GoodID(Item item, Sale sale) {
+  public GoodID(Item item, Purchase purchase) {
     this.item = item;
-    this.sale = sale;
+    this.purchase = purchase;
   }
 }

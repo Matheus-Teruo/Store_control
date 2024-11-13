@@ -23,7 +23,7 @@ public class Voluntary {
   @ManyToOne @JoinColumn(name = "stand_uuid")
   private Stand stand;
   @OneToMany(mappedBy = "voluntary")
-  private List<Sale> sales;
+  private List<Purchase> purchases;
   @OneToMany(mappedBy = "voluntary")
   private List<Recharge> recharges;
   @OneToMany(mappedBy = "voluntary")
