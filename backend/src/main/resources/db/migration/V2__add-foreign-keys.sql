@@ -12,11 +12,11 @@ FOREIGN KEY (customer_uuid) REFERENCES customers (uuid),
 ADD CONSTRAINT fk_donations_voluntary_uuid
 FOREIGN KEY (voluntary_uuid) REFERENCES volunteers (uuid);
 
--- Foreign keys for goods table
-ALTER TABLE goods
-ADD CONSTRAINT fk_goods_item_uuid
+-- Foreign keys for purchase_items table
+ALTER TABLE purchase_items
+ADD CONSTRAINT fk_purchase_items_item_uuid
 FOREIGN KEY (item_uuid) REFERENCES items (uuid),
-ADD CONSTRAINT fk_goods_purchase_uuid
+ADD CONSTRAINT fk_purchase_items_purchase_uuid
 FOREIGN KEY (purchase_uuid) REFERENCES purchases (uuid);
 
 -- Foreign key for items table

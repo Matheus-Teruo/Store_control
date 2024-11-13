@@ -27,8 +27,8 @@ CREATE TABLE donations (
     valid TINYINT NOT NULL
 );
 
--- Table for goods
-CREATE TABLE goods (
+-- Table for purchase_items
+CREATE TABLE purchase_items (
     item_uuid BINARY(16),
     purchase_uuid BINARY(16),
     quantity INT NOT NULL,

@@ -4,7 +4,7 @@ import com.storecontrol.backend.controllers.request.item.RequestUpdateItem;
 import com.storecontrol.backend.controllers.request.orderCard.RequestUpdateOrderCard;
 import com.storecontrol.backend.controllers.request.purchase.RequestPurchase;
 import com.storecontrol.backend.controllers.request.purchase.RequestUpdatePurchase;
-import com.storecontrol.backend.models.Good;
+import com.storecontrol.backend.models.PurchaseItem;
 import com.storecontrol.backend.models.Purchase;
 import com.storecontrol.backend.repositories.PurchaseRepository;
 import com.storecontrol.backend.services.validation.PurchaseValidate;
@@ -32,7 +32,7 @@ public class PurchaseService {
   CustomerService customerService;
 
   @Autowired
-  GoodService goodService;
+  PurchaseItemService purchaseItemService;
 
   @Transactional
   public Purchase createPurchase(RequestPurchase request) {
@@ -44,10 +44,10 @@ public class PurchaseService {
 
     var purchase =  new Purchase(request, customer,  voluntary);
 
-    var goods = goodService.createGoods(request, purchase);
-    purchase.allocateGoodsToPurchase(goods);
+    var purchaseItems = purchaseItemService.createPurchaseItems(request, purchase);
+    purchase.allocatePurchaseItemsToPurchase(purchaseItems);
 
-    updateItemsFromGoodsChanged(purchase, false);
+    updateItemsFromPurchaseItemsChanged(purchase, false);
     updateCustomerDebit(purchase, false);
     repository.save(purchase);
 
@@ -69,7 +69,7 @@ public class PurchaseService {
     var purchase = takePurchaseByUuid(request.uuid());
 
     purchase.updatePurchase(request);
-    purchase.updateGoodsFromPurchase(request.requestUpdateGoods());
+    purchase.updatePurchaseItemsFromPurchase(request.requestUpdatePurchaseItems());
 
     return purchase;
   }
@@ -78,33 +78,33 @@ public class PurchaseService {
   public void deletePurchase(RequestUpdatePurchase request) {
     var purchase = takePurchaseByUuid(request.uuid());
 
-    validate.checkSomeGoodWasDelivered(purchase);
+    validate.checkSomePurchaseItemWasDelivered(purchase);
 
-    updateItemsFromGoodsChanged(purchase, true);
+    updateItemsFromPurchaseItemsChanged(purchase, true);
     updateCustomerDebit(purchase, true);
 
     purchase.deletePurchase();
   }
 
-  private void updateItemsFromGoodsChanged(Purchase purchase, Boolean isReversal) {
-    for (Good good : purchase.getGoods()) {
-      var item = good.getGoodId().getItem();
+  private void updateItemsFromPurchaseItemsChanged(Purchase purchase, Boolean isReversal) {
+    for (PurchaseItem purchaseItem : purchase.getPurchaseItems()) {
+      var item = purchaseItem.getPurchaseItemId().getItem();
       int adjustmentFactor = isReversal ? 1 : -1;
 
       item.updateItem(new RequestUpdateItem(
           item.getUuid().toString(),
           null,
           null,
-          item.getStock() + (adjustmentFactor * good.getQuantity()),
+          item.getStock() + (adjustmentFactor * purchaseItem.getQuantity()),
           null,
           null));
     }
   }
 
   private void updateCustomerDebit(Purchase purchase, Boolean isReversal) {
-    var totalValue = purchase.getGoods().stream().map(good ->
-            BigDecimal.valueOf(good.getQuantity())
-                .multiply(good.getUnitPrice()))
+    var totalValue = purchase.getPurchaseItems().stream().map(purchaseItem ->
+            BigDecimal.valueOf(purchaseItem.getQuantity())
+                .multiply(purchaseItem.getUnitPrice()))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     var orderCard = purchase.getCustomer().getOrderCard();

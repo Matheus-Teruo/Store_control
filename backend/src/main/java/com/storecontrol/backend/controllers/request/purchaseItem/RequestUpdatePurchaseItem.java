@@ -1,8 +1,8 @@
-package com.storecontrol.backend.controllers.request.good;
+package com.storecontrol.backend.controllers.request.purchaseItem;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record RequestUpdateGood(
+public record RequestUpdatePurchaseItem(
     @NotBlank
     String itemId,
     Integer delivered

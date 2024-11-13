@@ -1,7 +1,7 @@
 package com.storecontrol.backend.controllers.response.purchase;
 
 import com.storecontrol.backend.controllers.response.customer.ResponseSummaryCustomer;
-import com.storecontrol.backend.controllers.response.good.ResponseGood;
+import com.storecontrol.backend.controllers.response.purchaseItem.ResponsePurchaseItem;
 import com.storecontrol.backend.controllers.response.voluntary.ResponseSummaryVoluntary;
 import com.storecontrol.backend.models.Purchase;
 
@@ -13,7 +13,7 @@ public record ResponsePurchase(
     UUID uuid,
     Boolean onOrder,
     LocalDateTime saleTimeStamp,
-    List<ResponseGood> goods,
+    List<ResponsePurchaseItem> goods,
     ResponseSummaryCustomer summaryCustomer,
     ResponseSummaryVoluntary summaryVoluntary
 ) {
@@ -23,7 +23,7 @@ public record ResponsePurchase(
         purchase.getUuid(),
         purchase.getOnOrder(),
         purchase.getPurchaseTimeStamp(),
-        purchase.getGoods().stream().map(ResponseGood::new).toList(),
+        purchase.getPurchaseItems().stream().map(ResponsePurchaseItem::new).toList(),
         new ResponseSummaryCustomer(purchase.getCustomer()),
         new ResponseSummaryVoluntary(purchase.getVoluntary())
     );

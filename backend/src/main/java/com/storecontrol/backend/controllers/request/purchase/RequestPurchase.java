@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.request.purchase;
 
-import com.storecontrol.backend.controllers.request.good.RequestGood;
+import com.storecontrol.backend.controllers.request.purchaseItem.RequestPurchaseItem;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
@@ -10,7 +10,7 @@ public record RequestPurchase(
     @NotNull
     Boolean onOrder,
     @NotNull
-    List<RequestGood> requestGoods,
+    List<RequestPurchaseItem> requestPurchaseItems,
     @NotNull
     @Pattern(regexp = "^[A-Za-z0-9]{15}$")
     String orderCardId,

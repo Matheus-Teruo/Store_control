@@ -1,6 +1,6 @@
 package com.storecontrol.backend.models;
 
-import com.storecontrol.backend.controllers.request.good.RequestUpdateGood;
+import com.storecontrol.backend.controllers.request.purchaseItem.RequestUpdatePurchaseItem;
 import com.storecontrol.backend.controllers.request.purchase.RequestPurchase;
 import com.storecontrol.backend.controllers.request.purchase.RequestUpdatePurchase;
 import jakarta.persistence.*;
@@ -23,8 +23,8 @@ public class Purchase {
     private Boolean onOrder;
     @Column(name = "purchase_time_stamp")
     private LocalDateTime purchaseTimeStamp;
-    @OneToMany(mappedBy = "goodId.purchase", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Good> goods;
+    @OneToMany(mappedBy = "purchaseItemId.purchase", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<PurchaseItem> purchaseItems;
     @ManyToOne(fetch = FetchType.EAGER) @JoinColumn(name = "customer_uuid")
     private Customer customer;
     @ManyToOne(fetch = FetchType.EAGER) @JoinColumn(name = "voluntary_uuid")
@@ -39,8 +39,8 @@ public class Purchase {
         this.valid = true;
     }
 
-    public void allocateGoodsToPurchase(List<Good> goods) {
-        this.goods = goods;
+    public void allocatePurchaseItemsToPurchase(List<PurchaseItem> purchaseItems) {
+        this.purchaseItems = purchaseItems;
     }
 
     public void updatePurchase(RequestUpdatePurchase request) {
@@ -49,20 +49,20 @@ public class Purchase {
         }
     }
 
-    public void updateGoodsFromPurchase(List<RequestUpdateGood> request) {
+    public void updatePurchaseItemsFromPurchase(List<RequestUpdatePurchaseItem> request) {
         if (request != null && !request.isEmpty()) {
 
-            var goodsMap = this.goods.stream().collect(Collectors.toMap(
-                good -> good.getGoodId().getItem().getUuid().toString(),
-                good -> good
+            var purchaseItemsMap = this.purchaseItems.stream().collect(Collectors.toMap(
+                purchaseItem -> purchaseItem.getPurchaseItemId().getItem().getUuid().toString(),
+                purchaseItem -> purchaseItem
             ));
 
-            request.forEach(requestUpdateGood -> {
-                var good = goodsMap.get(requestUpdateGood.itemId());
-                if (good != null) {
-                    good.updateGood(requestUpdateGood);
+            request.forEach(requestUpdatePurchaseItem -> {
+                var purchaseItem = purchaseItemsMap.get(requestUpdatePurchaseItem.itemId());
+                if (purchaseItem != null) {
+                    purchaseItem.updatePurchaseItem(requestUpdatePurchaseItem);
                 } else {
-                    // TODO: error. this item is not allocate in this purchase like good
+                    // TODO: error. this item is not allocate in this purchase like purchaseItem
                 }
             });
         }
@@ -71,6 +71,6 @@ public class Purchase {
     public void deletePurchase() {
         this.valid = false;
 
-        this.goods.forEach(Good::deleteGood);
+        this.purchaseItems.forEach(PurchaseItem::deletePurchaseItem);
     }
 }

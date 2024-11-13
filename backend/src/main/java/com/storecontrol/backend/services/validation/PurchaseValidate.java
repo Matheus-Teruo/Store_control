@@ -1,10 +1,10 @@
 package com.storecontrol.backend.services.validation;
 
-import com.storecontrol.backend.controllers.request.good.RequestGood;
 import com.storecontrol.backend.controllers.request.purchase.RequestPurchase;
+import com.storecontrol.backend.controllers.request.purchaseItem.RequestPurchaseItem;
 import com.storecontrol.backend.models.Customer;
-import com.storecontrol.backend.models.Good;
 import com.storecontrol.backend.models.Purchase;
+import com.storecontrol.backend.models.PurchaseItem;
 import com.storecontrol.backend.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,11 +19,11 @@ public class PurchaseValidate {
 
   public void checkInsufficientCreditValidity(RequestPurchase request, Customer customer) {
     var totalValue = request
-        .requestGoods()
+        .requestPurchaseItems()
         .stream()
-        .map(requestGood ->
-            BigDecimal.valueOf(requestGood.quantity())
-                .multiply(new BigDecimal(requestGood.unitPrice())))
+        .map(requestPurchaseItem ->
+            BigDecimal.valueOf(requestPurchaseItem.quantity())
+                .multiply(new BigDecimal(requestPurchaseItem.unitPrice())))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     if (totalValue.compareTo(customer.getOrderCard().getDebit()) > 0) {
@@ -32,18 +32,18 @@ public class PurchaseValidate {
   }
 
   public void checkInsufficientStockItemValidity(RequestPurchase request) {
-    for (RequestGood requestGood : request.requestGoods()) {
-      var item = itemService.takeItemByUuid(requestGood.itemId());
+    for (RequestPurchaseItem requestPurchaseItem : request.requestPurchaseItems()) {
+      var item = itemService.takeItemByUuid(requestPurchaseItem.itemId());
 
-      if (item.getStock() < requestGood.quantity()) {
+      if (item.getStock() < requestPurchaseItem.quantity()) {
         // TODO: error
       }
     }
   }
 
-  public void checkSomeGoodWasDelivered(Purchase purchase) {
-    for (Good good : purchase.getGoods()) {
-      if (good.getDelivered() != null && good.getDelivered() != 0) {
+  public void checkSomePurchaseItemWasDelivered(Purchase purchase) {
+    for (PurchaseItem purchaseItem : purchase.getPurchaseItems()) {
+      if (purchaseItem.getDelivered() != null && purchaseItem.getDelivered() != 0) {
         // TODO: error
       }
     }

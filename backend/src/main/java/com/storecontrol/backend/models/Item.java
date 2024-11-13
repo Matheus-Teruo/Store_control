@@ -25,8 +25,8 @@ public class Item {
     private String itemImg;
     @ManyToOne @JoinColumn(name = "stand_uuid")
     private Stand stand;
-    @OneToMany(mappedBy = "goodId.item")
-    private List<Good> goods;
+    @OneToMany(mappedBy = "purchaseItemId.item")
+    private List<PurchaseItem> purchaseItems;
     private Boolean valid;
 
     public Item(RequestItem request, Stand stand) {

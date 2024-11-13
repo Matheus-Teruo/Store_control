@@ -1,6 +1,5 @@
 package com.storecontrol.backend.repositories;
 
-import com.storecontrol.backend.models.Good;
 import com.storecontrol.backend.models.Purchase;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,7 +14,4 @@ public interface PurchaseRepository extends JpaRepository<Purchase, UUID> {
 
   @Query("select p from Purchase p where p.valid = true")
   List<Purchase> findAllValidTrue();
-
-  @Query("select g from Purchase p join p.goods g where p.uuid = :uuid")
-  List<Good> findAllGoodsFromOneSale(UUID uuid);
 }

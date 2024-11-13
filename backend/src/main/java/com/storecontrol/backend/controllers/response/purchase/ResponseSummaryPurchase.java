@@ -23,8 +23,8 @@ public record ResponseSummaryPurchase(
         purchase.getUuid(),
         purchase.getOnOrder(),
         purchase.getPurchaseTimeStamp(),
-        purchase.getGoods().size(),
-        purchase.getGoods().stream()
+        purchase.getPurchaseItems().size(),
+        purchase.getPurchaseItems().stream()
             .map(good -> BigDecimal.valueOf(good.getQuantity())
                 .multiply(good.getUnitPrice()))
             .reduce(BigDecimal.ZERO, BigDecimal::add),
