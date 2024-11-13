@@ -1,6 +1,5 @@
 package com.storecontrol.backend.services;
 
-import com.storecontrol.backend.controllers.request.good.RequestUpdateGood;
 import com.storecontrol.backend.controllers.request.item.RequestUpdateItem;
 import com.storecontrol.backend.controllers.request.orderCard.RequestUpdateOrderCard;
 import com.storecontrol.backend.controllers.request.sale.RequestSale;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -38,7 +36,7 @@ public class SaleService {
 
   @Transactional
   public Sale createSale(RequestSale request) {
-    var voluntary = voluntaryService.takeVoluntary(request.voluntaryId());
+    var voluntary = voluntaryService.takeVoluntaryByUuid(request.voluntaryId());
     var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
 
     validate.checkInsufficientCreditValidity(request, customer);
@@ -47,89 +45,73 @@ public class SaleService {
     var sale =  new Sale(request, customer,  voluntary);
 
     var goods = goodService.createGoods(request, sale);
-    sale.updateSale(goods);
+    sale.allocateGoodsToSale(goods);
 
-    updateItemsFromGoods(sale);
-    updateCustomerDebit(sale);
+    updateItemsFromGoodsChanged(sale, false);
+    updateCustomerDebit(sale, false);
     repository.save(sale);
 
     return sale;
   }
 
-  public Sale takeSale(String uuid) {
-    return repository.findByIdValidTrue(UUID.fromString(uuid));
+  public Sale takeSaleByUuid(String uuid) {
+    var saleOptional = repository.findByUuidValidTrue(UUID.fromString(uuid));
+
+    return saleOptional.orElseGet(Sale::new);  // TODO: ERROR: sale_uuid invalid
   }
 
   public List<Sale> listSales() {
-    return repository.findAllByValidTrue();
+    return repository.findAllValidTrue();
   }
 
   @Transactional
   public Sale updateSale(RequestUpdateSale request) {
-    Optional<Sale> saleOptional = repository.findById(UUID.fromString(request.uuid()));
+    var sale = takeSaleByUuid(request.uuid());
 
-    if (saleOptional.isPresent()) {
-      var sale = saleOptional.get();
-      sale.updateSale(request);
+    sale.updateSale(request);
+    sale.updateGoodsFromSale(request.requestUpdateGoods());
 
-      updateGoodsFromSale(request, sale);
-
-      return sale;
-    } else {
-      return new Sale();
-    }
+    return sale;
   }
 
   @Transactional
   public void deleteSale(RequestUpdateSale request) {
-    Optional<Sale> saleOptional = repository.findById(UUID.fromString(request.uuid()));
+    var sale = takeSaleByUuid(request.uuid());
 
-    if (saleOptional.isPresent()) {
-      var sale = saleOptional.get();
+    validate.checkSomeGoodWasDelivered(sale);
 
-      validate.checkSomeGoodWasDelivered(sale);
+    updateItemsFromGoodsChanged(sale, true);
+    updateCustomerDebit(sale, true);
 
-      revertUpdateItemsFromGoods(sale);
-      revertUpdateCustomerDebit(sale);
-      sale.deleteSale();
-    }
-
+    sale.deleteSale();
   }
 
-  private void updateItemsFromGoods(Sale sale) {
+  private void updateItemsFromGoodsChanged(Sale sale, Boolean isReversal) {
     for (Good good : sale.getGoods()) {
       var item = good.getGoodId().getItem();
+      int adjustmentFactor = isReversal ? 1 : -1;
+
       item.updateItem(new RequestUpdateItem(
           item.getUuid().toString(),
           null,
           null,
-          item.getStock() - good.getQuantity(),
+          item.getStock() + (adjustmentFactor * good.getQuantity()),
           null,
           null));
     }
   }
 
-  private void revertUpdateItemsFromGoods(Sale sale) {
-    for (Good good : sale.getGoods()) {
-      var item = good.getGoodId().getItem();
-      item.updateItem(new RequestUpdateItem(
-          item.getUuid().toString(),
-          null,
-          null,
-          item.getStock() + good.getQuantity(),
-          null,
-          null));
-    }
-  }
-
-  private void updateCustomerDebit(Sale sale) {
+  private void updateCustomerDebit(Sale sale, Boolean isReversal) {
     var totalValue = sale.getGoods().stream().map(good ->
             BigDecimal.valueOf(good.getQuantity())
                 .multiply(good.getUnitPrice()))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     var orderCard = sale.getCustomer().getOrderCard();
-    var debitResult = orderCard.getDebit().subtract(totalValue);
+
+    BigDecimal adjustmentFactor = isReversal ? BigDecimal.ONE : BigDecimal.valueOf(-1);
+
+    var debitResult = orderCard.getDebit().add(totalValue.multiply(adjustmentFactor));
 
     var requestUpdateOrderCard = new RequestUpdateOrderCard(
         orderCard.getId(),
@@ -137,39 +119,5 @@ public class SaleService {
         null);
 
     orderCard.updateOrderCard(requestUpdateOrderCard);
-  }
-
-  private void revertUpdateCustomerDebit(Sale sale) {
-    var totalValue = sale.getGoods().stream().map(good ->
-            BigDecimal.valueOf(good.getQuantity())
-                .multiply(good.getUnitPrice()))
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-    var orderCard = sale.getCustomer().getOrderCard();
-    var debitResult = orderCard.getDebit().add(totalValue);
-
-    var requestUpdateOrderCard = new RequestUpdateOrderCard(
-        orderCard.getId(),
-        debitResult.toString(),
-        null);
-
-    orderCard.updateOrderCard(requestUpdateOrderCard);
-  }
-
-  private void updateGoodsFromSale(RequestUpdateSale request, Sale sale) {
-    if (request.uuid() != null) {
-      var goods = goodService.takeGoodsBySaleId(request.uuid());
-
-      for (RequestUpdateGood requestUpdateGood : request.requestUpdateGoods()) {
-        for (Good good : goods) {
-          if (good.getGoodId().getItem().getUuid().toString().equals(requestUpdateGood.itemId())) {
-            good.updateGood(requestUpdateGood);
-            // Note: that way minimize calls from database. // search for better solution
-          }
-        }
-      }
-
-      sale.updateSale(goods);
-    }
   }
 }

@@ -28,7 +28,7 @@ public class VoluntaryController {
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseVoluntary> readVoluntary(@PathVariable String uuid) {
-    var response = new ResponseVoluntary(service.takeVoluntary(uuid));
+    var response = new ResponseVoluntary(service.takeVoluntaryByUuid(uuid));
 
     return ResponseEntity.ok(response);
   }

@@ -29,31 +29,24 @@ public class VoluntaryService {
     return voluntary;
   }
 
-  public Voluntary takeVoluntary(String uuid){
-    return repository.findByIdValidTrue(UUID.fromString(uuid));
+  public Voluntary takeVoluntaryByUuid(String uuid){
+    var voluntaryOptional = repository.findByUuidValidTrue(UUID.fromString(uuid));
+
+    return voluntaryOptional.orElseGet(Voluntary::new);  // TODO: ERROR: voluntary_uuid invalid
   }
 
   public List<Voluntary> listVolunteers() {
-    return repository.findAllByValidTrue();
+    return repository.findAllValidTrue();
   }
 
   @Transactional
   public Voluntary uptadeVoluntary(RequestUpdateVoluntary request) {
-    Optional<Voluntary> voluntaryOptional = repository.findById(UUID.fromString(request.uuid()));
+    var voluntary = takeVoluntaryByUuid(request.uuid());
 
-    if (voluntaryOptional.isPresent()) {
-      var voluntary = voluntaryOptional.get();
-      voluntary.updateVoluntary(request);
+    voluntary.updateVoluntary(request);
+    verifyUpdateStand(request.standId(), voluntary);
 
-      if (request.standId() != null) {
-        var stand = standService.takeStand(request.standId());
-        voluntary.updateVoluntary(stand);
-      }
-
-      return voluntary;
-    } else {
-      return new Voluntary();
-    }
+    return voluntary;
   }
 
   @Transactional
@@ -61,5 +54,13 @@ public class VoluntaryService {
     Optional<Voluntary> voluntary = repository.findById(UUID.fromString(request.uuid()));
 
     voluntary.ifPresent(Voluntary::deleteVoluntary);
+  }
+
+  private void verifyUpdateStand(String uuid, Voluntary voluntary) {
+    if (uuid != null) {
+      var stand = standService.takeStandByUuid(uuid);
+
+      voluntary.updateVoluntary(stand);
+    }
   }
 }

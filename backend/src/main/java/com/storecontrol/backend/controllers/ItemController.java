@@ -28,7 +28,7 @@ public class ItemController {
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseItem> readItem(@PathVariable String uuid) {
-    var response = new ResponseItem(service.takeItem(uuid));
+    var response = new ResponseItem(service.takeItemByUuid(uuid));
     return ResponseEntity.ok(response);
   }
 

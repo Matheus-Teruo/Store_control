@@ -2,7 +2,6 @@ package com.storecontrol.backend.controllers;
 
 import com.storecontrol.backend.controllers.response.customer.ResponseCustomer;
 import com.storecontrol.backend.controllers.response.customer.ResponseSummaryCustomer;
-import com.storecontrol.backend.repositories.CustomerRepository;
 import com.storecontrol.backend.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +16,6 @@ import java.util.List;
 @RequestMapping("customers")
 public class CustomerController {
 
-  @Autowired
-  CustomerRepository repository;
 
   @Autowired
   CustomerService service;

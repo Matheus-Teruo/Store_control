@@ -43,4 +43,8 @@ public class Good {
             }
         }
     }
+
+    public void deleteSale() {
+        this.valid = false;
+    }
 }

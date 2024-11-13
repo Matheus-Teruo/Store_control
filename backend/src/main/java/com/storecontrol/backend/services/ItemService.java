@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,47 +22,43 @@ public class ItemService {
 
   @Transactional
   public Item createItem(RequestItem request) {
-    var stand = standService.takeStand(request.standId());
+    var stand = standService.takeStandByUuid(request.standId());
     var item = new Item(request, stand);
     repository.save(item);
 
     return item;
   }
 
-  public Item takeItem(String uuid) {
-    return repository.findByIdValidTrue(UUID.fromString(uuid));
+  public Item takeItemByUuid(String uuid) {
+    var itemOptional = repository.findByUuidValidTrue(UUID.fromString(uuid));
+
+    return itemOptional.orElseGet(Item::new);  // TODO: ERROR: item_uuid invalid
   }
 
   public List<Item> listItems() {
-    return repository.findAllByValidTrue();
+    return repository.findAllValidTrue();
   }
 
   @Transactional
   public Item updateItem(RequestUpdateItem request) {
-    Optional<Item> itemOptional = repository.findById(UUID.fromString(request.uuid()));
+    var item = takeItemByUuid(request.uuid());
 
-    if (itemOptional.isPresent()) {
-      var item = itemOptional.get();
-      item.updateItem(request);
+    item.updateItem(request);
+    updateStandFromItem(request.standId(), item);
 
-      verifyUpdateItem(request.standId(), item);
-
-      return item;
-    } else {
-      return new Item();
-    }
+    return item;
   }
 
   @Transactional
   public void deleteItem(RequestUpdateItem request) {
-    Optional<Item> item = repository.findById(UUID.fromString(request.uuid()));
+    var item = takeItemByUuid(request.uuid());
 
-    item.ifPresent(Item::deleteItem);
+    item.deleteItem();
   }
 
-  private void verifyUpdateItem(String uuid, Item item) {
+  private void updateStandFromItem(String uuid, Item item) {
     if (uuid != null) {
-      var stand = standService.takeStand(uuid);
+      var stand = standService.takeStandByUuid(uuid);
 
       item.updateItem(stand);
     }

@@ -2,7 +2,6 @@ package com.storecontrol.backend.services.validation;
 
 import com.storecontrol.backend.controllers.request.good.RequestGood;
 import com.storecontrol.backend.controllers.request.sale.RequestSale;
-import com.storecontrol.backend.controllers.request.sale.RequestUpdateSale;
 import com.storecontrol.backend.models.Customer;
 import com.storecontrol.backend.models.Good;
 import com.storecontrol.backend.models.Sale;
@@ -34,7 +33,7 @@ public class SaleValidate {
 
   public void checkInsufficientStockItemValidity(RequestSale request) {
     for (RequestGood requestGood : request.requestGoods()) {
-      var item = itemService.takeItem(requestGood.itemId());
+      var item = itemService.takeItemByUuid(requestGood.itemId());
 
       if (item.getStock() < requestGood.quantity()) {
         // TODO: error

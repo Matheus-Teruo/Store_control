@@ -28,7 +28,7 @@ public class StandController {
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseStand> readStand(@PathVariable String uuid) {
-    var stand = service.takeStand(uuid);
+    var stand = service.takeStandByUuid(uuid);
 
     var response = new ResponseStand(stand);
     return ResponseEntity.ok(response);

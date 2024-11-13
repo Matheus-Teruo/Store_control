@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -33,8 +32,8 @@ public class RechargeService {
 
   @Transactional
   public Recharge createRecharge(RequestRecharge request) {
-    var voluntary = voluntaryService.takeVoluntary(request.voluntaryId());
-    var customer = verifyChangesOnCustomerByCardId(request);
+    var voluntary = voluntaryService.takeVoluntaryByUuid(request.voluntaryId());
+    var customer = handleChangesOnCustomerByCardId(request);
 
     var recharge = new Recharge(request, customer, voluntary);
     repository.save(recharge);
@@ -42,54 +41,45 @@ public class RechargeService {
     return recharge;
   }
 
-  public Recharge takeRecharge(String uuid) {
-    var rechargeOptional = repository.findByIdValidTrue(UUID.fromString(uuid));
+  public Recharge takeRechargeByUuid(String uuid) {
+    var rechargeOptional = repository.findByUuidValidTrue(UUID.fromString(uuid));
 
-    if (rechargeOptional.isPresent()) {
-      return rechargeOptional.get();
-    } else {
-      // TODO: error: input error field id
-      return new Recharge();
-    }
+    return rechargeOptional.orElseGet(Recharge::new);  // TODO: ERROR: recharge_uuid invalid
   }
 
   public List<Recharge> listRecharges() {
-    return repository.findAllByValidTrue();
+    return repository.findAllValidTrue();
   }
 
   @Transactional
   public Recharge updateRecharge(RequestUpdateRecharge request) {
-    var rechargeOptional = repository.findById(UUID.fromString(request.uuid()));
+    var recharge = takeRechargeByUuid(request.uuid());
 
-    if (rechargeOptional.isPresent()) {
-      var recharge = rechargeOptional.get();
-      recharge.updateRecharge(request);
+    handleUpdatesOnCustomerByCardId(request, recharge);
+    recharge.updateRecharge(request);
 
-      verifyUpdatesOnCustomerByCardId(request, recharge);
-
-      return recharge;
-    } else {
-      // TODO: error: input error field id
-      return new Recharge();
-    }
+    return recharge;
   }
 
   public void deleteRecharge(RequestUpdateRecharge request) {
-    Optional<Recharge> rechargeOptional = repository.findByIdValidTrue(UUID.fromString(request.uuid()));
+    var recharge = takeRechargeByUuid(request.uuid());
 
-    if (rechargeOptional.isPresent()) {
-      var recharge = rechargeOptional.get();
+    handleUpdatesOnCustomerByCardId(
+        new RequestUpdateRecharge(
+            request.uuid(),
+            "0",
+            null),
+        recharge);
 
-      verifyUpdatesOnCustomerByCardId(request, recharge);
-      recharge.deleteRecharge();
-    } // else
-    // TODO : error. id incorrect or already deleted
+    recharge.deleteRecharge();
   }
 
-  private Customer verifyChangesOnCustomerByCardId(RequestRecharge request) {
-    var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
-
-    if (customer == null) {  // TODO: use of option to fix, error: card_id invalid or card_id without a customer active
+  private Customer handleChangesOnCustomerByCardId(RequestRecharge request) {
+    Customer customer;
+    try {
+      customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
+      orderCardService.updateDebitOrderCard(request.orderCardId(), request.rechargeValue());
+    } catch (Exception e) {  // TODO: handle error of customer non-existence (change the Exception generic)
       customer = customerService.initializeCustomer(
           new RequestCustomer(
               new RequestUpdateOrderCard(
@@ -98,23 +88,22 @@ public class RechargeService {
                   true)
           )
       );
-    } else {
-      orderCardService.updateDebitOrderCard(request.orderCardId(), request.rechargeValue());
     }
-
     return customer;
   }
 
-  private void verifyUpdatesOnCustomerByCardId(RequestUpdateRecharge request, Recharge recharge) {
-    var newRechargeValue = new BigDecimal(request.rechargeValue());
-    var currentRechargeVale = recharge.getRechargeValue();
-    var currentDebit = recharge.getCustomer().getOrderCard().getDebit();
+  private void handleUpdatesOnCustomerByCardId(RequestUpdateRecharge request, Recharge recharge) {
+    if (request.rechargeValue() != null) {
+      var newRechargeValue = new BigDecimal(request.rechargeValue());
+      var currentRechargeVale = recharge.getRechargeValue();
+      var currentDebit = recharge.getCustomer().getOrderCard().getDebit();
 
-    var difference = newRechargeValue.subtract(currentRechargeVale);
+      var difference = newRechargeValue.subtract(currentRechargeVale);
 
-    if (difference.add(currentDebit).compareTo(BigDecimal.ZERO) >= 0 ) {
-      orderCardService.updateDebitOrderCard(recharge.getCustomer().getOrderCard().getId(), difference.toString());
+      if (difference.add(currentDebit).compareTo(BigDecimal.ZERO) >= 0 ) {
+        orderCardService.updateDebitOrderCard(recharge.getCustomer().getOrderCard().getId(), difference.toString());
+      }
+      // TODO: error: new RechargeValue can't result in a debit negative in OrderCard
     }
-    // TODO: error: new RechargeValue can't result in a debit negative in OrderCard
   }
 }

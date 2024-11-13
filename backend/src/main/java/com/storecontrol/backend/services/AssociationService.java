@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -27,39 +26,28 @@ public class AssociationService {
   }
 
   public Association takeAssociationByUuid(String uuid) {
-    var associationOptional = repository.findByIdValidTrue(UUID.fromString(uuid));
+    var associationOptional = repository.findByUuidValidTrue(UUID.fromString(uuid));
 
-    if (associationOptional.isPresent()) {
-      return associationOptional.get();
-    } else {
-      // TODO: ERROR: association_uuid invalid
-      return new Association();
-    }
+    return associationOptional.orElseGet(Association::new);  // TODO: ERROR: association_uuid invalid
   }
 
   public List<Association> listAssociations() {
-    return repository.findAllByValidTrue();
+    return repository.findAllValidTrue();
   }
 
   @Transactional
   public Association updateAssociation(RequestUpdateAssociation request) {
-    Optional<Association> associationOptional = repository.findById(UUID.fromString(request.uuid()));
+    var association = takeAssociationByUuid(request.uuid());
 
-    if (associationOptional.isPresent()) {
-      var association = associationOptional.get();
-      association.updateAssociation(request);
+    association.updateAssociation(request);
 
-      return association;
-    } else {
-      // TODO: error: input error field id
-      return new Association();
-    }
+    return association;
   }
 
   @Transactional
   public void deleteAssociation(RequestUpdateAssociation request) {
-    Optional<Association> association = repository.findById(UUID.fromString(request.uuid()));
+    var association = takeAssociationByUuid(request.uuid());
 
-    association.ifPresent(Association::deleteAssociation);
+    association.deleteAssociation();
   }
 }

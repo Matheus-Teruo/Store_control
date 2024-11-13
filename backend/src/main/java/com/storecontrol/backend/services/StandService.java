@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -30,36 +29,31 @@ public class StandService {
     return stand;
   }
 
-  public Stand takeStand(String uuid) {
-    return repository.findByIdValidTrue(UUID.fromString(uuid));
+  public Stand takeStandByUuid(String uuid) {
+    var standOptional = repository.findByUuidValidTrue(UUID.fromString(uuid));
+
+    return standOptional.orElseGet(Stand::new);  // TODO: ERROR: stand_uuid invalid
   }
 
   public List<Stand> listStands() {
-    return repository.findAllByValidTrue();
+    return repository.findAllValidTrue();
   }
 
   @Transactional
   public Stand updateStand(RequestUpdateStand request) {
-    Optional<Stand> standOptional = repository.findById(UUID.fromString(request.uuid()));
+    var stand = takeStandByUuid(request.uuid());
 
-    if (standOptional.isPresent()) {
-      var stand = standOptional.get();
-      stand.updateStand(request);
+    stand.updateStand(request);
+    verifyUpdateAssociation(request.associationId(), stand);
 
-      verifyUpdateAssociation(request.associationId(), stand);
-
-      return stand;
-    } else {
-      // TODO: error: input error field id
-      return new Stand();
-    }
+    return stand;
   }
 
   @Transactional
   public void deleteStand(RequestUpdateStand request) {
-    Optional<Stand> stand = repository.findById(UUID.fromString(request.uuid()));
+    var stand = takeStandByUuid(request.uuid());
 
-    stand.ifPresent(Stand::deleteStand);
+    stand.deleteStand();
   }
 
   private void verifyUpdateAssociation(String uuid, Stand stand) {

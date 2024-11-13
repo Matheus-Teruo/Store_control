@@ -28,7 +28,7 @@ public class RechargeController {
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseRecharge> readRecharge(@PathVariable String uuid) {
-    var response = new ResponseRecharge(service.takeRecharge(uuid));
+    var response = new ResponseRecharge(service.takeRechargeByUuid(uuid));
 
     return ResponseEntity.ok(response);
   }

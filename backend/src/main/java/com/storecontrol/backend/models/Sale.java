@@ -1,5 +1,6 @@
 package com.storecontrol.backend.models;
 
+import com.storecontrol.backend.controllers.request.good.RequestUpdateGood;
 import com.storecontrol.backend.controllers.request.sale.RequestSale;
 import com.storecontrol.backend.controllers.request.sale.RequestUpdateSale;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "sales")
@@ -37,21 +39,38 @@ public class Sale {
         this.valid = true;
     }
 
+    public void allocateGoodsToSale(List<Good> goods) {
+        this.goods = goods;
+    }
+
     public void updateSale(RequestUpdateSale request) {
         if (request.onOrder() != null){
             this.onOrder = request.onOrder();
         }
     }
 
-    public void updateSale(List<Good> goods) {
-        this.goods = goods;
-    }
+    public void updateGoodsFromSale(List<RequestUpdateGood> request) {
+        if (request != null && !request.isEmpty()) {
 
-    public void updateSale(Customer customer) {
-        this.customer = customer;
+            var goodsMap = this.goods.stream().collect(Collectors.toMap(
+                good -> good.getGoodId().getItem().getUuid().toString(),
+                good -> good
+            ));
+
+            request.forEach(requestUpdateGood -> {
+                var good = goodsMap.get(requestUpdateGood.itemId());
+                if (good != null) {
+                    good.updateGood(requestUpdateGood);
+                } else {
+                    // TODO: error. this item is not allocate in this sale like good
+                }
+            });
+        }
     }
 
     public void deleteSale() {
         this.valid = false;
+
+        this.goods.forEach(Good::deleteSale);
     }
 }

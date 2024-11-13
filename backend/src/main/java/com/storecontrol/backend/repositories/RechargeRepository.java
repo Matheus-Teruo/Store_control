@@ -10,8 +10,8 @@ import java.util.UUID;
 
 public interface RechargeRepository extends JpaRepository<Recharge, UUID> {
   @Query("select r from Recharge r where r.valid = true and r.uuid = :uuid")
-  Optional<Recharge> findByIdValidTrue(UUID uuid);
+  Optional<Recharge> findByUuidValidTrue(UUID uuid);
 
   @Query("select r from Recharge r where r.valid = true")
-  List<Recharge> findAllByValidTrue();
+  List<Recharge> findAllValidTrue();
 }

@@ -26,14 +26,14 @@ public class GoodService {
     List<Good> goods = new ArrayList<>();
 
     for (RequestGood requestGood : request.requestGoods()) {
-      var item = itemService.takeItem(requestGood.itemId());
+      var item = itemService.takeItemByUuid(requestGood.itemId());
       goods.add(new Good(requestGood, new GoodID(item, sale)));
     }
 
     return goods;
   }
 
-  public List<Good> takeGoodsBySaleId(String saleUuid) {
+  public List<Good> takeGoodsBySaleUuid(String saleUuid) {
     return repository.findAllGoodsFromOneSale(UUID.fromString(saleUuid));
   }
 }

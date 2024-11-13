@@ -8,8 +8,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OrderCardService {
@@ -25,10 +25,10 @@ public class OrderCardService {
     return orderCard;
   }
 
-  public OrderCard takeOrderCard(String id) {
-    var orderCard = repository.findByIdActiveTrue(id);
+  public OrderCard takeOrderCardById(String uuid) {
+    var orderCardOptional = repository.findByIdActiveTrue(uuid);
 
-    return orderCard.orElseGet(OrderCard::new);
+    return orderCardOptional.orElseGet(OrderCard::new); // TODO: ERROR: card_id invalid
   }
 
   public List<OrderCard> listAllOrderCards() {
@@ -36,33 +36,38 @@ public class OrderCardService {
   }
 
   public List<OrderCard> listActiveOrderCards() {
-    return repository.findAllByActiveTrue();
+    return repository.findAllActiveTrue();
   }
 
   @Transactional
   public OrderCard updateOrderCard(RequestUpdateOrderCard request) {
-    Optional<OrderCard> orderCard = repository.findById(request.id());
+    var card = takeOrderCardById(request.id());
 
-    if (orderCard.isPresent()) {
-      orderCard.get().updateOrderCard(request);
-      return orderCard.get();
-    } else {
-      return new OrderCard();
-    }
+    card.updateOrderCard(request);
+
+    return card;
   }
 
   @Transactional
   public void updateDebitOrderCard(String cardId, String debitUpdateValue) {
-    Optional<OrderCard> orderCard = repository.findByIdActiveTrue(cardId);
+    var orderCard = takeOrderCardById(cardId);
 
-    orderCard.ifPresent(card -> card.incrementDebit(debitUpdateValue));
+    orderCard.incrementDebit(debitUpdateValue);
   }
 
   @Transactional
-  public void deactivateOrderCard(String cardId) {
-    var orderCard = takeOrderCard(cardId);
+  public BigDecimal deactivateOrderCard(String cardId) {
+    var orderCard = takeOrderCardById(cardId);
+    var remainingDebit = orderCard.getDebit();
 
     orderCard.updateOrderCard(
-        new RequestUpdateOrderCard(cardId, "0", false));
+        new RequestUpdateOrderCard(
+            cardId,
+            "0",
+            false
+        )
+    );
+
+    return remainingDebit;
   }
 }

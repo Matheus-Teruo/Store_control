@@ -5,12 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface VoluntaryRepository extends JpaRepository<Voluntary, UUID> {
   @Query("select v from Voluntary v where v.valid = true and v.uuid = :uuid")
-  Voluntary findByIdValidTrue(UUID uuid);
+  Optional<Voluntary> findByUuidValidTrue(UUID uuid);
 
   @Query("select v from Voluntary v where v.valid = true")
-  List<Voluntary> findAllByValidTrue();
+  List<Voluntary> findAllValidTrue();
 }

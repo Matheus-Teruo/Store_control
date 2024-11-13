@@ -31,7 +31,7 @@ public class Customer {
     @Column(name = "in_use")
     private Boolean inUse;
 
-    public Customer(RequestCustomer request, OrderCard orderCard) {
+    public Customer(OrderCard orderCard) {
         this.orderCard = orderCard;
         this.customerStart = LocalDateTime.now();
         this.inUse = true;

@@ -10,8 +10,8 @@ import java.util.UUID;
 
 public interface AssociationRepository extends JpaRepository<Association, UUID> {
   @Query("select a from Association a where a.valid = true and a.uuid = :uuid")
-  Optional<Association> findByIdValidTrue(UUID uuid);
+  Optional<Association> findByUuidValidTrue(UUID uuid);
 
   @Query("select a from Association a where a.valid = true")
-  List<Association> findAllByValidTrue();
+  List<Association> findAllValidTrue();
 }

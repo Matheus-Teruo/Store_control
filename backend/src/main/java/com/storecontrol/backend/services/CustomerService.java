@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,44 +22,33 @@ public class CustomerService {
   @Transactional
   public Customer initializeCustomer(RequestCustomer request) {
     var orderCard = orderCardService.updateOrderCard(request.orderCard());
-    var customer = new Customer(request, orderCard);
+    var customer = new Customer(orderCard);
+
     repository.save(customer);
 
     return customer;
   }
 
-//  public Customer takeActiveCustomer(String uuid) {
-//    return repository.findByIdActiveTrue(UUID.fromString(uuid));
-//  }
-
   public Customer takeActiveCustomerByCardId(String cardId) {
-    return repository.findByOrderCardIdActiveTrue(cardId);
+    var customerOptional = repository.findByOrderCardIdActiveTrue(cardId);
+
+    return customerOptional.orElseGet(Customer::new);  // TODO: ERROR: card_id invalid
   }
 
   public Customer takeAnyCustomer(String uuid) {
     var customerOptional = repository.findById(UUID.fromString(uuid));
 
-    return customerOptional.orElseGet(Customer::new);
+    return customerOptional.orElseGet(Customer::new);  // TODO: ERROR: customer_uuid invalid
   }
 
   public List<Customer> listCustomers() {
-    return repository.findAllByActiveTrue();
+    return repository.findAllActiveTrue();
   }
 
   @Transactional
-  public Customer finalizeCustomer(String uuid) {
-    Optional<Customer> standOptional = repository.findById(UUID.fromString(uuid));
+  public void finalizeCustomer(String cardId) {
+    var customer = takeActiveCustomerByCardId(cardId);
 
-    if (standOptional.isPresent()) {
-      var customer = standOptional.get();
-      orderCardService.deactivateOrderCard(customer.getOrderCard().getId());
-
-      customer.finalizeCustomer();
-
-      return customer;
-    } else {
-      // TODO: erro de ID errado
-      return new Customer();
-    }
+    customer.finalizeCustomer();
   }
 }

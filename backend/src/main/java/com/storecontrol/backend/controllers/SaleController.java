@@ -28,7 +28,7 @@ public class SaleController {
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseSale> readSale(@PathVariable String uuid) {
-    var response = new ResponseSale(service.takeSale(uuid));
+    var response = new ResponseSale(service.takeSaleByUuid(uuid));
 
     return ResponseEntity.ok(response);
   }
