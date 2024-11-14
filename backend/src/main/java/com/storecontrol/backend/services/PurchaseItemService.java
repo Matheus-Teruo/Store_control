@@ -15,13 +15,13 @@ import java.util.List;
 public class PurchaseItemService {
 
   @Autowired
-  ItemService itemService;
+  ProductService productService;
 
   public List<PurchaseItem> createPurchaseItems(RequestPurchase request, Purchase purchase) {
     List<PurchaseItem> purchaseItems = new ArrayList<>();
 
     for (RequestPurchaseItem requestPurchaseItem : request.requestPurchaseItems()) {
-      var item = itemService.takeItemByUuid(requestPurchaseItem.itemId());
+      var item = productService.takeProductByUuid(requestPurchaseItem.productId());
       purchaseItems.add(new PurchaseItem(requestPurchaseItem, new PurchaseItemId(item, purchase)));
     }
 

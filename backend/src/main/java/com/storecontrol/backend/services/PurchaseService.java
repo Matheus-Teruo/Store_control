@@ -1,12 +1,11 @@
 package com.storecontrol.backend.services;
 
-import com.storecontrol.backend.controllers.request.item.RequestUpdateItem;
+import com.storecontrol.backend.controllers.request.product.RequestUpdateProduct;
 import com.storecontrol.backend.controllers.request.purchase.RequestPurchase;
 import com.storecontrol.backend.controllers.request.purchase.RequestUpdatePurchase;
 import com.storecontrol.backend.controllers.request.purchaseItem.RequestUpdatePurchaseItem;
 import com.storecontrol.backend.models.Purchase;
 import com.storecontrol.backend.models.PurchaseItem;
-import com.storecontrol.backend.models.PurchaseItemId;
 import com.storecontrol.backend.repositories.PurchaseRepository;
 import com.storecontrol.backend.services.validation.PurchaseValidate;
 import jakarta.transaction.Transactional;
@@ -42,7 +41,7 @@ public class PurchaseService {
     var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
 
     validate.checkInsufficientCreditValidity(request, customer);
-    validate.checkInsufficientStockItemValidity(request);
+    validate.checkInsufficientProductStockValidity(request);
 
     var purchase =  new Purchase(request, customer,  voluntary);
 
@@ -90,10 +89,10 @@ public class PurchaseService {
 
   private void updateItemsFromPurchaseItemsChanged(Purchase purchase, Boolean isReversal) {
     for (PurchaseItem purchaseItem : purchase.getPurchaseItems()) {
-      var item = purchaseItem.getPurchaseItemId().getItem();
+      var item = purchaseItem.getPurchaseItemId().getProduct();
       int adjustmentFactor = isReversal ? 1 : -1;
 
-      item.updateItem(new RequestUpdateItem(
+      item.updateProduct(new RequestUpdateProduct(
           item.getUuid().toString(),
           null,
           null,
@@ -122,12 +121,12 @@ public class PurchaseService {
     if (request != null && !request.isEmpty()) {
 
       var purchaseItemsMap = purchaseItems.stream().collect(Collectors.toMap(
-          purchaseItem -> purchaseItem.getPurchaseItemId().getItem().getUuid().toString(),
+          purchaseItem -> purchaseItem.getPurchaseItemId().getProduct().getUuid().toString(),
           purchaseItem -> purchaseItem
       ));
 
       request.forEach(requestUpdatePurchaseItem -> {
-        var purchaseItem = purchaseItemsMap.get(requestUpdatePurchaseItem.itemId());
+        var purchaseItem = purchaseItemsMap.get(requestUpdatePurchaseItem.productId());
         if (purchaseItem != null) {
           if (requestUpdatePurchaseItem.delivered() <= purchaseItem.getQuantity()) {
             purchaseItem.updatePurchaseItem(requestUpdatePurchaseItem);

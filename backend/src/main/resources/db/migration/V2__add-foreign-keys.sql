@@ -14,14 +14,14 @@ FOREIGN KEY (voluntary_uuid) REFERENCES volunteers (uuid);
 
 -- Foreign keys for purchase_items table
 ALTER TABLE purchase_items
-ADD CONSTRAINT fk_purchase_items_item_uuid
-FOREIGN KEY (item_uuid) REFERENCES items (uuid),
+ADD CONSTRAINT fk_purchase_items_product_uuid
+FOREIGN KEY (product_uuid) REFERENCES products (uuid),
 ADD CONSTRAINT fk_purchase_items_purchase_uuid
 FOREIGN KEY (purchase_uuid) REFERENCES purchases (uuid);
 
--- Foreign key for items table
-ALTER TABLE items
-ADD CONSTRAINT fk_items_stand_uuid
+-- Foreign key for products table
+ALTER TABLE products
+ADD CONSTRAINT fk_products_stand_uuid
 FOREIGN KEY (stand_uuid) REFERENCES stands (uuid);
 
 -- Foreign keys for recharges table

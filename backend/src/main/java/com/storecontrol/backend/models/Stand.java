@@ -23,7 +23,7 @@ public class Stand {
     @OneToMany(mappedBy = "stand")
     private List<Voluntary> volunteers;
     @OneToMany(mappedBy = "stand")
-    private List<Item> items;
+    private List<Product> products;
     private Boolean valid;
 
     public Stand(RequestStand request, Association association) {

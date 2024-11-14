@@ -1,7 +1,7 @@
 package com.storecontrol.backend.models;
 
-import com.storecontrol.backend.controllers.request.item.RequestItem;
-import com.storecontrol.backend.controllers.request.item.RequestUpdateItem;
+import com.storecontrol.backend.controllers.request.product.RequestProduct;
+import com.storecontrol.backend.controllers.request.product.RequestUpdateProduct;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,38 +11,38 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "items")
+@Table(name = "products")
 @Getter
 @NoArgsConstructor
-public class Item {
+public class Product {
     @Id @GeneratedValue(generator = "UUID")
     private UUID uuid;
-    @Column(name = "item_name")
-    private String itemName;
+    @Column(name = "product_name")
+    private String productName;
     private BigDecimal price;
     private Integer stock;
-    @Column(name = "item_img")
-    private String itemImg;
+    @Column(name = "product_img")
+    private String productImg;
     @ManyToOne @JoinColumn(name = "stand_uuid")
     private Stand stand;
-    @OneToMany(mappedBy = "purchaseItemId.item")
+    @OneToMany(mappedBy = "purchaseItemId.product")
     private List<PurchaseItem> purchaseItems;
     private Boolean valid;
 
-    public Item(RequestItem request, Stand stand) {
-        this.itemName = request.itemName();
+    public Product(RequestProduct request, Stand stand) {
+        this.productName = request.productName();
         this.price = new BigDecimal(request.price());
         this.stock = request.stock();
-        if (request.itemImg() != null) {
-            this.itemImg = request.itemImg();
+        if (request.productImg() != null) {
+            this.productImg = request.productImg();
         }
         this.stand = stand;
         this.valid = true;
     }
 
-    public void updateItem(RequestUpdateItem request) {
-        if (request.itemName() != null) {
-            this.itemName = request.itemName();
+    public void updateProduct(RequestUpdateProduct request) {
+        if (request.productName() != null) {
+            this.productName = request.productName();
         }
         if (request.price() != null) {
             this.price = new BigDecimal(request.price());
@@ -50,16 +50,16 @@ public class Item {
         if (request.stock() != null) {
             this.stock = request.stock();
         }
-        if (request.itemImg() != null) {
-            this.itemImg = request.itemImg();
+        if (request.productImg() != null) {
+            this.productImg = request.productImg();
         }
     }
 
-    public void updateItem(Stand stand) {
+    public void updateProduct(Stand stand) {
         this.stand = stand;
     }
 
-    public void deleteItem() {
+    public void deleteProduct() {
         this.valid = false;
     }
 }

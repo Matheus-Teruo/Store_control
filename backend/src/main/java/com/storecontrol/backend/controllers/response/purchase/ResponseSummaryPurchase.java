@@ -13,7 +13,7 @@ public record ResponseSummaryPurchase(
     Boolean onOrder,
     LocalDateTime saleTimeStamp,
     Integer totalGoods,
-    BigDecimal totalCost,
+    BigDecimal totalPurchaseCost,
     ResponseSummaryCustomer summaryCustomer,
     ResponseSummaryVoluntary summaryVoluntary
 ) {

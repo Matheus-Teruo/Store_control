@@ -29,22 +29,22 @@ CREATE TABLE donations (
 
 -- Table for purchase_items
 CREATE TABLE purchase_items (
-    item_uuid BINARY(16),
+    product_uuid BINARY(16),
     purchase_uuid BINARY(16),
     quantity INT NOT NULL,
     delivered INT,
     unit_price DECIMAL(19, 2) NOT NULL,
     valid TINYINT NOT NULL,
-    PRIMARY KEY (item_uuid, purchase_uuid)
+    PRIMARY KEY (product_uuid, purchase_uuid)
 );
 
--- Table for items
-CREATE TABLE items (
+-- Table for products
+CREATE TABLE products (
     uuid BINARY(16) PRIMARY KEY,
-    item_name VARCHAR(255) UNIQUE NOT NULL,
+    product_name VARCHAR(255) UNIQUE NOT NULL,
     price DECIMAL(19, 2) NOT NULL,
     stock INT NOT NULL,
-    item_img VARCHAR(255),
+    product_img VARCHAR(255),
     stand_uuid BINARY(16) NOT NULL,
     valid TINYINT NOT NULL
 );

@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 public class PurchaseItemId {
   @ManyToOne @JoinColumn(name = "purchase_uuid")
   private Purchase purchase;
-  @ManyToOne @JoinColumn(name = "item_uuid")
-  private Item item;
+  @ManyToOne @JoinColumn(name = "product_uuid")
+  private Product product;
 
-  public PurchaseItemId(Item item, Purchase purchase) {
-    this.item = item;
+  public PurchaseItemId(Product product, Purchase purchase) {
+    this.product = product;
     this.purchase = purchase;
   }
 }

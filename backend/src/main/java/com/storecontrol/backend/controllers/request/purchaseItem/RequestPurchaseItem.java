@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record RequestPurchaseItem(
     @NotBlank
-    String itemId,
+    String productId,
     @NotNull
     Integer quantity,
     Integer delivered,

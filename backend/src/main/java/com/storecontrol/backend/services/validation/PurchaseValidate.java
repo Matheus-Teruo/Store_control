@@ -5,7 +5,7 @@ import com.storecontrol.backend.controllers.request.purchaseItem.RequestPurchase
 import com.storecontrol.backend.models.Customer;
 import com.storecontrol.backend.models.Purchase;
 import com.storecontrol.backend.models.PurchaseItem;
-import com.storecontrol.backend.services.ItemService;
+import com.storecontrol.backend.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 public class PurchaseValidate {
 
   @Autowired
-  ItemService itemService;
+  ProductService productService;
 
   public void checkInsufficientCreditValidity(RequestPurchase request, Customer customer) {
     var totalValue = request
@@ -31,11 +31,11 @@ public class PurchaseValidate {
     }
   }
 
-  public void checkInsufficientStockItemValidity(RequestPurchase request) {
+  public void checkInsufficientProductStockValidity(RequestPurchase request) {
     for (RequestPurchaseItem requestPurchaseItem : request.requestPurchaseItems()) {
-      var item = itemService.takeItemByUuid(requestPurchaseItem.itemId());
+      var product = productService.takeProductByUuid(requestPurchaseItem.productId());
 
-      if (item.getStock() < requestPurchaseItem.quantity()) {
+      if (product.getStock() < requestPurchaseItem.quantity()) {
         // TODO: error
       }
     }
