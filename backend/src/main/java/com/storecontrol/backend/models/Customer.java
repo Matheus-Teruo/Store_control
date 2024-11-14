@@ -36,6 +36,11 @@ public class Customer {
         this.inUse = true;
     }
 
+    public void undoFinalizeCustomer() {
+        this.customerEnd = null;
+        this.inUse = true;
+    }
+
     public void finalizeCustomer() {
         this.customerEnd = LocalDateTime.now();
         this.inUse = false;

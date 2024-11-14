@@ -41,12 +41,7 @@ public class Recharge {
     }
 
     public void updateRecharge(RequestUpdateRecharge request) {
-        if (request.rechargeValue() != null) {
-            this.rechargeValue = new BigDecimal(request.rechargeValue());
-        }
-        if (request.paymentTypeEnum() != null) {
-            this.paymentTypeEnum = PaymentType.fromString(request.paymentTypeEnum());
-        }
+        this.paymentTypeEnum = PaymentType.fromString(request.paymentTypeEnum());
     }
 
     public void deleteRecharge() {

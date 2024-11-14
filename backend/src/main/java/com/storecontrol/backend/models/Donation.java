@@ -1,5 +1,6 @@
 package com.storecontrol.backend.models;
 
+import com.storecontrol.backend.controllers.request.donation.RequestDonation;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,4 +25,16 @@ public class Donation {
     @ManyToOne @JoinColumn(name = "voluntary_uuid")
     private Voluntary voluntary;
     private Boolean valid;
+
+    public Donation(RequestDonation request, Customer customer, Voluntary voluntary) {
+        this.donationValue = new BigDecimal(request.donationValue());
+        this.donationTimeStamp = LocalDateTime.now();
+        this.customer = customer;
+        this.voluntary = voluntary;
+        this.valid = true;
+    }
+
+    public void deleteDonation() {
+        this.valid = false;
+    }
 }

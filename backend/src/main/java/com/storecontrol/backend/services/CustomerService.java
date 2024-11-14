@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,7 +22,9 @@ public class CustomerService {
 
   @Transactional
   public Customer initializeCustomer(RequestCustomer request) {
-    var orderCard = orderCardService.updateOrderCard(request.orderCard());
+    var orderCard = orderCardService.takeOrderCardById(request.orderCard().id());
+    orderCard.incrementDebit(new BigDecimal(request.orderCard().debit()));
+    orderCard.updateActive(true);
     var customer = new Customer(orderCard);
 
     repository.save(customer);
@@ -43,12 +46,5 @@ public class CustomerService {
 
   public List<Customer> listCustomers() {
     return repository.findAllActiveTrue();
-  }
-
-  @Transactional
-  public void finalizeCustomer(String cardId) {
-    var customer = takeActiveCustomerByCardId(cardId);
-
-    customer.finalizeCustomer();
   }
 }

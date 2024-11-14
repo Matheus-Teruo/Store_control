@@ -1,11 +1,12 @@
 package com.storecontrol.backend.services;
 
 import com.storecontrol.backend.controllers.request.item.RequestUpdateItem;
-import com.storecontrol.backend.controllers.request.orderCard.RequestUpdateOrderCard;
 import com.storecontrol.backend.controllers.request.purchase.RequestPurchase;
 import com.storecontrol.backend.controllers.request.purchase.RequestUpdatePurchase;
-import com.storecontrol.backend.models.PurchaseItem;
+import com.storecontrol.backend.controllers.request.purchaseItem.RequestUpdatePurchaseItem;
 import com.storecontrol.backend.models.Purchase;
+import com.storecontrol.backend.models.PurchaseItem;
+import com.storecontrol.backend.models.PurchaseItemId;
 import com.storecontrol.backend.repositories.PurchaseRepository;
 import com.storecontrol.backend.services.validation.PurchaseValidate;
 import jakarta.transaction.Transactional;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class PurchaseService {
@@ -69,7 +71,7 @@ public class PurchaseService {
     var purchase = takePurchaseByUuid(request.uuid());
 
     purchase.updatePurchase(request);
-    purchase.updatePurchaseItemsFromPurchase(request.requestUpdatePurchaseItems());
+    updatePurchaseItemsFromPurchase(request.requestUpdatePurchaseItems(), purchase.getPurchaseItems());
 
     return purchase;
   }
@@ -113,11 +115,29 @@ public class PurchaseService {
 
     var debitResult = orderCard.getDebit().add(totalValue.multiply(adjustmentFactor));
 
-    var requestUpdateOrderCard = new RequestUpdateOrderCard(
-        orderCard.getId(),
-        debitResult.toString(),
-        null);
+    purchase.getCustomer().getOrderCard().incrementDebit(debitResult);
+  }
 
-    orderCard.updateOrderCard(requestUpdateOrderCard);
+  public void updatePurchaseItemsFromPurchase(List<RequestUpdatePurchaseItem> request, List<PurchaseItem> purchaseItems) {
+    if (request != null && !request.isEmpty()) {
+
+      var purchaseItemsMap = purchaseItems.stream().collect(Collectors.toMap(
+          purchaseItem -> purchaseItem.getPurchaseItemId().getItem().getUuid().toString(),
+          purchaseItem -> purchaseItem
+      ));
+
+      request.forEach(requestUpdatePurchaseItem -> {
+        var purchaseItem = purchaseItemsMap.get(requestUpdatePurchaseItem.itemId());
+        if (purchaseItem != null) {
+          if (requestUpdatePurchaseItem.delivered() <= purchaseItem.getQuantity()) {
+            purchaseItem.updatePurchaseItem(requestUpdatePurchaseItem);
+          } else {
+            // TODO: error quantity not allow to be bigger than quantity.
+          }
+        } else {
+          // TODO: error. this item is not allocate in this purchase like purchaseItem
+        }
+      });
+    }
   }
 }

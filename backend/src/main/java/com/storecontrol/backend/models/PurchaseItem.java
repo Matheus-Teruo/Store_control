@@ -35,13 +35,7 @@ public class PurchaseItem {
     }
 
     public void updatePurchaseItem(RequestUpdatePurchaseItem request) {
-        if (request.delivered() != null) {
-            if (request.delivered() <= this.quantity) {
-                this.delivered = request.delivered();
-            } else {
-                // TODO: error quantity not allow to be bigger than quantity.
-            }
-        }
+        this.delivered = request.delivered();
     }
 
     public void deletePurchaseItem() {

@@ -7,7 +7,6 @@ public record RequestUpdateOrderCard(
     @NotNull
     @Pattern(regexp = "^[A-Za-z0-9]{15}$")
     String id,
-    String debit,
-    Boolean active
+    String debit
 ) {
 }

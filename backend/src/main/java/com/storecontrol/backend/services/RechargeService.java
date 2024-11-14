@@ -27,9 +27,6 @@ public class RechargeService {
   @Autowired
   CustomerService customerService;
 
-  @Autowired
-  OrderCardService orderCardService;
-
   @Transactional
   public Recharge createRecharge(RequestRecharge request) {
     var voluntary = voluntaryService.takeVoluntaryByUuid(request.voluntaryId());
@@ -55,8 +52,9 @@ public class RechargeService {
   public Recharge updateRecharge(RequestUpdateRecharge request) {
     var recharge = takeRechargeByUuid(request.uuid());
 
-    handleUpdatesOnCustomerByCardId(request, recharge);
-    recharge.updateRecharge(request);
+    if (request.paymentTypeEnum() != null) {
+      recharge.updateRecharge(request);
+    } // TODO: error: value not valid
 
     return recharge;
   }
@@ -64,12 +62,7 @@ public class RechargeService {
   public void deleteRecharge(RequestUpdateRecharge request) {
     var recharge = takeRechargeByUuid(request.uuid());
 
-    handleUpdatesOnCustomerByCardId(
-        new RequestUpdateRecharge(
-            request.uuid(),
-            "0",
-            null),
-        recharge);
+    handleUpdatesCustomerDebit(recharge);
 
     recharge.deleteRecharge();
   }
@@ -78,32 +71,26 @@ public class RechargeService {
     Customer customer;
     try {
       customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
-      orderCardService.updateDebitOrderCard(request.orderCardId(), request.rechargeValue());
+      customer.getOrderCard().incrementDebit(new BigDecimal(request.rechargeValue()));
     } catch (Exception e) {  // TODO: handle error of customer non-existence (change the Exception generic)
       customer = customerService.initializeCustomer(
           new RequestCustomer(
               new RequestUpdateOrderCard(
                   request.orderCardId(),
-                  request.rechargeValue(),
-                  true)
+                  request.rechargeValue())
           )
       );
     }
     return customer;
   }
 
-  private void handleUpdatesOnCustomerByCardId(RequestUpdateRecharge request, Recharge recharge) {
-    if (request.rechargeValue() != null) {
-      var newRechargeValue = new BigDecimal(request.rechargeValue());
-      var currentRechargeVale = recharge.getRechargeValue();
-      var currentDebit = recharge.getCustomer().getOrderCard().getDebit();
+  private void handleUpdatesCustomerDebit(Recharge recharge) {
+    var rechargeValue = recharge.getRechargeValue();
+    var currentDebit = recharge.getCustomer().getOrderCard().getDebit();
 
-      var difference = newRechargeValue.subtract(currentRechargeVale);
-
-      if (difference.add(currentDebit).compareTo(BigDecimal.ZERO) >= 0 ) {
-        orderCardService.updateDebitOrderCard(recharge.getCustomer().getOrderCard().getId(), difference.toString());
-      }
-      // TODO: error: new RechargeValue can't result in a debit negative in OrderCard
+    if (rechargeValue.compareTo(currentDebit) <= 0 ) {
+      recharge.getCustomer().getOrderCard().incrementDebit(rechargeValue.negate());
     }
+    // TODO: error: new RechargeValue can't result in a debit negative in OrderCard
   }
 }

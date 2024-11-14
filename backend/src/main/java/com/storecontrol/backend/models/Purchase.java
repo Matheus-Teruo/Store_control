@@ -1,6 +1,5 @@
 package com.storecontrol.backend.models;
 
-import com.storecontrol.backend.controllers.request.purchaseItem.RequestUpdatePurchaseItem;
 import com.storecontrol.backend.controllers.request.purchase.RequestPurchase;
 import com.storecontrol.backend.controllers.request.purchase.RequestUpdatePurchase;
 import jakarta.persistence.*;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "purchases")
@@ -46,25 +44,6 @@ public class Purchase {
     public void updatePurchase(RequestUpdatePurchase request) {
         if (request.onOrder() != null){
             this.onOrder = request.onOrder();
-        }
-    }
-
-    public void updatePurchaseItemsFromPurchase(List<RequestUpdatePurchaseItem> request) {
-        if (request != null && !request.isEmpty()) {
-
-            var purchaseItemsMap = this.purchaseItems.stream().collect(Collectors.toMap(
-                purchaseItem -> purchaseItem.getPurchaseItemId().getItem().getUuid().toString(),
-                purchaseItem -> purchaseItem
-            ));
-
-            request.forEach(requestUpdatePurchaseItem -> {
-                var purchaseItem = purchaseItemsMap.get(requestUpdatePurchaseItem.itemId());
-                if (purchaseItem != null) {
-                    purchaseItem.updatePurchaseItem(requestUpdatePurchaseItem);
-                } else {
-                    // TODO: error. this item is not allocate in this purchase like purchaseItem
-                }
-            });
         }
     }
 
