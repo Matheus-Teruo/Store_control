@@ -21,8 +21,8 @@ public class Purchase {
     private Boolean onOrder;
     @Column(name = "purchase_time_stamp")
     private LocalDateTime purchaseTimeStamp;
-    @OneToMany(mappedBy = "purchaseItemId.purchase", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<PurchaseItem> purchaseItems;
+    @OneToMany(mappedBy = "itemId.purchase", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Item> items;
     @ManyToOne(fetch = FetchType.EAGER) @JoinColumn(name = "customer_uuid")
     private Customer customer;
     @ManyToOne(fetch = FetchType.EAGER) @JoinColumn(name = "voluntary_uuid")
@@ -37,8 +37,8 @@ public class Purchase {
         this.valid = true;
     }
 
-    public void allocatePurchaseItemsToPurchase(List<PurchaseItem> purchaseItems) {
-        this.purchaseItems = purchaseItems;
+    public void allocateItemsToPurchase(List<Item> items) {
+        this.items = items;
     }
 
     public void updatePurchase(RequestUpdatePurchase request) {
@@ -50,6 +50,6 @@ public class Purchase {
     public void deletePurchase() {
         this.valid = false;
 
-        this.purchaseItems.forEach(PurchaseItem::deletePurchaseItem);
+        this.items.forEach(Item::deleteItem);
     }
 }

@@ -23,6 +23,7 @@ public class CustomerService {
   @Transactional
   public Customer initializeCustomer(RequestCustomer request) {
     var orderCard = orderCardService.takeOrderCardById(request.orderCard().id());
+
     orderCard.incrementDebit(new BigDecimal(request.orderCard().debit()));
     orderCard.updateActive(true);
     var customer = new Customer(orderCard);
@@ -46,5 +47,16 @@ public class CustomerService {
 
   public List<Customer> listCustomers() {
     return repository.findAllActiveTrue();
+  }
+
+  public void finalizeCustomer(String cardId) {
+    var customer = takeActiveCustomerByCardId(cardId);
+
+    if (customer.getOrderCard().getDebit().compareTo(BigDecimal.ZERO) != 0) {
+      // TODO: system error, customer can't finalize with debit.
+    }
+
+    customer.getOrderCard().updateActive(false);
+    customer.finalizeCustomer();
   }
 }

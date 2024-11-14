@@ -41,7 +41,7 @@ public class DonationService {
     repository.save(donation);
 
     // TODO: verify if remind debit on order card
-    customer.finalizeCustomer();
+    customerService.finalizeCustomer(request.orderCardId());
     return donation;
   }
 

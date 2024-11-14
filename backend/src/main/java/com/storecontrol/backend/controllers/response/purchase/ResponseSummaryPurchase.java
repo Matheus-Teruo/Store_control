@@ -12,7 +12,7 @@ public record ResponseSummaryPurchase(
     UUID uuid,
     Boolean onOrder,
     LocalDateTime saleTimeStamp,
-    Integer totalGoods,
+    Integer totalItems,
     BigDecimal totalPurchaseCost,
     ResponseSummaryCustomer summaryCustomer,
     ResponseSummaryVoluntary summaryVoluntary
@@ -23,10 +23,10 @@ public record ResponseSummaryPurchase(
         purchase.getUuid(),
         purchase.getOnOrder(),
         purchase.getPurchaseTimeStamp(),
-        purchase.getPurchaseItems().size(),
-        purchase.getPurchaseItems().stream()
-            .map(good -> BigDecimal.valueOf(good.getQuantity())
-                .multiply(good.getUnitPrice()))
+        purchase.getItems().size(),
+        purchase.getItems().stream()
+            .map(item -> BigDecimal.valueOf(item.getQuantity())
+                .multiply(item.getUnitPrice()))
             .reduce(BigDecimal.ZERO, BigDecimal::add),
         new ResponseSummaryCustomer(purchase.getCustomer()),
         new ResponseSummaryVoluntary(purchase.getVoluntary())

@@ -3,9 +3,9 @@ package com.storecontrol.backend.services;
 import com.storecontrol.backend.controllers.request.product.RequestUpdateProduct;
 import com.storecontrol.backend.controllers.request.purchase.RequestPurchase;
 import com.storecontrol.backend.controllers.request.purchase.RequestUpdatePurchase;
-import com.storecontrol.backend.controllers.request.purchaseItem.RequestUpdatePurchaseItem;
+import com.storecontrol.backend.controllers.request.item.RequestUpdateItem;
+import com.storecontrol.backend.models.Item;
 import com.storecontrol.backend.models.Purchase;
-import com.storecontrol.backend.models.PurchaseItem;
 import com.storecontrol.backend.repositories.PurchaseRepository;
 import com.storecontrol.backend.services.validation.PurchaseValidate;
 import jakarta.transaction.Transactional;
@@ -33,7 +33,7 @@ public class PurchaseService {
   CustomerService customerService;
 
   @Autowired
-  PurchaseItemService purchaseItemService;
+  ItemService itemService;
 
   @Transactional
   public Purchase createPurchase(RequestPurchase request) {
@@ -45,10 +45,10 @@ public class PurchaseService {
 
     var purchase =  new Purchase(request, customer,  voluntary);
 
-    var purchaseItems = purchaseItemService.createPurchaseItems(request, purchase);
-    purchase.allocatePurchaseItemsToPurchase(purchaseItems);
+    var items = itemService.createItems(request, purchase);
+    purchase.allocateItemsToPurchase(items);
 
-    updateItemsFromPurchaseItemsChanged(purchase, false);
+    updateItemsFromItemsChanged(purchase, false);
     updateCustomerDebit(purchase, false);
     repository.save(purchase);
 
@@ -70,7 +70,7 @@ public class PurchaseService {
     var purchase = takePurchaseByUuid(request.uuid());
 
     purchase.updatePurchase(request);
-    updatePurchaseItemsFromPurchase(request.requestUpdatePurchaseItems(), purchase.getPurchaseItems());
+    updateItemsFromPurchase(request.requestUpdateItems(), purchase.getItems());
 
     return purchase;
   }
@@ -79,33 +79,33 @@ public class PurchaseService {
   public void deletePurchase(RequestUpdatePurchase request) {
     var purchase = takePurchaseByUuid(request.uuid());
 
-    validate.checkSomePurchaseItemWasDelivered(purchase);
+    validate.checkSomeItemWasDelivered(purchase);
 
-    updateItemsFromPurchaseItemsChanged(purchase, true);
+    updateItemsFromItemsChanged(purchase, true);
     updateCustomerDebit(purchase, true);
 
     purchase.deletePurchase();
   }
 
-  private void updateItemsFromPurchaseItemsChanged(Purchase purchase, Boolean isReversal) {
-    for (PurchaseItem purchaseItem : purchase.getPurchaseItems()) {
-      var item = purchaseItem.getPurchaseItemId().getProduct();
+  private void updateItemsFromItemsChanged(Purchase purchase, Boolean isReversal) {
+    for (Item item : purchase.getItems()) {
+      var product = item.getItemId().getProduct();
       int adjustmentFactor = isReversal ? 1 : -1;
 
-      item.updateProduct(new RequestUpdateProduct(
-          item.getUuid().toString(),
+      product.updateProduct(new RequestUpdateProduct(
+          product.getUuid().toString(),
           null,
           null,
-          item.getStock() + (adjustmentFactor * purchaseItem.getQuantity()),
+          product.getStock() + (adjustmentFactor * item.getQuantity()),
           null,
           null));
     }
   }
 
   private void updateCustomerDebit(Purchase purchase, Boolean isReversal) {
-    var totalValue = purchase.getPurchaseItems().stream().map(purchaseItem ->
-            BigDecimal.valueOf(purchaseItem.getQuantity())
-                .multiply(purchaseItem.getUnitPrice()))
+    var totalValue = purchase.getItems().stream().map(item ->
+            BigDecimal.valueOf(item.getQuantity())
+                .multiply(item.getUnitPrice()))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     var orderCard = purchase.getCustomer().getOrderCard();
@@ -117,24 +117,24 @@ public class PurchaseService {
     purchase.getCustomer().getOrderCard().incrementDebit(debitResult);
   }
 
-  public void updatePurchaseItemsFromPurchase(List<RequestUpdatePurchaseItem> request, List<PurchaseItem> purchaseItems) {
+  public void updateItemsFromPurchase(List<RequestUpdateItem> request, List<Item> items) {
     if (request != null && !request.isEmpty()) {
 
-      var purchaseItemsMap = purchaseItems.stream().collect(Collectors.toMap(
-          purchaseItem -> purchaseItem.getPurchaseItemId().getProduct().getUuid().toString(),
-          purchaseItem -> purchaseItem
+      var itemsMap = items.stream().collect(Collectors.toMap(
+          item -> item.getItemId().getProduct().getUuid().toString(),
+          item -> item
       ));
 
-      request.forEach(requestUpdatePurchaseItem -> {
-        var purchaseItem = purchaseItemsMap.get(requestUpdatePurchaseItem.productId());
-        if (purchaseItem != null) {
-          if (requestUpdatePurchaseItem.delivered() <= purchaseItem.getQuantity()) {
-            purchaseItem.updatePurchaseItem(requestUpdatePurchaseItem);
+      request.forEach(requestUpdateItem -> {
+        var item = itemsMap.get(requestUpdateItem.productId());
+        if (item != null) {
+          if (requestUpdateItem.delivered() <= item.getQuantity()) {
+            item.updateItem(requestUpdateItem);
           } else {
             // TODO: error quantity not allow to be bigger than quantity.
           }
         } else {
-          // TODO: error. this item is not allocate in this purchase like purchaseItem
+          // TODO: error. this item is not allocate in this purchase like item
         }
       });
     }

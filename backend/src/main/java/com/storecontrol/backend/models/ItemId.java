@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @Getter
 @NoArgsConstructor
-public class PurchaseItemId {
+public class ItemId {
   @ManyToOne @JoinColumn(name = "purchase_uuid")
   private Purchase purchase;
   @ManyToOne @JoinColumn(name = "product_uuid")
   private Product product;
 
-  public PurchaseItemId(Product product, Purchase purchase) {
+  public ItemId(Product product, Purchase purchase) {
     this.product = product;
     this.purchase = purchase;
   }

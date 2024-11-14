@@ -31,18 +31,24 @@ public class RefundService {
     var remainingDebit = customer.getOrderCard().getDebit();
     var refundValue = new BigDecimal(request.refundValue());
 
+    boolean donationCreated = false;
     if (remainingDebit.compareTo(BigDecimal.ZERO) > 0) {
       validate.checkRefundValueValid(refundValue, remainingDebit, customer);
 
       customer.getOrderCard().incrementDebit(refundValue.negate());
-      donationService.createDonation(
-          new RequestDonation(
-              remainingDebit.subtract(refundValue).toString(),
-              request.orderCardId(),
-              request.voluntaryId()));
+      if (remainingDebit.compareTo(refundValue) > 0) {
+        donationService.createDonation(
+            new RequestDonation(
+                remainingDebit.subtract(refundValue).toString(),
+                request.orderCardId(),
+                request.voluntaryId()));
+        donationCreated = true;
+      }
     }
 
-    customer.finalizeCustomer();
+    if (!donationCreated) {
+      customerService.finalizeCustomer(request.orderCardId());
+    }
 
     return new ResponseRefund(
         refundValue,

@@ -17,7 +17,7 @@ public class OrderCard {
     private String id;
     private BigDecimal debit;
     @OneToMany(mappedBy = "orderCard")
-    private List<Customer> curtomers;
+    private List<Customer> customers;
     private Boolean active;
 
     public OrderCard(RequestOrderCard request) {
