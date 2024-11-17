@@ -5,14 +5,13 @@ import com.storecontrol.backend.controllers.response.item.ResponseItem;
 import com.storecontrol.backend.controllers.response.voluntary.ResponseSummaryVoluntary;
 import com.storecontrol.backend.models.Purchase;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 public record ResponsePurchase(
     UUID uuid,
     Boolean onOrder,
-    LocalDateTime purchaseTimeStamp,
+    String purchaseTimeStamp,
     List<ResponseItem> items,
     ResponseSummaryCustomer summaryCustomer,
     ResponseSummaryVoluntary summaryVoluntary
@@ -22,7 +21,7 @@ public record ResponsePurchase(
     this(
         purchase.getUuid(),
         purchase.getOnOrder(),
-        purchase.getPurchaseTimeStamp(),
+        purchase.getPurchaseTimeStamp().toString(),
         purchase.getItems().stream().map(ResponseItem::new).toList(),
         new ResponseSummaryCustomer(purchase.getCustomer()),
         new ResponseSummaryVoluntary(purchase.getVoluntary())

@@ -429,7 +429,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"productName\": \"productExample2\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1,\r\n    \"productImg\": null,\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"productName\": \"productExample2\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 10,\r\n    \"productImg\": null,\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -694,9 +694,21 @@
 				},
 				{
 					"name": "Read Purchase",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{hostPath}}purchases/{{purchase_id}}",
 							"host": [
@@ -730,7 +742,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{sale_id}}\",\r\n    \"onOrder\": false,\r\n    \"requestUpdateItems\": [\r\n        {\"productId\": \"{{product_id}}\",\"delivered\": 1}\r\n    ]\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{purchase_id}}\",\r\n    \"onOrder\": false,\r\n    \"requestUpdateItems\": [\r\n        {\"productId\": \"{{product_id}}\",\"delivered\": 1}\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

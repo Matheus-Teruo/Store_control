@@ -108,13 +108,9 @@ public class PurchaseService {
                 .multiply(item.getUnitPrice()))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-    var orderCard = purchase.getCustomer().getOrderCard();
+    BigDecimal adjustmentFactor = isReversal ? BigDecimal.ONE : BigDecimal.ONE.negate();
 
-    BigDecimal adjustmentFactor = isReversal ? BigDecimal.ONE : BigDecimal.valueOf(-1);
-
-    var debitResult = orderCard.getDebit().add(totalValue.multiply(adjustmentFactor));
-
-    purchase.getCustomer().getOrderCard().incrementDebit(debitResult);
+    purchase.getCustomer().getOrderCard().incrementDebit(totalValue.multiply(adjustmentFactor));
   }
 
   public void updateItemsFromPurchase(List<RequestUpdateItem> request, List<Item> items) {

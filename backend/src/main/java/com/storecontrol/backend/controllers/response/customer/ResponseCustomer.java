@@ -16,7 +16,7 @@ public record ResponseCustomer(
     String customerStart,
     String customerEnd,
     List<ResponseSummaryRecharge> summaryRecharges,
-    List<ResponseSummaryPurchase> summarySales,
+    List<ResponseSummaryPurchase> summaryPurchases,
     ResponseSummaryDonation summaryDonation,
     ResponseSummaryRefund summaryRefund
 ) {
