@@ -54,17 +54,19 @@ public class RechargeService {
 
     if (request.paymentTypeEnum() != null) {
       recharge.updateRecharge(request);
-    } // TODO: error: value not valid
+    }
 
     return recharge;
   }
 
+  @Transactional
   public void deleteRecharge(RequestUpdateRecharge request) {
     var recharge = takeRechargeByUuid(request.uuid());
 
-    handleUpdatesCustomerDebit(recharge);
+    handleUndoCustomerDebit(recharge);
 
     recharge.deleteRecharge();
+    handleFinalizeCustomer(recharge.getCustomer());
   }
 
   private Customer handleChangesOnCustomerByCardId(RequestRecharge request) {
@@ -72,7 +74,7 @@ public class RechargeService {
     try {
       customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
       customer.getOrderCard().incrementDebit(new BigDecimal(request.rechargeValue()));
-    } catch (Exception e) {  // TODO: handle error of customer non-existence (change the Exception generic)
+    } catch (RuntimeException e) {  // TODO: handle error of customer non-existence (change the Exception generic)
       customer = customerService.initializeCustomer(
           new RequestCustomer(
               new RequestUpdateOrderCard(
@@ -84,13 +86,23 @@ public class RechargeService {
     return customer;
   }
 
-  private void handleUpdatesCustomerDebit(Recharge recharge) {
+  private void handleFinalizeCustomer(Customer customer) {
+    var recharges = customer.getRecharges().stream()
+        .filter(Recharge::getValid)
+        .toList();
+
+    if (recharges.isEmpty()) {
+      customerService.finalizeCustomer(customer);
+    }
+  }
+
+  private void handleUndoCustomerDebit(Recharge recharge) {
     var rechargeValue = recharge.getRechargeValue();
     var currentDebit = recharge.getCustomer().getOrderCard().getDebit();
 
     if (rechargeValue.compareTo(currentDebit) <= 0 ) {
       recharge.getCustomer().getOrderCard().incrementDebit(rechargeValue.negate());
     }
-    // TODO: error: new RechargeValue can't result in a debit negative in OrderCard
+    // TODO: error: can't delete recharge and result a negative debit in OrderCard
   }
 }

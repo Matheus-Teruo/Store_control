@@ -8,10 +8,20 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
 @Component
-public class RefundValidate {
+public class FinalizationOfCustomerValidate {
 
-  public void checkRefundValueValid(BigDecimal refundValue, BigDecimal remainingDebit, Customer customer) {
-    BigDecimal viableValueForRefund = customer.getRecharges().stream()
+  public void checkDonationValueValid(BigDecimal donationValue, Customer customer) {
+    var currentDebit = customer.getOrderCard().getDebit();
+
+    if (donationValue.compareTo(currentDebit) > 0) {
+      // TODO: error: insufficient balance or remaind credit to nothing
+    }
+  }
+
+  public void checkRefundValueValid(BigDecimal refundValue, Customer customer) {
+    var remainingDebit = customer.getOrderCard().getDebit();
+    // NOTE: this variable require to take a list of recharge from customer
+    var viableValueForRefund = customer.getRecharges().stream()
         .filter(recharge -> recharge.getPaymentTypeEnum() == PaymentType.CASH && recharge.getValid())
         .map(Recharge::getRechargeValue)
         .reduce(BigDecimal.ZERO, BigDecimal::add);

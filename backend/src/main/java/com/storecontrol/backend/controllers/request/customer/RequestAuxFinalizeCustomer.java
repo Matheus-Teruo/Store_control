@@ -1,10 +1,12 @@
-package com.storecontrol.backend.controllers.request.donation;
+package com.storecontrol.backend.controllers.request.customer;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record RequestDonation(
+public record RequestAuxFinalizeCustomer(
     @NotBlank
     String donationValue,
+    @NotBlank
+    String refundValue,
     @NotBlank
     String orderCardId,
     @NotBlank

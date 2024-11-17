@@ -38,6 +38,13 @@ CREATE TABLE items (
     PRIMARY KEY (product_uuid, purchase_uuid)
 );
 
+-- Table for order_cards
+CREATE TABLE order_cards (
+    card_id CHAR(15) PRIMARY KEY,
+    debit DECIMAL(19, 2) NOT NULL,
+    active TINYINT NOT NULL
+);
+
 -- Table for products
 CREATE TABLE products (
     uuid BINARY(16) PRIMARY KEY,
@@ -49,11 +56,14 @@ CREATE TABLE products (
     valid TINYINT NOT NULL
 );
 
--- Table for order_cards
-CREATE TABLE order_cards (
-    card_id CHAR(15) PRIMARY KEY,
-    debit DECIMAL(19, 2) NOT NULL,
-    active TINYINT NOT NULL
+-- Table for purchases
+CREATE TABLE purchases (
+    uuid BINARY(16) PRIMARY KEY,
+    on_order BOOLEAN,
+    purchase_time_stamp TIMESTAMP NOT NULL,
+    customer_uuid BINARY(16) NOT NULL,
+    voluntary_uuid BINARY(16) NOT NULL,
+    valid TINYINT NOT NULL
 );
 
 -- Table for recharges
@@ -67,11 +77,11 @@ CREATE TABLE recharges (
     valid TINYINT NOT NULL
 );
 
--- Table for purchases
-CREATE TABLE purchases (
+-- Table for refund
+CREATE TABLE refunds (
     uuid BINARY(16) PRIMARY KEY,
-    on_order BOOLEAN,
-    purchase_time_stamp TIMESTAMP NOT NULL,
+    refund_value DECIMAL(19, 2) NOT NULL,
+    refund_time_stamp TIMESTAMP NOT NULL,
     customer_uuid BINARY(16) NOT NULL,
     voluntary_uuid BINARY(16) NOT NULL,
     valid TINYINT NOT NULL

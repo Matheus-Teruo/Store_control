@@ -1,58 +1,55 @@
 package com.storecontrol.backend.services;
 
-import com.storecontrol.backend.controllers.request.donation.RequestDonation;
-import com.storecontrol.backend.controllers.request.refund.RequestRefund;
-import com.storecontrol.backend.controllers.response.customer.ResponseSummaryCustomer;
-import com.storecontrol.backend.controllers.response.refund.ResponseRefund;
-import com.storecontrol.backend.controllers.response.voluntary.ResponseSummaryVoluntary;
-import com.storecontrol.backend.services.validation.RefundValidate;
+import com.storecontrol.backend.controllers.request.customer.RequestAuxFinalizeCustomer;
+import com.storecontrol.backend.models.Customer;
+import com.storecontrol.backend.models.Refund;
+import com.storecontrol.backend.models.Voluntary;
+import com.storecontrol.backend.repositories.RefundRepository;
+import com.storecontrol.backend.services.validation.FinalizationOfCustomerValidate;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class RefundService {
 
   @Autowired
-  RefundValidate validate;
+  RefundRepository repository;
 
   @Autowired
-  CustomerService customerService;
+  FinalizationOfCustomerValidate validate;
 
-  @Autowired
-  DonationService donationService;
-
-  @Autowired
-  VoluntaryService voluntaryService;
-
-  public ResponseRefund createRefund(RequestRefund request) {
-    var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
-    var remainingDebit = customer.getOrderCard().getDebit();
+  @Transactional
+  public void createRefund(RequestAuxFinalizeCustomer request, Customer customer, Voluntary voluntary) {
     var refundValue = new BigDecimal(request.refundValue());
 
-    boolean donationCreated = false;
-    if (remainingDebit.compareTo(BigDecimal.ZERO) > 0) {
-      validate.checkRefundValueValid(refundValue, remainingDebit, customer);
+    validate.checkRefundValueValid(refundValue, customer);
 
-      customer.getOrderCard().incrementDebit(refundValue.negate());
-      if (remainingDebit.compareTo(refundValue) > 0) {
-        donationService.createDonation(
-            new RequestDonation(
-                remainingDebit.subtract(refundValue).toString(),
-                request.orderCardId(),
-                request.voluntaryId()));
-        donationCreated = true;
-      }
-    }
+    customer.getOrderCard().incrementDebit(refundValue.negate());
+    var refund = new Refund(request, customer, voluntary);
+    customer.setRefunds(List.of(refund));
 
-    if (!donationCreated) {
-      customerService.finalizeCustomer(request.orderCardId());
-    }
+    repository.save(refund);
+  }
 
-    return new ResponseRefund(
-        refundValue,
-        new ResponseSummaryCustomer(customer),
-        new ResponseSummaryVoluntary(voluntaryService.takeVoluntaryByUuid(request.voluntaryId())));
+  public Refund takeRefundByUuid(String uuid) {
+    var refundOptional = repository.findByUuidValidTrue(UUID.fromString(uuid));
+
+    return refundOptional.orElseGet(Refund::new);  // TODO: ERROR: donation_uuid invalid
+  }
+
+  public List<Refund> listRefunds() {
+    return repository.findAllValidTrue();
+  }
+
+  @Transactional
+  public void deleteRefund(Customer customer) {
+    customer.getOrderCard().incrementDebit(customer.getRefunds().getFirst().getRefundValue());
+
+    customer.getRefunds().getFirst().deleteRefund();
   }
 }

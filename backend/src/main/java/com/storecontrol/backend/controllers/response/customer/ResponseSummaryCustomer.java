@@ -14,7 +14,7 @@ public record ResponseSummaryCustomer(
 
   public ResponseSummaryCustomer(Customer customer) {
     this(customer.getUuid(),
-        new ResponseSummaryOrderCard(customer.getOrderCard()),
+        customer.getInUse() ? new ResponseSummaryOrderCard(customer.getOrderCard()) : null,
         customer.getCustomerStart().toString(),
         customer.getCustomerEnd() != null ? customer.getCustomerEnd().toString() : null
     );

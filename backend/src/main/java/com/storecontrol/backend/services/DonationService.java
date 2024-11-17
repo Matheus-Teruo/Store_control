@@ -1,15 +1,17 @@
 package com.storecontrol.backend.services;
 
-import com.storecontrol.backend.controllers.request.donation.RequestDonation;
-import com.storecontrol.backend.controllers.request.donation.RequestDeleteDonation;
+import com.storecontrol.backend.controllers.request.customer.RequestAuxFinalizeCustomer;
+import com.storecontrol.backend.models.Customer;
 import com.storecontrol.backend.models.Donation;
+import com.storecontrol.backend.models.Voluntary;
 import com.storecontrol.backend.repositories.DonationRepository;
-import com.storecontrol.backend.services.validation.DonationValidate;
+import com.storecontrol.backend.services.validation.FinalizationOfCustomerValidate;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,29 +22,19 @@ public class DonationService {
   DonationRepository repository;
 
   @Autowired
-  DonationValidate validate;
-
-  @Autowired
-  VoluntaryService voluntaryService;
-
-  @Autowired
-  CustomerService customerService;
+  FinalizationOfCustomerValidate validate;
 
   @Transactional
-  public Donation createDonation(RequestDonation request) {
-    var voluntary = voluntaryService.takeVoluntaryByUuid(request.voluntaryId());
-    var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
+  public void createDonation(RequestAuxFinalizeCustomer request, Customer customer, Voluntary voluntary) {
+    var donationValue = new BigDecimal(request.donationValue());
 
-    validate.checkInsufficientDebitToDonate(request, customer);
+    validate.checkDonationValueValid(donationValue, customer);
 
-    customer.getOrderCard().incrementDebit(new BigDecimal(request.donationValue()).negate());
+    customer.getOrderCard().incrementDebit(donationValue.negate());
     var donation = new Donation(request, customer, voluntary);
+    customer.setDonations(List.of(donation));
 
     repository.save(donation);
-
-    // TODO: verify if remind debit on order card
-    customerService.finalizeCustomer(request.orderCardId());
-    return donation;
   }
 
   public Donation takeDonationByUuid(String uuid) {
@@ -56,12 +48,9 @@ public class DonationService {
   }
 
   @Transactional
-  public void deleteDonation(RequestDeleteDonation request) {
-    var donation = takeDonationByUuid(request.uuid());
+  public void deleteDonation(Customer customer) {
+    customer.getOrderCard().incrementDebit(customer.getDonations().getFirst().getDonationValue());
 
-    donation.getCustomer().undoFinalizeCustomer();
-    donation.getCustomer().getOrderCard().incrementDebit(donation.getDonationValue());
-
-    donation.deleteDonation();
+    customer.getDonations().getFirst().deleteDonation();
   }
 }

@@ -1,7 +1,7 @@
 package com.storecontrol.backend.services;
 
 import com.storecontrol.backend.controllers.request.customer.RequestCustomer;
-import com.storecontrol.backend.models.Customer;
+import com.storecontrol.backend.models.*;
 import com.storecontrol.backend.repositories.CustomerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,30 +33,91 @@ public class CustomerService {
     return customer;
   }
 
+  public Customer takeFilteredCustomerByUuid(String uuid) {
+    var customer = repository.findById(UUID.fromString(uuid))
+        .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+    filterCustomerToDiscardInactiveRelations(customer);
+
+    return customer;
+  }
+
   public Customer takeActiveCustomerByCardId(String cardId) {
-    var customerOptional = repository.findByOrderCardIdActiveTrue(cardId);
-
-    return customerOptional.orElseGet(Customer::new);  // TODO: ERROR: card_id invalid
+    return repository.findByOrderCardIdActiveTrue(cardId)
+        .orElseThrow(() -> new RuntimeException("Customer not found"));
   }
 
-  public Customer takeAnyCustomer(String uuid) {
-    var customerOptional = repository.findById(UUID.fromString(uuid));
+  public Customer takeLastActiveFilteredCustomerByCardId(String cardId) {
+    var customer = repository.findByOrderCardId(cardId)
+        .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-    return customerOptional.orElseGet(Customer::new);  // TODO: ERROR: customer_uuid invalid
+    filterCustomerToDiscardInactiveRelations(customer);
+
+    return customer;
   }
 
-  public List<Customer> listCustomers() {
+  public Customer takeActiveFilteredCustomerByCardId(String cardId) {
+    var customer = repository.findByOrderCardIdActiveTrue(cardId)
+        .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+    filterCustomerToDiscardInactiveRelations(customer);
+
+    return customer;
+  }
+
+  public List<Customer> listActiveCustomers() {
     return repository.findAllActiveTrue();
   }
 
-  public void finalizeCustomer(String cardId) {
-    var customer = takeActiveCustomerByCardId(cardId);
+  public List<Customer> listCustomers() {
+    return repository.findAll();
+  }
 
+  @Transactional
+  public void finalizeCustomer(Customer customer) {
     if (customer.getOrderCard().getDebit().compareTo(BigDecimal.ZERO) != 0) {
       // TODO: system error, customer can't finalize with debit.
     }
 
     customer.getOrderCard().updateActive(false);
     customer.finalizeCustomer();
+  }
+
+  @Transactional
+  public void undoFinalizeCustomer(Customer customer) {
+    if (customer.getOrderCard().getDebit().compareTo(BigDecimal.ZERO) != 0) {
+      // TODO: system error, customer can't finalize with debit.
+    }
+
+    customer.getOrderCard().updateActive(true);
+    customer.undoFinalizeCustomer();
+    filterCustomerToDiscardInactiveRelations(customer);
+  }
+
+  private void filterCustomerToDiscardInactiveRelations(Customer customer) {
+    customer.setRecharges(filterValidRecharges(customer.getRecharges()));
+    customer.setPurchases(filterValidPurchases(customer.getPurchases()));
+    customer.setDonations(filterValidDonation(customer.getDonations()));
+    customer.setRefunds(filterValidRefund(customer.getRefunds()));
+  }
+
+  private List<Recharge> filterValidRecharges(List<Recharge> recharges) {
+    return recharges.stream()
+        .filter(Recharge::getValid).toList();
+  }
+
+  private List<Purchase> filterValidPurchases(List<Purchase> purchases) {
+    return purchases.stream()
+        .filter(Purchase::getValid).toList();
+  }
+
+  private List<Donation> filterValidDonation(List<Donation> donations) {
+    return donations.stream()
+        .filter(Donation::getValid).toList();
+  }
+
+  private List<Refund> filterValidRefund(List<Refund> refunds) {
+    return refunds.stream()
+        .filter(Refund::getValid).toList();
   }
 }

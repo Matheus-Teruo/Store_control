@@ -2,8 +2,9 @@ package com.storecontrol.backend.controllers.response.customer;
 
 import com.storecontrol.backend.controllers.response.donation.ResponseSummaryDonation;
 import com.storecontrol.backend.controllers.response.orderCard.ResponseOrderCard;
-import com.storecontrol.backend.controllers.response.recharge.ResponseSummaryRecharge;
 import com.storecontrol.backend.controllers.response.purchase.ResponseSummaryPurchase;
+import com.storecontrol.backend.controllers.response.recharge.ResponseSummaryRecharge;
+import com.storecontrol.backend.controllers.response.refund.ResponseSummaryRefund;
 import com.storecontrol.backend.models.Customer;
 
 import java.util.List;
@@ -14,9 +15,10 @@ public record ResponseCustomer(
     ResponseOrderCard orderCard,
     String customerStart,
     String customerEnd,
-    List<ResponseSummaryRecharge> recharges,
-    List<ResponseSummaryPurchase> sales,
-    ResponseSummaryDonation donation
+    List<ResponseSummaryRecharge> summaryRecharges,
+    List<ResponseSummaryPurchase> summarySales,
+    ResponseSummaryDonation summaryDonation,
+    ResponseSummaryRefund summaryRefund
 ) {
 
   public ResponseCustomer(Customer customer) {
@@ -26,7 +28,8 @@ public record ResponseCustomer(
         customer.getCustomerEnd() != null ? customer.getCustomerEnd().toString() : null,
         customer.getRecharges().stream().map(ResponseSummaryRecharge::new).toList(),
         customer.getPurchases().stream().map(ResponseSummaryPurchase::new).toList(),
-        customer.getDonation() != null ? new ResponseSummaryDonation(customer.getDonation()) : null
+        !customer.getDonations().isEmpty() ? new ResponseSummaryDonation(customer.getDonations().getFirst()) : null,
+        !customer.getRefunds().isEmpty() ? new ResponseSummaryRefund(customer.getRefunds().getFirst()) : null
     );
   }
 }

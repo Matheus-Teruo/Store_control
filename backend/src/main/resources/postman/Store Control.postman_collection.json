@@ -35,7 +35,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"associationName\": \"Association_example10\",\r\n    \"principalName\": \"principal_example\"\r\n}",
+							"raw": "{\r\n    \"associationName\": \"Association_example\",\r\n    \"principalName\": \"principal_example\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -198,27 +198,15 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "Donation",
-			"item": [
+				},
 				{
-					"name": "Create Donation",
+					"name": "List Customers Active",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"const responseBody = pm.response.json();\r",
-									"\r",
-									"if (responseBody && responseBody.uuid) {\r",
-									"    pm.collectionVariables.set(\"donation_id\", responseBody.uuid);\r",
-									"    // console.log(\"donation ID (UUID) saved as:\", responseBody.uuid);\r",
-									"} else {\r",
-									"    console.error(\"UUID not found in the response body\");\r",
-									"}"
+									""
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -226,11 +214,28 @@
 						}
 					],
 					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}customers/active",
+							"host": [
+								"{{hostPath}}customers"
+							],
+							"path": [
+								"active"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Finalize Customer",
+					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"donationValue\": \"1.00\",\r\n    \"orderCardId\": {{card_id}},\r\n    \"voluntaryId\": {{voluntary_id}}\r\n}",
+							"raw": "{\r\n    \"donationValue\": \"2\",\r\n    \"refundValue\": \"0\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -238,14 +243,48 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostPath}}donations",
+							"raw": "{{hostPath}}customers/finalize",
 							"host": [
-								"{{hostPath}}donations"
+								"{{hostPath}}customers"
+							],
+							"path": [
+								"finalize"
 							]
 						}
 					},
 					"response": []
 				},
+				{
+					"name": "UndoFinalize Customer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"orderCard\": {\r\n        \"id\": \"{{card_id}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}customers/undofinalize",
+							"host": [
+								"{{hostPath}}customers"
+							],
+							"path": [
+								"undofinalize"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Donation",
+			"item": [
 				{
 					"name": "Read Donation",
 					"request": {
@@ -265,32 +304,32 @@
 				},
 				{
 					"name": "List Donations",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const donations = pm.response.json();\r",
+									"\r",
+									"if (Array.isArray(donations) && donations.length > 0) {\r",
+									"    const randomIndex = Math.floor(Math.random() * donations.length);\r",
+									"\r",
+									"    const randomUUID = donations[randomIndex].uuid;\r",
+									"\r",
+									"    pm.collectionVariables.set(\"donation_id\", randomUUID);\r",
+									"    console.log(\"UUID aleatório salvo:\", randomUUID);\r",
+									"} else {\r",
+									"    console.warn(\"A resposta não contém dados de donations.\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{hostPath}}donations",
-							"host": [
-								"{{hostPath}}donations"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Donation",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{donation_id}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
 							"raw": "{{hostPath}}donations",
 							"host": [
@@ -306,19 +345,40 @@
 			"name": "Refund",
 			"item": [
 				{
-					"name": "Create Refund",
+					"name": "Read Refund",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}refunds/{{refund_id}}",
+							"host": [
+								"{{hostPath}}refunds"
+							],
+							"path": [
+								"{{refund_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Refunds",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"const responseBody = pm.response.json();\r",
+									"const refunds = pm.response.json();\r",
 									"\r",
-									"if (responseBody && responseBody.uuid) {\r",
-									"    pm.collectionVariables.set(\"refund_id\", responseBody.uuid);\r",
-									"    // console.log(\"refund ID (UUID) saved as:\", responseBody.uuid);\r",
+									"if (Array.isArray(refunds) && refunds.length > 0) {\r",
+									"    const randomIndex = Math.floor(Math.random() * refunds.length);\r",
+									"\r",
+									"    const randomUUID = refunds[randomIndex].uuid;\r",
+									"\r",
+									"    pm.collectionVariables.set(\"refund_id\", randomUUID);\r",
+									"    console.log(\"UUID aleatório salvo:\", randomUUID);\r",
 									"} else {\r",
-									"    console.error(\"UUID not found in the response body\");\r",
+									"    console.warn(\"A resposta não contém dados de refunds.\");\r",
 									"}"
 								],
 								"type": "text/javascript",
@@ -327,17 +387,8 @@
 						}
 					],
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"refundValue\": \"1.00\",\r\n    \"orderCardId\": {{card_id}},\r\n    \"voluntaryId\": {{voluntary_id}}\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
 							"raw": "{{hostPath}}refunds",
 							"host": [
@@ -549,7 +600,7 @@
 					"response": []
 				},
 				{
-					"name": "Read OrderCard Active",
+					"name": "Read OrderCard",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -803,7 +854,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{recharge_id}}\",\r\n    \"rechargeValue\": \"1.00\",\r\n    \"paymentTypeEnum\": \"DEBIT\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{recharge_id}}\",\r\n    \"paymentTypeEnum\": \"DEBIT\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1151,6 +1202,11 @@
 			"type": "string"
 		},
 		{
+			"key": "refund_id",
+			"value": "",
+			"type": "string"
+		},
+		{
 			"key": "stand_id",
 			"value": "",
 			"type": "string"
@@ -1159,6 +1215,10 @@
 			"key": "voluntary_id",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "donation_id",
+			"value": ""
 		}
 	]
 }

@@ -1,15 +1,16 @@
 package com.storecontrol.backend.controllers;
 
-import com.storecontrol.backend.controllers.request.refund.RequestRefund;
 import com.storecontrol.backend.controllers.response.refund.ResponseRefund;
+import com.storecontrol.backend.controllers.response.refund.ResponseSummaryRefund;
 import com.storecontrol.backend.services.RefundService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("refunds")
@@ -18,10 +19,18 @@ public class RefundController {
   @Autowired
   RefundService service;
 
-  @PostMapping
-  public ResponseEntity<ResponseRefund> createRefund(@RequestBody @Valid RequestRefund request) {
-    var response = service.createRefund(request);
+  @GetMapping("/{uuid}")
+  public ResponseEntity<ResponseRefund> readRefund(@PathVariable String uuid) {
+    var response = new ResponseRefund(service.takeRefundByUuid(uuid));
 
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping
+  public ResponseEntity<List<ResponseSummaryRefund>> readRefunds() {
+    var donation = service.listRefunds();
+
+    var response = donation.stream().map(ResponseSummaryRefund::new).toList();
     return ResponseEntity.ok(response);
   }
 }

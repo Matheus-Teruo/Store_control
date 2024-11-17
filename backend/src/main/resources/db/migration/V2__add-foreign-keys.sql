@@ -24,6 +24,13 @@ ALTER TABLE products
 ADD CONSTRAINT fk_products_stand_uuid
 FOREIGN KEY (stand_uuid) REFERENCES stands (uuid);
 
+-- Foreign keys for purchases table
+ALTER TABLE purchases
+ADD CONSTRAINT fk_purchases_customer_uuid
+FOREIGN KEY (customer_uuid) REFERENCES customers (uuid),
+ADD CONSTRAINT fk_purchases_voluntary_uuid
+FOREIGN KEY (voluntary_uuid) REFERENCES volunteers (uuid);
+
 -- Foreign keys for recharges table
 ALTER TABLE recharges
 ADD CONSTRAINT fk_recharges_customer_uuid
@@ -31,11 +38,11 @@ FOREIGN KEY (customer_uuid) REFERENCES customers (uuid),
 ADD CONSTRAINT fk_recharges_voluntary_uuid
 FOREIGN KEY (voluntary_uuid) REFERENCES volunteers (uuid);
 
--- Foreign keys for purchases table
-ALTER TABLE purchases
-ADD CONSTRAINT fk_purchases_customer_uuid
+-- Foreign keys for refunds table
+ALTER TABLE refunds
+ADD CONSTRAINT fk_refunds_customer_uuid
 FOREIGN KEY (customer_uuid) REFERENCES customers (uuid),
-ADD CONSTRAINT fk_purchases_voluntary_uuid
+ADD CONSTRAINT fk_refunds_voluntary_uuid
 FOREIGN KEY (voluntary_uuid) REFERENCES volunteers (uuid);
 
 -- Foreign key for stands table

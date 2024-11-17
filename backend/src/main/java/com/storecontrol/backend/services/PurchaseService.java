@@ -130,12 +130,10 @@ public class PurchaseService {
         if (item != null) {
           if (requestUpdateItem.delivered() <= item.getQuantity()) {
             item.updateItem(requestUpdateItem);
-          } else {
+          } // else
             // TODO: error quantity not allow to be bigger than quantity.
-          }
-        } else {
+        } // else
           // TODO: error. this item is not allocate in this purchase like item
-        }
       });
     }
   }

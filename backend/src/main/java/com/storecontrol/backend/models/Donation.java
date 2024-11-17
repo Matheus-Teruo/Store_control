@@ -1,6 +1,6 @@
 package com.storecontrol.backend.models;
 
-import com.storecontrol.backend.controllers.request.donation.RequestDonation;
+import com.storecontrol.backend.controllers.request.customer.RequestAuxFinalizeCustomer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,13 +20,13 @@ public class Donation {
     private BigDecimal donationValue;
     @Column(name = "donation_time_stamp")
     private LocalDateTime donationTimeStamp;
-    @OneToOne @JoinColumn(name = "customer_uuid")
+    @ManyToOne @JoinColumn(name = "customer_uuid")
     private Customer customer;
     @ManyToOne @JoinColumn(name = "voluntary_uuid")
     private Voluntary voluntary;
     private Boolean valid;
 
-    public Donation(RequestDonation request, Customer customer, Voluntary voluntary) {
+    public Donation(RequestAuxFinalizeCustomer request, Customer customer, Voluntary voluntary) {
         this.donationValue = new BigDecimal(request.donationValue());
         this.donationTimeStamp = LocalDateTime.now();
         this.customer = customer;

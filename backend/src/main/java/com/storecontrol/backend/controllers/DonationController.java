@@ -1,14 +1,14 @@
 package com.storecontrol.backend.controllers;
 
-import com.storecontrol.backend.controllers.request.donation.RequestDonation;
-import com.storecontrol.backend.controllers.request.donation.RequestDeleteDonation;
 import com.storecontrol.backend.controllers.response.donation.ResponseDonation;
 import com.storecontrol.backend.controllers.response.donation.ResponseSummaryDonation;
 import com.storecontrol.backend.services.DonationService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -18,13 +18,6 @@ public class DonationController {
 
   @Autowired
   DonationService service;
-
-  @PostMapping
-  public ResponseEntity<ResponseDonation> createDonation(@RequestBody @Valid RequestDonation request) {
-    var response = new ResponseDonation(service.createDonation(request));
-
-    return ResponseEntity.ok(response);
-  }
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseDonation> readDonation(@PathVariable String uuid) {
@@ -39,12 +32,5 @@ public class DonationController {
 
     var response = donation.stream().map(ResponseSummaryDonation::new).toList();
     return ResponseEntity.ok(response);
-  }
-
-  @DeleteMapping
-  public ResponseEntity<Void> deleteDonation(@RequestBody @Valid RequestDeleteDonation request) {
-    service.deleteDonation(request);
-
-    return ResponseEntity.noContent().build();
   }
 }
