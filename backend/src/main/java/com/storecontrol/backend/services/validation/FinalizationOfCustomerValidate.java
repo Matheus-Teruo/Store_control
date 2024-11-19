@@ -1,7 +1,7 @@
 package com.storecontrol.backend.services.validation;
 
-import com.storecontrol.backend.models.Customer;
-import com.storecontrol.backend.models.Recharge;
+import com.storecontrol.backend.models.customers.Customer;
+import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +22,7 @@ public class FinalizationOfCustomerValidate {
     var remainingDebit = customer.getOrderCard().getDebit();
     // NOTE: this variable require to take a list of recharge from customer
     var viableValueForRefund = customer.getRecharges().stream()
-        .filter(recharge -> recharge.getPaymentTypeEnum() == PaymentType.CASH && recharge.getValid())
+        .filter(recharge -> recharge.getPaymentTypeEnum() == PaymentType.CASH && recharge.isValid())
         .map(Recharge::getRechargeValue)
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 

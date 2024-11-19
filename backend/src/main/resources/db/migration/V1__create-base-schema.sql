@@ -8,6 +8,14 @@ CREATE TABLE associations (
     valid TINYINT NOT NULL
 );
 
+-- Table for cash_registers
+CREATE TABLE cash_registers (
+    uuid BINARY(16) PRIMARY KEY,
+    cash_total DECIMAL(19, 2) NOT NULL,
+    credit_total DECIMAL(19, 2) NOT NULL,
+    debit_total DECIMAL(19, 2) NOT NULL
+);
+
 -- Table for customers
 CREATE TABLE customers (
     uuid BINARY(16) PRIMARY KEY,
@@ -24,6 +32,13 @@ CREATE TABLE donations (
     donation_time_stamp TIMESTAMP NOT NULL,
     customer_uuid BINARY(16) NOT NULL,
     voluntary_uuid BINARY(16) NOT NULL,
+    valid TINYINT NOT NULL
+);
+
+-- Table for functions
+CREATE TABLE functions (
+    uuid BINARY(16) PRIMARY KEY,
+    function_name VARCHAR(255) UNIQUE NOT NULL,
     valid TINYINT NOT NULL
 );
 
@@ -73,6 +88,7 @@ CREATE TABLE recharges (
     recharge_time_stamp TIMESTAMP NOT NULL,
     payment_type ENUM('CREDIT', 'DEBIT', 'CASH') NOT NULL,
     customer_uuid BINARY(16) NOT NULL,
+    cash_register_uuid binary(16) NOT NULL,
     voluntary_uuid BINARY(16) NOT NULL,
     valid TINYINT NOT NULL
 );
@@ -83,6 +99,7 @@ CREATE TABLE refunds (
     refund_value DECIMAL(19, 2) NOT NULL,
     refund_time_stamp TIMESTAMP NOT NULL,
     customer_uuid BINARY(16) NOT NULL,
+    cash_register_uuid binary(16) NOT NULL,
     voluntary_uuid BINARY(16) NOT NULL,
     valid TINYINT NOT NULL
 );
@@ -90,8 +107,17 @@ CREATE TABLE refunds (
 -- Table for stands
 CREATE TABLE stands (
     uuid BINARY(16) PRIMARY KEY,
-    stand_name VARCHAR(255) UNIQUE NOT NULL,
-    association_uuid BINARY(16) NOT NULL,
+    association_uuid BINARY(16) NOT NULL
+);
+
+-- Table for transactions
+CREATE TABLE transactions (
+    uuid BINARY(16) PRIMARY KEY,
+    amount DECIMAL(19, 2) NOT NULL,
+    transaction_type ENUM('ENTRY', 'EXIT') NOT NULL,
+    transaction_time_stamp TIMESTAMP NOT NULL,
+    cash_register_uuid binary(16) NOT NULL,
+    voluntary_uuid BINARY(16) NOT NULL,
     valid TINYINT NOT NULL
 );
 
@@ -102,7 +128,7 @@ CREATE TABLE volunteers (
     password VARCHAR(255) NOT NULL,
     salt VARCHAR(255) NOT NULL,
     fullname VARCHAR(255) UNIQUE NOT NULL,
-    stand_uuid BINARY(16),
+    function_uuid BINARY(16),
     superuser TINYINT NOT NULL,
     valid TINYINT NOT NULL
 );
