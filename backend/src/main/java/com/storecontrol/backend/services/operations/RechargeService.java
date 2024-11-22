@@ -37,7 +37,7 @@ public class RechargeService {
   @Transactional
   public Recharge createRecharge(RequestRecharge request) {
     var voluntary = voluntaryService.safeTakeVoluntaryByUuid(request.voluntaryId());
-    var cashRegister = cashRegisterService.takeCashRegisterByUuid(request.cashRegisterId());
+    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterId());
     var customer = handleChangesOnCustomerByCardId(request);
 
     var recharge = new Recharge(request, customer, cashRegister, voluntary);

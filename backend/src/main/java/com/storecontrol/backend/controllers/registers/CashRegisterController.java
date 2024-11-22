@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.registers;
 
-import com.storecontrol.backend.models.registers.request.RequestCashRegister;
+import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
 import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
 import com.storecontrol.backend.models.registers.response.ResponseCashRegister;
 import com.storecontrol.backend.models.registers.response.ResponseSummaryCashRegister;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/registers")
@@ -20,14 +21,14 @@ public class CashRegisterController {
   CashRegisterService service;
 
   @PostMapping
-  public ResponseEntity<ResponseCashRegister> createCashRegister(@RequestBody @Valid RequestCashRegister request) {
+  public ResponseEntity<ResponseCashRegister> createCashRegister(@RequestBody @Valid RequestCreateCashRegister request) {
     var response = new ResponseCashRegister(service.createCashRegister(request));
 
     return ResponseEntity.ok(response);
   }
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseCashRegister> readCashRegister(@PathVariable String uuid) {
+  public ResponseEntity<ResponseCashRegister> readCashRegister(@PathVariable UUID uuid) {
     var stand = service.takeCashRegisterByUuid(uuid);
 
     var response = new ResponseCashRegister(stand);

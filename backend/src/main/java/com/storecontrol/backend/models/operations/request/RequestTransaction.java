@@ -10,8 +10,8 @@ public record RequestTransaction(
     String amount,
     @NotBlank
     String transactionTypeEnum,
-    @NotBlank
-    String cashRegisterId,
+    @NotNull
+    UUID cashRegisterId,
     @NotNull
     UUID voluntaryId
 ) {

@@ -1,6 +1,6 @@
 package com.storecontrol.backend.models.registers;
 
-import com.storecontrol.backend.models.registers.request.RequestCashRegister;
+import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
 import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Refund;
@@ -41,7 +41,7 @@ public class CashRegister extends Function {
   private List<Refund> refunds;
 
 
-  public CashRegister(RequestCashRegister request) {
+  public CashRegister(RequestCreateCashRegister request) {
     super(request.cashRegisterName());
     this.cashTotal = BigDecimal.ZERO;
     this.creditTotal = BigDecimal.ZERO;

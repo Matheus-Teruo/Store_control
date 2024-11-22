@@ -33,7 +33,7 @@ public class FinalizeCustomerSupport {
 
   public Customer finalizeCustomer(RequestAuxFinalizeCustomer request) {
     var voluntary = voluntaryService.safeTakeVoluntaryByUuid(request.voluntaryId());
-    var cashRegister = cashRegisterService.takeCashRegisterByUuid(request.cashRegisterId());
+    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterId());
     var customer = customerService.takeActiveFilteredCustomerByCardId(request.orderCardId());
     var remainingDebit = customer.getOrderCard().getDebit();
 

@@ -12,8 +12,8 @@ public record RequestRecharge(
     String paymentTypeEnum,
     @NotBlank
     String orderCardId,
-    @NotBlank
-    String cashRegisterId,
+    @NotNull
+    UUID cashRegisterId,
     @NotNull
     UUID voluntaryId
 ) {

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public record RequestCreateStand(
     @NotBlank(message = "Name of stand is required")
-    @Pattern(regexp = "^[A-Za-z ]+$", message = "Stand name must contain only letters and space")
+    @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "Stand name must contain only letters, numbers and space")
     String standName,
 
     @NotNull(message = "Stand must be related to an association")

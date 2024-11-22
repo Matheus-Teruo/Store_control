@@ -37,7 +37,7 @@ public class TransactionService {
 //    if (function instanceof CashRegister) {
 //
 //    }
-    var cashRegister = cashRegisterService.takeCashRegisterByUuid(request.cashRegisterId());
+    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterId());
 
     validate.checkCashAvailableToTransaction(request, cashRegister);
 
