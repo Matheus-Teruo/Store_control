@@ -39,11 +39,12 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(InvalidDatabaseInsertionException.class)
-  public ResponseEntity<Map<String, String>> handleDatabaseInsertionExceptions(InvalidDatabaseInsertionException ex) {
-    Map<String, String> error = new HashMap<>();
+  public ResponseEntity<Map<String, Object>> handleDatabaseInsertionExceptions(InvalidDatabaseInsertionException ex) {
+    Map<String, Object> error = new HashMap<>();
     error.put("errorType", "Insertion Entity Error");
     error.put("entity", ex.getEntityName());
-    error.put("invalidFields", ex.getTypeOfError());
+    error.put("invalidFields", ex.getFieldErrors());
+    error.put("description", ex.getDescriptionOfError());
     error.put("error", ex.getMessage());
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);

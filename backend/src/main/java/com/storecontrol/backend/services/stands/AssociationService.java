@@ -1,7 +1,7 @@
 package com.storecontrol.backend.services.stands;
 
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
-import com.storecontrol.backend.models.stands.request.RequestAssociation;
+import com.storecontrol.backend.models.stands.request.RequestCreateAssociation;
 import com.storecontrol.backend.models.stands.request.RequestUpdateAssociation;
 import com.storecontrol.backend.models.stands.Association;
 import com.storecontrol.backend.repositories.stands.AssociationRepository;
@@ -24,7 +24,7 @@ public class AssociationService {
   AssociationRepository repository;
 
   @Transactional
-  public Association createAssociation(RequestAssociation request) {
+  public Association createAssociation(RequestCreateAssociation request) {
     validation.checkNameDuplication(request.associationName());
 
     var association = new Association(request);

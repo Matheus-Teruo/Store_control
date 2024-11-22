@@ -3,7 +3,7 @@ package com.storecontrol.backend.models.stands.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-public record RequestAssociation(
+public record RequestCreateAssociation(
     @NotBlank(message = "Name of association is required")
     @Pattern(regexp = "^[A-Za-z]+$", message = "Association name must contain only letters")
     String associationName,

@@ -8,7 +8,7 @@ public record ResponseSummaryVoluntary(
     UUID uuid,
     String username,
     String fullname,
-    ResponseSummaryFunction SummaryStand
+    ResponseSummaryFunction SummaryFunction
 ) {
 
   public ResponseSummaryVoluntary(Voluntary voluntary) {

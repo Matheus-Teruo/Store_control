@@ -1,6 +1,6 @@
 package com.storecontrol.backend.models.stands;
 
-import com.storecontrol.backend.models.stands.request.RequestAssociation;
+import com.storecontrol.backend.models.stands.request.RequestCreateAssociation;
 import com.storecontrol.backend.models.stands.request.RequestUpdateAssociation;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
@@ -32,7 +32,7 @@ public class Association {
     private boolean valid;
 
 
-    public Association(@Valid RequestAssociation request) {
+    public Association(@Valid RequestCreateAssociation request) {
         this.associationName = request.associationName();
         this.principalName = request.principalName();
         this.valid = true;

@@ -1,19 +1,24 @@
 package com.storecontrol.backend.services.volunteers;
 
+import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestCreateVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
-import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
+import com.storecontrol.backend.services.volunteers.validation.VoluntaryValidation;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class VoluntaryService {
+
+  @Autowired
+  VoluntaryValidation validation;
 
   @Autowired
   VoluntaryRepository repository;
@@ -23,16 +28,25 @@ public class VoluntaryService {
 
   @Transactional
   public Voluntary createVoluntary(RequestCreateVoluntary request) {
+    validation.checkNameDuplication(request.username(), request.fullname());
     var voluntary = new Voluntary(request);
     repository.save(voluntary);
 
     return voluntary;
   }
 
-  public Voluntary takeVoluntaryByUuid(String uuid){
-    var voluntaryOptional = repository.findByUuidValidTrue(UUID.fromString(uuid));
+  public Voluntary takeVoluntaryByUuid(UUID uuid){
+    var voluntaryOptional = repository.findByUuidValidTrue(uuid);
 
-    return voluntaryOptional.orElseGet(Voluntary::new);  // TODO: ERROR: voluntary_uuid invalid
+    return voluntaryOptional.orElseThrow(EntityNotFoundException::new);
+  }
+
+  public Voluntary safeTakeVoluntaryByUuid(UUID uuid) {
+    try {
+      return takeVoluntaryByUuid(uuid);
+    } catch (EntityNotFoundException e) {
+      throw new InvalidDatabaseQueryException("Non-existent entity" ,"Voluntary", uuid.toString());
+    }
   }
 
   public List<Voluntary> listVolunteers() {
@@ -41,22 +55,23 @@ public class VoluntaryService {
 
   @Transactional
   public Voluntary uptadeVoluntary(RequestUpdateVoluntary request) {
-    var voluntary = takeVoluntaryByUuid(request.uuid());
+    validation.checkNameDuplication(request.username(), request.fullname());
+    var voluntary = safeTakeVoluntaryByUuid(request.uuid());
 
     voluntary.updateVoluntary(request);
-    verifyUpdateFunction(request.standId(), voluntary);
+    verifyUpdateFunction(request.functionId(), voluntary);
 
     return voluntary;
   }
 
   @Transactional
   public void deleteVoluntary(RequestUpdateVoluntary request) {
-    Optional<Voluntary> voluntary = repository.findById(UUID.fromString(request.uuid()));
+    var voluntary = safeTakeVoluntaryByUuid(request.uuid());
 
-    voluntary.ifPresent(Voluntary::deleteVoluntary);
+    voluntary.deleteVoluntary();
   }
 
-  private void verifyUpdateFunction(String uuid, Voluntary voluntary) {
+  private void verifyUpdateFunction(UUID uuid, Voluntary voluntary) {
     if (uuid != null) {
       var function = functionService.takeFunctionByUuid(uuid);
 

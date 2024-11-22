@@ -2,7 +2,7 @@ package com.storecontrol.backend.services.stands;
 
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.stands.Product;
-import com.storecontrol.backend.models.stands.request.RequestProduct;
+import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.repositories.stands.ProductRepository;
 import com.storecontrol.backend.services.stands.validation.ProductValidation;
@@ -27,7 +27,7 @@ public class ProductService {
   StandService standService;
 
   @Transactional
-  public Product createProduct(RequestProduct request) {
+  public Product createProduct(RequestCreateProduct request) {
     validation.checkNameDuplication(request.productName());
     var stand = standService.safeTakeStandByUuid(request.standId());
     var product = new Product(request, stand);

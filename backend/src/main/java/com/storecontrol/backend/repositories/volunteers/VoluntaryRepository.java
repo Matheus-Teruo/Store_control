@@ -14,4 +14,8 @@ public interface VoluntaryRepository extends JpaRepository<Voluntary, UUID> {
 
   @Query("select v from Voluntary v where v.valid = true")
   List<Voluntary> findAllValidTrue();
+
+  boolean existsByUserUsername(String username);
+
+  boolean existsByFullname(String fullname);
 }

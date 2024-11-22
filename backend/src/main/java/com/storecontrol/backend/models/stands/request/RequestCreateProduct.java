@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record RequestProduct(
+public record RequestCreateProduct(
     @NotBlank(message = "Name of product is required")
     @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "Product name must contain only letters, numbers and space")
     String productName,

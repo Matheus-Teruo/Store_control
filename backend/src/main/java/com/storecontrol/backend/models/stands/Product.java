@@ -1,6 +1,6 @@
 package com.storecontrol.backend.models.stands;
 
-import com.storecontrol.backend.models.stands.request.RequestProduct;
+import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import jakarta.persistence.*;
@@ -42,7 +42,7 @@ public class Product {
     private boolean valid;
 
 
-    public Product(RequestProduct request, Stand stand) {
+    public Product(RequestCreateProduct request, Stand stand) {
         this.productName = request.productName();
         this.price = request.price();
         this.stock = request.stock();

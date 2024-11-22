@@ -13,8 +13,8 @@ public class FunctionService {
   @Autowired
   FunctionRepository repository;
 
-  public Function takeFunctionByUuid(String uuid) {
-    return repository.findByUuidValidTrue(UUID.fromString(uuid))
+  public Function takeFunctionByUuid(UUID uuid) {
+    return repository.findByUuidValidTrue(uuid)
         .orElseThrow(() -> new RuntimeException("Function not found"));  // TODO: ERROR: function_uuid invalid
   }
 }

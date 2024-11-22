@@ -39,7 +39,7 @@ public class PurchaseService {
 
   @Transactional
   public Purchase createPurchase(RequestPurchase request) {
-    var voluntary = voluntaryService.takeVoluntaryByUuid(request.voluntaryId());
+    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(request.voluntaryId());
     var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
 
     validate.checkInsufficientCreditValidity(request, customer);

@@ -2,6 +2,8 @@ package com.storecontrol.backend.models.operations.request;
 
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.UUID;
+
 public record RequestTransaction(
     @NotBlank
     String amount,
@@ -10,6 +12,6 @@ public record RequestTransaction(
     @NotBlank
     String cashRegisterId,
     @NotBlank
-    String voluntaryId
+    UUID voluntaryId
 ) {
 }

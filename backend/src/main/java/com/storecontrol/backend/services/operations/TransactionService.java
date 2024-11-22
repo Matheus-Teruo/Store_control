@@ -32,7 +32,7 @@ public class TransactionService {
 
   @Transactional
   public Transaction createTransaction(RequestTransaction request) {
-    var voluntary = voluntaryService.takeVoluntaryByUuid(request.voluntaryId());
+    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(request.voluntaryId());
 //    var function = voluntary.getFunction();
 //    if (function instanceof CashRegister) {
 //

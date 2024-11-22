@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("volunteers")
@@ -27,7 +28,7 @@ public class VoluntaryController {
   }
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseVoluntary> readVoluntary(@PathVariable String uuid) {
+  public ResponseEntity<ResponseVoluntary> readVoluntary(@PathVariable UUID uuid) {
     var response = new ResponseVoluntary(service.takeVoluntaryByUuid(uuid));
 
     return ResponseEntity.ok(response);

@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.stands;
 
-import com.storecontrol.backend.models.stands.request.RequestStand;
+import com.storecontrol.backend.models.stands.request.RequestCreateStand;
 import com.storecontrol.backend.models.stands.request.RequestUpdateStand;
 import com.storecontrol.backend.models.stands.response.ResponseStand;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryStand;
@@ -21,7 +21,7 @@ public class StandController {
   StandService service;
 
   @PostMapping
-  public ResponseEntity<ResponseStand> createStand(@RequestBody @Valid RequestStand request) {
+  public ResponseEntity<ResponseStand> createStand(@RequestBody @Valid RequestCreateStand request) {
     var response = new ResponseStand(service.createStand(request));
 
     return ResponseEntity.ok(response);

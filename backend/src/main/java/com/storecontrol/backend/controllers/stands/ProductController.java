@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.stands;
 
-import com.storecontrol.backend.models.stands.request.RequestProduct;
+import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.stands.response.ResponseProduct;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
@@ -21,7 +21,7 @@ public class ProductController {
   ProductService service;
 
   @PostMapping
-  public ResponseEntity<ResponseProduct> createProduct(@RequestBody @Valid RequestProduct request) {
+  public ResponseEntity<ResponseProduct> createProduct(@RequestBody @Valid RequestCreateProduct request) {
     var response = new ResponseProduct(service.createProduct(request));
 
     return ResponseEntity.ok(response);

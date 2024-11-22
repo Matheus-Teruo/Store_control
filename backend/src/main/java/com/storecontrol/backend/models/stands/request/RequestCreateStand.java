@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 
 import java.util.UUID;
 
-public record RequestStand(
+public record RequestCreateStand(
     @NotBlank(message = "Name of stand is required")
     @Pattern(regexp = "^[A-Za-z ]+$", message = "Stand name must contain only letters and space")
     String standName,

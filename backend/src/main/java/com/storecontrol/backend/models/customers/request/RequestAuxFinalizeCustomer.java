@@ -2,6 +2,8 @@ package com.storecontrol.backend.models.customers.request;
 
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.UUID;
+
 public record RequestAuxFinalizeCustomer(
     @NotBlank
     String donationValue,
@@ -12,6 +14,6 @@ public record RequestAuxFinalizeCustomer(
     @NotBlank
     String cashRegisterId,
     @NotBlank
-    String voluntaryId
+    UUID voluntaryId
 ) {
 }

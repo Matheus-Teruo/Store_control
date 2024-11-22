@@ -1,6 +1,6 @@
 package com.storecontrol.backend.models.stands;
 
-import com.storecontrol.backend.models.stands.request.RequestStand;
+import com.storecontrol.backend.models.stands.request.RequestCreateStand;
 import com.storecontrol.backend.models.stands.request.RequestUpdateStand;
 import com.storecontrol.backend.models.volunteers.Function;
 import jakarta.persistence.*;
@@ -22,7 +22,7 @@ public class Stand extends Function {
     private List<Product> products;
 
 
-    public Stand(RequestStand request, Association association) {
+    public Stand(RequestCreateStand request, Association association) {
         super(request.standName());
         this.association = association;
     }

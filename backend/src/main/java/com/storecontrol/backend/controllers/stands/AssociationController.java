@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.stands;
 
-import com.storecontrol.backend.models.stands.request.RequestAssociation;
+import com.storecontrol.backend.models.stands.request.RequestCreateAssociation;
 import com.storecontrol.backend.models.stands.request.RequestUpdateAssociation;
 import com.storecontrol.backend.models.stands.response.ResponseAssociation;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryAssociation;
@@ -21,7 +21,7 @@ public class AssociationController {
   AssociationService service;
 
   @PostMapping
-  public ResponseEntity<ResponseAssociation> createAssociation(@RequestBody @Valid RequestAssociation request) {
+  public ResponseEntity<ResponseAssociation> createAssociation(@RequestBody @Valid RequestCreateAssociation request) {
     System.out.println(request);
     var response = new ResponseAssociation(service.createAssociation(request));
 

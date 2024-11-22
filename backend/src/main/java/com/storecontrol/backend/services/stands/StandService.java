@@ -1,7 +1,7 @@
 package com.storecontrol.backend.services.stands;
 
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
-import com.storecontrol.backend.models.stands.request.RequestStand;
+import com.storecontrol.backend.models.stands.request.RequestCreateStand;
 import com.storecontrol.backend.models.stands.request.RequestUpdateStand;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.repositories.stands.StandRepository;
@@ -27,7 +27,7 @@ public class StandService {
   AssociationService associationService;
 
   @Transactional
-  public Stand createStand(RequestStand request) {
+  public Stand createStand(RequestCreateStand request) {
     validation.checkNameDuplication(request.standName());
     var association = associationService.safeTakeAssociationByUuid(request.associationId());
     var stand = new Stand(request, association);
