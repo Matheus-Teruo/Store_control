@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.customers;
 
+import com.storecontrol.backend.infra.exceptions.InvalidCustomerException;
 import com.storecontrol.backend.models.customers.request.RequestAuxFinalizeCustomer;
 import com.storecontrol.backend.models.customers.request.RequestCustomer;
 import com.storecontrol.backend.models.customers.Customer;
@@ -37,17 +38,18 @@ public class FinalizeCustomerSupport {
     var remainingDebit = customer.getOrderCard().getDebit();
 
     if (remainingDebit.compareTo(BigDecimal.ZERO) > 0) {
-      if (new BigDecimal(request.refundValue())
-          .add(new BigDecimal(request.donationValue()))
+      if (request.refundValue()
+          .add(request.donationValue())
           .compareTo(remainingDebit) == 0) {
-        if (new BigDecimal(request.donationValue()).compareTo(BigDecimal.ZERO) > 0) {
-          donationService.createDonation(request, customer, voluntary);
-        }
-        if (new BigDecimal(request.refundValue()).compareTo(BigDecimal.ZERO) > 0) {
+        if (request.refundValue().compareTo(BigDecimal.ZERO) > 0) {
           refundService.createRefund(request, customer, cashRegister, voluntary);
         }
-      } // else
-        // TODO: error, this will result in a donation value different
+        if (request.donationValue().compareTo(BigDecimal.ZERO) > 0) {
+          donationService.createDonation(request, customer, voluntary);
+        }
+      } else {
+        throw new InvalidCustomerException("Customer finalization", "Sum of donation and refund is not equal remaining debit");
+      }
     }
 
     customerService.finalizeCustomer(customer);
@@ -66,8 +68,9 @@ public class FinalizeCustomerSupport {
       }
 
       customerService.undoFinalizeCustomer(customer);
-    } // else
-      // TODO: error: customer not finalized to undo it.
+    } else {
+      throw new InvalidCustomerException("Undo customer finalization", "Customer still in use");
+    }
 
     return customer;
   }

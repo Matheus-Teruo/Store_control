@@ -36,17 +36,13 @@ public class VoluntaryService {
   }
 
   public Voluntary takeVoluntaryByUuid(UUID uuid){
-    var voluntaryOptional = repository.findByUuidValidTrue(uuid);
-
-    return voluntaryOptional.orElseThrow(EntityNotFoundException::new);
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(EntityNotFoundException::new);
   }
 
   public Voluntary safeTakeVoluntaryByUuid(UUID uuid) {
-    try {
-      return takeVoluntaryByUuid(uuid);
-    } catch (EntityNotFoundException e) {
-      throw new InvalidDatabaseQueryException("Non-existent entity" ,"Voluntary", uuid.toString());
-    }
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "Voluntary", uuid.toString()));
   }
 
   public List<Voluntary> listVolunteers() {

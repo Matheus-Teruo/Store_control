@@ -44,7 +44,7 @@ public class Refund {
                 Customer customer,
                 CashRegister cashRegister,
                 Voluntary voluntary) {
-    this.refundValue = new BigDecimal(request.refundValue());
+    this.refundValue = request.refundValue();
     this.refundTimeStamp = LocalDateTime.now();
     this.customer = customer;
     this.cashRegister = cashRegister;

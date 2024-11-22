@@ -6,7 +6,7 @@ import com.storecontrol.backend.models.operations.Refund;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.RefundRepository;
-import com.storecontrol.backend.services.validation.FinalizationOfCustomerValidate;
+import com.storecontrol.backend.services.customers.validation.FinalizationOfCustomerValidate;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class RefundService {
                            Customer customer,
                            CashRegister cashRegister,
                            Voluntary voluntary) {
-    var refundValue = new BigDecimal(request.refundValue());
+    var refundValue = request.refundValue();
 
     validate.checkRefundValueValid(refundValue, customer);
 

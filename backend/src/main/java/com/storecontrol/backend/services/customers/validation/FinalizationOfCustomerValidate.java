@@ -1,5 +1,6 @@
-package com.storecontrol.backend.services.validation;
+package com.storecontrol.backend.services.customers.validation;
 
+import com.storecontrol.backend.infra.exceptions.InvalidCustomerException;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.enumerate.PaymentType;
@@ -14,13 +15,12 @@ public class FinalizationOfCustomerValidate {
     var currentDebit = customer.getOrderCard().getDebit();
 
     if (donationValue.compareTo(currentDebit) > 0) {
-      // TODO: error: insufficient balance or remaind credit to nothing
+      throw new InvalidCustomerException("Donation", "donation value is greater than the current debit amount");
     }
   }
 
   public void checkRefundValueValid(BigDecimal refundValue, Customer customer) {
     var remainingDebit = customer.getOrderCard().getDebit();
-    // NOTE: this variable require to take a list of recharge from customer
     var viableValueForRefund = customer.getRecharges().stream()
         .filter(recharge -> recharge.getPaymentTypeEnum() == PaymentType.CASH && recharge.isValid())
         .map(Recharge::getRechargeValue)
@@ -29,13 +29,13 @@ public class FinalizationOfCustomerValidate {
     if (remainingDebit.compareTo(viableValueForRefund) >= 0 ) {
 
       if (viableValueForRefund.compareTo(refundValue) < 0) {
-        // TODO: error refund value bigger than recharge with cash
+        throw new InvalidCustomerException("Refund", "refund value is greater than the amount available to refund");
       }
 
     } else {
 
       if (remainingDebit.compareTo(refundValue) < 0) {
-        // TODO: error refund value bigger than recharge with
+        throw new InvalidCustomerException("Refund", "refund value is greater than the remaining debit");
       }
 
     }

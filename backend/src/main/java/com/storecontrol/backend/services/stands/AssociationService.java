@@ -34,17 +34,13 @@ public class AssociationService {
   }
 
   public Association takeAssociationByUuid(UUID uuid) {
-    var associationOptional = repository.findByUuidValidTrue(uuid);
-
-    return associationOptional.orElseThrow(EntityNotFoundException::new);
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(EntityNotFoundException::new);
   }
 
   public Association safeTakeAssociationByUuid(UUID uuid) {
-    try {
-      return takeAssociationByUuid(uuid);
-    } catch (EntityNotFoundException e) {
-      throw new InvalidDatabaseQueryException("Non-existent entity" ,"Association", uuid.toString());
-    }
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "Association", uuid.toString()));
   }
 
   public List<Association> listAssociations() {

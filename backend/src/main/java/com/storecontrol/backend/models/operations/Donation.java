@@ -39,7 +39,7 @@ public class Donation {
     public Donation(RequestAuxFinalizeCustomer request,
                     Customer customer,
                     Voluntary voluntary) {
-        this.donationValue = new BigDecimal(request.donationValue());
+        this.donationValue = request.donationValue();
         this.donationTimeStamp = LocalDateTime.now();
         this.customer = customer;
         this.voluntary = voluntary;

@@ -89,7 +89,7 @@ public class RechargeService {
           new RequestCustomer(
               new RequestUpdateOrderCard(
                   request.orderCardId(),
-                  request.rechargeValue())
+                  new BigDecimal(request.rechargeValue()))
           )
       );
     }

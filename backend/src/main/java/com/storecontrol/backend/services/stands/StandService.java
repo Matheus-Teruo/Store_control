@@ -37,17 +37,13 @@ public class StandService {
   }
 
   public Stand takeStandByUuid(UUID uuid) {
-    var standOptional = repository.findByUuidValidTrue(uuid);
-
-    return standOptional.orElseThrow(EntityNotFoundException::new);
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(EntityNotFoundException::new);
   }
 
   public Stand safeTakeStandByUuid(UUID uuid) {
-    try {
-      return takeStandByUuid(uuid);
-    } catch (EntityNotFoundException e) {
-      throw new InvalidDatabaseQueryException("Non-existent entity" , "Stand", uuid.toString());
-    }
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "Stand", uuid.toString()));
   }
 
   public List<Stand> listStands() {

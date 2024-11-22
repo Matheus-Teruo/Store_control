@@ -1,5 +1,6 @@
 package com.storecontrol.backend.infra;
 
+import com.storecontrol.backend.infra.exceptions.InvalidCustomerException;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import jakarta.persistence.EntityNotFoundException;
@@ -36,6 +37,17 @@ public class GlobalExceptionHandler {
     response.put("details", errors);
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+  }
+
+  @ExceptionHandler(InvalidCustomerException.class)
+  public ResponseEntity<Map<String, String>> handleCustomerExceptions(InvalidCustomerException ex) {
+    Map<String, String> error = new HashMap<>();
+    error.put("errorType", "Customer Status");
+    error.put("typeOfError", ex.getTypeOfError());
+    error.put("error", ex.getError());
+    error.put("message", ex.getMessage());
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
   }
 
   @ExceptionHandler(InvalidDatabaseInsertionException.class)

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("customers")
@@ -24,7 +25,7 @@ public class CustomerController {
   FinalizeCustomerSupport customerSupport;
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseCustomer> readCustomer(@PathVariable String uuid) {
+  public ResponseEntity<ResponseCustomer> readCustomer(@PathVariable UUID uuid) {
     var response = new ResponseCustomer(service.takeFilteredCustomerByUuid(uuid));
 
     return ResponseEntity.ok(response);

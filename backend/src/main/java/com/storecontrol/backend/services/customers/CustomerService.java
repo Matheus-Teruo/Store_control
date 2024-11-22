@@ -1,12 +1,15 @@
 package com.storecontrol.backend.services.customers;
 
-import com.storecontrol.backend.models.customers.request.RequestCustomer;
+import com.storecontrol.backend.infra.exceptions.InvalidCustomerException;
+import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.customers.Customer;
+import com.storecontrol.backend.models.customers.request.RequestCustomer;
 import com.storecontrol.backend.models.operations.Donation;
-import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Refund;
+import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.repositories.customers.CustomerRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,9 +29,9 @@ public class CustomerService {
 
   @Transactional
   public Customer initializeCustomer(RequestCustomer request) {
-    var orderCard = orderCardService.takeOrderCardById(request.orderCard().id());
+    var orderCard = orderCardService.safeTakeOrderCardById(request.orderCard().id());
 
-    orderCard.incrementDebit(new BigDecimal(request.orderCard().debit()));
+    orderCard.incrementDebit(request.orderCard().debitIncrement());
     orderCard.updateActive(true);
     var customer = new Customer(orderCard);
 
@@ -37,9 +40,9 @@ public class CustomerService {
     return customer;
   }
 
-  public Customer takeFilteredCustomerByUuid(String uuid) {
-    var customer = repository.findById(UUID.fromString(uuid))
-        .orElseThrow(() -> new RuntimeException("Customer not found"));
+  public Customer takeFilteredCustomerByUuid(UUID uuid) {
+    var customer = repository.findById(uuid)
+        .orElseThrow(EntityNotFoundException::new);
 
     filterCustomerToDiscardInactiveRelations(customer);
 
@@ -48,12 +51,12 @@ public class CustomerService {
 
   public Customer takeActiveCustomerByCardId(String cardId) {
     return repository.findByOrderCardIdActiveTrue(cardId)
-        .orElseThrow(() -> new RuntimeException("Customer not found"));
+        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity" , "Customer", cardId));
   }
 
   public Customer takeLastActiveFilteredCustomerByCardId(String cardId) {
     var customer = repository.findByOrderCardId(cardId)
-        .orElseThrow(() -> new RuntimeException("Customer not found"));
+        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity" , "Customer", cardId));
 
     filterCustomerToDiscardInactiveRelations(customer);
 
@@ -61,8 +64,7 @@ public class CustomerService {
   }
 
   public Customer takeActiveFilteredCustomerByCardId(String cardId) {
-    var customer = repository.findByOrderCardIdActiveTrue(cardId)
-        .orElseThrow(() -> new RuntimeException("Customer not found"));
+    var customer = takeActiveCustomerByCardId(cardId);
 
     filterCustomerToDiscardInactiveRelations(customer);
 
@@ -80,7 +82,7 @@ public class CustomerService {
   @Transactional
   public void finalizeCustomer(Customer customer) {
     if (customer.getOrderCard().getDebit().compareTo(BigDecimal.ZERO) != 0) {
-      // TODO: system error, customer can't finalize with debit.
+      throw new InvalidCustomerException("Customer finalization", "debt has not been cleared");
     }
 
     customer.getOrderCard().updateActive(false);
@@ -89,9 +91,6 @@ public class CustomerService {
 
   @Transactional
   public void undoFinalizeCustomer(Customer customer) {
-    if (customer.getOrderCard().getDebit().compareTo(BigDecimal.ZERO) != 0) {
-      // TODO: system error, customer can't finalize with debit.
-    }
 
     customer.getOrderCard().updateActive(true);
     customer.undoFinalizeCustomer();

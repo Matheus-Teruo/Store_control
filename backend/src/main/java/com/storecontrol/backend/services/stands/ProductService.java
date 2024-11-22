@@ -37,17 +37,13 @@ public class ProductService {
   }
 
   public Product takeProductByUuid(UUID uuid) {
-    var itemOptional = repository.findByUuidValidTrue(uuid);
-
-    return itemOptional.orElseThrow(EntityNotFoundException::new);
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(EntityNotFoundException::new);
   }
 
   public Product safeTakeProductByUuid(UUID uuid) {
-    try {
-      return takeProductByUuid(uuid);
-    } catch (EntityNotFoundException e) {
-      throw new InvalidDatabaseQueryException("Non-existent entity", "Product", uuid.toString());
-    }
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "Product", uuid.toString()));
   }
 
   public List<Product> listProducts() {

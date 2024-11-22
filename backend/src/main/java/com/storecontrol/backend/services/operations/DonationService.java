@@ -5,7 +5,7 @@ import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.operations.Donation;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.DonationRepository;
-import com.storecontrol.backend.services.validation.FinalizationOfCustomerValidate;
+import com.storecontrol.backend.services.customers.validation.FinalizationOfCustomerValidate;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class DonationService {
   public void createDonation(RequestAuxFinalizeCustomer request,
                              Customer customer,
                              Voluntary voluntary) {
-    var donationValue = new BigDecimal(request.donationValue());
+    var donationValue = request.donationValue();
 
     validate.checkDonationValueValid(donationValue, customer);
 

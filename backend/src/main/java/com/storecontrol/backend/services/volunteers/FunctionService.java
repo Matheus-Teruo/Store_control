@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.volunteers;
 
+import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.volunteers.Function;
 import com.storecontrol.backend.repositories.volunteers.FunctionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,6 @@ public class FunctionService {
 
   public Function takeFunctionByUuid(UUID uuid) {
     return repository.findByUuidValidTrue(uuid)
-        .orElseThrow(() -> new RuntimeException("Function not found"));  // TODO: ERROR: function_uuid invalid
+        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "Function", uuid.toString()));
   }
 }
