@@ -1,11 +1,11 @@
 package com.storecontrol.backend.services.validation;
 
-import com.storecontrol.backend.controllers.request.purchase.RequestPurchase;
-import com.storecontrol.backend.controllers.request.item.RequestItem;
-import com.storecontrol.backend.models.Customer;
-import com.storecontrol.backend.models.Purchase;
-import com.storecontrol.backend.models.Item;
-import com.storecontrol.backend.services.ProductService;
+import com.storecontrol.backend.models.operations.purchases.request.RequestPurchase;
+import com.storecontrol.backend.models.operations.purchases.request.RequestItem;
+import com.storecontrol.backend.models.customers.Customer;
+import com.storecontrol.backend.models.operations.purchases.Purchase;
+import com.storecontrol.backend.models.operations.purchases.Item;
+import com.storecontrol.backend.services.stands.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ public class PurchaseValidate {
 
   public void checkInsufficientCreditValidity(RequestPurchase request, Customer customer) {
     var totalValue = request
-        .requestItems()
+        .items()
         .stream()
         .map(requestItem ->
             BigDecimal.valueOf(requestItem.quantity())
@@ -32,8 +32,8 @@ public class PurchaseValidate {
   }
 
   public void checkInsufficientProductStockValidity(RequestPurchase request) {
-    for (RequestItem requestItem : request.requestItems()) {
-      var product = productService.takeProductByUuid(requestItem.productId());
+    for (RequestItem requestItem : request.items()) {
+      var product = productService.safeTakeProductByUuid(requestItem.productId());
 
       if (product.getStock() < requestItem.quantity()) {
         // TODO: error
