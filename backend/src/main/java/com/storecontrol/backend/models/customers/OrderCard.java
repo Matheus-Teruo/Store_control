@@ -1,6 +1,6 @@
 package com.storecontrol.backend.models.customers;
 
-import com.storecontrol.backend.controllers.customers.request.RequestOrderCard;
+import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

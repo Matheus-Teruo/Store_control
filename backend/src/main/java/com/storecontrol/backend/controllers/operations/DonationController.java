@@ -1,7 +1,7 @@
 package com.storecontrol.backend.controllers.operations;
 
-import com.storecontrol.backend.controllers.operations.response.ResponseDonation;
-import com.storecontrol.backend.controllers.operations.response.ResponseSummaryDonation;
+import com.storecontrol.backend.models.operations.response.ResponseDonation;
+import com.storecontrol.backend.models.operations.response.ResponseSummaryDonation;
 import com.storecontrol.backend.services.operations.DonationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,9 +1,9 @@
 package com.storecontrol.backend.services.operations;
 
-import com.storecontrol.backend.controllers.stands.request.RequestUpdateProduct;
-import com.storecontrol.backend.controllers.operations.request.RequestPurchase;
-import com.storecontrol.backend.controllers.operations.request.RequestUpdatePurchase;
-import com.storecontrol.backend.controllers.operations.request.RequestUpdateItem;
+import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
+import com.storecontrol.backend.models.operations.purchases.request.RequestPurchase;
+import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
+import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
@@ -95,7 +95,7 @@ public class PurchaseService {
       int adjustmentFactor = isReversal ? 1 : -1;
 
       product.updateProduct(new RequestUpdateProduct(
-          product.getUuid().toString(),
+          product.getUuid(),
           null,
           null,
           product.getStock() + (adjustmentFactor * item.getQuantity()),

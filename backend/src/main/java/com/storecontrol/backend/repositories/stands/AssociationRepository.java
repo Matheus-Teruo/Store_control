@@ -14,4 +14,6 @@ public interface AssociationRepository extends JpaRepository<Association, UUID> 
 
   @Query("select a from Association a where a.valid = true")
   List<Association> findAllValidTrue();
+
+  boolean existsByAssociationName(String associationName);
 }

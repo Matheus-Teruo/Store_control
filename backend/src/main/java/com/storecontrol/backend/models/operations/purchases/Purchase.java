@@ -1,7 +1,7 @@
 package com.storecontrol.backend.models.operations.purchases;
 
-import com.storecontrol.backend.controllers.operations.request.RequestPurchase;
-import com.storecontrol.backend.controllers.operations.request.RequestUpdatePurchase;
+import com.storecontrol.backend.models.operations.purchases.request.RequestPurchase;
+import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import jakarta.persistence.*;

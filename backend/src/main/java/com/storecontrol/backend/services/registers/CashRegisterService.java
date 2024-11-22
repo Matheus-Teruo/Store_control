@@ -1,7 +1,7 @@
 package com.storecontrol.backend.services.registers;
 
-import com.storecontrol.backend.controllers.registers.request.RequestCashRegister;
-import com.storecontrol.backend.controllers.registers.request.RequestUpdateCashRegister;
+import com.storecontrol.backend.models.registers.request.RequestCashRegister;
+import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.repositories.resgisters.CashRegisterRepository;
 import jakarta.transaction.Transactional;

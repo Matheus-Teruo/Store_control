@@ -1,6 +1,6 @@
 package com.storecontrol.backend.models.operations;
 
-import com.storecontrol.backend.controllers.operations.request.RequestTransaction;
+import com.storecontrol.backend.models.operations.request.RequestTransaction;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.models.enumerate.TransactionType;

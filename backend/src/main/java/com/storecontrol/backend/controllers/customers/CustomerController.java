@@ -1,9 +1,9 @@
 package com.storecontrol.backend.controllers.customers;
 
-import com.storecontrol.backend.controllers.customers.request.RequestAuxFinalizeCustomer;
-import com.storecontrol.backend.controllers.customers.request.RequestCustomer;
-import com.storecontrol.backend.controllers.customers.response.ResponseCustomer;
-import com.storecontrol.backend.controllers.customers.response.ResponseSummaryCustomer;
+import com.storecontrol.backend.models.customers.request.RequestAuxFinalizeCustomer;
+import com.storecontrol.backend.models.customers.request.RequestCustomer;
+import com.storecontrol.backend.models.customers.response.ResponseCustomer;
+import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
 import com.storecontrol.backend.services.customers.CustomerService;
 import com.storecontrol.backend.services.customers.FinalizeCustomerSupport;
 import jakarta.validation.Valid;

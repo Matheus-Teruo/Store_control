@@ -1,12 +1,10 @@
 package com.storecontrol.backend.models.registers;
 
-import com.storecontrol.backend.controllers.registers.request.RequestCashRegister;
-import com.storecontrol.backend.controllers.registers.request.RequestUpdateCashRegister;
-import com.storecontrol.backend.models.operations.Donation;
+import com.storecontrol.backend.models.registers.request.RequestCashRegister;
+import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Refund;
 import com.storecontrol.backend.models.operations.Transaction;
-import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.volunteers.Function;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,7 +50,7 @@ public class CashRegister extends Function {
 
   public void updateCashRegister(RequestUpdateCashRegister request) {
     if (request.cashRegisterName() != null) {
-      super.setFunctionName(request.cashRegisterName());
+      super.updateFunctionName(request.cashRegisterName());
     }
   }
 

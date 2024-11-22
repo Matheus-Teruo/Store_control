@@ -1,9 +1,9 @@
 package com.storecontrol.backend.controllers.volunteers;
 
-import com.storecontrol.backend.controllers.volunteers.request.RequestCreateVoluntary;
-import com.storecontrol.backend.controllers.volunteers.request.RequestUpdateVoluntary;
-import com.storecontrol.backend.controllers.volunteers.response.ResponseSummaryVoluntary;
-import com.storecontrol.backend.controllers.volunteers.response.ResponseVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestCreateVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
+import com.storecontrol.backend.models.volunteers.response.ResponseSummaryVoluntary;
+import com.storecontrol.backend.models.volunteers.response.ResponseVoluntary;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

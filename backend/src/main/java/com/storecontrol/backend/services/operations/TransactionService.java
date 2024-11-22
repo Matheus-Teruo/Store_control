@@ -1,7 +1,7 @@
 package com.storecontrol.backend.services.operations;
 
-import com.storecontrol.backend.controllers.operations.request.RequestDeleteTransaction;
-import com.storecontrol.backend.controllers.operations.request.RequestTransaction;
+import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
+import com.storecontrol.backend.models.operations.request.RequestTransaction;
 import com.storecontrol.backend.models.operations.Transaction;
 import com.storecontrol.backend.repositories.operations.TransactionRepository;
 import com.storecontrol.backend.services.registers.CashRegisterService;

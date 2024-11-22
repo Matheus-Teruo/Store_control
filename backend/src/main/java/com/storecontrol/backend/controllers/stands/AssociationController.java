@@ -1,9 +1,9 @@
 package com.storecontrol.backend.controllers.stands;
 
-import com.storecontrol.backend.controllers.stands.request.RequestAssociation;
-import com.storecontrol.backend.controllers.stands.request.RequestUpdateAssociation;
-import com.storecontrol.backend.controllers.stands.response.ResponseAssociation;
-import com.storecontrol.backend.controllers.stands.response.ResponseSummaryAssociation;
+import com.storecontrol.backend.models.stands.request.RequestAssociation;
+import com.storecontrol.backend.models.stands.request.RequestUpdateAssociation;
+import com.storecontrol.backend.models.stands.response.ResponseAssociation;
+import com.storecontrol.backend.models.stands.response.ResponseSummaryAssociation;
 import com.storecontrol.backend.services.stands.AssociationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("associations")
@@ -21,13 +22,14 @@ public class AssociationController {
 
   @PostMapping
   public ResponseEntity<ResponseAssociation> createAssociation(@RequestBody @Valid RequestAssociation request) {
+    System.out.println(request);
     var response = new ResponseAssociation(service.createAssociation(request));
 
     return ResponseEntity.ok(response);
   }
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseAssociation> readAssociation(@PathVariable String uuid) {
+  public ResponseEntity<ResponseAssociation> readAssociation(@PathVariable @Valid UUID uuid) {
     var response = new ResponseAssociation(service.takeAssociationByUuid(uuid));
 
     return ResponseEntity.ok(response);

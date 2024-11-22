@@ -1,6 +1,6 @@
 package com.storecontrol.backend.services.customers;
 
-import com.storecontrol.backend.controllers.customers.request.RequestOrderCard;
+import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.repositories.customers.OrderCardRepository;
 import jakarta.transaction.Transactional;

@@ -1,9 +1,9 @@
 package com.storecontrol.backend.controllers.operations;
 
-import com.storecontrol.backend.controllers.operations.request.RequestPurchase;
-import com.storecontrol.backend.controllers.operations.request.RequestUpdatePurchase;
-import com.storecontrol.backend.controllers.operations.response.ResponsePurchase;
-import com.storecontrol.backend.controllers.operations.response.ResponseSummaryPurchase;
+import com.storecontrol.backend.models.operations.purchases.request.RequestPurchase;
+import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
+import com.storecontrol.backend.models.operations.purchases.response.ResponsePurchase;
+import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
 import com.storecontrol.backend.services.operations.PurchaseService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

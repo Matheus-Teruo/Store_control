@@ -1,13 +1,12 @@
 package com.storecontrol.backend.services.operations;
 
-import com.storecontrol.backend.controllers.customers.request.RequestCustomer;
-import com.storecontrol.backend.controllers.customers.request.RequestUpdateOrderCard;
-import com.storecontrol.backend.controllers.operations.request.RequestRecharge;
-import com.storecontrol.backend.controllers.operations.request.RequestUpdateRecharge;
+import com.storecontrol.backend.models.customers.request.RequestCustomer;
+import com.storecontrol.backend.models.customers.request.RequestUpdateOrderCard;
+import com.storecontrol.backend.models.operations.request.RequestRecharge;
+import com.storecontrol.backend.models.operations.request.RequestUpdateRecharge;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import com.storecontrol.backend.models.operations.Recharge;
-import com.storecontrol.backend.models.operations.Transaction;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
 import com.storecontrol.backend.services.registers.CashRegisterService;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;

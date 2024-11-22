@@ -12,7 +12,6 @@ import java.util.UUID;
 @Table(name = "functions")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
-@Setter
 @NoArgsConstructor
 public abstract class Function {
 
@@ -34,8 +33,8 @@ public abstract class Function {
     this.valid = true;
   }
 
-  public void delete() {
-    this.valid = false;
+  public void updateFunctionName(String functionName) {
+    this.functionName = functionName;
   }
 
   public void deleteFunction() {

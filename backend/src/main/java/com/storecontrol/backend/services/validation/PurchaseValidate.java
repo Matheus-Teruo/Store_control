@@ -1,7 +1,7 @@
 package com.storecontrol.backend.services.validation;
 
-import com.storecontrol.backend.controllers.operations.request.RequestPurchase;
-import com.storecontrol.backend.controllers.operations.request.RequestItem;
+import com.storecontrol.backend.models.operations.purchases.request.RequestPurchase;
+import com.storecontrol.backend.models.operations.purchases.request.RequestItem;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.Item;
@@ -33,7 +33,7 @@ public class PurchaseValidate {
 
   public void checkInsufficientProductStockValidity(RequestPurchase request) {
     for (RequestItem requestItem : request.items()) {
-      var product = productService.takeProductByUuid(requestItem.productId());
+      var product = productService.safeTakeProductByUuid(requestItem.productId());
 
       if (product.getStock() < requestItem.quantity()) {
         // TODO: error

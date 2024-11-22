@@ -1,6 +1,6 @@
 package com.storecontrol.backend.models.operations;
 
-import com.storecontrol.backend.controllers.customers.request.RequestAuxFinalizeCustomer;
+import com.storecontrol.backend.models.customers.request.RequestAuxFinalizeCustomer;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.volunteers.Voluntary;

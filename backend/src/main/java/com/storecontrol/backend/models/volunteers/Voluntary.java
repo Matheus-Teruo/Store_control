@@ -1,7 +1,7 @@
 package com.storecontrol.backend.models.volunteers;
 
-import com.storecontrol.backend.controllers.volunteers.request.RequestCreateVoluntary;
-import com.storecontrol.backend.controllers.volunteers.request.RequestUpdateVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestCreateVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import com.storecontrol.backend.models.operations.Donation;
 import com.storecontrol.backend.models.operations.Refund;
 import com.storecontrol.backend.models.operations.purchases.Purchase;

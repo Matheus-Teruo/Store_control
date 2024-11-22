@@ -1,7 +1,7 @@
 package com.storecontrol.backend.models.stands;
 
-import com.storecontrol.backend.controllers.stands.request.RequestAssociation;
-import com.storecontrol.backend.controllers.stands.request.RequestUpdateAssociation;
+import com.storecontrol.backend.models.stands.request.RequestAssociation;
+import com.storecontrol.backend.models.stands.request.RequestUpdateAssociation;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.Getter;
@@ -49,5 +49,9 @@ public class Association {
 
     public void deleteAssociation() {
         this.valid = false;
+
+        for (Stand stand : stands) {
+            stand.deleteFunction();
+        }
     }
 }

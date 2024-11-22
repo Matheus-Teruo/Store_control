@@ -1,7 +1,7 @@
 package com.storecontrol.backend.models.stands;
 
-import com.storecontrol.backend.controllers.stands.request.RequestProduct;
-import com.storecontrol.backend.controllers.stands.request.RequestUpdateProduct;
+import com.storecontrol.backend.models.stands.request.RequestProduct;
+import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -44,7 +44,7 @@ public class Product {
 
     public Product(RequestProduct request, Stand stand) {
         this.productName = request.productName();
-        this.price = new BigDecimal(request.price());
+        this.price = request.price();
         this.stock = request.stock();
         if (request.productImg() != null) {
             this.productImg = request.productImg();
@@ -58,7 +58,7 @@ public class Product {
             this.productName = request.productName();
         }
         if (request.price() != null) {
-            this.price = new BigDecimal(request.price());
+            this.price = request.price();
         }
         if (request.stock() != null) {
             this.stock = request.stock();

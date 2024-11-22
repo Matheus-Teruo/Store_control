@@ -1,6 +1,6 @@
 package com.storecontrol.backend.services.validation;
 
-import com.storecontrol.backend.controllers.operations.request.RequestTransaction;
+import com.storecontrol.backend.models.operations.request.RequestTransaction;
 import com.storecontrol.backend.models.registers.CashRegister;
 import org.springframework.stereotype.Component;
 

@@ -1,7 +1,7 @@
 package com.storecontrol.backend.models.operations.purchases;
 
-import com.storecontrol.backend.controllers.operations.request.RequestItem;
-import com.storecontrol.backend.controllers.operations.request.RequestUpdateItem;
+import com.storecontrol.backend.models.operations.purchases.request.RequestItem;
+import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;

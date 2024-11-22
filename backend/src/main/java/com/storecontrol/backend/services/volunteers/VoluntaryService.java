@@ -1,7 +1,7 @@
 package com.storecontrol.backend.services.volunteers;
 
-import com.storecontrol.backend.controllers.volunteers.request.RequestCreateVoluntary;
-import com.storecontrol.backend.controllers.volunteers.request.RequestUpdateVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestCreateVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
 import jakarta.transaction.Transactional;

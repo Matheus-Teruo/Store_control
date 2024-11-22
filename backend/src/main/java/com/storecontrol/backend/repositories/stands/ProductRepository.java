@@ -14,4 +14,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
   @Query("select p from Product p where p.valid = true")
   List<Product> findAllValidTrue();
+
+  boolean existsByProductName(String productName);
 }

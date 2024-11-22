@@ -1,9 +1,9 @@
 package com.storecontrol.backend.controllers.registers;
 
-import com.storecontrol.backend.controllers.registers.request.RequestCashRegister;
-import com.storecontrol.backend.controllers.registers.request.RequestUpdateCashRegister;
-import com.storecontrol.backend.controllers.registers.response.ResponseCashRegister;
-import com.storecontrol.backend.controllers.registers.response.ResponseSummaryCashRegister;
+import com.storecontrol.backend.models.registers.request.RequestCashRegister;
+import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
+import com.storecontrol.backend.models.registers.response.ResponseCashRegister;
+import com.storecontrol.backend.models.registers.response.ResponseSummaryCashRegister;
 import com.storecontrol.backend.services.registers.CashRegisterService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

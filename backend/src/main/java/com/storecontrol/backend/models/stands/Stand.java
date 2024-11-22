@@ -1,7 +1,7 @@
 package com.storecontrol.backend.models.stands;
 
-import com.storecontrol.backend.controllers.stands.request.RequestStand;
-import com.storecontrol.backend.controllers.stands.request.RequestUpdateStand;
+import com.storecontrol.backend.models.stands.request.RequestStand;
+import com.storecontrol.backend.models.stands.request.RequestUpdateStand;
 import com.storecontrol.backend.models.volunteers.Function;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,11 +29,20 @@ public class Stand extends Function {
 
     public void updateStand(RequestUpdateStand request) {
         if (request.standName() != null) {
-            super.setFunctionName(request.standName());
+            super.updateFunctionName(request.standName());
         }
     }
 
     public void updateStand(Association association) {
         this.association = association;
+    }
+
+    @Override
+    public void deleteFunction() {
+        super.deleteFunction();
+
+        for (Product product : products) {
+            product.deleteProduct();
+        }
     }
 }

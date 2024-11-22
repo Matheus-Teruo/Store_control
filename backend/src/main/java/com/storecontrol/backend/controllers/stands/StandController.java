@@ -1,9 +1,9 @@
 package com.storecontrol.backend.controllers.stands;
 
-import com.storecontrol.backend.controllers.stands.request.RequestStand;
-import com.storecontrol.backend.controllers.stands.request.RequestUpdateStand;
-import com.storecontrol.backend.controllers.stands.response.ResponseStand;
-import com.storecontrol.backend.controllers.stands.response.ResponseSummaryStand;
+import com.storecontrol.backend.models.stands.request.RequestStand;
+import com.storecontrol.backend.models.stands.request.RequestUpdateStand;
+import com.storecontrol.backend.models.stands.response.ResponseStand;
+import com.storecontrol.backend.models.stands.response.ResponseSummaryStand;
 import com.storecontrol.backend.services.stands.StandService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("stands")
@@ -27,7 +28,7 @@ public class StandController {
   }
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseStand> readStand(@PathVariable String uuid) {
+  public ResponseEntity<ResponseStand> readStand(@PathVariable UUID uuid) {
     var stand = service.takeStandByUuid(uuid);
 
     var response = new ResponseStand(stand);

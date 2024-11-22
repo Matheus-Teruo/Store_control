@@ -1,9 +1,9 @@
 package com.storecontrol.backend.controllers.stands;
 
-import com.storecontrol.backend.controllers.stands.request.RequestProduct;
-import com.storecontrol.backend.controllers.stands.request.RequestUpdateProduct;
-import com.storecontrol.backend.controllers.stands.response.ResponseProduct;
-import com.storecontrol.backend.controllers.stands.response.ResponseSummaryProduct;
+import com.storecontrol.backend.models.stands.request.RequestProduct;
+import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
+import com.storecontrol.backend.models.stands.response.ResponseProduct;
+import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
 import com.storecontrol.backend.services.stands.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("products")
@@ -27,7 +28,7 @@ public class ProductController {
   }
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseProduct> readProduct(@PathVariable String uuid) {
+  public ResponseEntity<ResponseProduct> readProduct(@PathVariable UUID uuid) {
     var response = new ResponseProduct(service.takeProductByUuid(uuid));
     return ResponseEntity.ok(response);
   }

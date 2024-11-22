@@ -1,7 +1,7 @@
 package com.storecontrol.backend.services.customers;
 
-import com.storecontrol.backend.controllers.customers.request.RequestAuxFinalizeCustomer;
-import com.storecontrol.backend.controllers.customers.request.RequestCustomer;
+import com.storecontrol.backend.models.customers.request.RequestAuxFinalizeCustomer;
+import com.storecontrol.backend.models.customers.request.RequestCustomer;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.services.operations.DonationService;
 import com.storecontrol.backend.services.operations.RefundService;

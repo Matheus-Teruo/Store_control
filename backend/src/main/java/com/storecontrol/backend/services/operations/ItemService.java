@@ -1,7 +1,7 @@
 package com.storecontrol.backend.services.operations;
 
-import com.storecontrol.backend.controllers.operations.request.RequestPurchase;
-import com.storecontrol.backend.controllers.operations.request.RequestItem;
+import com.storecontrol.backend.models.operations.purchases.request.RequestPurchase;
+import com.storecontrol.backend.models.operations.purchases.request.RequestItem;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.ItemId;
@@ -22,7 +22,7 @@ public class ItemService {
     List<Item> items = new ArrayList<>();
 
     for (RequestItem requestItem : request.items()) {
-      var item = productService.takeProductByUuid(requestItem.productId());
+      var item = productService.safeTakeProductByUuid(requestItem.productId());
       items.add(new Item(requestItem, new ItemId(item, purchase)));
     }
 

@@ -1,6 +1,6 @@
 package com.storecontrol.backend.services.customers;
 
-import com.storecontrol.backend.controllers.customers.request.RequestCustomer;
+import com.storecontrol.backend.models.customers.request.RequestCustomer;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.operations.Donation;
 import com.storecontrol.backend.models.operations.purchases.Purchase;

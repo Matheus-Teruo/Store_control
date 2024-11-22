@@ -1,8 +1,8 @@
 package com.storecontrol.backend.controllers.customers;
 
-import com.storecontrol.backend.controllers.customers.request.RequestOrderCard;
-import com.storecontrol.backend.controllers.customers.response.ResponseOrderCard;
-import com.storecontrol.backend.controllers.customers.response.ResponseSummaryOrderCard;
+import com.storecontrol.backend.models.customers.request.RequestOrderCard;
+import com.storecontrol.backend.models.customers.response.ResponseOrderCard;
+import com.storecontrol.backend.models.customers.response.ResponseSummaryOrderCard;
 import com.storecontrol.backend.services.customers.OrderCardService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
