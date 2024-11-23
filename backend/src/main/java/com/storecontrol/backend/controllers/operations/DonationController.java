@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("donations")
@@ -20,7 +21,7 @@ public class DonationController {
   DonationService service;
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseDonation> readDonation(@PathVariable String uuid) {
+  public ResponseEntity<ResponseDonation> readDonation(@PathVariable UUID uuid) {
     var response = new ResponseDonation(service.takeDonationByUuid(uuid));
 
     return ResponseEntity.ok(response);

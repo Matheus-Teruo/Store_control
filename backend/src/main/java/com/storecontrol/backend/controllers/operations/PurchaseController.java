@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.operations;
 
-import com.storecontrol.backend.models.operations.purchases.request.RequestPurchase;
+import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
 import com.storecontrol.backend.models.operations.purchases.response.ResponsePurchase;
 import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("purchases")
@@ -20,14 +21,14 @@ public class PurchaseController {
   PurchaseService service;
 
   @PostMapping
-  public ResponseEntity<ResponsePurchase> createPurchase(@RequestBody @Valid RequestPurchase request) {
+  public ResponseEntity<ResponsePurchase> createPurchase(@RequestBody @Valid RequestCreatePurchase request) {
     var response = new ResponsePurchase(service.createPurchase(request));
 
     return ResponseEntity.ok(response);
   }
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponsePurchase> readPurchase(@PathVariable String uuid) {
+  public ResponseEntity<ResponsePurchase> readPurchase(@PathVariable UUID uuid) {
     var response = new ResponsePurchase(service.takePurchaseByUuid(uuid));
 
     return ResponseEntity.ok(response);

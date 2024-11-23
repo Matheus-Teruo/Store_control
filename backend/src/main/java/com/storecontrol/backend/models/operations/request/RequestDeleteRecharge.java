@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public record RequestDeleteTransaction(
+public record RequestDeleteRecharge(
     @NotNull(message = "UUID is required")
     UUID uuid
 ) {

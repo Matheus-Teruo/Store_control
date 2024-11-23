@@ -5,12 +5,13 @@ import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.operations.Donation;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.DonationRepository;
-import com.storecontrol.backend.services.customers.validation.FinalizationOfCustomerValidate;
+import com.storecontrol.backend.services.customers.validation.FinalizationOfCustomerValidation;
+import com.storecontrol.backend.services.operations.validation.DonationValidation;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,10 +19,13 @@ import java.util.UUID;
 public class DonationService {
 
   @Autowired
+  DonationValidation validation;
+
+  @Autowired
   DonationRepository repository;
 
   @Autowired
-  FinalizationOfCustomerValidate validate;
+  FinalizationOfCustomerValidation finalizationValidation;
 
   @Transactional
   public void createDonation(RequestAuxFinalizeCustomer request,
@@ -29,7 +33,8 @@ public class DonationService {
                              Voluntary voluntary) {
     var donationValue = request.donationValue();
 
-    validate.checkDonationValueValid(donationValue, customer);
+    validation.checkVoluntaryFunctionMatch(voluntary);
+    finalizationValidation.checkDonationValueValid(donationValue, customer);
 
     customer.getOrderCard().incrementDebit(donationValue.negate());
     var donation = new Donation(request, customer, voluntary);
@@ -38,10 +43,9 @@ public class DonationService {
     repository.save(donation);
   }
 
-  public Donation takeDonationByUuid(String uuid) {
-    var donationOptional = repository.findByUuidValidTrue(UUID.fromString(uuid));
-
-    return donationOptional.orElseGet(Donation::new);  // TODO: ERROR: donation_uuid invalid
+  public Donation takeDonationByUuid(UUID uuid) {
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(EntityNotFoundException::new);
   }
 
   public List<Donation> listDonations() {

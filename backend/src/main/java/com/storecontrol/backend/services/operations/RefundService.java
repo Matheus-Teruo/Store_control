@@ -6,12 +6,13 @@ import com.storecontrol.backend.models.operations.Refund;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.RefundRepository;
-import com.storecontrol.backend.services.customers.validation.FinalizationOfCustomerValidate;
+import com.storecontrol.backend.services.customers.validation.FinalizationOfCustomerValidation;
+import com.storecontrol.backend.services.operations.validation.RefundValidation;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,10 +20,13 @@ import java.util.UUID;
 public class RefundService {
 
   @Autowired
+  RefundValidation validation;
+
+  @Autowired
   RefundRepository repository;
 
   @Autowired
-  FinalizationOfCustomerValidate validate;
+  FinalizationOfCustomerValidation finalizationValidation;
 
   @Transactional
   public void createRefund(RequestAuxFinalizeCustomer request,
@@ -31,7 +35,8 @@ public class RefundService {
                            Voluntary voluntary) {
     var refundValue = request.refundValue();
 
-    validate.checkRefundValueValid(refundValue, customer);
+    validation.checkVoluntaryFunctionMatch(voluntary);
+    finalizationValidation.checkRefundValueValid(refundValue, customer);
 
     customer.getOrderCard().incrementDebit(refundValue.negate());
     cashRegister.incrementCash(refundValue.negate());
@@ -41,10 +46,9 @@ public class RefundService {
     repository.save(refund);
   }
 
-  public Refund takeRefundByUuid(String uuid) {
-    var refundOptional = repository.findByUuidValidTrue(UUID.fromString(uuid));
-
-    return refundOptional.orElseGet(Refund::new);  // TODO: ERROR: donation_uuid invalid
+  public Refund takeRefundByUuid(UUID uuid) {
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(EntityNotFoundException::new);
   }
 
   public List<Refund> listRefunds() {

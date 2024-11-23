@@ -1,7 +1,7 @@
 package com.storecontrol.backend.controllers.operations;
 
-import com.storecontrol.backend.models.operations.request.RequestRecharge;
-import com.storecontrol.backend.models.operations.request.RequestUpdateRecharge;
+import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
+import com.storecontrol.backend.models.operations.request.RequestDeleteRecharge;
 import com.storecontrol.backend.models.operations.response.ResponseRecharge;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryRecharge;
 import com.storecontrol.backend.services.operations.RechargeService;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("recharges")
@@ -20,14 +21,14 @@ public class RechargeController {
   RechargeService service;
 
   @PostMapping
-  public ResponseEntity<ResponseRecharge> createRecharge(@RequestBody @Valid RequestRecharge request) {
+  public ResponseEntity<ResponseRecharge> createRecharge(@RequestBody @Valid RequestCreateRecharge request) {
     var response = new ResponseRecharge(service.createRecharge(request));
 
     return ResponseEntity.ok(response);
   }
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseRecharge> readRecharge(@PathVariable String uuid) {
+  public ResponseEntity<ResponseRecharge> readRecharge(@PathVariable UUID uuid) {
     var response = new ResponseRecharge(service.takeRechargeByUuid(uuid));
 
     return ResponseEntity.ok(response);
@@ -41,15 +42,8 @@ public class RechargeController {
     return ResponseEntity.ok(response);
   }
 
-  @PutMapping
-  public ResponseEntity<ResponseRecharge> updateRecharge(@RequestBody @Valid RequestUpdateRecharge request) {
-    var response = new ResponseRecharge(service.updateRecharge(request));
-
-    return ResponseEntity.ok(response);
-  }
-
   @DeleteMapping
-  public ResponseEntity<Void> deleteRecharge(@RequestBody @Valid RequestUpdateRecharge request) {
+  public ResponseEntity<Void> deleteRecharge(@RequestBody @Valid RequestDeleteRecharge request) {
     service.deleteRecharge(request);
 
     return ResponseEntity.noContent().build();

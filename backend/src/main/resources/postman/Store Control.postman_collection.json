@@ -35,7 +35,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"associationName\": \"Association_example\",\r\n    \"principalName\": \"principal_example\"\r\n}",
+							"raw": "{\r\n    \"associationName\": \"Associationexample\",\r\n    \"principalName\": \"principalexample\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -89,7 +89,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{association_id}}\",\r\n    \"associationName\": \"AssociationExample\",\r\n    \"principalName\": \"PrincipalNameExample\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{association_id}}\",\r\n    \"associationName\": \"AssociationExampleaw\",\r\n    \"principalName\": \"PrincipalNameExamplea\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -123,6 +123,130 @@
 							"raw": "{{hostPath}}associations",
 							"host": [
 								"{{hostPath}}associations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CashRegister",
+			"item": [
+				{
+					"name": "Create CashRegister",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseBody = pm.response.json();\r",
+									"\r",
+									"if (responseBody && responseBody.uuid) {\r",
+									"    pm.collectionVariables.set(\"cash_register_id\", responseBody.uuid);\r",
+									"    // console.log(\"cash_register ID (UUID) saved as:\", responseBody.uuid);\r",
+									"} else {\r",
+									"    console.error(\"UUID not found in the response body\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cashRegisterName\": \"CashRegister\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}registers",
+							"host": [
+								"{{hostPath}}registers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read CashRegister",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}registers/{{cash_register_id}}",
+							"host": [
+								"{{hostPath}}registers"
+							],
+							"path": [
+								"{{cash_register_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List CashRegisters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}registers",
+							"host": [
+								"{{hostPath}}registers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update CashRegister",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{cash_register_id}}\",\r\n    \"cashRegisterName\": \"Register 2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}registers",
+							"host": [
+								"{{hostPath}}registers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{cash_register_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}registers",
+							"host": [
+								"{{hostPath}}registers"
 							]
 						}
 					},
@@ -235,7 +359,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"donationValue\": \"2\",\r\n    \"refundValue\": \"0\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
+							"raw": "{\r\n    \"donationValue\": \"4\",\r\n    \"refundValue\": \"0\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"cashRegisterId\": \"{{cash_register_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -275,248 +399,6 @@
 							],
 							"path": [
 								"undofinalize"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Donation",
-			"item": [
-				{
-					"name": "Read Donation",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{hostPath}}donations/{{donation_id}}",
-							"host": [
-								"{{hostPath}}donations"
-							],
-							"path": [
-								"{{donation_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "List Donations",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const donations = pm.response.json();\r",
-									"\r",
-									"if (Array.isArray(donations) && donations.length > 0) {\r",
-									"    const randomIndex = Math.floor(Math.random() * donations.length);\r",
-									"\r",
-									"    const randomUUID = donations[randomIndex].uuid;\r",
-									"\r",
-									"    pm.collectionVariables.set(\"donation_id\", randomUUID);\r",
-									"    console.log(\"UUID aleatório salvo:\", randomUUID);\r",
-									"} else {\r",
-									"    console.warn(\"A resposta não contém dados de donations.\");\r",
-									"}"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{hostPath}}donations",
-							"host": [
-								"{{hostPath}}donations"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Refund",
-			"item": [
-				{
-					"name": "Read Refund",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{hostPath}}refunds/{{refund_id}}",
-							"host": [
-								"{{hostPath}}refunds"
-							],
-							"path": [
-								"{{refund_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "List Refunds",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const refunds = pm.response.json();\r",
-									"\r",
-									"if (Array.isArray(refunds) && refunds.length > 0) {\r",
-									"    const randomIndex = Math.floor(Math.random() * refunds.length);\r",
-									"\r",
-									"    const randomUUID = refunds[randomIndex].uuid;\r",
-									"\r",
-									"    pm.collectionVariables.set(\"refund_id\", randomUUID);\r",
-									"    console.log(\"UUID aleatório salvo:\", randomUUID);\r",
-									"} else {\r",
-									"    console.warn(\"A resposta não contém dados de refunds.\");\r",
-									"}"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{hostPath}}refunds",
-							"host": [
-								"{{hostPath}}refunds"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Product",
-			"item": [
-				{
-					"name": "Create Product",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const responseBody = pm.response.json();\r",
-									"\r",
-									"if (responseBody && responseBody.uuid) {\r",
-									"    pm.collectionVariables.set(\"product_id\", responseBody.uuid);\r",
-									"    // console.log(\"product ID (UUID) saved as:\", responseBody.uuid);\r",
-									"} else {\r",
-									"    console.error(\"UUID not found in the response body\");\r",
-									"}"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"productName\": \"productExample2\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 10,\r\n    \"productImg\": null,\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{hostPath}}products",
-							"host": [
-								"{{hostPath}}products"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Read Product",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{hostPath}}products/{{product_id}}",
-							"host": [
-								"{{hostPath}}products"
-							],
-							"path": [
-								"{{product_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "List Products",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{hostPath}}products",
-							"host": [
-								"{{hostPath}}products"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Product",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{item_id}}\",\r\n    \"productName\": \"ExampleproductName\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 10,\r\n    \"productImg\": \"\",\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{hostPath}}products",
-							"host": [
-								"{{hostPath}}products"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Product",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{product_id}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{hostPath}}products",
-							"host": [
-								"{{hostPath}}products"
 							]
 						}
 					},
@@ -648,266 +530,6 @@
 			]
 		},
 		{
-			"name": "Purchase",
-			"item": [
-				{
-					"name": "Create Purchase",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const responseBody = pm.response.json();\r",
-									"\r",
-									"if (responseBody && responseBody.uuid) {\r",
-									"    pm.collectionVariables.set(\"purchase_id\", responseBody.uuid);\r",
-									"    // console.log(\"purchase ID (UUID) saved as:\", responseBody.uuid);\r",
-									"} else {\r",
-									"    console.error(\"UUID not found in the response body\");\r",
-									"}"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"onOrder\": false,\r\n    \"requestItems\": [\r\n        {\"productId\": \"{{product_id}}\",\"quantity\": 1,\"unitPrice\": \"1.00\"}\r\n    ],\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{hostPath}}purchases",
-							"host": [
-								"{{hostPath}}purchases"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Read Purchase",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{hostPath}}purchases/{{purchase_id}}",
-							"host": [
-								"{{hostPath}}purchases"
-							],
-							"path": [
-								"{{purchase_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "List Purchases",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{hostPath}}purchases",
-							"host": [
-								"{{hostPath}}purchases"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Purchase",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{purchase_id}}\",\r\n    \"onOrder\": false,\r\n    \"requestUpdateItems\": [\r\n        {\"productId\": \"{{product_id}}\",\"delivered\": 1}\r\n    ]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{hostPath}}purchases",
-							"host": [
-								"{{hostPath}}purchases"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Purchase",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{purchase_id}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{hostPath}}purchases",
-							"host": [
-								"{{hostPath}}purchases"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Recharge",
-			"item": [
-				{
-					"name": "Create Recharge",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const responseBody = pm.response.json();\r",
-									"\r",
-									"if (responseBody && responseBody.uuid) {\r",
-									"    pm.collectionVariables.set(\"recharge_id\", responseBody.uuid);\r",
-									"    // console.log(\"Recharge ID (UUID) saved as:\", responseBody.uuid);\r",
-									"} else {\r",
-									"    console.error(\"UUID not found in the response body\");\r",
-									"}"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"rechargeValue\": \"2.00\",\r\n    \"paymentTypeEnum\": \"cash\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{hostPath}}recharges",
-							"host": [
-								"{{hostPath}}recharges"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Read Recharge",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{hostPath}}recharges/{{recharge_id}}",
-							"host": [
-								"{{hostPath}}recharges"
-							],
-							"path": [
-								"{{recharge_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "List Recharges",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{hostPath}}recharges",
-							"host": [
-								"{{hostPath}}recharges"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Recharge",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{recharge_id}}\",\r\n    \"paymentTypeEnum\": \"DEBIT\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{hostPath}}recharges",
-							"host": [
-								"{{hostPath}}recharges"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Recharge",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{recharge_id}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{hostPath}}recharges",
-							"host": [
-								"{{hostPath}}recharges"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "Stand",
 			"item": [
 				{
@@ -954,9 +576,21 @@
 				},
 				{
 					"name": "Read Stand",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{hostPath}}stands/{{stand_id}}",
 							"host": [
@@ -990,7 +624,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{stand_id}}\",\r\n    \"standName\": \"StandExample1\",\r\n    \"associationId\": \"{{association_id}}\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{stand_id}}\",\r\n    \"standName\": \"StandExample\",\r\n    \"associationId\": \"{{association_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1032,6 +666,130 @@
 			]
 		},
 		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Create Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseBody = pm.response.json();\r",
+									"\r",
+									"if (responseBody && responseBody.uuid) {\r",
+									"    pm.collectionVariables.set(\"product_id\", responseBody.uuid);\r",
+									"    // console.log(\"product ID (UUID) saved as:\", responseBody.uuid);\r",
+									"} else {\r",
+									"    console.error(\"UUID not found in the response body\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productName\": \"productExample\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}products",
+							"host": [
+								"{{hostPath}}products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}products/{{product_id}}",
+							"host": [
+								"{{hostPath}}products"
+							],
+							"path": [
+								"{{product_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}products",
+							"host": [
+								"{{hostPath}}products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{product_id}}\",\r\n    \"productName\": \"ExampleproductName\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": \"\",\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}products",
+							"host": [
+								"{{hostPath}}products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{product_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}products",
+							"host": [
+								"{{hostPath}}products"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Voluntary",
 			"item": [
 				{
@@ -1060,7 +818,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"UsernameExample3\",\r\n    \"password\": \"PasswordExample\",\r\n    \"salt\": \"SaltExample\",\r\n    \"fullname\": \"Full Name Example3\"\r\n}",
+							"raw": "{\r\n    \"username\": \"UsernameAlpha\",\r\n    \"password\": \"PasswordExample\",\r\n    \"salt\": \"SaltExample\",\r\n    \"fullname\": \"FullName Alpha\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1114,7 +872,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"username\": \"UsernameExample4\",\r\n    \"password\": \"PasswordExample\",\r\n    \"salt\": \"SaltExample\",\r\n    \"fullname\": \"Full Name Example4\",\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"username\": null,\r\n    \"password\": \"PasswordExample\",\r\n    \"salt\": \"SaltExample\",\r\n    \"fullname\": null,\r\n    \"functionId\": \"{{cash_register_id}}\" // \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1152,6 +910,490 @@
 						}
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "Operations",
+			"item": [
+				{
+					"name": "Donation",
+					"item": [
+						{
+							"name": "Read Donation",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}donations/{{donation_id}}",
+									"host": [
+										"{{hostPath}}donations"
+									],
+									"path": [
+										"{{donation_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Donations",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const donations = pm.response.json();\r",
+											"\r",
+											"if (Array.isArray(donations) && donations.length > 0) {\r",
+											"    const randomIndex = Math.floor(Math.random() * donations.length);\r",
+											"\r",
+											"    const randomUUID = donations[randomIndex].uuid;\r",
+											"\r",
+											"    pm.collectionVariables.set(\"donation_id\", randomUUID);\r",
+											"    console.log(\"UUID aleatório salvo:\", randomUUID);\r",
+											"} else {\r",
+											"    console.warn(\"A resposta não contém dados de donations.\");\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}donations",
+									"host": [
+										"{{hostPath}}donations"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Purchase",
+					"item": [
+						{
+							"name": "Create Purchase",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseBody = pm.response.json();\r",
+											"\r",
+											"if (responseBody && responseBody.uuid) {\r",
+											"    pm.collectionVariables.set(\"purchase_id\", responseBody.uuid);\r",
+											"    // console.log(\"purchase ID (UUID) saved as:\", responseBody.uuid);\r",
+											"} else {\r",
+											"    console.error(\"UUID not found in the response body\");\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productId\": \"a8c9e905-591a-4c67-a46e-d02d435f4ce8\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\"},\r\n        {\"productId\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\"}\r\n    ],\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}purchases",
+									"host": [
+										"{{hostPath}}purchases"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Purchase",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}purchases/{{purchase_id}}",
+									"host": [
+										"{{hostPath}}purchases"
+									],
+									"path": [
+										"{{purchase_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Purchases",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}purchases",
+									"host": [
+										"{{hostPath}}purchases"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Purchase",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"uuid\": \"{{purchase_id}}\",\r\n    \"onOrder\": false,\r\n    \"requestUpdateItems\": [\r\n        {\"productId\": \"{{product_id}}\",\"delivered\": 1}\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}purchases",
+									"host": [
+										"{{hostPath}}purchases"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Purchase",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"uuid\": \"{{purchase_id}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}purchases",
+									"host": [
+										"{{hostPath}}purchases"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Recharge",
+					"item": [
+						{
+							"name": "Create Recharge",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseBody = pm.response.json();\r",
+											"\r",
+											"if (responseBody && responseBody.uuid) {\r",
+											"    pm.collectionVariables.set(\"recharge_id\", responseBody.uuid);\r",
+											"    // console.log(\"Recharge ID (UUID) saved as:\", responseBody.uuid);\r",
+											"} else {\r",
+											"    console.error(\"UUID not found in the response body\");\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"cashRegisterId\": \"{{cash_register_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}recharges",
+									"host": [
+										"{{hostPath}}recharges"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Recharge",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}recharges/{{recharge_id}}",
+									"host": [
+										"{{hostPath}}recharges"
+									],
+									"path": [
+										"{{recharge_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Recharges",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}recharges",
+									"host": [
+										"{{hostPath}}recharges"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Recharge",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"uuid\": \"{{recharge_id}}\",\r\n    \"paymentTypeEnum\": \"DEBIT\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}recharges",
+									"host": [
+										"{{hostPath}}recharges"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Recharge",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"uuid\": \"{{recharge_id}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}recharges",
+									"host": [
+										"{{hostPath}}recharges"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Refund",
+					"item": [
+						{
+							"name": "Read Refund",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}refunds/{{refund_id}}",
+									"host": [
+										"{{hostPath}}refunds"
+									],
+									"path": [
+										"{{refund_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Refunds",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const refunds = pm.response.json();\r",
+											"\r",
+											"if (Array.isArray(refunds) && refunds.length > 0) {\r",
+											"    const randomIndex = Math.floor(Math.random() * refunds.length);\r",
+											"\r",
+											"    const randomUUID = refunds[randomIndex].uuid;\r",
+											"\r",
+											"    pm.collectionVariables.set(\"refund_id\", randomUUID);\r",
+											"    console.log(\"UUID aleatório salvo:\", randomUUID);\r",
+											"} else {\r",
+											"    console.warn(\"A resposta não contém dados de refunds.\");\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}refunds",
+									"host": [
+										"{{hostPath}}refunds"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Transaction",
+					"item": [
+						{
+							"name": "Create Transaction",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseBody = pm.response.json();\r",
+											"\r",
+											"if (responseBody && responseBody.uuid) {\r",
+											"    pm.collectionVariables.set(\"transaction_id\", responseBody.uuid);\r",
+											"    // console.log(\"transaction ID (UUID) saved as:\", responseBody.uuid);\r",
+											"} else {\r",
+											"    console.error(\"UUID not found in the response body\");\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"amount\": \"7.60\",\r\n    \"transactionTypeEnum\": \"EXIT\",\r\n    \"cashRegisterId\": \"{{cash_register_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}transactions",
+									"host": [
+										"{{hostPath}}transactions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Transaction",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}transactions/{{transaction_id}}",
+									"host": [
+										"{{hostPath}}transactions"
+									],
+									"path": [
+										"{{transaction_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Transactions",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}transactions",
+									"host": [
+										"{{hostPath}}transactions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "New Request Copy",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"uuid\": \"{{transaction_id}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}transactions",
+									"host": [
+										"{{hostPath}}transactions"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		}
@@ -1230,6 +1472,14 @@
 		},
 		{
 			"key": "donation_id",
+			"value": ""
+		},
+		{
+			"key": "cash_register_id",
+			"value": ""
+		},
+		{
+			"key": "transaction_id",
 			"value": ""
 		}
 	]

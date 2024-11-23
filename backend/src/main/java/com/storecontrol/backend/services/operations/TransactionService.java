@@ -1,12 +1,15 @@
 package com.storecontrol.backend.services.operations;
 
-import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
-import com.storecontrol.backend.models.operations.request.RequestTransaction;
+import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.operations.Transaction;
+import com.storecontrol.backend.models.operations.purchases.Purchase;
+import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
+import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
 import com.storecontrol.backend.repositories.operations.TransactionRepository;
+import com.storecontrol.backend.services.operations.validation.TransactionValidation;
 import com.storecontrol.backend.services.registers.CashRegisterService;
-import com.storecontrol.backend.services.validation.TransactionValidate;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +22,7 @@ import java.util.UUID;
 public class TransactionService {
 
   @Autowired
-  TransactionValidate validate;
+  TransactionValidation validate;
 
   @Autowired
   TransactionRepository repository;
@@ -31,14 +34,11 @@ public class TransactionService {
   VoluntaryService voluntaryService;
 
   @Transactional
-  public Transaction createTransaction(RequestTransaction request) {
+  public Transaction createTransaction(RequestCreateTransaction request) {
     var voluntary = voluntaryService.safeTakeVoluntaryByUuid(request.voluntaryId());
-//    var function = voluntary.getFunction();
-//    if (function instanceof CashRegister) {
-//
-//    }
     var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterId());
 
+    validate.checkVoluntaryFunctionMatch(voluntary);
     validate.checkCashAvailableToTransaction(request, cashRegister);
 
     var transaction = new Transaction(request, cashRegister, voluntary);
@@ -48,10 +48,14 @@ public class TransactionService {
     return transaction;
   }
 
-  public Transaction takeTransactionByUuid(String uuid) {
-    var transactionOptional = repository.findByUuidValidTrue(UUID.fromString(uuid));
+  public Transaction takeTransactionByUuid(UUID uuid) {
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(EntityNotFoundException::new);
+  }
 
-    return transactionOptional.orElseGet(Transaction::new);  // TODO: ERROR: recharge_uuid invalid
+  public Transaction safeTakeTransactionByUuid(UUID uuid) {
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "Transaction", uuid.toString()));
   }
 
   public List<Transaction> listTransactions() {
@@ -60,7 +64,7 @@ public class TransactionService {
 
   @Transactional
   public void deleteTransaction(RequestDeleteTransaction request) {
-    var transaction = takeTransactionByUuid(request.uuid());
+    var transaction = safeTakeTransactionByUuid(request.uuid());
 
     handleCashTotal(transaction, transaction.getTransactionTypeEnum().isExit());
 

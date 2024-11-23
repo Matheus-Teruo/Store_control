@@ -1,7 +1,6 @@
 package com.storecontrol.backend.models.operations;
 
-import com.storecontrol.backend.models.operations.request.RequestRecharge;
-import com.storecontrol.backend.models.operations.request.RequestUpdateRecharge;
+import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.volunteers.Voluntary;
@@ -46,21 +45,17 @@ public class Recharge {
     private boolean valid;
 
 
-    public Recharge(RequestRecharge request,
+    public Recharge(RequestCreateRecharge request,
                     Customer customer,
                     CashRegister cashRegister,
                     Voluntary voluntary) {
-        this.rechargeValue = new BigDecimal(request.rechargeValue());
+        this.rechargeValue = request.rechargeValue();
         this.rechargeTimeStamp = LocalDateTime.now();
         this.paymentTypeEnum = PaymentType.fromString(request.paymentTypeEnum());
         this.customer = customer;
         this.cashRegister = cashRegister;
         this.voluntary = voluntary;
         this.valid = true;
-    }
-
-    public void updateRecharge(RequestUpdateRecharge request) {
-        this.paymentTypeEnum = PaymentType.fromString(request.paymentTypeEnum());
     }
 
     public void deleteRecharge() {

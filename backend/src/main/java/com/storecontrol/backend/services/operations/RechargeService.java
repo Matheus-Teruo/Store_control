@@ -1,16 +1,17 @@
 package com.storecontrol.backend.services.operations;
 
-import com.storecontrol.backend.models.customers.request.RequestCustomer;
-import com.storecontrol.backend.models.customers.request.RequestUpdateOrderCard;
-import com.storecontrol.backend.models.operations.request.RequestRecharge;
-import com.storecontrol.backend.models.operations.request.RequestUpdateRecharge;
+import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
+import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
+import com.storecontrol.backend.models.operations.request.RequestDeleteRecharge;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
+import com.storecontrol.backend.services.operations.validation.RechargeValidation;
 import com.storecontrol.backend.services.registers.CashRegisterService;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;
 import com.storecontrol.backend.services.customers.CustomerService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ import java.util.UUID;
 
 @Service
 public class RechargeService {
+
+  @Autowired
+  RechargeValidation validation;
 
   @Autowired
   RechargeRepository repository;
@@ -35,22 +39,31 @@ public class RechargeService {
   CustomerService customerService;
 
   @Transactional
-  public Recharge createRecharge(RequestRecharge request) {
+  public Recharge createRecharge(RequestCreateRecharge request) {
     var voluntary = voluntaryService.safeTakeVoluntaryByUuid(request.voluntaryId());
     var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterId());
+
+    validation.checkVoluntaryFunctionMatch(cashRegister, voluntary);
+
     var customer = handleChangesOnCustomerByCardId(request);
+    customer.getOrderCard().incrementDebit(request.rechargeValue());
 
     var recharge = new Recharge(request, customer, cashRegister, voluntary);
     handleCashTotal(recharge, recharge.getPaymentTypeEnum(), false);
+
     repository.save(recharge);
 
     return recharge;
   }
 
-  public Recharge takeRechargeByUuid(String uuid) {
-    var rechargeOptional = repository.findByUuidValidTrue(UUID.fromString(uuid));
+  public Recharge takeRechargeByUuid(UUID uuid) {
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(EntityNotFoundException::new);
+  }
 
-    return rechargeOptional.orElseGet(Recharge::new);  // TODO: ERROR: recharge_uuid invalid
+  public Recharge safeTakeRechargeByUuid(UUID uuid) {
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "Recharge", uuid.toString()));
   }
 
   public List<Recharge> listRecharges() {
@@ -58,45 +71,28 @@ public class RechargeService {
   }
 
   @Transactional
-  public Recharge updateRecharge(RequestUpdateRecharge request) {
-    var recharge = takeRechargeByUuid(request.uuid());
+  public void deleteRecharge(RequestDeleteRecharge request) {
+    var recharge = safeTakeRechargeByUuid(request.uuid());
+    validation.checkDebitGreaterThanUndoDonation(recharge);
 
-    if (request.paymentTypeEnum() != null) {
-      recharge.updateRecharge(request);
-    }
-
-    return recharge;
-  }
-
-  @Transactional
-  public void deleteRecharge(RequestUpdateRecharge request) {
-    var recharge = takeRechargeByUuid(request.uuid());
-
-    handleUndoCustomerDebit(recharge);
+    recharge.getCustomer().getOrderCard().incrementDebit(recharge.getRechargeValue().negate());
     handleCashTotal(recharge, recharge.getPaymentTypeEnum(), true);
 
     recharge.deleteRecharge();
-    handleFinalizeCustomer(recharge.getCustomer());
+    handleFilterFinalizeCustomer(recharge.getCustomer());
   }
 
-  private Customer handleChangesOnCustomerByCardId(RequestRecharge request) {
+  private Customer handleChangesOnCustomerByCardId(RequestCreateRecharge request) {
     Customer customer;
     try {
       customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
-      customer.getOrderCard().incrementDebit(new BigDecimal(request.rechargeValue()));
-    } catch (RuntimeException e) {  // TODO: handle error of customer non-existence (change generic Exception )
-      customer = customerService.initializeCustomer(
-          new RequestCustomer(
-              new RequestUpdateOrderCard(
-                  request.orderCardId(),
-                  new BigDecimal(request.rechargeValue()))
-          )
-      );
+    } catch (InvalidDatabaseQueryException ex) {
+      customer = customerService.initializeCustomer(request.orderCardId());
     }
     return customer;
   }
 
-  private void handleFinalizeCustomer(Customer customer) {
+  private void handleFilterFinalizeCustomer(Customer customer) {
     var recharges = customer.getRecharges().stream()
         .filter(Recharge::isValid)
         .toList();
@@ -104,16 +100,6 @@ public class RechargeService {
     if (recharges.isEmpty()) {
       customerService.finalizeCustomer(customer);
     }
-  }
-
-  private void handleUndoCustomerDebit(Recharge recharge) {
-    var rechargeValue = recharge.getRechargeValue();
-    var currentDebit = recharge.getCustomer().getOrderCard().getDebit();
-
-    if (rechargeValue.compareTo(currentDebit) <= 0 ) {
-      recharge.getCustomer().getOrderCard().incrementDebit(rechargeValue.negate());
-    }
-    // TODO: error: can't delete recharge and result a negative debit in OrderCard
   }
 
   private void handleCashTotal(Recharge recharge, PaymentType paymentType, Boolean isReversal) {

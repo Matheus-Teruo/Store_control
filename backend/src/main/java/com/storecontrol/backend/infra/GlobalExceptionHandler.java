@@ -3,6 +3,7 @@ package com.storecontrol.backend.infra;
 import com.storecontrol.backend.infra.exceptions.InvalidCustomerException;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
+import com.storecontrol.backend.infra.exceptions.InvalidOperationException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,17 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
   }
 
+  @ExceptionHandler(InvalidOperationException.class)
+  public ResponseEntity<Map<String, String>> handleOperationExceptions(InvalidOperationException ex) {
+    Map<String, String> error = new HashMap<>();
+    error.put("errorType", "Operation Error");
+    error.put("typeOfError", ex.getTypeOfError());
+    error.put("error", ex.getError());
+    error.put("message", ex.getMessage());
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+  }
+
   @ExceptionHandler(InvalidDatabaseInsertionException.class)
   public ResponseEntity<Map<String, Object>> handleDatabaseInsertionExceptions(InvalidDatabaseInsertionException ex) {
     Map<String, Object> error = new HashMap<>();
@@ -65,7 +77,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(InvalidDatabaseQueryException.class)
   public ResponseEntity<Map<String, String>> handleDatabaseQueryExceptions(InvalidDatabaseQueryException ex) {
     Map<String, String> error = new HashMap<>();
-    error.put("errorType", "Query Entity Error");
+    error.put("errorType", "Query Entity Error: " + ex.getTypeOfError());
     error.put("entity", ex.getEntityName());
     error.put("invalidValue", ex.getInvalidValue());
     error.put("error", ex.getMessage());

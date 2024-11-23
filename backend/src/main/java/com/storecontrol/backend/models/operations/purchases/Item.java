@@ -1,6 +1,6 @@
 package com.storecontrol.backend.models.operations.purchases;
 
-import com.storecontrol.backend.models.operations.purchases.request.RequestItem;
+import com.storecontrol.backend.models.operations.purchases.request.RequestCreateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
@@ -32,13 +32,13 @@ public class Item {
     private boolean valid;
 
 
-    public Item(RequestItem requestItem, ItemId ItemId) {
+    public Item(RequestCreateItem requestCreateItem, ItemId ItemId) {
         this.itemId = ItemId;
-        this.quantity = requestItem.quantity();
-        if (requestItem.delivered() != null) {
-            this.delivered = requestItem.delivered();
+        this.quantity = requestCreateItem.quantity();
+        if (requestCreateItem.delivered() != null) {
+            this.delivered = requestCreateItem.delivered();
         }
-        this.unitPrice = new BigDecimal(requestItem.unitPrice());
+        this.unitPrice = requestCreateItem.unitPrice();
         this.valid = true;
     }
 

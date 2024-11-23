@@ -28,10 +28,9 @@ public class CustomerService {
   OrderCardService orderCardService;
 
   @Transactional
-  public Customer initializeCustomer(RequestCustomer request) {
-    var orderCard = orderCardService.safeTakeOrderCardById(request.orderCard().id());
+  public Customer initializeCustomer(String cardId) {
+    var orderCard = orderCardService.safeTakeOrderCardById(cardId);
 
-    orderCard.incrementDebit(request.orderCard().debitIncrement());
     orderCard.updateActive(true);
     var customer = new Customer(orderCard);
 
@@ -51,12 +50,12 @@ public class CustomerService {
 
   public Customer takeActiveCustomerByCardId(String cardId) {
     return repository.findByOrderCardIdActiveTrue(cardId)
-        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity" , "Customer", cardId));
+        .orElseThrow(() -> new InvalidDatabaseQueryException("Entity not active" , "Customer OrderCard", cardId));
   }
 
   public Customer takeLastActiveFilteredCustomerByCardId(String cardId) {
     var customer = repository.findByOrderCardId(cardId)
-        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity" , "Customer", cardId));
+        .orElseThrow(() -> new InvalidDatabaseQueryException("Entity not active" , "Customer OrderCard", cardId));
 
     filterCustomerToDiscardInactiveRelations(customer);
 

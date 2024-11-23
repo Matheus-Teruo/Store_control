@@ -1,6 +1,6 @@
 package com.storecontrol.backend.models.operations;
 
-import com.storecontrol.backend.models.operations.request.RequestTransaction;
+import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.models.enumerate.TransactionType;
@@ -41,8 +41,8 @@ public class Transaction {
   private boolean valid;
 
 
-  public Transaction(RequestTransaction request, CashRegister cashRegister, Voluntary voluntary) {
-    this.amount = new BigDecimal(request.amount());
+  public Transaction(RequestCreateTransaction request, CashRegister cashRegister, Voluntary voluntary) {
+    this.amount = request.amount();
     this.transactionTypeEnum = TransactionType.fromString(request.transactionTypeEnum());
     this.transactionTimeStamp = LocalDateTime.now();
     this.cashRegister = cashRegister;

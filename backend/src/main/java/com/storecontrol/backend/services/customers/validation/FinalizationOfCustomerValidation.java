@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
 @Component
-public class FinalizationOfCustomerValidate {
+public class FinalizationOfCustomerValidation {
 
   public void checkDonationValueValid(BigDecimal donationValue, Customer customer) {
     var currentDebit = customer.getOrderCard().getDebit();

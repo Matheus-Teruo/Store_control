@@ -1,7 +1,7 @@
 package com.storecontrol.backend.controllers.operations;
 
 import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
-import com.storecontrol.backend.models.operations.request.RequestTransaction;
+import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryTransaction;
 import com.storecontrol.backend.models.operations.response.ResponseTransaction;
 import com.storecontrol.backend.services.operations.TransactionService;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("transactions")
@@ -20,14 +21,14 @@ public class TransactionController {
   TransactionService service;
 
   @PostMapping
-  public ResponseEntity<ResponseTransaction> createTransaction(@RequestBody @Valid RequestTransaction request) {
+  public ResponseEntity<ResponseTransaction> createTransaction(@RequestBody @Valid RequestCreateTransaction request) {
     var response = new ResponseTransaction(service.createTransaction(request));
 
     return ResponseEntity.ok(response);
   }
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseTransaction> readTransaction(@PathVariable String uuid) {
+  public ResponseEntity<ResponseTransaction> readTransaction(@PathVariable UUID uuid) {
     var response = new ResponseTransaction(service.takeTransactionByUuid(uuid));
 
     return ResponseEntity.ok(response);

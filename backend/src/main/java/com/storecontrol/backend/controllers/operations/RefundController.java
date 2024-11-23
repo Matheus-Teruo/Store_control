@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("refunds")
@@ -20,7 +21,7 @@ public class RefundController {
   RefundService service;
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseRefund> readRefund(@PathVariable String uuid) {
+  public ResponseEntity<ResponseRefund> readRefund(@PathVariable UUID uuid) {
     var response = new ResponseRefund(service.takeRefundByUuid(uuid));
 
     return ResponseEntity.ok(response);

@@ -1,15 +1,17 @@
 package com.storecontrol.backend.services.operations;
 
-import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
-import com.storecontrol.backend.models.operations.purchases.request.RequestPurchase;
-import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
-import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
+import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
+import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
+import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
+import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
+import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
-import com.storecontrol.backend.services.volunteers.VoluntaryService;
 import com.storecontrol.backend.services.customers.CustomerService;
-import com.storecontrol.backend.services.validation.PurchaseValidate;
+import com.storecontrol.backend.services.operations.validation.PurchaseValidation;
+import com.storecontrol.backend.services.volunteers.VoluntaryService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,10 +25,10 @@ import java.util.stream.Collectors;
 public class PurchaseService {
 
   @Autowired
-  PurchaseRepository repository;
+  PurchaseValidation validate;
 
   @Autowired
-  PurchaseValidate validate;
+  PurchaseRepository repository;
 
   @Autowired
   VoluntaryService voluntaryService;
@@ -38,29 +40,34 @@ public class PurchaseService {
   ItemService itemService;
 
   @Transactional
-  public Purchase createPurchase(RequestPurchase request) {
+  public Purchase createPurchase(RequestCreatePurchase request) {
     var voluntary = voluntaryService.safeTakeVoluntaryByUuid(request.voluntaryId());
     var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
 
+    validate.checkVoluntaryFunctionMatch(voluntary);
     validate.checkInsufficientCreditValidity(request, customer);
     validate.checkInsufficientProductStockValidity(request);
 
-    var purchase =  new Purchase(request, customer,  voluntary);
+    var purchase = new Purchase(request, customer,  voluntary);
 
+    repository.save(purchase);
     var items = itemService.createItems(request, purchase);
-    purchase.allocateItemsToPurchase(items);
+    purchase.setItems(items);
 
     updateItemsFromItemsChanged(purchase, false);
     updateCustomerDebit(purchase, false);
-    repository.save(purchase);
 
     return purchase;
   }
 
-  public Purchase takePurchaseByUuid(String uuid) {
-    var purchaseOptional = repository.findByUuidValidTrue(UUID.fromString(uuid));
+  public Purchase takePurchaseByUuid(UUID uuid) {
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(EntityNotFoundException::new);
+  }
 
-    return purchaseOptional.orElseGet(Purchase::new);  // TODO: ERROR: purchase_uuid invalid
+  public Purchase safeTakePurchaseByUuid(UUID uuid) {
+    return repository.findByUuidValidTrue(uuid)
+        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "Purchase", uuid.toString()));
   }
 
   public List<Purchase> listPurchases() {
@@ -69,7 +76,9 @@ public class PurchaseService {
 
   @Transactional
   public Purchase updatePurchase(RequestUpdatePurchase request) {
-    var purchase = takePurchaseByUuid(request.uuid());
+    var purchase = safeTakePurchaseByUuid(request.uuid());
+
+    validate.checkItemsFromPurchaseValidation(request.updateItems(), purchase.getItems());
 
     purchase.updatePurchase(request);
     updateItemsFromPurchase(request.updateItems(), purchase.getItems());
@@ -79,7 +88,7 @@ public class PurchaseService {
 
   @Transactional
   public void deletePurchase(RequestUpdatePurchase request) {
-    var purchase = takePurchaseByUuid(request.uuid());
+    var purchase = safeTakePurchaseByUuid(request.uuid());
 
     validate.checkSomeItemWasDelivered(purchase);
 
@@ -119,7 +128,7 @@ public class PurchaseService {
     if (request != null && !request.isEmpty()) {
 
       var itemsMap = items.stream().collect(Collectors.toMap(
-          item -> item.getItemId().getProduct().getUuid().toString(),
+          item -> item.getItemId().getProduct().getUuid(),
           item -> item
       ));
 
@@ -128,10 +137,8 @@ public class PurchaseService {
         if (item != null) {
           if (requestUpdateItem.delivered() <= item.getQuantity()) {
             item.updateItem(requestUpdateItem);
-          } // else
-            // TODO: error quantity not allow to be bigger than quantity.
-        } // else
-          // TODO: error. this item is not allocate in this purchase like item
+          }
+        }
       });
     }
   }
