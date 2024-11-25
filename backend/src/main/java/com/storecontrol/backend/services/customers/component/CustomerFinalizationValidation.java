@@ -1,4 +1,4 @@
-package com.storecontrol.backend.services.customers.validation;
+package com.storecontrol.backend.services.customers.component;
 
 import com.storecontrol.backend.infra.exceptions.InvalidCustomerException;
 import com.storecontrol.backend.models.customers.Customer;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
 @Component
-public class FinalizationOfCustomerValidation {
+public class CustomerFinalizationValidation {
 
   public void checkDonationValueValid(BigDecimal donationValue, Customer customer) {
     var currentDebit = customer.getOrderCard().getDebit();

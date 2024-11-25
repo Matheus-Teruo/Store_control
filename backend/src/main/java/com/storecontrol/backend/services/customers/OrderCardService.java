@@ -4,7 +4,7 @@ import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.repositories.customers.OrderCardRepository;
-import com.storecontrol.backend.services.customers.validation.OrderCardValidation;
+import com.storecontrol.backend.services.customers.component.OrderCardValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class OrderCardService {
 
   @Transactional
   public OrderCard createOrderCard(RequestOrderCard request) {
-    validation.checkNameDuplication(request.id());
+    validation.checkNameDuplication(request.cardId());
     var orderCard = new OrderCard(request);
     repository.save(orderCard);
 

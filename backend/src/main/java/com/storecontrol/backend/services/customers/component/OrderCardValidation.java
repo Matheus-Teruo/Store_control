@@ -1,4 +1,4 @@
-package com.storecontrol.backend.services.customers.validation;
+package com.storecontrol.backend.services.customers.component;
 
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.repositories.customers.OrderCardRepository;
@@ -16,7 +16,7 @@ public class OrderCardValidation {
   public void checkNameDuplication(String cardId) {
     if (repository.existsById(cardId)) {
       throw new InvalidDatabaseInsertionException(
-          "name already used",
+          "cardId already exist",
           "OrderCard",
           Map.of("cardId", cardId)
       );

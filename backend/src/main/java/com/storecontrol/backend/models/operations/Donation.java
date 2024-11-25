@@ -1,6 +1,6 @@
 package com.storecontrol.backend.models.operations;
 
-import com.storecontrol.backend.models.customers.request.RequestAuxFinalizeCustomer;
+import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import jakarta.persistence.*;
@@ -36,7 +36,7 @@ public class Donation {
     private boolean valid;
 
 
-    public Donation(RequestAuxFinalizeCustomer request,
+    public Donation(RequestCustomerFinalization request,
                     Customer customer,
                     Voluntary voluntary) {
         this.donationValue = request.donationValue();

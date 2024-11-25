@@ -381,11 +381,11 @@
 				{
 					"name": "UndoFinalize Customer",
 					"request": {
-						"method": "POST",
+						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"orderCard\": {\r\n        \"id\": \"{{card_id}}\"\r\n    }\r\n}",
+							"raw": "{\r\n    \"cardId\": \"{{card_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -393,12 +393,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostPath}}customers/undofinalize",
+							"raw": "{{hostPath}}customers/finalize",
 							"host": [
 								"{{hostPath}}customers"
 							],
 							"path": [
-								"undofinalize"
+								"finalize"
 							]
 						}
 					},

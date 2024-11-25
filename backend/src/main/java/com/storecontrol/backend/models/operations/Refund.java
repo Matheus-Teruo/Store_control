@@ -1,6 +1,6 @@
 package com.storecontrol.backend.models.operations;
 
-import com.storecontrol.backend.models.customers.request.RequestAuxFinalizeCustomer;
+import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.volunteers.Voluntary;
@@ -40,7 +40,7 @@ public class Refund {
   private boolean valid;
 
 
-  public Refund(RequestAuxFinalizeCustomer request,
+  public Refund(RequestCustomerFinalization request,
                 Customer customer,
                 CashRegister cashRegister,
                 Voluntary voluntary) {

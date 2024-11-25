@@ -1,11 +1,11 @@
 package com.storecontrol.backend.controllers.customers;
 
-import com.storecontrol.backend.models.customers.request.RequestAuxFinalizeCustomer;
-import com.storecontrol.backend.models.customers.request.RequestCustomer;
+import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
+import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.customers.response.ResponseCustomer;
 import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
 import com.storecontrol.backend.services.customers.CustomerService;
-import com.storecontrol.backend.services.customers.FinalizeCustomerSupport;
+import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class CustomerController {
   CustomerService service;
 
   @Autowired
-  FinalizeCustomerSupport customerSupport;
+  CustomerFinalizationHandler customerSupport;
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseCustomer> readCustomer(@PathVariable UUID uuid) {
@@ -48,14 +48,14 @@ public class CustomerController {
   }
 
   @PostMapping("/finalize")
-  public ResponseEntity<ResponseCustomer> finalizeCustomer(@RequestBody @Valid RequestAuxFinalizeCustomer request) {
+  public ResponseEntity<ResponseCustomer> finalizeCustomer(@RequestBody @Valid RequestCustomerFinalization request) {
     var response = new ResponseCustomer(customerSupport.finalizeCustomer(request));
 
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping("/undofinalize")
-  public ResponseEntity<ResponseCustomer> undoFinalizeCustomer(@RequestBody @Valid RequestCustomer request) {
+  @DeleteMapping("/finalize")
+  public ResponseEntity<ResponseCustomer> undoFinalizeCustomer(@RequestBody @Valid RequestOrderCard request) {
     var response = new ResponseCustomer(customerSupport.undoFinalizeCustomer(request));
 
     return ResponseEntity.ok(response);

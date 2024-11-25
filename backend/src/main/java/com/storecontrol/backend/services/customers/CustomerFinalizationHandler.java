@@ -1,9 +1,9 @@
 package com.storecontrol.backend.services.customers;
 
 import com.storecontrol.backend.infra.exceptions.InvalidCustomerException;
-import com.storecontrol.backend.models.customers.request.RequestAuxFinalizeCustomer;
-import com.storecontrol.backend.models.customers.request.RequestCustomer;
 import com.storecontrol.backend.models.customers.Customer;
+import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
+import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.services.operations.DonationService;
 import com.storecontrol.backend.services.operations.RefundService;
 import com.storecontrol.backend.services.registers.CashRegisterService;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
 @Component
-public class FinalizeCustomerSupport {
+public class CustomerFinalizationHandler {
 
   @Autowired
   CustomerService customerService;
@@ -31,7 +31,7 @@ public class FinalizeCustomerSupport {
   @Autowired
   DonationService donationService;
 
-  public Customer finalizeCustomer(RequestAuxFinalizeCustomer request) {
+  public Customer finalizeCustomer(RequestCustomerFinalization request) {
     var voluntary = voluntaryService.safeTakeVoluntaryByUuid(request.voluntaryId());
     var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterId());
     var customer = customerService.takeActiveFilteredCustomerByCardId(request.orderCardId());
@@ -56,8 +56,8 @@ public class FinalizeCustomerSupport {
     return customer;
   }
 
-  public Customer undoFinalizeCustomer(RequestCustomer request) {
-    var customer = customerService.takeLastActiveFilteredCustomerByCardId(request.orderCard().id());
+  public Customer undoFinalizeCustomer(RequestOrderCard request) {
+    var customer = customerService.takeLastActiveFilteredCustomerByCardId(request.cardId());
 
     if (!customer.isInUse()) {
       if (!customer.getDonations().isEmpty()) {

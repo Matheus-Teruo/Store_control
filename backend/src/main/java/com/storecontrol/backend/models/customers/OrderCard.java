@@ -28,7 +28,7 @@ public class OrderCard {
 
 
     public OrderCard(RequestOrderCard request) {
-        this.id = request.id();
+        this.id = request.cardId();
         this.debit = BigDecimal.ZERO;
         this.active = false;
     }

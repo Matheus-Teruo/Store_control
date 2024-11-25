@@ -1,11 +1,11 @@
 package com.storecontrol.backend.services.operations;
 
-import com.storecontrol.backend.models.customers.request.RequestAuxFinalizeCustomer;
+import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.operations.Donation;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.DonationRepository;
-import com.storecontrol.backend.services.customers.validation.FinalizationOfCustomerValidation;
+import com.storecontrol.backend.services.customers.component.CustomerFinalizationValidation;
 import com.storecontrol.backend.services.operations.validation.DonationValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -25,10 +25,10 @@ public class DonationService {
   DonationRepository repository;
 
   @Autowired
-  FinalizationOfCustomerValidation finalizationValidation;
+  CustomerFinalizationValidation finalizationValidation;
 
   @Transactional
-  public void createDonation(RequestAuxFinalizeCustomer request,
+  public void createDonation(RequestCustomerFinalization request,
                              Customer customer,
                              Voluntary voluntary) {
     var donationValue = request.donationValue();

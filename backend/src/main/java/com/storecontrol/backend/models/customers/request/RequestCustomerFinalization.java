@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record RequestAuxFinalizeCustomer(
+public record RequestCustomerFinalization(
     @NotNull(message = "Debit is required")
     @PositiveOrZero(message = "Donation cannot have a negative value")
     @Digits(integer = 5, fraction = 2, message = "The increment must contain 2 decimal digits and a value below 5 digits")
