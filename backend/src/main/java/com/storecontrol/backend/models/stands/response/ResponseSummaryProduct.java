@@ -11,7 +11,7 @@ public record ResponseSummaryProduct(
     BigDecimal price,
     Integer stock,
     String productImg,
-    ResponseSummaryStand summaryStand
+    UUID standUuid
 ) {
 
   public ResponseSummaryProduct(Product product) {
@@ -20,7 +20,7 @@ public record ResponseSummaryProduct(
         product.getPrice(),
         product.getStock(),
         product.getProductImg(),
-        new ResponseSummaryStand(product.getStand())
+        product.getStandUuid()
     );
   }
 }

@@ -29,6 +29,7 @@ public class StandService {
   @Transactional
   public Stand createStand(RequestCreateStand request) {
     validation.checkNameDuplication(request.standName());
+
     var association = associationService.safeTakeAssociationByUuid(request.associationId());
     var stand = new Stand(request, association);
     repository.save(stand);

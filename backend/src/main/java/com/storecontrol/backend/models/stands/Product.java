@@ -32,7 +32,10 @@ public class Product {
     @Column(name = "product_img")
     private String productImg;
 
-    @ManyToOne @JoinColumn(name = "stand_uuid", nullable = false)
+    @Column(name = "stand_uuid", insertable = false, updatable = false)
+    private UUID standUuid;
+
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "stand_uuid", nullable = false)
     private Stand stand;
 
     @OneToMany(mappedBy = "itemId.product")
