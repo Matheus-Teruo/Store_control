@@ -6,10 +6,10 @@ import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
-import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.services.customers.CustomerService;
 import com.storecontrol.backend.services.operations.validation.PurchaseValidation;
+import com.storecontrol.backend.services.stands.ProductService;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -31,6 +31,9 @@ public class PurchaseService {
   PurchaseRepository repository;
 
   @Autowired
+  ProductService productService;
+
+  @Autowired
   VoluntaryService voluntaryService;
 
   @Autowired
@@ -42,21 +45,22 @@ public class PurchaseService {
   @Transactional
   public Purchase createPurchase(RequestCreatePurchase request) {
     var voluntary = voluntaryService.safeTakeVoluntaryByUuid(request.voluntaryId());
-    var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
-
     validate.checkVoluntaryFunctionMatch(voluntary);
+
+    var productMap = productService.listProductsAsMap();
+    var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
+    validate.checkItemPriceAndDiscountMatch(request, voluntary, productMap);
     validate.checkInsufficientCreditValidity(request, customer);
-    validate.checkInsufficientProductStockValidity(request);
+    validate.checkInsufficientProductStockValidity(request, productMap);
 
     var purchase = new Purchase(request, customer,  voluntary);
-
-    repository.save(purchase);
     var items = itemService.createItems(request, purchase);
     purchase.setItems(items);
 
     updateItemsFromItemsChanged(purchase, false);
     updateCustomerDebit(purchase, false);
 
+    repository.save(purchase);
     return purchase;
   }
 
@@ -101,22 +105,16 @@ public class PurchaseService {
   private void updateItemsFromItemsChanged(Purchase purchase, Boolean isReversal) {
     for (Item item : purchase.getItems()) {
       var product = item.getItemId().getProduct();
-      int adjustmentFactor = isReversal ? 1 : -1;
+      int adjustmentFactor = isReversal ? -1 : 1;
 
-      product.updateProduct(new RequestUpdateProduct(
-          product.getUuid(),
-          null,
-          null,
-          product.getStock() + (adjustmentFactor * item.getQuantity()),
-          null,
-          null));
+      product.decreaseStock(adjustmentFactor * item.getQuantity());
     }
   }
 
   private void updateCustomerDebit(Purchase purchase, Boolean isReversal) {
     var totalValue = purchase.getItems().stream().map(item ->
             BigDecimal.valueOf(item.getQuantity())
-                .multiply(item.getUnitPrice()))
+                .multiply(item.getUnitPrice().subtract(item.getDiscount())))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     BigDecimal adjustmentFactor = isReversal ? BigDecimal.ONE : BigDecimal.ONE.negate();

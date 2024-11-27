@@ -49,6 +49,7 @@ CREATE TABLE items (
     quantity INT NOT NULL,
     delivered INT,
     unit_price DECIMAL(19, 2) NOT NULL,
+    discount DECIMAL(19, 2) NOT NULL,
     valid TINYINT NOT NULL,
     PRIMARY KEY (product_uuid, purchase_uuid)
 );
@@ -65,6 +66,7 @@ CREATE TABLE products (
     uuid BINARY(16) PRIMARY KEY,
     product_name VARCHAR(255) UNIQUE NOT NULL,
     price DECIMAL(19, 2) NOT NULL,
+    discount DECIMAL(19, 2) NOT NULL,
     stock INT NOT NULL,
     product_img VARCHAR(255),
     stand_uuid BINARY(16) NOT NULL,
@@ -74,7 +76,7 @@ CREATE TABLE products (
 -- Table for purchases
 CREATE TABLE purchases (
     uuid BINARY(16) PRIMARY KEY,
-    on_order BOOLEAN,
+    on_order BOOLEAN NOT NULL,
     purchase_time_stamp TIMESTAMP NOT NULL,
     customer_uuid BINARY(16) NOT NULL,
     voluntary_uuid BINARY(16) NOT NULL,

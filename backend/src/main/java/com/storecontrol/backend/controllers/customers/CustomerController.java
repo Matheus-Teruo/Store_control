@@ -4,8 +4,8 @@ import com.storecontrol.backend.models.customers.request.RequestCustomerFinaliza
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.customers.response.ResponseCustomer;
 import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
-import com.storecontrol.backend.services.customers.CustomerService;
 import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
+import com.storecontrol.backend.services.customers.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

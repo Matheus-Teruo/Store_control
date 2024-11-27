@@ -16,6 +16,10 @@ public record RequestUpdateProduct(
     @Digits(integer = 5, fraction = 2, message = "The price must contain 2 decimal digits and a value below 5 digits")
     BigDecimal price,
 
+    @PositiveOrZero(message = "Product cannot have a negative price")
+    @Digits(integer = 5, fraction = 2, message = "The price must contain 2 decimal digits and a value below 5 digits")
+    BigDecimal discount,
+
     @PositiveOrZero(message = "Product cannot have negative stock")
     Integer stock,
 

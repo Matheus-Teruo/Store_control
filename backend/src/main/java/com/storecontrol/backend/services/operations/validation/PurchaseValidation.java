@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.operations.validation;
 
+import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.infra.exceptions.InvalidOperationException;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.operations.purchases.Item;
@@ -7,21 +8,19 @@ import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
+import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.volunteers.Voluntary;
-import com.storecontrol.backend.services.stands.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
 public class PurchaseValidation {
-
-  @Autowired
-  ProductService productService;
 
   public void checkVoluntaryFunctionMatch(Voluntary voluntary) {
     if (!voluntary.isSuperuser()) {
@@ -35,13 +34,36 @@ public class PurchaseValidation {
     }
   }
 
+  public void checkItemPriceAndDiscountMatch(RequestCreatePurchase request, Voluntary voluntary, Map<UUID, Product> productMap) {
+    for (RequestCreateItem requestCreateItem : request.items()) {
+      var product = productMap.get(requestCreateItem.productId());
+
+      if (product == null) {
+        throw new InvalidDatabaseQueryException("Non-existent entity", "Product", requestCreateItem.productId().toString());
+      }
+
+      if (!voluntary.isSuperuser()) {
+        if (product.getPrice().compareTo(requestCreateItem.unitPrice()) != 0) {
+          throw new InvalidOperationException("Create Purchase", "Price of product " +
+              product.getProductName() +
+              " was changed without authorization");
+        }
+        if (product.getDiscount().compareTo(requestCreateItem.discount()) != 0) {
+          throw new InvalidOperationException("Create Purchase", "Discount of product " +
+              product.getProductName() +
+              " was changed without authorization");
+        }
+      }
+    }
+  }
+
   public void checkInsufficientCreditValidity(RequestCreatePurchase request, Customer customer) {
     var totalValue = request
         .items()
         .stream()
         .map(requestCreateItem ->
             BigDecimal.valueOf(requestCreateItem.quantity())
-                .multiply(requestCreateItem.unitPrice()))
+                .multiply(requestCreateItem.unitPrice().subtract(requestCreateItem.discount())))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     if (totalValue.compareTo(customer.getOrderCard().getDebit()) > 0) {
@@ -49,9 +71,9 @@ public class PurchaseValidation {
     }
   }
 
-  public void checkInsufficientProductStockValidity(RequestCreatePurchase request) {
+  public void checkInsufficientProductStockValidity(RequestCreatePurchase request, Map<UUID, Product> productMap) {
     for (RequestCreateItem requestCreateItem : request.items()) {
-      var product = productService.safeTakeProductByUuid(requestCreateItem.productId());
+      var product = productMap.get(requestCreateItem.productId());
 
       if (product.getStock() < requestCreateItem.quantity()) {
         throw new InvalidOperationException("Create Purchase", "Insufficient product stock");
@@ -59,23 +81,24 @@ public class PurchaseValidation {
     }
   }
 
-  public void checkItemsFromPurchaseValidation(List<RequestUpdateItem> request, List<Item> items) {
-    if (request != null && !request.isEmpty()) {
+  public void checkItemsFromPurchaseValidation(List<RequestUpdateItem> requestUpdateItems, List<Item> items) {
+    if (requestUpdateItems != null && !requestUpdateItems.isEmpty()) {
 
       var itemsMap = items.stream().collect(Collectors.toMap(
           item -> item.getItemId().getProduct().getUuid(),
           item -> item
       ));
 
-      request.forEach(requestUpdateItem -> {
+      requestUpdateItems.forEach(requestUpdateItem -> {
         var item = itemsMap.get(requestUpdateItem.productId());
+
         if (item != null) {
           if (requestUpdateItem.delivered() > item.getQuantity()) {
             throw new InvalidOperationException("Update Purchase",
                 "Delivered not allow to be bigger than quantity");
           }
         } else {
-          throw new InvalidOperationException("Delete Purchase",
+          throw new InvalidOperationException("Update Purchase",
               "This product (" + requestUpdateItem.productId() + ") is not allocate in this purchase like item");
         }
       });

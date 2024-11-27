@@ -10,7 +10,8 @@ public record ResponseItem(
     String productName,
     Integer quantity,
     Integer delivered,
-    BigDecimal unitPrice
+    BigDecimal unitPrice,
+    BigDecimal discount
 ) {
 
   public ResponseItem(Item item) {
@@ -18,7 +19,8 @@ public record ResponseItem(
         item.getItemId().getProduct().getProductName(),
         item.getQuantity(),
         item.getDelivered(),
-        item.getUnitPrice()
+        item.getUnitPrice(),
+        item.getDiscount()
     );
   }
 }

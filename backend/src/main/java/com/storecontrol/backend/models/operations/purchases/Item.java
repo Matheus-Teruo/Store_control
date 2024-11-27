@@ -29,16 +29,18 @@ public class Item {
     private BigDecimal unitPrice;
 
     @Column(nullable = false)
+    private BigDecimal discount;
+
+    @Column(nullable = false)
     private boolean valid;
 
 
-    public Item(RequestCreateItem requestCreateItem, ItemId ItemId) {
+    public Item(RequestCreateItem request, ItemId ItemId) {
         this.itemId = ItemId;
-        this.quantity = requestCreateItem.quantity();
-        if (requestCreateItem.delivered() != null) {
-            this.delivered = requestCreateItem.delivered();
-        }
-        this.unitPrice = requestCreateItem.unitPrice();
+        this.quantity = request.quantity();
+        this.delivered = request.delivered();
+        this.unitPrice = request.unitPrice();
+        this.discount = request.discount();
         this.valid = true;
     }
 

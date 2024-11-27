@@ -22,6 +22,11 @@ public record RequestCreateItem(
     @NotNull(message = "Unit price is required")
     @PositiveOrZero(message = "Unit price cannot have a negative price")
     @Digits(integer = 5, fraction = 2, message = "The unit price must contain 2 decimal digits and a value below 5 digits")
-    BigDecimal unitPrice
+    BigDecimal unitPrice,
+
+    @NotNull(message = "discount is required")
+    @PositiveOrZero(message = "Unit price cannot have a negative price")
+    @Digits(integer = 5, fraction = 2, message = "The unit price must contain 2 decimal digits and a value below 5 digits")
+    BigDecimal discount
 ) {
 }

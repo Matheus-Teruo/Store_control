@@ -451,7 +451,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\": \"{{card_id}}\"\r\n}",
+							"raw": "{\r\n    \"cardId\": \"{{card_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -678,10 +678,19 @@
 									"const responseBody = pm.response.json();\r",
 									"\r",
 									"if (responseBody && responseBody.uuid) {\r",
+									"    if (pm.collectionVariables.has(\"product_id\")) {\r",
+									"        // Se \"product_id\" já existe, salvar o valor atual em \"product_id2\"\r",
+									"        const existingProductId = pm.collectionVariables.get(\"product_id\");\r",
+									"        pm.collectionVariables.set(\"product_id2\", existingProductId);\r",
+									"    }\r",
+									"    // Atualizar \"product_id\" com o novo valor\r",
 									"    pm.collectionVariables.set(\"product_id\", responseBody.uuid);\r",
-									"    // console.log(\"product ID (UUID) saved as:\", responseBody.uuid);\r",
+									"    // console.log(\"Novo product_id salvo:\", responseBody.uuid);\r",
+									"    if (pm.collectionVariables.has(\"product_id2\")) {\r",
+									"        // console.log(\"Valor antigo movido para product_id2:\", pm.collectionVariables.get(\"product_id2\"));\r",
+									"    }\r",
 									"} else {\r",
-									"    console.error(\"UUID not found in the response body\");\r",
+									"    console.error(\"UUID não encontrado no corpo da resposta.\");\r",
 									"}"
 								],
 								"type": "text/javascript",
@@ -748,7 +757,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{product_id}}\",\r\n    \"productName\": \"ExampleproductName\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": \"\",\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{product_id}}\",\r\n    \"productName\": \"ExampleproductName\",\r\n    \"price\": \"2.00\",\r\n    \"discount\": \"0.00\",\r\n    \"stock\": null,\r\n    \"productImg\": null,\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -818,7 +827,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"UsernameAlpha\",\r\n    \"password\": \"PasswordExample\",\r\n    \"salt\": \"SaltExample\",\r\n    \"fullname\": \"FullName Alpha\"\r\n}",
+							"raw": "{\r\n    \"username\": \"UsernameCashier\",\r\n    \"password\": \"PasswordExample\",\r\n    \"salt\": \"SaltExample\",\r\n    \"fullname\": \"Full Name Cashier\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -853,6 +862,29 @@
 				},
 				{
 					"name": "List Volunteers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const voluntary = pm.response.json();\r",
+									"\r",
+									"if (Array.isArray(voluntary) && voluntary.length > 0) {\r",
+									"    const randomIndex = Math.floor(Math.random() * voluntary.length);\r",
+									"\r",
+									"    const randomUUID = voluntary[randomIndex].uuid;\r",
+									"\r",
+									"    pm.collectionVariables.set(\"voluntary_id\", randomUUID);\r",
+									"    console.log(\"UUID aleatório salvo:\", randomUUID);\r",
+									"} else {\r",
+									"    console.warn(\"A resposta não contém dados de voluntary.\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -872,7 +904,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"username\": null,\r\n    \"password\": \"PasswordExample\",\r\n    \"salt\": \"SaltExample\",\r\n    \"fullname\": null,\r\n    \"functionId\": \"{{cash_register_id}}\" // \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"username\": \"UsernameStand\",\r\n    \"password\": null ,\r\n    \"salt\": null,\r\n    \"fullname\": \"Full Name Stand\",\r\n    \"functionId\": \"{{cash_register_id}}\" // \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1004,7 +1036,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productId\": \"a8c9e905-591a-4c67-a46e-d02d435f4ce8\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\"},\r\n        {\"productId\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\"}\r\n    ],\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
+									"raw": "{\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productId\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productId\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"0.00\", \"discount\": \"0.00\"}\r\n    ],\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1070,7 +1102,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"uuid\": \"{{purchase_id}}\",\r\n    \"onOrder\": false,\r\n    \"requestUpdateItems\": [\r\n        {\"productId\": \"{{product_id}}\",\"delivered\": 1}\r\n    ]\r\n}",
+									"raw": "{\r\n    \"uuid\": \"{{purchase_id}}\",\r\n    \"onOrder\": false,\r\n    \"requestUpdateItems\": [\r\n        {\"productId\": \"{{product_id}}\", \"delivered\": 1}\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1480,6 +1512,10 @@
 		},
 		{
 			"key": "transaction_id",
+			"value": ""
+		},
+		{
+			"key": "product_id2",
 			"value": ""
 		}
 	]

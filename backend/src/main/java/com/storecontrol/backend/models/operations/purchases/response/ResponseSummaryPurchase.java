@@ -12,6 +12,8 @@ public record ResponseSummaryPurchase(
     String saleTimeStamp,
     Integer totalItems,
     BigDecimal totalPurchaseCost,
+    BigDecimal totalPurchaseDiscount,
+    BigDecimal finalTotalPurchase,
     ResponseSummaryVoluntary summaryVoluntary
 ) {
 
@@ -24,6 +26,14 @@ public record ResponseSummaryPurchase(
         purchase.getItems().stream()
             .map(item -> BigDecimal.valueOf(item.getQuantity())
                 .multiply(item.getUnitPrice()))
+            .reduce(BigDecimal.ZERO, BigDecimal::add),
+        purchase.getItems().stream()
+            .map(item -> BigDecimal.valueOf(item.getQuantity())
+                .multiply(item.getDiscount()))
+            .reduce(BigDecimal.ZERO, BigDecimal::add),
+        purchase.getItems().stream()
+            .map(item -> BigDecimal.valueOf(item.getQuantity())
+                .multiply(item.getUnitPrice().subtract(item.getDiscount())))
             .reduce(BigDecimal.ZERO, BigDecimal::add),
         new ResponseSummaryVoluntary(purchase.getVoluntary())
     );

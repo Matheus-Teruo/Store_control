@@ -9,6 +9,7 @@ public record ResponseSummaryProduct(
     UUID uuid,
     String productName,
     BigDecimal price,
+    BigDecimal discount,
     Integer stock,
     String productImg,
     UUID standUuid
@@ -18,6 +19,7 @@ public record ResponseSummaryProduct(
     this(product.getUuid(),
         product.getProductName(),
         product.getPrice(),
+        product.getDiscount(),
         product.getStock(),
         product.getProductImg(),
         product.getStandUuid()

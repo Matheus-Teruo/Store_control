@@ -27,6 +27,9 @@ public class Product {
     private BigDecimal price;
 
     @Column(nullable = false)
+    private BigDecimal discount;
+
+    @Column(nullable = false)
     private int stock;
 
     @Column(name = "product_img")
@@ -48,6 +51,7 @@ public class Product {
     public Product(RequestCreateProduct request, Stand stand) {
         this.productName = request.productName();
         this.price = request.price();
+        this.discount = BigDecimal.ZERO;
         this.stock = request.stock();
         if (request.productImg() != null) {
             this.productImg = request.productImg();
@@ -63,12 +67,19 @@ public class Product {
         if (request.price() != null) {
             this.price = request.price();
         }
+        if (request.discount() != null) {
+            this.discount = request.discount();
+        }
         if (request.stock() != null) {
             this.stock = request.stock();
         }
         if (request.productImg() != null) {
             this.productImg = request.productImg();
         }
+    }
+
+    public void decreaseStock(Integer stock) {
+        this.stock = this.stock - stock;
     }
 
     public void updateProduct(Stand stand) {

@@ -23,8 +23,11 @@ public class ItemService {
   public List<Item> createItems(RequestCreatePurchase request, Purchase purchase) {
     List<Item> items = new ArrayList<>();
 
+    var productMap = productService.listProductsAsMap();
+
     for (RequestCreateItem requestCreateItem : request.items()) {
-      var product = productService.safeTakeProductByUuid(requestCreateItem.productId());
+      var product = productMap.get(requestCreateItem.productId());
+
       var itemId = new ItemId(product, purchase);
       var item = new Item(requestCreateItem, itemId);
       items.add(item);
