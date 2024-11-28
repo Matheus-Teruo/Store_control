@@ -12,6 +12,6 @@ public record RequestCreateStand(
     String standName,
 
     @NotNull(message = "Stand must be related to an association")
-    UUID associationId
+    UUID associationUuid
 ) {
 }

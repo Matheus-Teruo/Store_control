@@ -1,6 +1,7 @@
 package com.storecontrol.backend.models.volunteers;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public abstract class Function {
 
   @Id @GeneratedValue(generator = "UUID")

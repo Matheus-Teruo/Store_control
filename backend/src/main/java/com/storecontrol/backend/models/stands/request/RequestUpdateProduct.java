@@ -25,6 +25,6 @@ public record RequestUpdateProduct(
 
     String productImg,
 
-    UUID standId
+    UUID standUuid
 ) {
 }

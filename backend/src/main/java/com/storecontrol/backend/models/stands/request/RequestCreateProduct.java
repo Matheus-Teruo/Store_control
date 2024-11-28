@@ -22,6 +22,6 @@ public record RequestCreateProduct(
     String productImg,
 
     @NotNull(message = "Product must be related to a stand")
-    UUID standId
+    UUID standUuid
 ) {
 }

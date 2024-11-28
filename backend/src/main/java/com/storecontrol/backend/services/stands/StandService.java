@@ -30,7 +30,7 @@ public class StandService {
   public Stand createStand(RequestCreateStand request) {
     validation.checkNameDuplication(request.standName());
 
-    var association = associationService.safeTakeAssociationByUuid(request.associationId());
+    var association = associationService.safeTakeAssociationByUuid(request.associationUuid());
     var stand = new Stand(request, association);
     repository.save(stand);
 
@@ -57,7 +57,7 @@ public class StandService {
     var stand = safeTakeStandByUuid(request.uuid());
 
     stand.updateStand(request);
-    verifyUpdateAssociation(request.associationId(), stand);
+    verifyUpdateAssociation(request.associationUuid(), stand);
 
     return stand;
   }

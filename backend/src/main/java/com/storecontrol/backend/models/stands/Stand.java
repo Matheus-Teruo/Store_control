@@ -3,11 +3,13 @@ package com.storecontrol.backend.models.stands;
 import com.storecontrol.backend.models.stands.request.RequestCreateStand;
 import com.storecontrol.backend.models.stands.request.RequestUpdateStand;
 import com.storecontrol.backend.models.volunteers.Function;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "stands")
@@ -21,6 +23,12 @@ public class Stand extends Function {
     @OneToMany(mappedBy = "stand")
     private List<Product> products;
 
+
+    public Stand(UUID uuid, String functionName, List<Voluntary> volunteers, boolean valid, Association association, List<Product> products) {
+        super(uuid, functionName, volunteers, valid);
+        this.association = association;
+        this.products = products;
+    }
 
     public Stand(RequestCreateStand request, Association association) {
         super(request.standName());

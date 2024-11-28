@@ -4,6 +4,7 @@ import com.storecontrol.backend.models.stands.request.RequestCreateAssociation;
 import com.storecontrol.backend.models.stands.request.RequestUpdateAssociation;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Table(name = "associations")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Association {
 
     @Id @GeneratedValue(generator = "UUID")

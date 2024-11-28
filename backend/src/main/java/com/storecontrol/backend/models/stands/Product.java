@@ -4,6 +4,7 @@ import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Table(name = "products")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Product {
 
     @Id @GeneratedValue(generator = "UUID")
@@ -78,12 +80,12 @@ public class Product {
         }
     }
 
-    public void decreaseStock(Integer stock) {
-        this.stock = this.stock - stock;
-    }
-
     public void updateProduct(Stand stand) {
         this.stand = stand;
+    }
+
+    public void decreaseStock(Integer stock) {
+        this.stock = this.stock - stock;
     }
 
     public void deleteProduct() {

@@ -12,6 +12,6 @@ public record RequestUpdateStand(
     @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "Stand name must contain only letters, numbers and space")
     String standName,
 
-    UUID associationId
+    UUID associationUuid
 ) {
 }
