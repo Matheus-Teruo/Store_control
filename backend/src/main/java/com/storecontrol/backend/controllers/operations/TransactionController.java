@@ -1,15 +1,18 @@
 package com.storecontrol.backend.controllers.operations;
 
-import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
+import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryTransaction;
 import com.storecontrol.backend.models.operations.response.ResponseTransaction;
+import com.storecontrol.backend.models.registers.response.ResponseCashRegister;
 import com.storecontrol.backend.services.operations.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,9 +25,15 @@ public class TransactionController {
 
   @PostMapping
   public ResponseEntity<ResponseTransaction> createTransaction(@RequestBody @Valid RequestCreateTransaction request) {
-    var response = new ResponseTransaction(service.createTransaction(request));
+    var transaction = service.createTransaction(request);
 
-    return ResponseEntity.ok(response);
+    URI location = ServletUriComponentsBuilder
+        .fromCurrentRequest()
+        .path("/{uuid}")
+        .buildAndExpand(transaction.getUuid())
+        .toUri();
+
+    return ResponseEntity.created(location).body(new ResponseTransaction(transaction));
   }
 
   @GetMapping("/{uuid}")

@@ -8,7 +8,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -20,8 +22,15 @@ public class OrderCardController {
 
   @PostMapping
   public ResponseEntity<ResponseOrderCard> createCard(@RequestBody @Valid RequestOrderCard request) {
-    var response = new ResponseOrderCard(service.createOrderCard(request));
-    return ResponseEntity.ok(response);
+    var orderCard = service.createOrderCard(request);
+
+    URI location = ServletUriComponentsBuilder
+        .fromCurrentRequest()
+        .path("/{cardId}")
+        .buildAndExpand(orderCard.getId())
+        .toUri();
+
+    return ResponseEntity.created(location).body(new ResponseOrderCard(orderCard));
   }
 
   @GetMapping("/{cardId}")

@@ -9,7 +9,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,10 +24,15 @@ public class AssociationController {
 
   @PostMapping
   public ResponseEntity<ResponseAssociation> createAssociation(@RequestBody @Valid RequestCreateAssociation request) {
-    System.out.println(request);
-    var response = new ResponseAssociation(service.createAssociation(request));
+    var association = service.createAssociation(request);
 
-    return ResponseEntity.ok(response);
+    URI location = ServletUriComponentsBuilder
+        .fromCurrentRequest()
+        .path("/{uuid}")
+        .buildAndExpand(association.getUuid())
+        .toUri();
+
+    return ResponseEntity.created(location).body(new ResponseAssociation(association));
   }
 
   @GetMapping("/{uuid}")

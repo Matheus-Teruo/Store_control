@@ -9,7 +9,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,9 +24,15 @@ public class PurchaseController {
 
   @PostMapping
   public ResponseEntity<ResponsePurchase> createPurchase(@RequestBody @Valid RequestCreatePurchase request) {
-    var response = new ResponsePurchase(service.createPurchase(request));
+    var purchase = service.createPurchase(request);
 
-    return ResponseEntity.ok(response);
+    URI location = ServletUriComponentsBuilder
+        .fromCurrentRequest()
+        .path("/{uuid}")
+        .buildAndExpand(purchase.getUuid())
+        .toUri();
+
+    return ResponseEntity.created(location).body(new ResponsePurchase(purchase));
   }
 
   @GetMapping("/{uuid}")
