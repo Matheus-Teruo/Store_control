@@ -1,6 +1,7 @@
 package com.storecontrol.backend.services.operations.validation;
 
 import com.storecontrol.backend.infra.exceptions.InvalidOperationException;
+import com.storecontrol.backend.models.enumerate.TransactionType;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.volunteers.Voluntary;
@@ -11,11 +12,15 @@ import java.math.BigDecimal;
 @Component
 public class TransactionValidation {
 
-  public void checkCashAvailableToTransaction(RequestCreateTransaction request , CashRegister cashRegister) {
+  public void checkCashAvailableToTransaction(
+      BigDecimal amount,
+      String transactionTypeEnum,
+      CashRegister cashRegister,
+      Boolean isDelete) {
     var cashTotal = cashRegister.getCashTotal();
-    var cashTransaction = request.amount();
-
-    if (cashTransaction.compareTo(cashTotal) > 0) {
+    var transactionType = TransactionType.fromString(transactionTypeEnum);
+    boolean aux = isDelete ? transactionType == TransactionType.ENTRY : transactionType == TransactionType.EXIT;
+    if (aux && amount.compareTo(cashTotal) > 0) {
       throw new InvalidOperationException("Create Transaction", "Insufficient cash to transaction");
     }
   }

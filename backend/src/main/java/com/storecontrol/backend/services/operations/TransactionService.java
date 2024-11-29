@@ -2,9 +2,8 @@ package com.storecontrol.backend.services.operations;
 
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.operations.Transaction;
-import com.storecontrol.backend.models.operations.purchases.Purchase;
-import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
+import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
 import com.storecontrol.backend.repositories.operations.TransactionRepository;
 import com.storecontrol.backend.services.operations.validation.TransactionValidation;
 import com.storecontrol.backend.services.registers.CashRegisterService;
@@ -39,7 +38,11 @@ public class TransactionService {
     var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterId());
 
     validate.checkVoluntaryFunctionMatch(voluntary);
-    validate.checkCashAvailableToTransaction(request, cashRegister);
+    validate.checkCashAvailableToTransaction(
+        request.amount(),
+        request.transactionTypeEnum(),
+        cashRegister,
+        false);
 
     var transaction = new Transaction(request, cashRegister, voluntary);
     handleCashTotal(transaction, !transaction.getTransactionTypeEnum().isExit());
@@ -66,6 +69,11 @@ public class TransactionService {
   public void deleteTransaction(RequestDeleteTransaction request) {
     var transaction = safeTakeTransactionByUuid(request.uuid());
 
+    validate.checkCashAvailableToTransaction(
+        transaction.getAmount(),
+        transaction.getTransactionTypeEnum().toString(),
+        transaction.getCashRegister(),
+        true);
     handleCashTotal(transaction, transaction.getTransactionTypeEnum().isExit());
 
     transaction.deleteTransaction();
