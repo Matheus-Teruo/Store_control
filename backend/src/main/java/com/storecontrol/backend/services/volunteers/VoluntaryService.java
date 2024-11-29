@@ -50,7 +50,7 @@ public class VoluntaryService {
   }
 
   @Transactional
-  public Voluntary uptadeVoluntary(RequestUpdateVoluntary request) {
+  public Voluntary updateVoluntary(RequestUpdateVoluntary request) {
     validation.checkNameDuplication(request.username(), request.fullname());
     var voluntary = safeTakeVoluntaryByUuid(request.uuid());
 

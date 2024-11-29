@@ -9,12 +9,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.UUID;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -43,15 +46,41 @@ public abstract class BaseControllerTest {
 		return objectMapper.readValue(json, clazz);
 	}
 
-	protected void performPost(String url, Object request, int expectedStatus) throws Exception {
-		mockMvc.perform(post(url)
+	protected String performPostCreate(String url, Object request, UUID uuid) throws Exception {
+		return mockMvc.perform(post("/" + url)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(toJson(request)))
-				.andExpect(status().is(expectedStatus));
+				.andExpect(status().isCreated())
+				.andExpect(header().string("Location", containsString("/" + url + "/" + uuid.toString())))
+				.andReturn().getResponse().getContentAsString();
 	}
 
-	protected void performGet(String url, int expectedStatus) throws Exception {
-		mockMvc.perform(get(url).accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().is(expectedStatus));
+	protected String performGetWithVariablePath(String url, UUID uuid) throws Exception {
+		return mockMvc.perform(get("/" + url + "/{uuid}", uuid)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+	}
+
+	protected ResultActions performGetList(String url) throws Exception {
+		return mockMvc.perform(get("/" + url)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray());
+	}
+
+	protected String performPut(String url, Object updateRequest) throws Exception {
+		return mockMvc.perform(put("/" + url)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+	}
+
+	protected void performDelete(String url, Object deleteRequest) throws Exception {
+		mockMvc.perform(delete("/" + url)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(deleteRequest)))
+				.andExpect(status().isNoContent());
 	}
 }

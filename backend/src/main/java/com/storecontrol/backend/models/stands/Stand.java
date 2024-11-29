@@ -24,7 +24,12 @@ public class Stand extends Function {
     private List<Product> products;
 
 
-    public Stand(UUID uuid, String functionName, List<Voluntary> volunteers, boolean valid, Association association, List<Product> products) {
+    public Stand(UUID uuid,
+                 String functionName,
+                 List<Voluntary> volunteers,
+                 boolean valid,
+                 Association association,
+                 List<Product> products) {
         super(uuid, functionName, volunteers, valid);
         this.association = association;
         this.products = products;

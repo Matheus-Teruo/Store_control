@@ -6,19 +6,19 @@ import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
+import com.storecontrol.backend.models.stands.response.ResponseProduct;
+import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
 import com.storecontrol.backend.services.stands.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class ProductControllerTest extends BaseControllerTest {
 
@@ -33,25 +33,16 @@ class ProductControllerTest extends BaseControllerTest {
     Product mockProduct = createProductEntity(UUID.randomUUID(), mockStand);
 
     RequestCreateProduct requestProduct = createRequestCreateProduct(mockStand.getUuid());
+    ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
 
     when(service.createProduct(requestProduct)).thenReturn(mockProduct);
 
-    // When & Then
-    mockMvc.perform(post("/products")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(requestProduct)))
-        .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.uuid").value(mockProduct.getUuid().toString()))
-        .andExpect(jsonPath("$.productName").value(mockProduct.getProductName()))
-        .andExpect(jsonPath("$.price").value(mockProduct.getPrice()))
-        .andExpect(jsonPath("$.discount").value(mockProduct.getDiscount()))
-        .andExpect(jsonPath("$.stock").value(mockProduct.getStock()))
-        .andExpect(jsonPath("$.productImg").value(mockProduct.getProductImg()))
-        .andExpect(jsonPath("$.stand.uuid").value(mockStand.getUuid().toString()))
-        .andExpect(jsonPath("$.stand.stand").value(mockStand.getFunctionName()))
-        .andExpect(jsonPath("$.stand.association.uuid").value(mockAssociation.getUuid().toString()))
-        .andExpect(jsonPath("$.stand.association.association").value(mockAssociation.getAssociationName()))
-        .andExpect(jsonPath("$.stand.association.principalName").value(mockAssociation.getPrincipalName()));
+    // When
+    String jsonResponse = performPostCreate("products", requestProduct, mockProduct.getUuid());
+
+    // Then
+    ResponseProduct actualResponse = fromJson(jsonResponse, ResponseProduct.class);
+    assertEquals(expectedResponse, actualResponse);
 
     // Verify interactions
     verify(service, times(1)).createProduct(requestProduct);
@@ -66,24 +57,16 @@ class ProductControllerTest extends BaseControllerTest {
     Association mockAssociation = createAssociationEntity(UUID.randomUUID());
     Stand mockStand = createStandEntity(UUID.randomUUID(), mockAssociation);
     Product mockProduct = createProductEntity(productUuid, mockStand);
+    ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
 
     when(service.takeProductByUuid(productUuid)).thenReturn(mockProduct);
 
-    // When & Then
-    mockMvc.perform(get("/products/{uuid}", productUuid)
-            .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.uuid").value(mockProduct.getUuid().toString()))
-        .andExpect(jsonPath("$.productName").value(mockProduct.getProductName()))
-        .andExpect(jsonPath("$.price").value(mockProduct.getPrice()))
-        .andExpect(jsonPath("$.discount").value(mockProduct.getDiscount()))
-        .andExpect(jsonPath("$.stock").value(mockProduct.getStock()))
-        .andExpect(jsonPath("$.productImg").value(mockProduct.getProductImg()))
-        .andExpect(jsonPath("$.stand.uuid").value(mockStand.getUuid().toString()))
-        .andExpect(jsonPath("$.stand.stand").value(mockStand.getFunctionName()))
-        .andExpect(jsonPath("$.stand.association.uuid").value(mockAssociation.getUuid().toString()))
-        .andExpect(jsonPath("$.stand.association.association").value(mockAssociation.getAssociationName()))
-        .andExpect(jsonPath("$.stand.association.principalName").value(mockAssociation.getPrincipalName()));
+    // When
+    String jsonResponse = performGetWithVariablePath("products", productUuid);
+
+    // Then
+    ResponseProduct actualResponse = fromJson(jsonResponse, ResponseProduct.class);
+    assertEquals(expectedResponse, actualResponse);
 
     // Verify interactions
     verify(service, times(1)).takeProductByUuid(productUuid);
@@ -91,7 +74,7 @@ class ProductControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void readProducts() throws Exception {
+  void testReadProducts() throws Exception {
     // Given
     Association mockAssociation = createAssociationEntity(UUID.randomUUID());
     Stand mockStand = createStandEntity(UUID.randomUUID(), mockAssociation);
@@ -99,29 +82,20 @@ class ProductControllerTest extends BaseControllerTest {
         createProductEntity(UUID.randomUUID(), mockStand),
         createProductEntity(UUID.randomUUID(), mockStand)
     );
+    List<ResponseSummaryProduct> expectedResponse = mockProducts.stream()
+        .map(ResponseSummaryProduct::new)
+        .toList();
 
     when(service.listProducts()).thenReturn(mockProducts);
 
-    // When & Then
-    mockMvc.perform(get("/products")
-            .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$").isArray())
+    // When
+    String jsonResponse = performGetList("products")
         .andExpect(jsonPath("$.length()").value(2))
-        .andExpect(jsonPath("$[0].uuid").value(mockProducts.get(0).getUuid().toString()))
-        .andExpect(jsonPath("$[0].productName").value(mockProducts.get(0).getProductName()))
-        .andExpect(jsonPath("$[0].price").value(mockProducts.get(0).getPrice()))
-        .andExpect(jsonPath("$[0].discount").value(mockProducts.get(0).getDiscount()))
-        .andExpect(jsonPath("$[0].stock").value(mockProducts.get(0).getStock()))
-        .andExpect(jsonPath("$[0].productImg").value(mockProducts.get(0).getProductImg()))
-        .andExpect(jsonPath("$[0].standUuid").value(mockProducts.get(0).getStandUuid().toString()))
-        .andExpect(jsonPath("$[1].uuid").value(mockProducts.get(1).getUuid().toString()))
-        .andExpect(jsonPath("$[1].productName").value(mockProducts.get(1).getProductName()))
-        .andExpect(jsonPath("$[1].price").value(mockProducts.get(1).getPrice()))
-        .andExpect(jsonPath("$[1].discount").value(mockProducts.get(1).getDiscount()))
-        .andExpect(jsonPath("$[1].stock").value(mockProducts.get(1).getStock()))
-        .andExpect(jsonPath("$[1].productImg").value(mockProducts.get(1).getProductImg()))
-        .andExpect(jsonPath("$[1].standUuid").value(mockProducts.get(1).getStandUuid().toString()));
+        .andReturn().getResponse().getContentAsString();
+
+    // Then
+    List<ResponseSummaryProduct> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryProduct[].class));
+    assertEquals(expectedResponse, actualResponse);
 
     // Verify interactions
     verify(service, times(1)).listProducts();
@@ -129,7 +103,7 @@ class ProductControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void updateProduct() throws Exception {
+  void testUpdateProduct() throws Exception {
     // Given
     Association mockAssociation = createAssociationEntity(UUID.randomUUID());
     Stand mockStand = createStandEntity(UUID.randomUUID(), mockAssociation);
@@ -140,25 +114,16 @@ class ProductControllerTest extends BaseControllerTest {
 
     mockProduct.updateProduct(updateRequest);
     mockProduct.updateProduct(updatedMockStand);
+    ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
 
     when(service.updateProduct(updateRequest)).thenReturn(mockProduct);
 
-    // When & Then
-    mockMvc.perform(put("/products")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(updateRequest)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.uuid").value(mockProduct.getUuid().toString()))
-        .andExpect(jsonPath("$.productName").value(mockProduct.getProductName()))
-        .andExpect(jsonPath("$.price").value(mockProduct.getPrice()))
-        .andExpect(jsonPath("$.discount").value(mockProduct.getDiscount()))
-        .andExpect(jsonPath("$.stock").value(mockProduct.getStock()))
-        .andExpect(jsonPath("$.productImg").value(mockProduct.getProductImg()))
-        .andExpect(jsonPath("$.stand.uuid").value(updatedMockStand.getUuid().toString()))
-        .andExpect(jsonPath("$.stand.stand").value(updatedMockStand.getFunctionName()))
-        .andExpect(jsonPath("$.stand.association.uuid").value(mockAssociation.getUuid().toString()))
-        .andExpect(jsonPath("$.stand.association.association").value(mockAssociation.getAssociationName()))
-        .andExpect(jsonPath("$.stand.association.principalName").value(mockAssociation.getPrincipalName()));
+    // When
+    String jsonResponse = performPut("products", updateRequest);
+
+    // Then
+    ResponseProduct actualResponse = fromJson(jsonResponse, ResponseProduct.class);
+    assertEquals(expectedResponse, actualResponse);
 
     // Verify interactions
     verify(service, times(1)).updateProduct(updateRequest);
@@ -166,17 +131,14 @@ class ProductControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void deleteProduct() throws Exception {
+  void testDeleteProduct() throws Exception {
     // Given
     RequestUpdateProduct deleteRequest = createRequestUpdateProduct(UUID.randomUUID(), UUID.randomUUID());
 
     doNothing().when(service).deleteProduct(deleteRequest);
 
     // When & Then
-    mockMvc.perform(delete("/products")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(deleteRequest)))
-        .andExpect(status().isNoContent());
+    performDelete("products", deleteRequest);
 
     // Verify interactions
     verify(service, times(1)).deleteProduct(deleteRequest);

@@ -5,16 +5,21 @@ import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegist
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Refund;
 import com.storecontrol.backend.models.operations.Transaction;
+import com.storecontrol.backend.models.stands.Association;
+import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.volunteers.Function;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "cash_registers")
@@ -40,6 +45,15 @@ public class CashRegister extends Function {
   @OneToMany(mappedBy = "cashRegister")
   private List<Refund> refunds;
 
+  public CashRegister(UUID uuid,
+                      String functionName,
+                      List<Voluntary> volunteers,
+                      boolean valid) {
+    super(uuid, functionName, volunteers, valid);
+    this.cashTotal = BigDecimal.ZERO;
+    this.creditTotal = BigDecimal.ZERO;
+    this.debitTotal = BigDecimal.ZERO;
+  }
 
   public CashRegister(RequestCreateCashRegister request) {
     super(request.cashRegisterName());

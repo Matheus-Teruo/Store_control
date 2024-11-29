@@ -52,7 +52,7 @@ public class VoluntaryController {
 
   @PutMapping
   public ResponseEntity<ResponseVoluntary> updateVoluntary(@RequestBody @Valid RequestUpdateVoluntary request) {
-    var response = new ResponseVoluntary(service.uptadeVoluntary(request));
+    var response = new ResponseVoluntary(service.updateVoluntary(request));
 
     return ResponseEntity.ok(response);
   }

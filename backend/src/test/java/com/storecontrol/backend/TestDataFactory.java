@@ -1,15 +1,44 @@
 package com.storecontrol.backend;
 
+import com.storecontrol.backend.models.registers.CashRegister;
+import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
+import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
 import com.storecontrol.backend.models.stands.Association;
 import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.request.*;
+import com.storecontrol.backend.models.volunteers.User;
+import com.storecontrol.backend.models.volunteers.Voluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestCreateVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 
 import java.math.BigDecimal;
 import java.util.Random;
 import java.util.UUID;
 
 public class TestDataFactory {
+
+  public static CashRegister createCashRegisterEntity(UUID uuid) {
+    return new CashRegister(
+        uuid,
+        nameOnlyLettersSpaceAndNumbers(),
+        null,
+        true
+    );
+  }
+
+  public static RequestCreateCashRegister createRequestCreateCashRegister() {
+    return new RequestCreateCashRegister(
+        nameOnlyLettersSpaceAndNumbers()
+    );
+  }
+
+  public static RequestUpdateCashRegister createRequestUpdateCashRegister(UUID uuid) {
+    return new RequestUpdateCashRegister(
+        uuid,
+        nameOnlyLettersSpaceAndNumbers()
+    );
+  }
 
   public static Association createAssociationEntity(UUID uuid) {
     return new Association(
@@ -99,6 +128,41 @@ public class TestDataFactory {
     );
   }
 
+  public static Voluntary createVoluntaryEntity(UUID uuid) {
+    return new Voluntary(
+        uuid,
+        new User(nameOnlyLettersAndNumbers(), nameOnlyLettersAndNumbers(), nameOnlyLettersAndNumbers()),
+        nameOnlyLettersAndSpace(),
+        null,
+        null,
+        null,
+        null,
+        null,
+        false,
+        true
+    );
+  }
+
+  public static RequestCreateVoluntary createRequestCreateVoluntary() {
+    return new RequestCreateVoluntary(
+        nameOnlyLettersAndNumbers(),
+        nameOnlyLettersAndNumbers(),
+        nameOnlyLettersAndNumbers(),
+        nameOnlyLettersAndSpace()
+    );
+  }
+
+  public static RequestUpdateVoluntary createRequestUpdateVoluntary(UUID uuid, UUID functionUuid) {
+    return new RequestUpdateVoluntary(
+        uuid,
+        nameOnlyLettersAndNumbers(),
+        nameOnlyLettersAndNumbers(),
+        nameOnlyLettersAndNumbers(),
+        nameOnlyLettersAndSpace(),
+        functionUuid
+    );
+  }
+
   private static int generateRandomLength(int min, int max) {
     return random.nextInt(max - min + 1) + min;
   }
@@ -117,6 +181,12 @@ public class TestDataFactory {
 
   private static String nameOnlyLettersSpaceAndNumbers() {
     String character = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789";
+    int length = generateRandomLength(6, 25);
+    return generateRandomName(length, character);
+  }
+
+  private static String nameOnlyLettersAndNumbers() {
+    String character = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     int length = generateRandomLength(6, 25);
     return generateRandomName(length, character);
   }

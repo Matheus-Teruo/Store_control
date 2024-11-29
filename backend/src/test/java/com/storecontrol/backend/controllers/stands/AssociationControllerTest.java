@@ -4,19 +4,19 @@ import com.storecontrol.backend.BaseControllerTest;
 import com.storecontrol.backend.models.stands.Association;
 import com.storecontrol.backend.models.stands.request.RequestCreateAssociation;
 import com.storecontrol.backend.models.stands.request.RequestUpdateAssociation;
+import com.storecontrol.backend.models.stands.response.ResponseAssociation;
+import com.storecontrol.backend.models.stands.response.ResponseSummaryAssociation;
 import com.storecontrol.backend.services.stands.AssociationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class AssociationControllerTest extends BaseControllerTest {
 
@@ -26,23 +26,21 @@ class AssociationControllerTest extends BaseControllerTest {
   @Test
   void testCreateAssociationSuccess() throws Exception {
     // Given
-    RequestCreateAssociation request = createRequestCreateAssociation();
-
+    RequestCreateAssociation requestAssociation = createRequestCreateAssociation();
     Association mockAssociation = createAssociationEntity(UUID.randomUUID());
+    ResponseAssociation expectedResponse = new ResponseAssociation(mockAssociation);
 
-    when(service.createAssociation(request)).thenReturn(mockAssociation);
+    when(service.createAssociation(requestAssociation)).thenReturn(mockAssociation);
 
-    // When & Then
-    mockMvc.perform(post("/associations")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(request)))
-        .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.uuid").value(mockAssociation.getUuid().toString()))
-        .andExpect(jsonPath("$.association").value(mockAssociation.getAssociationName()))
-        .andExpect(jsonPath("$.principalName").value(mockAssociation.getPrincipalName()));
+    // When
+    String jsonResponse = performPostCreate("associations", requestAssociation, mockAssociation.getUuid());
+
+    // Then
+    ResponseAssociation actualResponse = fromJson(jsonResponse, ResponseAssociation.class);
+    assertEquals(expectedResponse, actualResponse);
 
     // Verify interactions
-    verify(service, times(1)).createAssociation(request);
+    verify(service, times(1)).createAssociation(requestAssociation);
     verifyNoMoreInteractions(service);
   }
 
@@ -51,16 +49,16 @@ class AssociationControllerTest extends BaseControllerTest {
     // Given
     UUID associationUuid = UUID.randomUUID();
     Association mockAssociation = createAssociationEntity(associationUuid);
+    ResponseAssociation expectedResponse = new ResponseAssociation(mockAssociation);
 
     when(service.takeAssociationByUuid(associationUuid)).thenReturn(mockAssociation);
 
-    // When & Then
-    mockMvc.perform(get("/associations/{uuid}", associationUuid)
-            .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.uuid").value(mockAssociation.getUuid().toString()))
-        .andExpect(jsonPath("$.association").value(mockAssociation.getAssociationName()))
-        .andExpect(jsonPath("$.principalName").value(mockAssociation.getPrincipalName()));
+    // When
+    String jsonResponse = performGetWithVariablePath("associations", associationUuid);
+
+    // Then
+    ResponseAssociation actualResponse = fromJson(jsonResponse, ResponseAssociation.class);
+    assertEquals(expectedResponse, actualResponse);
 
     // Verify interactions
     verify(service, times(1)).takeAssociationByUuid(associationUuid);
@@ -75,19 +73,20 @@ class AssociationControllerTest extends BaseControllerTest {
         createAssociationEntity(UUID.randomUUID()),
         createAssociationEntity(UUID.randomUUID())
     );
+    List<ResponseSummaryAssociation> expectedResponse = mockAssociations.stream()
+        .map(ResponseSummaryAssociation::new)
+        .toList();
 
     when(service.listAssociations()).thenReturn(mockAssociations);
 
-    // When & Then
-    mockMvc.perform(get("/associations")
-            .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$").isArray())
+    // When
+    String jsonResponse = performGetList("associations")
         .andExpect(jsonPath("$.length()").value(2))
-        .andExpect(jsonPath("$[0].uuid").value(mockAssociations.get(0).getUuid().toString()))
-        .andExpect(jsonPath("$[0].association").value(mockAssociations.get(0).getAssociationName()))
-        .andExpect(jsonPath("$[1].uuid").value(mockAssociations.get(1).getUuid().toString()))
-        .andExpect(jsonPath("$[1].association").value(mockAssociations.get(1).getAssociationName()));
+        .andReturn().getResponse().getContentAsString();
+
+    // Then
+    List<ResponseSummaryAssociation> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryAssociation[].class));
+    assertEquals(expectedResponse, actualResponse);
 
     // Verify interactions
     verify(service, times(1)).listAssociations();
@@ -101,17 +100,16 @@ class AssociationControllerTest extends BaseControllerTest {
     RequestUpdateAssociation updateRequest = createRequestUpdateAssociation(mockAssociation.getUuid());
 
     mockAssociation.updateAssociation(updateRequest);
+    ResponseAssociation expectedResponse = new ResponseAssociation(mockAssociation);
 
     when(service.updateAssociation(updateRequest)).thenReturn(mockAssociation);
 
-    // When & Then
-    mockMvc.perform(put("/associations")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(updateRequest)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.uuid").value(mockAssociation.getUuid().toString()))
-        .andExpect(jsonPath("$.association").value(mockAssociation.getAssociationName()))
-        .andExpect(jsonPath("$.principalName").value(mockAssociation.getPrincipalName()));
+    // When
+    String jsonResponse = performPut("associations", updateRequest);
+
+    // Then
+    ResponseAssociation actualResponse = fromJson(jsonResponse, ResponseAssociation.class);
+    assertEquals(expectedResponse, actualResponse);
 
     // Verify interactions
     verify(service, times(1)).updateAssociation(updateRequest);
@@ -126,10 +124,7 @@ class AssociationControllerTest extends BaseControllerTest {
     doNothing().when(service).deleteAssociation(deleteRequest);
 
     // When & Then
-    mockMvc.perform(delete("/associations")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(deleteRequest)))
-        .andExpect(status().isNoContent());
+    performDelete("associations", deleteRequest);
 
     // Verify interactions
     verify(service, times(1)).deleteAssociation(deleteRequest);

@@ -8,6 +8,7 @@ import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.Recharge;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Table(name = "volunteers")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Voluntary {
 
   @Id @GeneratedValue(generator = "UUID")
