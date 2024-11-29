@@ -22,7 +22,7 @@ public class CustomerController {
   CustomerService service;
 
   @Autowired
-  CustomerFinalizationHandler customerSupport;
+  CustomerFinalizationHandler customerFinalizationHandler;
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseCustomer> readCustomer(@PathVariable UUID uuid) {
@@ -49,14 +49,14 @@ public class CustomerController {
 
   @PostMapping("/finalize")
   public ResponseEntity<ResponseCustomer> finalizeCustomer(@RequestBody @Valid RequestCustomerFinalization request) {
-    var response = new ResponseCustomer(customerSupport.finalizeCustomer(request));
+    var response = new ResponseCustomer(customerFinalizationHandler.finalizeCustomer(request));
 
     return ResponseEntity.ok(response);
   }
 
   @DeleteMapping("/finalize")
   public ResponseEntity<ResponseCustomer> undoFinalizeCustomer(@RequestBody @Valid RequestOrderCard request) {
-    var response = new ResponseCustomer(customerSupport.undoFinalizeCustomer(request));
+    var response = new ResponseCustomer(customerFinalizationHandler.undoFinalizeCustomer(request));
 
     return ResponseEntity.ok(response);
   }

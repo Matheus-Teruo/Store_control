@@ -2,7 +2,9 @@ package com.storecontrol.backend;
 
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
+import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
+import com.storecontrol.backend.models.customers.response.ResponseCustomer;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import com.storecontrol.backend.models.enumerate.TransactionType;
 import com.storecontrol.backend.models.operations.Donation;
@@ -52,6 +54,16 @@ public class TestDataFactory {
         new ArrayList<>(),
         new ArrayList<>(),
         inUse
+    );
+  }
+
+  public static RequestCustomerFinalization createRequestCustomerFinalization(Customer customer) {
+    return new RequestCustomerFinalization(
+        BigDecimal.TWO,
+        BigDecimal.ONE,
+        customer.getOrderCard().getId(),
+        UUID.randomUUID(),
+        UUID.randomUUID()
     );
   }
 

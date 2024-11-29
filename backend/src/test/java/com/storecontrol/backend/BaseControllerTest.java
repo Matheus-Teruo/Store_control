@@ -55,6 +55,14 @@ public abstract class BaseControllerTest {
 				.andReturn().getResponse().getContentAsString();
 	}
 
+	protected String performPost(String url, Object request) throws Exception {
+		return mockMvc.perform(post("/" + url)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(toJson(request)))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+	}
+
 	protected String performGetWithVariablePath(String url, UUID uuid) throws Exception {
 		return mockMvc.perform(get("/" + url + "/{uuid}", uuid)
 						.accept(MediaType.APPLICATION_JSON))
@@ -82,5 +90,13 @@ public abstract class BaseControllerTest {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(deleteRequest)))
 				.andExpect(status().isNoContent());
+	}
+
+	protected String performDeleteIsOk(String url, Object deleteRequest) throws Exception {
+		return mockMvc.perform(delete("/" + url)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(deleteRequest)))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
 	}
 }

@@ -3,6 +3,8 @@ package com.storecontrol.backend.controllers.customers;
 import com.storecontrol.backend.BaseControllerTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
+import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
+import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.customers.response.ResponseCustomer;
 import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
 import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
@@ -13,8 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.List;
 import java.util.UUID;
 
-import static com.storecontrol.backend.TestDataFactory.createCustomerEntity;
-import static com.storecontrol.backend.TestDataFactory.createOrderCardEntity;
+import static com.storecontrol.backend.TestDataFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -25,7 +26,7 @@ class CustomerControllerTest extends BaseControllerTest {
   CustomerService service;
 
   @MockBean
-  CustomerFinalizationHandler customerSupport;
+  CustomerFinalizationHandler customerFinalizationHandler;
 
   @Test
   void testReadCustomerSuccess() throws Exception {
@@ -117,10 +118,57 @@ class CustomerControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testFinalizeCustomer() {
+  void testFinalizeCustomerSuccess() throws Exception {
+    // Given
+    UUID customerUuid = UUID.randomUUID();
+
+    String cardId = "CardIDTest12345";
+    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
+
+    Customer mockCustomer = createCustomerEntity(customerUuid, mockOrderCard,false);
+    RequestCustomerFinalization request = createRequestCustomerFinalization(mockCustomer);
+    ResponseCustomer expectedResponse = new ResponseCustomer(mockCustomer);
+
+    when(customerFinalizationHandler.finalizeCustomer(request)).thenReturn(mockCustomer);
+
+    // When
+    String jsonResponse = performPost("customers/finalize", request);
+
+    // Then
+    ResponseCustomer actualResponse = fromJson(jsonResponse, ResponseCustomer.class);
+    assertEquals(expectedResponse, actualResponse);
+
+    // Verify interactions
+    verify(customerFinalizationHandler, times(1)).finalizeCustomer(request);
+    verifyNoMoreInteractions(customerFinalizationHandler);
+    verifyNoMoreInteractions(service);
   }
 
   @Test
-  void testUndoFinalizeCustomer() {
+  void testUndoFinalizeCustomerSuccess() throws Exception {
+    // Given
+    UUID customerUuid = UUID.randomUUID();
+
+    String cardId = "CardIDTest12345";
+
+    RequestOrderCard requestOrderCard = createRequestOrderCard(cardId);
+    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
+
+    Customer mockCustomer = createCustomerEntity(customerUuid, mockOrderCard,false);
+    ResponseCustomer expectedResponse = new ResponseCustomer(mockCustomer);
+
+    when(customerFinalizationHandler.undoFinalizeCustomer(requestOrderCard)).thenReturn(mockCustomer);
+
+    // When
+    String jsonResponse = performDeleteIsOk("customers/finalize", requestOrderCard);
+
+    // Then
+    ResponseCustomer actualResponse = fromJson(jsonResponse, ResponseCustomer.class);
+    assertEquals(expectedResponse, actualResponse);
+
+    // Verify interactions
+    verify(customerFinalizationHandler, times(1)).undoFinalizeCustomer(requestOrderCard);
+    verifyNoMoreInteractions(customerFinalizationHandler);
+    verifyNoMoreInteractions(service);
   }
 }
