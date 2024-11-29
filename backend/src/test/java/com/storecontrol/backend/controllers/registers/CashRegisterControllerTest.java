@@ -52,7 +52,7 @@ class CashRegisterControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testReadCashRegister() throws Exception {
+  void testReadCashRegisterSuccess() throws Exception {
     // Given
     UUID cashRegisterUuid = UUID.randomUUID();
 
@@ -74,7 +74,7 @@ class CashRegisterControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testReadCashRegisters() throws Exception {
+  void testReadCashRegistersSuccess() throws Exception {
     // Given
     List<CashRegister> mockCashRegisters = List.of(
         createCashRegisterEntity(UUID.randomUUID()),
@@ -101,7 +101,7 @@ class CashRegisterControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testUpdateCashRegister() throws Exception {
+  void testUpdateCashRegisterSuccess() throws Exception {
     // Given
     CashRegister mockCashRegisters = createCashRegisterEntity(UUID.randomUUID());
 
@@ -125,7 +125,7 @@ class CashRegisterControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testDeleteCashRegister() throws Exception {
+  void testDeleteCashRegisterSuccess() throws Exception {
     // Given
     RequestUpdateCashRegister deleteRequest = createRequestUpdateCashRegister(UUID.randomUUID());
 

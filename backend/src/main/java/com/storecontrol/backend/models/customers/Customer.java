@@ -5,6 +5,7 @@ import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Refund;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Table(name = "customers")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Customer {
 
     @Id @GeneratedValue(generator = "UUID")

@@ -1,5 +1,6 @@
 package com.storecontrol.backend;
 
+import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.registers.CashRegister;
@@ -15,10 +16,26 @@ import com.storecontrol.backend.models.volunteers.request.RequestCreateVoluntary
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
 public class TestDataFactory {
+
+  public static Customer createCustomerEntity(UUID uuid, OrderCard orderCard, boolean inUse) {
+    return new Customer(
+        uuid,
+        orderCard,
+        LocalDateTime.now(),
+        null,
+        new ArrayList<>(),
+        new ArrayList<>(),
+        new ArrayList<>(),
+        new ArrayList<>(),
+        inUse
+    );
+  }
 
   public static OrderCard createOrderCardEntity(String cardId, boolean active) {
     return new OrderCard(
