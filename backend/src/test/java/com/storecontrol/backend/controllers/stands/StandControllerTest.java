@@ -25,7 +25,7 @@ class StandControllerTest extends BaseControllerTest {
   private StandService service;
 
   @Test
-  void testCreateStand() throws Exception {
+  void testCreateStandSuccess() throws Exception {
     // Given
     Association mockAssociation = createAssociationEntity(UUID.randomUUID());
     Stand mockStand = createStandEntity(UUID.randomUUID(), mockAssociation);
@@ -48,7 +48,7 @@ class StandControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testReadStand() throws Exception {
+  void testReadStandSuccess() throws Exception {
     // Given
     UUID standUuid = UUID.randomUUID();
 
@@ -71,7 +71,7 @@ class StandControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testReadStands() throws Exception {
+  void testReadStandsSuccess() throws Exception {
     // Given
     Association mockAssociation = createAssociationEntity(UUID.randomUUID());
     List<Stand> mockStands = List.of(
@@ -99,7 +99,7 @@ class StandControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testUpdateStand() throws Exception {
+  void testUpdateStandSuccess() throws Exception {
     // Given
     Association mockAssociation = createAssociationEntity(UUID.randomUUID());
     Stand mockStand = createStandEntity(UUID.randomUUID(), mockAssociation);
@@ -126,7 +126,7 @@ class StandControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testDeleteStand() throws Exception {
+  void testDeleteStandSuccess() throws Exception {
     // Given
     RequestUpdateStand deleteRequest = createRequestUpdateStand(UUID.randomUUID(), UUID.randomUUID());
 

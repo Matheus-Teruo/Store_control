@@ -2,6 +2,7 @@ package com.storecontrol.backend.models.customers;
 
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Table(name = "order_cards")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class OrderCard {
 
     @Id @Column(name = "card_id")

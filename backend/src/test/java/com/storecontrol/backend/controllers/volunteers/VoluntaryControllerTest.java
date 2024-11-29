@@ -24,7 +24,7 @@ class VoluntaryControllerTest extends BaseControllerTest {
   VoluntaryService service;
 
   @Test
-  void testCreateVoluntary() throws Exception {
+  void testCreateVoluntarySuccess() throws Exception {
     // Given
     RequestCreateVoluntary requestVoluntary = createRequestCreateVoluntary();
     Voluntary mockVoluntary = createVoluntaryEntity(UUID.randomUUID());
@@ -45,7 +45,7 @@ class VoluntaryControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testReadVoluntary() throws Exception {
+  void testReadVoluntarySuccess() throws Exception {
     // Given
     UUID voluntaryUuid = UUID.randomUUID();
     Voluntary mockVoluntary = createVoluntaryEntity(voluntaryUuid);
@@ -66,7 +66,7 @@ class VoluntaryControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testReadVolunteers() throws Exception {
+  void testReadVolunteersSuccess() throws Exception {
     // Given
     List<Voluntary> mockVolunteers = List.of(
         createVoluntaryEntity(UUID.randomUUID()),
@@ -93,7 +93,7 @@ class VoluntaryControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testUpdateVoluntary() throws Exception {
+  void testUpdateVoluntarySuccess() throws Exception {
     // Given
     Voluntary mockVoluntary = createVoluntaryEntity(UUID.randomUUID());
     RequestUpdateVoluntary updateRequest = createRequestUpdateVoluntary(mockVoluntary.getUuid(), UUID.randomUUID());
@@ -116,7 +116,7 @@ class VoluntaryControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testDeleteVoluntary() throws Exception {
+  void testDeleteVoluntarySuccess() throws Exception {
     // Given
     RequestUpdateVoluntary deleteRequest = createRequestUpdateVoluntary(UUID.randomUUID(), UUID.randomUUID());
 

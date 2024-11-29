@@ -67,7 +67,7 @@ class AssociationControllerTest extends BaseControllerTest {
 
 
   @Test
-  void testReadAssociations() throws Exception {
+  void testReadAssociationsSuccess() throws Exception {
     // Given
     List<Association> mockAssociations = List.of(
         createAssociationEntity(UUID.randomUUID()),
@@ -94,7 +94,7 @@ class AssociationControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testUpdateAssociation() throws Exception {
+  void testUpdateAssociationSuccess() throws Exception {
     // Given
     Association mockAssociation = createAssociationEntity(UUID.randomUUID());
     RequestUpdateAssociation updateRequest = createRequestUpdateAssociation(mockAssociation.getUuid());
@@ -117,7 +117,7 @@ class AssociationControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testDeleteAssociation() throws Exception {
+  void testDeleteAssociationSuccess() throws Exception {
     // Given
     RequestUpdateAssociation deleteRequest = createRequestUpdateAssociation(UUID.randomUUID());
 

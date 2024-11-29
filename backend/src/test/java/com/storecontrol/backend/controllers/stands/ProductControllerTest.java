@@ -26,7 +26,7 @@ class ProductControllerTest extends BaseControllerTest {
   private ProductService service;
 
   @Test
-  void testCreateProduct() throws Exception {
+  void testCreateProductSuccess() throws Exception {
     // Given
     Association mockAssociation = createAssociationEntity(UUID.randomUUID());
     Stand mockStand = createStandEntity(UUID.randomUUID(), mockAssociation);
@@ -50,7 +50,7 @@ class ProductControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testReadProduct() throws Exception {
+  void testReadProductSuccess() throws Exception {
     // Given
     UUID productUuid = UUID.randomUUID();
 
@@ -74,7 +74,7 @@ class ProductControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testReadProducts() throws Exception {
+  void testReadProductsSuccess() throws Exception {
     // Given
     Association mockAssociation = createAssociationEntity(UUID.randomUUID());
     Stand mockStand = createStandEntity(UUID.randomUUID(), mockAssociation);
@@ -103,7 +103,7 @@ class ProductControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testUpdateProduct() throws Exception {
+  void testUpdateProductSuccess() throws Exception {
     // Given
     Association mockAssociation = createAssociationEntity(UUID.randomUUID());
     Stand mockStand = createStandEntity(UUID.randomUUID(), mockAssociation);
@@ -131,7 +131,7 @@ class ProductControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testDeleteProduct() throws Exception {
+  void testDeleteProductSuccess() throws Exception {
     // Given
     RequestUpdateProduct deleteRequest = createRequestUpdateProduct(UUID.randomUUID(), UUID.randomUUID());
 

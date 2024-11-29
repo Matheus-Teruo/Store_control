@@ -1,5 +1,7 @@
 package com.storecontrol.backend;
 
+import com.storecontrol.backend.models.customers.OrderCard;
+import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
 import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
@@ -17,6 +19,22 @@ import java.util.Random;
 import java.util.UUID;
 
 public class TestDataFactory {
+
+  public static OrderCard createOrderCardEntity(String cardId, boolean active) {
+    return new OrderCard(
+        cardId,
+        BigDecimal.ZERO,
+        null,
+        active
+    );
+  }
+
+  public static RequestOrderCard createRequestOrderCard(String cardId) {
+    return new RequestOrderCard(
+        cardId
+    );
+  }
+
 
   public static CashRegister createCashRegisterEntity(UUID uuid) {
     return new CashRegister(
