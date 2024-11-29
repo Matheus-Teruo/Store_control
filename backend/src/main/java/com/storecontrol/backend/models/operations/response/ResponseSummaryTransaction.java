@@ -10,7 +10,7 @@ import java.util.UUID;
 public record ResponseSummaryTransaction(
     UUID uuid,
     BigDecimal amount,
-    Enum<TransactionType> transactionTypeEnum,
+    TransactionType transactionTypeEnum,
     String transactionTimeStamp,
     ResponseSummaryVoluntary voluntaryId
 ) {

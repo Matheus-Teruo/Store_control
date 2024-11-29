@@ -5,6 +5,7 @@ import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Table(name = "refunds")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Refund {
 
   @Id @GeneratedValue(generator = "UUID")

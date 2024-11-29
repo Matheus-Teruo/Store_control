@@ -4,6 +4,7 @@ import com.storecontrol.backend.models.customers.request.RequestCustomerFinaliza
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Table(name = "donations")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Donation {
 
     @Id @GeneratedValue(generator = "UUID")

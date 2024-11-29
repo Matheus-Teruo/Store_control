@@ -26,8 +26,8 @@ class AssociationControllerTest extends BaseControllerTest {
   @Test
   void testCreateAssociationSuccess() throws Exception {
     // Given
-    RequestCreateAssociation requestAssociation = createRequestCreateAssociation();
     Association mockAssociation = createAssociationEntity(UUID.randomUUID());
+    RequestCreateAssociation requestAssociation = createRequestCreateAssociation(mockAssociation);
     ResponseAssociation expectedResponse = new ResponseAssociation(mockAssociation);
 
     when(service.createAssociation(requestAssociation)).thenReturn(mockAssociation);
@@ -64,7 +64,6 @@ class AssociationControllerTest extends BaseControllerTest {
     verify(service, times(1)).takeAssociationByUuid(associationUuid);
     verifyNoMoreInteractions(service);
   }
-
 
   @Test
   void testReadAssociationsSuccess() throws Exception {

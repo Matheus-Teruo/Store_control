@@ -6,11 +6,6 @@ import com.storecontrol.backend.models.registers.request.RequestCreateCashRegist
 import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
 import com.storecontrol.backend.models.registers.response.ResponseCashRegister;
 import com.storecontrol.backend.models.registers.response.ResponseSummaryCashRegister;
-import com.storecontrol.backend.models.stands.Association;
-import com.storecontrol.backend.models.stands.Stand;
-import com.storecontrol.backend.models.stands.request.RequestUpdateStand;
-import com.storecontrol.backend.models.stands.response.ResponseStand;
-import com.storecontrol.backend.models.stands.response.ResponseSummaryStand;
 import com.storecontrol.backend.services.registers.CashRegisterService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,7 +14,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
-import static com.storecontrol.backend.TestDataFactory.createStandEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -33,8 +27,7 @@ class CashRegisterControllerTest extends BaseControllerTest {
   void testCreateCashRegister() throws Exception {
     // Given
     CashRegister mockCashRegister = createCashRegisterEntity(UUID.randomUUID());
-
-    RequestCreateCashRegister requestStand = createRequestCreateCashRegister();
+    RequestCreateCashRegister requestStand = createRequestCreateCashRegister(mockCashRegister);
     ResponseCashRegister expectedResponse = new ResponseCashRegister(mockCashRegister);
 
     when(service.createCashRegister(requestStand)).thenReturn(mockCashRegister);

@@ -26,8 +26,8 @@ class VoluntaryControllerTest extends BaseControllerTest {
   @Test
   void testCreateVoluntarySuccess() throws Exception {
     // Given
-    RequestCreateVoluntary requestVoluntary = createRequestCreateVoluntary();
     Voluntary mockVoluntary = createVoluntaryEntity(UUID.randomUUID());
+    RequestCreateVoluntary requestVoluntary = createRequestCreateVoluntary(mockVoluntary);
     ResponseVoluntary expectedResponse = new ResponseVoluntary(mockVoluntary);
 
     when(service.createVoluntary(requestVoluntary)).thenReturn(mockVoluntary);

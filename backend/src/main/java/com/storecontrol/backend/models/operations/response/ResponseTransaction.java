@@ -11,7 +11,7 @@ import java.util.UUID;
 public record ResponseTransaction(
     UUID uuid,
     BigDecimal amount,
-    Enum<TransactionType> transactionTypeEnum,
+    TransactionType transactionTypeEnum,
     String transactionTimeStamp,
     ResponseSummaryCashRegister cashRegisterId,
     ResponseSummaryVoluntary voluntaryId

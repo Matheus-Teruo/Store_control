@@ -5,6 +5,7 @@ import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.models.enumerate.TransactionType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Table(name = "transactions")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
 
   @Id @GeneratedValue(generator = "UUID")

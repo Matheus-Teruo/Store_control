@@ -27,10 +27,9 @@ class StandControllerTest extends BaseControllerTest {
   @Test
   void testCreateStandSuccess() throws Exception {
     // Given
-    Association mockAssociation = createAssociationEntity(UUID.randomUUID());
-    Stand mockStand = createStandEntity(UUID.randomUUID(), mockAssociation);
+    Stand mockStand = createStandEntity(UUID.randomUUID());
 
-    RequestCreateStand requestStand = createRequestCreateStand(mockAssociation.getUuid());
+    RequestCreateStand requestStand = createRequestCreateStand(mockStand);
     ResponseStand expectedResponse = new ResponseStand(mockStand);
 
     when(service.createStand(requestStand)).thenReturn(mockStand);
@@ -52,8 +51,7 @@ class StandControllerTest extends BaseControllerTest {
     // Given
     UUID standUuid = UUID.randomUUID();
 
-    Association mockAssociation = createAssociationEntity(UUID.randomUUID());
-    Stand mockStand = createStandEntity(standUuid, mockAssociation);
+    Stand mockStand = createStandEntity(standUuid);
     ResponseStand expectedResponse = new ResponseStand(mockStand);
 
     when(service.takeStandByUuid(standUuid)).thenReturn(mockStand);
@@ -73,10 +71,9 @@ class StandControllerTest extends BaseControllerTest {
   @Test
   void testReadStandsSuccess() throws Exception {
     // Given
-    Association mockAssociation = createAssociationEntity(UUID.randomUUID());
     List<Stand> mockStands = List.of(
-        createStandEntity(UUID.randomUUID(), mockAssociation),
-        createStandEntity(UUID.randomUUID(), mockAssociation)
+        createStandEntity(UUID.randomUUID()),
+        createStandEntity(UUID.randomUUID())
     );
     List<ResponseSummaryStand> expectedResponse = mockStands.stream()
         .map(ResponseSummaryStand::new)
@@ -101,8 +98,7 @@ class StandControllerTest extends BaseControllerTest {
   @Test
   void testUpdateStandSuccess() throws Exception {
     // Given
-    Association mockAssociation = createAssociationEntity(UUID.randomUUID());
-    Stand mockStand = createStandEntity(UUID.randomUUID(), mockAssociation);
+    Stand mockStand = createStandEntity(UUID.randomUUID());
 
     Association updatedMockAssociation = createAssociationEntity(UUID.randomUUID());
     RequestUpdateStand updateRequest = createRequestUpdateStand(mockStand.getUuid(), updatedMockAssociation.getUuid());

@@ -1,7 +1,6 @@
 package com.storecontrol.backend.controllers.stands;
 
 import com.storecontrol.backend.BaseControllerTest;
-import com.storecontrol.backend.models.stands.Association;
 import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
@@ -28,11 +27,8 @@ class ProductControllerTest extends BaseControllerTest {
   @Test
   void testCreateProductSuccess() throws Exception {
     // Given
-    Association mockAssociation = createAssociationEntity(UUID.randomUUID());
-    Stand mockStand = createStandEntity(UUID.randomUUID(), mockAssociation);
-    Product mockProduct = createProductEntity(UUID.randomUUID(), mockStand);
-
-    RequestCreateProduct requestProduct = createRequestCreateProduct(mockStand.getUuid());
+    Product mockProduct = createProductEntity(UUID.randomUUID());
+    RequestCreateProduct requestProduct = createRequestCreateProduct(mockProduct);
     ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
 
     when(service.createProduct(requestProduct)).thenReturn(mockProduct);
@@ -54,9 +50,7 @@ class ProductControllerTest extends BaseControllerTest {
     // Given
     UUID productUuid = UUID.randomUUID();
 
-    Association mockAssociation = createAssociationEntity(UUID.randomUUID());
-    Stand mockStand = createStandEntity(UUID.randomUUID(), mockAssociation);
-    Product mockProduct = createProductEntity(productUuid, mockStand);
+    Product mockProduct = createProductEntity(productUuid);
     ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
 
     when(service.takeProductByUuid(productUuid)).thenReturn(mockProduct);
@@ -76,11 +70,9 @@ class ProductControllerTest extends BaseControllerTest {
   @Test
   void testReadProductsSuccess() throws Exception {
     // Given
-    Association mockAssociation = createAssociationEntity(UUID.randomUUID());
-    Stand mockStand = createStandEntity(UUID.randomUUID(), mockAssociation);
     List<Product> mockProducts = List.of(
-        createProductEntity(UUID.randomUUID(), mockStand),
-        createProductEntity(UUID.randomUUID(), mockStand)
+        createProductEntity(UUID.randomUUID()),
+        createProductEntity(UUID.randomUUID())
     );
     List<ResponseSummaryProduct> expectedResponse = mockProducts.stream()
         .map(ResponseSummaryProduct::new)
@@ -105,11 +97,9 @@ class ProductControllerTest extends BaseControllerTest {
   @Test
   void testUpdateProductSuccess() throws Exception {
     // Given
-    Association mockAssociation = createAssociationEntity(UUID.randomUUID());
-    Stand mockStand = createStandEntity(UUID.randomUUID(), mockAssociation);
-    Product mockProduct = createProductEntity(UUID.randomUUID(), mockStand);
+    Product mockProduct = createProductEntity(UUID.randomUUID());
 
-    Stand updatedMockStand = createStandEntity(UUID.randomUUID(), mockAssociation);
+    Stand updatedMockStand = createStandEntity(UUID.randomUUID());
     RequestUpdateProduct updateRequest = createRequestUpdateProduct(mockProduct.getUuid(), updatedMockStand.getUuid());
 
     mockProduct.updateProduct(updateRequest);

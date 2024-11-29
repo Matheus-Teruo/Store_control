@@ -6,6 +6,7 @@ import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Table(name = "recharges")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Recharge {
 
     @Id @GeneratedValue(generator = "UUID")

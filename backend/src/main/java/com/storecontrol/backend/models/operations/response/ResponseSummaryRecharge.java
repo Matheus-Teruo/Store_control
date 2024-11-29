@@ -11,7 +11,7 @@ public record ResponseSummaryRecharge(
     UUID uuid,
     BigDecimal rechargeValue,
     String rechargeTimeStamp,
-    Enum<PaymentType> paymentTypeEnum,
+    PaymentType paymentTypeEnum,
     ResponseSummaryVoluntary summaryVoluntary
 ) {
 

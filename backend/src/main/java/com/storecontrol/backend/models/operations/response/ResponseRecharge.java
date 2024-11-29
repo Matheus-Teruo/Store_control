@@ -12,7 +12,7 @@ public record ResponseRecharge(
     UUID uuid,
     BigDecimal rechargeValue,
     String rechargeTimeStamp,
-    Enum<PaymentType> paymentTypeEnum,
+    PaymentType paymentTypeEnum,
     ResponseSummaryCustomer summaryCustomer,
     ResponseSummaryVoluntary summaryVoluntary
 ) {
