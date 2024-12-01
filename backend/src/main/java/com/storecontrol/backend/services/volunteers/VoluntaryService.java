@@ -1,14 +1,17 @@
 package com.storecontrol.backend.services.volunteers;
 
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
+import com.storecontrol.backend.models.volunteers.User;
 import com.storecontrol.backend.models.volunteers.Voluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestCreateVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestRoleVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
 import com.storecontrol.backend.services.volunteers.validation.VoluntaryValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,10 +29,14 @@ public class VoluntaryService {
   @Autowired
   FunctionService functionService;
 
+  @Autowired
+  PasswordEncoder passwordEncoder;
+
   @Transactional
-  public Voluntary createVoluntary(RequestCreateVoluntary request) {
+  public Voluntary createVoluntary(RequestSignupVoluntary request) {
     validation.checkNameDuplication(request.username(), request.fullname());
-    var voluntary = new Voluntary(request);
+    var user = new User(request.username(), passwordEncoder.encode(request.password()));
+    var voluntary = new Voluntary(request, user);
     repository.save(voluntary);
 
     return voluntary;
@@ -56,6 +63,15 @@ public class VoluntaryService {
 
     voluntary.updateVoluntary(request);
     verifyUpdateFunction(request.functionId(), voluntary);
+
+    return voluntary;
+  }
+
+  @Transactional
+  public Voluntary updateVoluntaryRole(RequestRoleVoluntary request) {
+    var voluntary = safeTakeVoluntaryByUuid(request.uuid());
+
+    voluntary.updateVoluntaryRole(request);
 
     return voluntary;
   }

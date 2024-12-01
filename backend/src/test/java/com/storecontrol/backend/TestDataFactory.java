@@ -4,9 +4,9 @@ import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
-import com.storecontrol.backend.models.customers.response.ResponseCustomer;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import com.storecontrol.backend.models.enumerate.TransactionType;
+import com.storecontrol.backend.models.enumerate.VoluntaryRole;
 import com.storecontrol.backend.models.operations.Donation;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Refund;
@@ -31,7 +31,8 @@ import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.request.*;
 import com.storecontrol.backend.models.volunteers.User;
 import com.storecontrol.backend.models.volunteers.Voluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestCreateVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestLoginVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 
 import java.math.BigDecimal;
@@ -340,31 +341,36 @@ public class TestDataFactory {
   public static Voluntary createVoluntaryEntity(UUID uuid) {
     return new Voluntary(
         uuid,
-        new User(nameOnlyLettersAndNumbers(), nameOnlyLettersAndNumbers(), nameOnlyLettersAndNumbers()),
+        new User(nameOnlyLettersAndNumbers(), nameOnlyLettersAndNumbers()),
         nameOnlyLettersAndSpace(),
         null,
         null,
         null,
         null,
         null,
-        false,
+        VoluntaryRole.ROLE_USER,
         true
     );
   }
 
-  public static RequestCreateVoluntary createRequestCreateVoluntary(Voluntary voluntary) {
-    return new RequestCreateVoluntary(
+  public static RequestSignupVoluntary createRequestSignupVoluntary(Voluntary voluntary) {
+    return new RequestSignupVoluntary(
         voluntary.getUser().getUsername(),
         voluntary.getUser().getPassword(),
-        voluntary.getUser().getSalt(),
         voluntary.getFullname()
+    );
+  }
+
+  public static RequestLoginVoluntary createRequestLoginVoluntary(Voluntary voluntary) {
+    return new RequestLoginVoluntary(
+        voluntary.getUser().getUsername(),
+        voluntary.getUser().getPassword()
     );
   }
 
   public static RequestUpdateVoluntary createRequestUpdateVoluntary(UUID uuid, UUID functionUuid) {
     return new RequestUpdateVoluntary(
         uuid,
-        nameOnlyLettersAndNumbers(),
         nameOnlyLettersAndNumbers(),
         nameOnlyLettersAndNumbers(),
         nameOnlyLettersAndSpace(),

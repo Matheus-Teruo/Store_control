@@ -1,17 +1,21 @@
 package com.storecontrol.backend.models.volunteers;
 
-import com.storecontrol.backend.models.volunteers.request.RequestCreateVoluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
+import com.storecontrol.backend.models.enumerate.VoluntaryRole;
 import com.storecontrol.backend.models.operations.Donation;
+import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Refund;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
-import com.storecontrol.backend.models.operations.Recharge;
+import com.storecontrol.backend.models.volunteers.request.RequestRoleVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,7 +24,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Voluntary {
+public class Voluntary implements UserDetails {
 
   @Id @GeneratedValue(generator = "UUID")
   private UUID uuid;
@@ -46,23 +50,23 @@ public class Voluntary {
   @OneToMany(mappedBy = "voluntary")
   private List<Refund> refunds;
 
-  @Column(nullable = false)
-  private boolean superuser;
+  @Column(name = "voluntary_role", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private VoluntaryRole voluntaryRole;
 
   @Column(nullable = false)
   private boolean valid;
 
-
-  public Voluntary(@Valid RequestCreateVoluntary request) {
-    this.user = new User(request.username(), request.password(), request.salt());
+  public Voluntary(RequestSignupVoluntary request, User user) {
+    this.user = user;
     this.fullname = request.fullname();
-    this.superuser = false;
+    this.voluntaryRole = VoluntaryRole.ROLE_USER;
     this.valid = true;
   }
 
   public void updateVoluntary(RequestUpdateVoluntary request) {
-    if (request.username() != null || request.password() != null || request.salt() != null) {
-      this.user.updateUser(request.username(), request.password(), request.salt());
+    if (request.username() != null || request.password() != null) {
+      this.user.updateUser(request.username(), request.password());
     }
     if (request.fullname() != null) {
       this.fullname = request.fullname();
@@ -73,7 +77,46 @@ public class Voluntary {
     this.function = function;
   }
 
+  public void updateVoluntaryRole(RequestRoleVoluntary request) {
+    this.voluntaryRole = VoluntaryRole.fromString(request.voluntaryRole());
+  }
+
   public void deleteVoluntary() {
     this.valid = false;
+  }
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return List.of((GrantedAuthority) () -> voluntaryRole.name());
+  }
+
+  @Override
+  public String getUsername() {
+    return user.getUsername();
+  }
+
+  @Override
+  public String getPassword() {
+    return user.getPassword();
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    return UserDetails.super.isAccountNonExpired();
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return UserDetails.super.isAccountNonLocked();
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return UserDetails.super.isCredentialsNonExpired();
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return UserDetails.super.isEnabled();
   }
 }

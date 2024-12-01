@@ -3,6 +3,7 @@ package com.storecontrol.backend.repositories.volunteers;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,4 +19,6 @@ public interface VoluntaryRepository extends JpaRepository<Voluntary, UUID> {
   boolean existsByUserUsername(String username);
 
   boolean existsByFullname(String fullname);
+
+  UserDetails findByUserUsername(String username);
 }

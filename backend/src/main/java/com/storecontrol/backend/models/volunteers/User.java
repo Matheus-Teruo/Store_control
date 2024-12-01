@@ -18,19 +18,13 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String salt;
 
-
-    public void updateUser(String username, String password, String salt) {
+    public void updateUser(String username, String password) {
         if (username != null) {
             this.username = username;
         }
         if (password != null) {
             this.password = password;
-        }
-        if (salt != null) {
-            this.salt = salt;
         }
     }
 }

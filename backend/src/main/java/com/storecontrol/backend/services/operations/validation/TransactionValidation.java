@@ -2,7 +2,6 @@ package com.storecontrol.backend.services.operations.validation;
 
 import com.storecontrol.backend.infra.exceptions.InvalidOperationException;
 import com.storecontrol.backend.models.enumerate.TransactionType;
-import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import org.springframework.stereotype.Component;
@@ -26,7 +25,7 @@ public class TransactionValidation {
   }
 
   public void checkVoluntaryFunctionMatch(Voluntary voluntary) {
-    if (!voluntary.isSuperuser()) {
+    if (!voluntary.getVoluntaryRole().isAdmin()) {
       if ((voluntary.getFunction() == null)) {
         throw new InvalidOperationException("Create Transaction", "This voluntary has no role");
       } else {

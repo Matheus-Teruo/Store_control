@@ -17,6 +17,6 @@ public enum PaymentType {
                 return paymentType;
             }
         }
-        throw new IllegalArgumentException("Nenhum tipo de pagamento encontrado a partir da String passada");
+        throw new IllegalArgumentException("No payment type found from the passed String");
     }
 }

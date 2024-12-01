@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class RechargeValidation {
 
   public void checkVoluntaryFunctionMatch(Function function, Voluntary voluntary) {
-    if (!voluntary.isSuperuser()) {
+    if (!voluntary.getVoluntaryRole().isAdmin()) {
       if ((voluntary.getFunction() == null)) {
         throw new InvalidOperationException("Create Recharge", "This voluntary has no role");
       } else {

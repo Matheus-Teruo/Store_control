@@ -17,7 +17,7 @@ public record ResponseVoluntary(
         voluntary.getUser().getUsername(),
         voluntary.getFullname(),
         voluntary.getFunction() != null ? new ResponseFunction(voluntary.getFunction()) : null,
-        voluntary.isSuperuser()
+        voluntary.getVoluntaryRole().isAdmin()
     );
   }
 }

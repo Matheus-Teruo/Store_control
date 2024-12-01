@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class DonationValidation {
 
   public void checkVoluntaryFunctionMatch(Voluntary voluntary) {
-    if (!voluntary.isSuperuser()) {
+    if (!voluntary.getVoluntaryRole().isAdmin()) {
       if ((voluntary.getFunction() == null)) {
         throw new InvalidOperationException("Create Donation", "This voluntary has no role");
       } else {

@@ -18,7 +18,7 @@ public enum TransactionType {
         return transactionType;
       }
     }
-    throw new IllegalArgumentException("Nenhum tipo de transição encontrada a partir da String passada");
+    throw new IllegalArgumentException("No transition type found from the passed String");
   }
 
   public boolean isExit() {
