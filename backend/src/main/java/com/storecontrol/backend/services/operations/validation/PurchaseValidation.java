@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class PurchaseValidation {
 
   public void checkVoluntaryFunctionMatch(Voluntary voluntary) {
-    if (!voluntary.getVoluntaryRole().isAdmin()) {
+    if (voluntary.getVoluntaryRole().isNotAdmin()) {
       if ((voluntary.getFunction() == null)) {
         throw new InvalidOperationException("Create Purchase", "This voluntary has no role");
       } else {
@@ -42,7 +42,7 @@ public class PurchaseValidation {
         throw new InvalidDatabaseQueryException("Non-existent entity", "Product", requestCreateItem.productId().toString());
       }
 
-      if (!voluntary.getVoluntaryRole().isAdmin()) {
+      if (voluntary.getVoluntaryRole().isNotAdmin()) {
         if (product.getPrice().compareTo(requestCreateItem.unitPrice()) != 0) {
           throw new InvalidOperationException("Create Purchase", "Price of product " +
               product.getProductName() +

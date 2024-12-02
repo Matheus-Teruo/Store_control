@@ -25,7 +25,7 @@ public class TransactionValidation {
   }
 
   public void checkVoluntaryFunctionMatch(Voluntary voluntary) {
-    if (!voluntary.getVoluntaryRole().isAdmin()) {
+    if (voluntary.getVoluntaryRole().isNotAdmin()) {
       if ((voluntary.getFunction() == null)) {
         throw new InvalidOperationException("Create Transaction", "This voluntary has no role");
       } else {

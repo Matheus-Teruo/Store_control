@@ -1,5 +1,6 @@
 package com.storecontrol.backend.models.volunteers.response;
 
+import com.storecontrol.backend.models.enumerate.VoluntaryRole;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 
 import java.util.UUID;
@@ -9,7 +10,7 @@ public record ResponseVoluntary(
     String username,
     String fullname,
     ResponseFunction function,
-    Boolean superuser
+    VoluntaryRole voluntaryRole
 ) {
 
   public ResponseVoluntary(Voluntary voluntary) {
@@ -17,7 +18,7 @@ public record ResponseVoluntary(
         voluntary.getUser().getUsername(),
         voluntary.getFullname(),
         voluntary.getFunction() != null ? new ResponseFunction(voluntary.getFunction()) : null,
-        voluntary.getVoluntaryRole().isAdmin()
+        voluntary.getVoluntaryRole()
     );
   }
 }

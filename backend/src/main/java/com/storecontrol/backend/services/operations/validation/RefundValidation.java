@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class RefundValidation {
 
   public void checkVoluntaryFunctionMatch(Voluntary voluntary) {
-    if (!voluntary.getVoluntaryRole().isAdmin()) {
+    if (voluntary.getVoluntaryRole().isNotAdmin()) {
       if ((voluntary.getFunction() == null)) {
         throw new InvalidOperationException("Create Refund", "This voluntary has no role");
       } else {
