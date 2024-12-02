@@ -30,6 +30,7 @@ public class SecurityConfigurations {
           req.requestMatchers( "/user/login","/user/signup","/customers/{uuid}").permitAll();
 
           req.requestMatchers(
+              "/user/logout",
               "/user/check",
               "/customer/finalize",
               "/donations",
