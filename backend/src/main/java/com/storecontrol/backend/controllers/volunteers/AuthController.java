@@ -45,7 +45,7 @@ public class AuthController {
 
     var tokenJWT = tokenService.generateToken((Voluntary) authentication.getPrincipal());
 
-    response.addCookie(createCookie(tokenJWT));
+    response.addCookie(createCookie(tokenJWT, 24));
 
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
@@ -66,7 +66,7 @@ public class AuthController {
 
     var tokenJWT = tokenService.generateToken((Voluntary) authentication.getPrincipal());
 
-    response.addCookie(createCookie(tokenJWT));
+    response.addCookie(createCookie(tokenJWT, 24));
 
     return ResponseEntity.noContent().build();
   }
@@ -81,12 +81,19 @@ public class AuthController {
     return ResponseEntity.ok(new ResponseUser(user));
   }
 
-  private Cookie createCookie(String tokenJWT) {
+  @PostMapping("/logout")
+  public ResponseEntity<Void> logout(HttpServletResponse response) {
+    response.addCookie(createCookie("", 0));
+
+    return ResponseEntity.noContent().build();
+  }
+
+  private Cookie createCookie(String tokenJWT, int hours) {
     Cookie authCookie = new Cookie("auth", tokenJWT);
     authCookie.setHttpOnly(true);
     authCookie.setSecure(true);
     authCookie.setPath("/");
-    authCookie.setMaxAge(60 * 60 * 24);
+    authCookie.setMaxAge(60 * 60 * hours);
     return authCookie;
   }
 
@@ -94,7 +101,7 @@ public class AuthController {
     Cookie[] cookies = request.getCookies();
     if (cookies != null) {
       for (Cookie cookie : cookies) {
-        if ("auth".equals(cookie.getName())) { // Nome do cookie que você deseja recuperar
+        if ("auth".equals(cookie.getName())) {
           return cookie.getValue();
         }
       }

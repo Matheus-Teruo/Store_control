@@ -99,7 +99,7 @@ class AuthControllerTest extends BaseControllerTest {
   }
 
   @Test
-  void testUserEndpointSuccess() throws Exception {
+  void testUserCheckSuccess() throws Exception {
     // Given
     String mockJwt = "mocked-jwt-token";
     UUID mockUserUuid = UUID.randomUUID();
@@ -123,5 +123,24 @@ class AuthControllerTest extends BaseControllerTest {
     verify(service, times(1)).safeTakeVoluntaryByUuid(mockUserUuid);
     verifyNoMoreInteractions(tokenService);
     verifyNoMoreInteractions(service);
+  }
+
+  @Test
+  void testLogoutSuccess() throws Exception {
+    // Given
+    String mockJwt = "mocked-jwt-token";
+    Cookie authCookie = new Cookie("auth", mockJwt);
+
+    // When & Then
+    mockMvc.perform(post("/user/logout")
+            .cookie(authCookie))
+        .andExpect(status().isNoContent())
+        .andExpect(cookie().value("auth", ""))
+        .andExpect(cookie().maxAge("auth", 0));
+
+    // Verify interactions
+    verifyNoMoreInteractions(tokenService);
+    verifyNoMoreInteractions(service);
+    verifyNoMoreInteractions(manager);
   }
 }
