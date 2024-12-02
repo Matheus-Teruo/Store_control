@@ -62,8 +62,8 @@ public class SecurityFilter extends OncePerRequestFilter {
   }
 
   private static final List<String> PUBLIC_ROUTES = List.of(
-      "/volunteers/login",
-      "/volunteers/signup",
+      "/user/login",
+      "/user/signup",
       "/customers/"
   );
 

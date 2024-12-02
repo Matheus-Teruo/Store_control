@@ -27,9 +27,10 @@ public class SecurityConfigurations {
     return http.csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(req -> {
-          req.requestMatchers( "/volunteers/login","/volunteers/signup","/customers/{uuid}").permitAll();
+          req.requestMatchers( "/user/login","/user/signup","/customers/{uuid}").permitAll();
 
           req.requestMatchers(
+              "/user/check",
               "/customer/finalize",
               "/donations",
               "/purchases",
