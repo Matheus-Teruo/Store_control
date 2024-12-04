@@ -11,14 +11,15 @@ import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
 import com.storecontrol.backend.services.customers.CustomerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class CustomerControllerTest extends BaseControllerTest {
 
@@ -41,12 +42,11 @@ class CustomerControllerTest extends BaseControllerTest {
 
     when(service.takeFilteredCustomerByUuid(customerUuid)).thenReturn(mockCustomer);
 
-    // When
-    String jsonResponse = performGetWithVariablePath("customers", customerUuid);
-
-    // Then
-    ResponseCustomer actualResponse = fromJson(jsonResponse, ResponseCustomer.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(get("/customers/{uuid}", customerUuid)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).takeFilteredCustomerByUuid(customerUuid);
@@ -71,14 +71,12 @@ class CustomerControllerTest extends BaseControllerTest {
 
     when(service.listActiveCustomers()).thenReturn(mockCustomers);
 
-    // When
-    String jsonResponse = performGetList("customers/active")
+    // When & Then
+    mockMvc.perform(get("/customers/active")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryCustomer> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryCustomer[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listActiveCustomers();
@@ -103,14 +101,12 @@ class CustomerControllerTest extends BaseControllerTest {
 
     when(service.listCustomers()).thenReturn(mockCustomers);
 
-    // When
-    String jsonResponse = performGetList("customers")
+    // When & Then
+    mockMvc.perform(get("/customers")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryCustomer> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryCustomer[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listCustomers();
@@ -131,12 +127,12 @@ class CustomerControllerTest extends BaseControllerTest {
 
     when(customerFinalizationHandler.finalizeCustomer(request)).thenReturn(mockCustomer);
 
-    // When
-    String jsonResponse = performPost("customers/finalize", request);
-
-    // Then
-    ResponseCustomer actualResponse = fromJson(jsonResponse, ResponseCustomer.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(post("/customers/finalize")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(request)))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(customerFinalizationHandler, times(1)).finalizeCustomer(request);
@@ -159,12 +155,11 @@ class CustomerControllerTest extends BaseControllerTest {
 
     when(customerFinalizationHandler.undoFinalizeCustomer(requestOrderCard)).thenReturn(mockCustomer);
 
-    // When
-    String jsonResponse = performDeleteIsOk("customers/finalize", requestOrderCard);
-
-    // Then
-    ResponseCustomer actualResponse = fromJson(jsonResponse, ResponseCustomer.class);
-    assertEquals(expectedResponse, actualResponse);
+    mockMvc.perform(delete("/customers/finalize")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestOrderCard)))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(customerFinalizationHandler, times(1)).undoFinalizeCustomer(requestOrderCard);

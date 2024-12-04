@@ -3,25 +3,21 @@ package com.storecontrol.backend.controllers.operations;
 import com.storecontrol.backend.BaseControllerTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
-import com.storecontrol.backend.models.operations.Donation;
 import com.storecontrol.backend.models.operations.Refund;
-import com.storecontrol.backend.models.operations.response.ResponseDonation;
 import com.storecontrol.backend.models.operations.response.ResponseRefund;
-import com.storecontrol.backend.models.operations.response.ResponseSummaryDonation;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryRefund;
-import com.storecontrol.backend.models.registers.CashRegister;
-import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.services.operations.RefundService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class RefundControllerTest extends BaseControllerTest {
 
@@ -42,12 +38,11 @@ class RefundControllerTest extends BaseControllerTest {
 
     when(service.takeRefundByUuid(refundUuid)).thenReturn(mockRefund);
 
-    // When
-    String jsonResponse = performGetWithVariablePath("refunds", refundUuid);
-
-    // Then
-    ResponseRefund actualResponse = fromJson(jsonResponse, ResponseRefund.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(get("/refunds/{uuid}", refundUuid)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).takeRefundByUuid(refundUuid);
@@ -71,14 +66,12 @@ class RefundControllerTest extends BaseControllerTest {
 
     when(service.listRefunds()).thenReturn(mockRefunds);
 
-    // When
-    String jsonResponse = performGetList("refunds")
+    // When & Then
+    mockMvc.perform(get("/refunds")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryRefund> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryRefund[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listRefunds();

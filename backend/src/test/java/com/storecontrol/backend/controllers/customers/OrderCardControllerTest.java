@@ -15,7 +15,6 @@ import java.util.List;
 import static com.storecontrol.backend.TestDataFactory.createOrderCardEntity;
 import static com.storecontrol.backend.TestDataFactory.createRequestOrderCard;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,17 +36,13 @@ class OrderCardControllerTest extends BaseControllerTest {
 
     when(service.createOrderCard(requestOrderCard)).thenReturn(mockOrderCard);
 
-    // When
-    String jsonResponse = mockMvc.perform(post("/cards")
+    // When & Then
+    mockMvc.perform(post("/cards")
             .contentType(MediaType.APPLICATION_JSON)
             .content(toJson(requestOrderCard)))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location", containsString("/cards/" + cardId)))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    ResponseOrderCard actualResponse = fromJson(jsonResponse, ResponseOrderCard.class);
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).createOrderCard(requestOrderCard);
@@ -63,15 +58,11 @@ class OrderCardControllerTest extends BaseControllerTest {
 
     when(service.takeOrderCardById(cardId)).thenReturn(mockAssociation);
 
-    // When
-    String jsonResponse = mockMvc.perform(get("/cards/{cardId}", cardId)
+    // When & Then
+    mockMvc.perform(get("/cards/{cardId}", cardId)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    ResponseOrderCard actualResponse = fromJson(jsonResponse, ResponseOrderCard.class);
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).takeOrderCardById(cardId);
@@ -93,14 +84,12 @@ class OrderCardControllerTest extends BaseControllerTest {
 
     when(service.listAllOrderCards()).thenReturn(mockOrderCard);
 
-    // When
-    String jsonResponse = performGetList("cards")
+    // When & Then
+    mockMvc.perform(get("/cards")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryOrderCard> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryOrderCard[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listAllOrderCards();
@@ -122,14 +111,12 @@ class OrderCardControllerTest extends BaseControllerTest {
 
     when(service.listActiveOrderCards()).thenReturn(mockOrderCard);
 
-    // When
-    String jsonResponse = performGetList("cards/active")
+    // When & Then
+    mockMvc.perform(get("/cards/active")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryOrderCard> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryOrderCard[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listActiveOrderCards();

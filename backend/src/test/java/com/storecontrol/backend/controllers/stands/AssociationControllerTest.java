@@ -9,14 +9,16 @@ import com.storecontrol.backend.models.stands.response.ResponseSummaryAssociatio
 import com.storecontrol.backend.services.stands.AssociationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class AssociationControllerTest extends BaseControllerTest {
 
@@ -32,12 +34,14 @@ class AssociationControllerTest extends BaseControllerTest {
 
     when(service.createAssociation(requestAssociation)).thenReturn(mockAssociation);
 
-    // When
-    String jsonResponse = performPostCreate("associations", requestAssociation, mockAssociation.getUuid());
-
-    // Then
-    ResponseAssociation actualResponse = fromJson(jsonResponse, ResponseAssociation.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(post("/associations")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(requestAssociation)))
+        .andExpect(status().isCreated())
+        .andExpect(header().string("Location",
+            containsString("/associations/" + mockAssociation.getUuid().toString())))
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).createAssociation(requestAssociation);
@@ -53,12 +57,11 @@ class AssociationControllerTest extends BaseControllerTest {
 
     when(service.takeAssociationByUuid(associationUuid)).thenReturn(mockAssociation);
 
-    // When
-    String jsonResponse = performGetWithVariablePath("associations", associationUuid);
-
-    // Then
-    ResponseAssociation actualResponse = fromJson(jsonResponse, ResponseAssociation.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(get("/associations/{uuid}", associationUuid)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).takeAssociationByUuid(associationUuid);
@@ -78,14 +81,12 @@ class AssociationControllerTest extends BaseControllerTest {
 
     when(service.listAssociations()).thenReturn(mockAssociations);
 
-    // When
-    String jsonResponse = performGetList("associations")
+    // When & Then
+    mockMvc.perform(get("/associations")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryAssociation> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryAssociation[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listAssociations();
@@ -103,12 +104,12 @@ class AssociationControllerTest extends BaseControllerTest {
 
     when(service.updateAssociation(updateRequest)).thenReturn(mockAssociation);
 
-    // When
-    String jsonResponse = performPut("associations", updateRequest);
-
-    // Then
-    ResponseAssociation actualResponse = fromJson(jsonResponse, ResponseAssociation.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(put("/associations")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(updateRequest)))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).updateAssociation(updateRequest);
@@ -123,7 +124,10 @@ class AssociationControllerTest extends BaseControllerTest {
     doNothing().when(service).deleteAssociation(deleteRequest);
 
     // When & Then
-    performDelete("associations", deleteRequest);
+    mockMvc.perform(delete("/associations")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(deleteRequest)))
+        .andExpect(status().isNoContent());
 
     // Verify interactions
     verify(service, times(1)).deleteAssociation(deleteRequest);

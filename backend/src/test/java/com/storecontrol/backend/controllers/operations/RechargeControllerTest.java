@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class RechargeControllerTest extends BaseControllerTest {
 
@@ -40,12 +40,14 @@ class RechargeControllerTest extends BaseControllerTest {
 
     when(service.createRecharge(requestRecharge)).thenReturn(mockRecharge);
 
-    // When
-    String jsonResponse = performPostCreate("recharges", requestRecharge, mockRecharge.getUuid());
-
-    // Then
-    ResponseRecharge actualResponse = fromJson(jsonResponse, ResponseRecharge.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(post("/recharges")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(requestRecharge)))
+        .andExpect(status().isCreated())
+        .andExpect(header().string("Location",
+            containsString("/recharges/" + mockRecharge.getUuid().toString())))
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).createRecharge(requestRecharge);
@@ -67,12 +69,11 @@ class RechargeControllerTest extends BaseControllerTest {
 
     when(service.takeRechargeByUuid(rechargeUuid)).thenReturn(mockRefund);
 
-    // When
-    String jsonResponse = performGetWithVariablePath("recharges", rechargeUuid);
-
-    // Then
-    ResponseRecharge actualResponse = fromJson(jsonResponse, ResponseRecharge.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(get("/recharges/{uuid}", rechargeUuid)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).takeRechargeByUuid(rechargeUuid);
@@ -97,14 +98,12 @@ class RechargeControllerTest extends BaseControllerTest {
 
     when(service.listRecharges()).thenReturn(mockRecharges);
 
-    // When
-    String jsonResponse = performGetList("recharges")
+    // When & Then
+    mockMvc.perform(get("/recharges")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryRecharge> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryRecharge[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listRecharges();
@@ -131,16 +130,13 @@ class RechargeControllerTest extends BaseControllerTest {
 
     when(service.listLast3Purchases(userUuid)).thenReturn(mockRecharges);
 
-    // When
-    String jsonResponse = mockMvc.perform(get("/recharges/last3")
-        .requestAttr("UserUuid", userUuid)
-        .contentType(MediaType.APPLICATION_JSON))
+    // When & Then
+    mockMvc.perform(get("/recharges/last3")
+            .requestAttr("UserUuid", userUuid)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(3))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryRecharge> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryRecharge[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listLast3Purchases(userUuid);
@@ -155,7 +151,10 @@ class RechargeControllerTest extends BaseControllerTest {
     doNothing().when(service).deleteRecharge(deleteRequest);
 
     // When & Then
-    performDelete("recharges", deleteRequest);
+    mockMvc.perform(delete("/recharges")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(deleteRequest)))
+        .andExpect(status().isNoContent());
 
     // Verify interactions
     verify(service, times(1)).deleteRecharge(deleteRequest);

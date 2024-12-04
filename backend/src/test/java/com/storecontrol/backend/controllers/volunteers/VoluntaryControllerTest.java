@@ -10,14 +10,15 @@ import com.storecontrol.backend.models.volunteers.response.ResponseVoluntary;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class VoluntaryControllerTest extends BaseControllerTest {
 
@@ -33,12 +34,11 @@ class VoluntaryControllerTest extends BaseControllerTest {
 
     when(service.takeVoluntaryByUuid(voluntaryUuid)).thenReturn(mockVoluntary);
 
-    // When
-    String jsonResponse = performGetWithVariablePath("volunteers", voluntaryUuid);
-
-    // Then
-    ResponseVoluntary actualResponse = fromJson(jsonResponse, ResponseVoluntary.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(get("/volunteers/{uuid}", voluntaryUuid)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).takeVoluntaryByUuid(voluntaryUuid);
@@ -58,14 +58,12 @@ class VoluntaryControllerTest extends BaseControllerTest {
 
     when(service.listVolunteers()).thenReturn(mockVolunteers);
 
-    // When
-    String jsonResponse = performGetList("volunteers")
+    // When & Then
+    mockMvc.perform(get("/volunteers")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryVoluntary> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryVoluntary[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listVolunteers();
@@ -83,12 +81,12 @@ class VoluntaryControllerTest extends BaseControllerTest {
 
     when(service.updateVoluntary(updateRequest)).thenReturn(mockVoluntary);
 
-    // When
-    String jsonResponse = performPut("volunteers", updateRequest);
-
-    // Then
-    ResponseVoluntary actualResponse = fromJson(jsonResponse, ResponseVoluntary.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(put("/volunteers")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(updateRequest)))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).updateVoluntary(updateRequest);
@@ -109,12 +107,12 @@ class VoluntaryControllerTest extends BaseControllerTest {
 
     when(service.updateFunctionFromVoluntary(updateRequest)).thenReturn(mockVoluntary);
 
-    // When
-    String jsonResponse = performPut("volunteers/function", updateRequest);
-
-    // Then
-    ResponseVoluntary actualResponse = fromJson(jsonResponse, ResponseVoluntary.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(put("/volunteers/function")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(updateRequest)))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).updateFunctionFromVoluntary(updateRequest);
@@ -129,7 +127,10 @@ class VoluntaryControllerTest extends BaseControllerTest {
     doNothing().when(service).deleteVoluntary(deleteRequest);
 
     // When & Then
-    performDelete("volunteers", deleteRequest);
+    mockMvc.perform(delete("/volunteers")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(deleteRequest)))
+        .andExpect(status().isNoContent());
 
     // Verify interactions
     verify(service, times(1)).deleteVoluntary(deleteRequest);

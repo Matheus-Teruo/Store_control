@@ -1,17 +1,9 @@
 package com.storecontrol.backend.controllers.operations;
 
 import com.storecontrol.backend.BaseControllerTest;
-import com.storecontrol.backend.models.customers.Customer;
-import com.storecontrol.backend.models.customers.OrderCard;
-import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Transaction;
-import com.storecontrol.backend.models.operations.purchases.Purchase;
-import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
-import com.storecontrol.backend.models.operations.request.RequestDeleteRecharge;
 import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
-import com.storecontrol.backend.models.operations.response.ResponseRecharge;
-import com.storecontrol.backend.models.operations.response.ResponseSummaryRecharge;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryTransaction;
 import com.storecontrol.backend.models.operations.response.ResponseTransaction;
 import com.storecontrol.backend.services.operations.TransactionService;
@@ -23,10 +15,12 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 class TransactionControllerTest extends BaseControllerTest {
 
@@ -44,12 +38,14 @@ class TransactionControllerTest extends BaseControllerTest {
 
     when(service.createTransaction(requestTransaction)).thenReturn(mockTransaction);
 
-    // When
-    String jsonResponse = performPostCreate("transactions", requestTransaction, mockTransaction.getUuid());
-
-    // Then
-    ResponseTransaction actualResponse = fromJson(jsonResponse, ResponseTransaction.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(post("/transactions")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(requestTransaction)))
+        .andExpect(status().isCreated())
+        .andExpect(header().string("Location",
+            containsString("/transactions/" + mockTransaction.getUuid().toString())))
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).createTransaction(requestTransaction);
@@ -66,12 +62,11 @@ class TransactionControllerTest extends BaseControllerTest {
 
     when(service.takeTransactionByUuid(transactionUuid)).thenReturn(mockTransaction);
 
-    // When
-    String jsonResponse = performGetWithVariablePath("transactions", transactionUuid);
-
-    // Then
-    ResponseTransaction actualResponse = fromJson(jsonResponse, ResponseTransaction.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(get("/transactions/{uuid}", transactionUuid)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).takeTransactionByUuid(transactionUuid);
@@ -91,14 +86,12 @@ class TransactionControllerTest extends BaseControllerTest {
 
     when(service.listTransactions()).thenReturn(mockRecharges);
 
-    // When
-    String jsonResponse = performGetList("transactions")
+    // When & Then
+    mockMvc.perform(get("/transactions")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryTransaction> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryTransaction[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listTransactions();
@@ -121,16 +114,13 @@ class TransactionControllerTest extends BaseControllerTest {
 
     when(service.listLast3Purchases(userUuid)).thenReturn(mockTransactions);
 
-    // When
-    String jsonResponse = mockMvc.perform(get("/transactions/last3")
+    // When & Then
+    mockMvc.perform(get("/transactions/last3")
             .requestAttr("UserUuid", userUuid)
-            .contentType(MediaType.APPLICATION_JSON))
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(3))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryTransaction> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryTransaction[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listLast3Purchases(userUuid);
@@ -145,7 +135,10 @@ class TransactionControllerTest extends BaseControllerTest {
     doNothing().when(service).deleteTransaction(deleteRequest);
 
     // When & Then
-    performDelete("transactions", deleteRequest);
+    mockMvc.perform(delete("/transactions")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(deleteRequest)))
+        .andExpect(status().isNoContent());
 
     // Verify interactions
     verify(service, times(1)).deleteTransaction(deleteRequest);
