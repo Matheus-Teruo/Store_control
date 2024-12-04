@@ -31,6 +31,13 @@ public class CustomerController {
     return ResponseEntity.ok(response);
   }
 
+  @PostMapping("/card")
+  public ResponseEntity<ResponseCustomer> readCustomerByCard(@PathVariable RequestOrderCard request) {
+    var response = new ResponseCustomer(service.takeActiveCustomerByCardId(request.cardId()));
+
+    return ResponseEntity.ok(response);
+  }
+
   @GetMapping("/active")
   public ResponseEntity<List<ResponseSummaryCustomer>> readActiveCustomers() {
     var customers = service.listActiveCustomers();

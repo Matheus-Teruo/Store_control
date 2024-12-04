@@ -78,6 +78,10 @@ public class PurchaseService {
     return repository.findAllValidTrue();
   }
 
+  public List<Purchase> listLast3Purchases(UUID voluntaryUuid) {
+    return repository.findLast3ValidTrue(voluntaryUuid);
+  }
+
   @Transactional
   public Purchase updatePurchase(RequestUpdatePurchase request) {
     var purchase = safeTakePurchaseByUuid(request.uuid());

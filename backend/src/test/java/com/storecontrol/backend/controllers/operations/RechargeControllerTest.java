@@ -11,6 +11,7 @@ import com.storecontrol.backend.models.operations.response.ResponseSummaryRechar
 import com.storecontrol.backend.services.operations.RechargeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import static com.storecontrol.backend.TestDataFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 class RechargeControllerTest extends BaseControllerTest {
@@ -106,6 +108,42 @@ class RechargeControllerTest extends BaseControllerTest {
 
     // Verify interactions
     verify(service, times(1)).listRecharges();
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
+  void testReadLast3RechargesSuccess() throws Exception {
+    // Given
+    UUID userUuid = UUID.randomUUID();
+    String cardId1 = "order_card12345";
+    OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
+    Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
+    Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
+
+    List<Recharge> mockRecharges = List.of(
+        createRechargeEntity(UUID.randomUUID(), mockCustomer1, false),
+        createRechargeEntity(UUID.randomUUID(), mockCustomer2, false),
+        createRechargeEntity(UUID.randomUUID(), mockCustomer2, true)
+    );
+    List<ResponseSummaryRecharge> expectedResponse = mockRecharges.stream()
+        .map(ResponseSummaryRecharge::new)
+        .toList();
+
+    when(service.listLast3Purchases(userUuid)).thenReturn(mockRecharges);
+
+    // When
+    String jsonResponse = mockMvc.perform(get("/recharges/last3")
+        .requestAttr("UserUuid", userUuid)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.length()").value(3))
+        .andReturn().getResponse().getContentAsString();
+
+    // Then
+    List<ResponseSummaryRecharge> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryRecharge[].class));
+    assertEquals(expectedResponse, actualResponse);
+
+    // Verify interactions
+    verify(service, times(1)).listLast3Purchases(userUuid);
     verifyNoMoreInteractions(service);
   }
 

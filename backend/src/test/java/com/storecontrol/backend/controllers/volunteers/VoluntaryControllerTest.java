@@ -1,8 +1,10 @@
 package com.storecontrol.backend.controllers.volunteers;
 
 import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
 import com.storecontrol.backend.models.volunteers.response.ResponseSummaryVoluntary;
 import com.storecontrol.backend.models.volunteers.response.ResponseVoluntary;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;
@@ -12,8 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.List;
 import java.util.UUID;
 
-import static com.storecontrol.backend.TestDataFactory.createRequestUpdateVoluntary;
-import static com.storecontrol.backend.TestDataFactory.createVoluntaryEntity;
+import static com.storecontrol.backend.TestDataFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -75,7 +76,7 @@ class VoluntaryControllerTest extends BaseControllerTest {
   void testUpdateVoluntarySuccess() throws Exception {
     // Given
     Voluntary mockVoluntary = createVoluntaryEntity(UUID.randomUUID());
-    RequestUpdateVoluntary updateRequest = createRequestUpdateVoluntary(mockVoluntary.getUuid(), UUID.randomUUID());
+    RequestUpdateVoluntary updateRequest = createRequestUpdateVoluntary(mockVoluntary.getUuid());
 
     mockVoluntary.updateVoluntary(updateRequest);
     ResponseVoluntary expectedResponse = new ResponseVoluntary(mockVoluntary);
@@ -95,9 +96,35 @@ class VoluntaryControllerTest extends BaseControllerTest {
   }
 
   @Test
+  void testUpdateFunctionsFromVoluntarySuccess() throws Exception {
+    // Given
+    Voluntary mockVoluntary = createVoluntaryEntity(UUID.randomUUID());
+    Stand mockStand = createStandEntity(UUID.randomUUID());
+    RequestUpdateVoluntaryFunction updateRequest = createRequestUpdateVoluntaryFunction(
+        mockVoluntary.getUuid(),
+        mockStand.getUuid());
+
+    mockVoluntary.updateVoluntary(mockStand);
+    ResponseVoluntary expectedResponse = new ResponseVoluntary(mockVoluntary);
+
+    when(service.updateFunctionFromVoluntary(updateRequest)).thenReturn(mockVoluntary);
+
+    // When
+    String jsonResponse = performPut("volunteers/function", updateRequest);
+
+    // Then
+    ResponseVoluntary actualResponse = fromJson(jsonResponse, ResponseVoluntary.class);
+    assertEquals(expectedResponse, actualResponse);
+
+    // Verify interactions
+    verify(service, times(1)).updateFunctionFromVoluntary(updateRequest);
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
   void testDeleteVoluntarySuccess() throws Exception {
     // Given
-    RequestUpdateVoluntary deleteRequest = createRequestUpdateVoluntary(UUID.randomUUID(), UUID.randomUUID());
+    RequestUpdateVoluntary deleteRequest = createRequestUpdateVoluntary(UUID.randomUUID());
 
     doNothing().when(service).deleteVoluntary(deleteRequest);
 

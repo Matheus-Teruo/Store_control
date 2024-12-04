@@ -14,4 +14,7 @@ public interface PurchaseRepository extends JpaRepository<Purchase, UUID> {
 
   @Query("select p from Purchase p where p.valid = true")
   List<Purchase> findAllValidTrue();
+
+  @Query("select p from Purchase p where p.valid = true and p.voluntary.uuid = :voluntaryUuid order by p.purchaseTimeStamp desc LIMIT 3")
+  List<Purchase> findLast3ValidTrue(UUID voluntaryUuid);
 }

@@ -9,7 +9,7 @@ public record ResponseVoluntary(
     UUID uuid,
     String username,
     String fullname,
-    ResponseFunction function,
+    ResponseSummaryFunction function,
     VoluntaryRole voluntaryRole
 ) {
 
@@ -17,7 +17,7 @@ public record ResponseVoluntary(
     this(voluntary.getUuid(),
         voluntary.getUser().getUsername(),
         voluntary.getFullname(),
-        voluntary.getFunction() != null ? new ResponseFunction(voluntary.getFunction()) : null,
+        voluntary.getFunction() != null ? new ResponseSummaryFunction(voluntary.getFunction()) : null,
         voluntary.getVoluntaryRole()
     );
   }

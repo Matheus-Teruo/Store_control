@@ -1,6 +1,7 @@
 package com.storecontrol.backend.services.operations;
 
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
+import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Transaction;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
@@ -63,6 +64,10 @@ public class TransactionService {
 
   public List<Transaction> listTransactions() {
     return repository.findAllValidTrue();
+  }
+
+  public List<Transaction> listLast3Purchases(UUID voluntaryUuid) {
+    return repository.findLast3ValidTrue(voluntaryUuid);
   }
 
   @Transactional

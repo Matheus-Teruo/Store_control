@@ -50,6 +50,14 @@ public class RechargeController {
     return ResponseEntity.ok(response);
   }
 
+  @GetMapping("/last3")
+  public ResponseEntity<List<ResponseSummaryRecharge>> readLast3Purchases(@RequestAttribute("UserUuid") String userUuid) {
+    var recharges = service.listLast3Purchases(UUID.fromString(userUuid));
+
+    var response = recharges.stream().map(ResponseSummaryRecharge::new).toList();
+    return ResponseEntity.ok(response);
+  }
+
   @DeleteMapping
   public ResponseEntity<Void> deleteRecharge(@RequestBody @Valid RequestDeleteRecharge request) {
     service.deleteRecharge(request);

@@ -287,6 +287,23 @@
 					"response": []
 				},
 				{
+					"name": "Read Customer By CardID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}customers/card",
+							"host": [
+								"{{hostPath}}customers"
+							],
+							"path": [
+								"card"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "List Customers",
 					"event": [
 						{
@@ -703,7 +720,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"productName\": \"productExample\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"productName\": \"productExample1\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -802,48 +819,6 @@
 			"name": "Voluntary",
 			"item": [
 				{
-					"name": "Create Voluntary",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const responseBody = pm.response.json();\r",
-									"\r",
-									"if (responseBody && responseBody.uuid) {\r",
-									"    pm.collectionVariables.set(\"voluntary_id\", responseBody.uuid);\r",
-									"    // console.log(\"volunteers ID (UUID) saved as:\", responseBody.uuid);\r",
-									"} else {\r",
-									"    console.error(\"UUID not found in the response body\");\r",
-									"}"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"UsernameCashier\",\r\n    \"password\": \"PasswordExample\",\r\n    \"salt\": \"SaltExample\",\r\n    \"fullname\": \"Full Name Cashier\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{hostPath}}volunteers",
-							"host": [
-								"{{hostPath}}volunteers"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Read Voluntary",
 					"request": {
 						"method": "GET",
@@ -904,7 +879,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"username\": \"UsernameStand\",\r\n    \"password\": null ,\r\n    \"salt\": null,\r\n    \"fullname\": \"Full Name Stand\",\r\n    \"functionId\": \"{{cash_register_id}}\" // \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"username\": \"UsernameStand\",\r\n    \"password\": null ,\r\n    \"salt\": null,\r\n    \"fullname\": \"Full Name Stand\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -915,6 +890,32 @@
 							"raw": "{{hostPath}}volunteers",
 							"host": [
 								"{{hostPath}}volunteers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Function from voluntary",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"functionId\": \"{{cash_register_id}}\" // \"{{stand_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}volunteers/function",
+							"host": [
+								"{{hostPath}}volunteers"
+							],
+							"path": [
+								"function"
 							]
 						}
 					},
@@ -1036,7 +1037,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productId\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productId\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"0.00\", \"discount\": \"0.00\"}\r\n    ],\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
+									"raw": "{\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productId\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productId\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ],\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1090,6 +1091,23 @@
 									"raw": "{{hostPath}}purchases",
 									"host": [
 										"{{hostPath}}purchases"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Purchases Last 3",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}purchases/last3",
+									"host": [
+										"{{hostPath}}purchases"
+									],
+									"path": [
+										"last3"
 									]
 								}
 							},
@@ -1220,23 +1238,17 @@
 							"response": []
 						},
 						{
-							"name": "Update Recharge",
+							"name": "List Recharges Last 3",
 							"request": {
-								"method": "PUT",
+								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"uuid\": \"{{recharge_id}}\",\r\n    \"paymentTypeEnum\": \"DEBIT\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
 								"url": {
-									"raw": "{{hostPath}}recharges",
+									"raw": "{{hostPath}}recharges/last3",
 									"host": [
 										"{{hostPath}}recharges"
+									],
+									"path": [
+										"last3"
 									]
 								}
 							},
@@ -1355,7 +1367,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"amount\": \"7.60\",\r\n    \"transactionTypeEnum\": \"EXIT\",\r\n    \"cashRegisterId\": \"{{cash_register_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
+									"raw": "{\r\n    \"amount\": \"7.60\",\r\n    \"transactionTypeEnum\": \"entry\",\r\n    \"cashRegisterId\": \"{{cash_register_id}}\",\r\n    \"voluntaryId\": \"4d79b333-1998-42d4-9fa9-199af56c8483\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1403,6 +1415,23 @@
 							"response": []
 						},
 						{
+							"name": "List Transactions Last 3",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}transactions/last3",
+									"host": [
+										"{{hostPath}}transactions"
+									],
+									"path": [
+										"last3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "New Request Copy",
 							"request": {
 								"method": "DELETE",
@@ -1426,6 +1455,99 @@
 							"response": []
 						}
 					]
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Sign up",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseBody = pm.response.json();\r",
+									"\r",
+									"if (responseBody && responseBody.uuid) {\r",
+									"    pm.collectionVariables.set(\"voluntary_id\", responseBody.uuid);\r",
+									"    // console.log(\"volunteers ID (UUID) saved as:\", responseBody.uuid);\r",
+									"} else {\r",
+									"    console.error(\"UUID not found in the response body\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"UsernameCashier\",\r\n    \"password\": \"PasswordExample\",\r\n    \"fullname\": \"Full Name Cashier\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}user/signup",
+							"host": [
+								"{{hostPath}}user"
+							],
+							"path": [
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log in",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"UsernameCashier\",\r\n    \"password\": \"PasswordExample\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}user/login",
+							"host": [
+								"{{hostPath}}user"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}user/check",
+							"host": [
+								"{{hostPath}}user"
+							],
+							"path": [
+								"check"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
@@ -1478,6 +1600,10 @@
 			"value": ""
 		},
 		{
+			"key": "product_id2",
+			"value": ""
+		},
+		{
 			"key": "purchase_id",
 			"value": "",
 			"type": "string"
@@ -1512,10 +1638,6 @@
 		},
 		{
 			"key": "transaction_id",
-			"value": ""
-		},
-		{
-			"key": "product_id2",
 			"value": ""
 		}
 	]

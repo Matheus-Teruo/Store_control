@@ -2,6 +2,7 @@ package com.storecontrol.backend.controllers.operations;
 
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
+import com.storecontrol.backend.models.operations.response.ResponseSummaryRecharge;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryTransaction;
 import com.storecontrol.backend.models.operations.response.ResponseTransaction;
 import com.storecontrol.backend.models.registers.response.ResponseCashRegister;
@@ -45,9 +46,17 @@ public class TransactionController {
 
   @GetMapping
   public ResponseEntity<List<ResponseSummaryTransaction>> readTransactions() {
-    var transaction = service.listTransactions();
+    var transactions = service.listTransactions();
 
-    var response = transaction.stream().map(ResponseSummaryTransaction::new).toList();
+    var response = transactions.stream().map(ResponseSummaryTransaction::new).toList();
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/last3")
+  public ResponseEntity<List<ResponseSummaryTransaction>> readLast3Purchases(@RequestAttribute("UserUuid") String userUuid) {
+    var transactions = service.listLast3Purchases(UUID.fromString(userUuid));
+
+    var response = transactions.stream().map(ResponseSummaryTransaction::new).toList();
     return ResponseEntity.ok(response);
   }
 

@@ -44,9 +44,17 @@ public class PurchaseController {
 
   @GetMapping
   public ResponseEntity<List<ResponseSummaryPurchase>> readPurchases() {
-    var Sales = service.listPurchases();
+    var purchases = service.listPurchases();
 
-    var response = Sales.stream().map(ResponseSummaryPurchase::new).toList();
+    var response = purchases.stream().map(ResponseSummaryPurchase::new).toList();
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/last3")
+  public ResponseEntity<List<ResponseSummaryPurchase>> readLast3Purchases(@RequestAttribute("UserUuid") String userUuid) {
+    var purchases = service.listLast3Purchases(UUID.fromString(userUuid));
+
+    var response = purchases.stream().map(ResponseSummaryPurchase::new).toList();
     return ResponseEntity.ok(response);
   }
 

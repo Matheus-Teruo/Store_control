@@ -34,6 +34,7 @@ import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestLoginVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -368,12 +369,18 @@ public class TestDataFactory {
     );
   }
 
-  public static RequestUpdateVoluntary createRequestUpdateVoluntary(UUID uuid, UUID functionUuid) {
+  public static RequestUpdateVoluntary createRequestUpdateVoluntary(UUID uuid) {
     return new RequestUpdateVoluntary(
         uuid,
         nameOnlyLettersAndNumbers(),
         nameOnlyLettersAndNumbers(),
-        nameOnlyLettersAndSpace(),
+        nameOnlyLettersAndSpace()
+    );
+  }
+
+  public static RequestUpdateVoluntaryFunction createRequestUpdateVoluntaryFunction(UUID uuid, UUID functionUuid) {
+    return new RequestUpdateVoluntaryFunction(
+        uuid,
         functionUuid
     );
   }

@@ -20,6 +20,7 @@ import com.storecontrol.backend.models.stands.response.ResponseProduct;
 import com.storecontrol.backend.services.operations.PurchaseService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +28,7 @@ import java.util.UUID;
 import static com.storecontrol.backend.TestDataFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 class PurchaseControllerTest extends BaseControllerTest {
@@ -119,6 +121,46 @@ class PurchaseControllerTest extends BaseControllerTest {
 
     // Verify interactions
     verify(service, times(1)).listPurchases();
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
+  void testReadLast3PurchasesSuccess() throws Exception {
+    // Given
+    UUID userUuid = UUID.randomUUID();
+    String cardId1 = "CardIDTest12345";
+    OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
+    Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
+    Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
+
+    List<Purchase> mockPurchases = List.of(
+        createPurchaseEntity(UUID.randomUUID(), mockCustomer1),
+        createPurchaseEntity(UUID.randomUUID(), mockCustomer2),
+        createPurchaseEntity(UUID.randomUUID(), mockCustomer2)
+    );
+    mockPurchases.get(0).setItems(createItemEntity(mockPurchases.get(0)));
+    mockPurchases.get(1).setItems(createItemEntity(mockPurchases.get(1)));
+    mockPurchases.get(2).setItems(createItemEntity(mockPurchases.get(2)));
+
+    List<ResponseSummaryPurchase> expectedResponse = mockPurchases.stream()
+        .map(ResponseSummaryPurchase::new)
+        .toList();
+
+    when(service.listLast3Purchases(userUuid)).thenReturn(mockPurchases);
+
+    // When
+    String jsonResponse = mockMvc.perform(get("/purchases/last3")
+            .requestAttr("UserUuid", userUuid)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.length()").value(3))
+        .andReturn().getResponse().getContentAsString();
+
+    // Then
+    List<ResponseSummaryPurchase> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryPurchase[].class));
+    assertEquals(expectedResponse, actualResponse);
+
+    // Verify interactions
+    verify(service, times(1)).listLast3Purchases(userUuid);
     verifyNoMoreInteractions(service);
   }
 

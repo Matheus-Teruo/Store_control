@@ -6,6 +6,7 @@ import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestRoleVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
 import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
 import com.storecontrol.backend.services.volunteers.validation.VoluntaryValidation;
 import jakarta.persistence.EntityNotFoundException;
@@ -62,7 +63,15 @@ public class VoluntaryService {
     var voluntary = safeTakeVoluntaryByUuid(request.uuid());
 
     voluntary.updateVoluntary(request);
-    verifyUpdateFunction(request.functionId(), voluntary);
+
+    return voluntary;
+  }
+
+  @Transactional
+  public Voluntary updateFunctionFromVoluntary(RequestUpdateVoluntaryFunction request) {
+    var voluntary = safeTakeVoluntaryByUuid(request.uuid());
+
+    verifyUpdateFunction(request.functionUuid(), voluntary);
 
     return voluntary;
   }

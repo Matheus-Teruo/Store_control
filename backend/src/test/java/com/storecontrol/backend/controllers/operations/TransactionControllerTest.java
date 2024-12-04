@@ -5,6 +5,8 @@ import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Transaction;
+import com.storecontrol.backend.models.operations.purchases.Purchase;
+import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.operations.request.RequestDeleteRecharge;
 import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
@@ -15,6 +17,7 @@ import com.storecontrol.backend.models.operations.response.ResponseTransaction;
 import com.storecontrol.backend.services.operations.TransactionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +25,7 @@ import java.util.UUID;
 import static com.storecontrol.backend.TestDataFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 class TransactionControllerTest extends BaseControllerTest {
@@ -98,6 +102,38 @@ class TransactionControllerTest extends BaseControllerTest {
 
     // Verify interactions
     verify(service, times(1)).listTransactions();
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
+  void testReadLast3TransactionsSuccess() throws Exception {
+    // Given
+    UUID userUuid = UUID.randomUUID();
+
+    List<Transaction> mockTransactions = List.of(
+        createTransactionEntity(UUID.randomUUID(), false),
+        createTransactionEntity(UUID.randomUUID(), false),
+        createTransactionEntity(UUID.randomUUID(), false)
+    );
+    List<ResponseSummaryTransaction> expectedResponse = mockTransactions.stream()
+        .map(ResponseSummaryTransaction::new)
+        .toList();
+
+    when(service.listLast3Purchases(userUuid)).thenReturn(mockTransactions);
+
+    // When
+    String jsonResponse = mockMvc.perform(get("/transactions/last3")
+            .requestAttr("UserUuid", userUuid)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.length()").value(3))
+        .andReturn().getResponse().getContentAsString();
+
+    // Then
+    List<ResponseSummaryTransaction> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryTransaction[].class));
+    assertEquals(expectedResponse, actualResponse);
+
+    // Verify interactions
+    verify(service, times(1)).listLast3Purchases(userUuid);
     verifyNoMoreInteractions(service);
   }
 

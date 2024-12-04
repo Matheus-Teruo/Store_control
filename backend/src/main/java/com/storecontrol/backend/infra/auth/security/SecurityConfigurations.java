@@ -27,31 +27,37 @@ public class SecurityConfigurations {
     return http.csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(req -> {
-          req.requestMatchers( "/user/login","/user/signup","/customers/{uuid}").permitAll();
 
-          req.requestMatchers(
-              "/user/logout",
-              "/user/check",
-              "/customer/finalize",
-              "/donations",
-              "/purchases",
-              "/recharges",
-              "/refund",
-              "/transaction",
-              "/register/{uuid}",
-              "/stand/{uuid}",
-              "voluntary/{uuid}")
-              .hasAnyRole("USER", "MANAGEMENT", "ADMIN");
-          req.requestMatchers(HttpMethod.PUT,"/voluntary")
-              .hasAnyRole("USER", "MANAGEMENT", "ADMIN");
-          req.requestMatchers(HttpMethod.GET,"/products")
-              .hasAnyRole("USER", "MANAGEMENT", "ADMIN");
+          req.requestMatchers(HttpMethod.GET,
+              "/products").permitAll();
+          req.requestMatchers(HttpMethod.POST,
+              "/user/login", "/user/signup", "/customers/card").permitAll();
 
-          req.requestMatchers(HttpMethod.POST,"/products")
+          req.requestMatchers(HttpMethod.GET,
+                  AUTHORIZED_GET_ENDPOINTS_LOGGED)
+              .hasAnyRole( "USER", "MANAGEMENT", "ADMIN");
+          req.requestMatchers(HttpMethod.POST,
+                  AUTHORIZED_POST_ENDPOINTS_LOGGED)
+              .hasAnyRole( "USER", "MANAGEMENT", "ADMIN");
+          req.requestMatchers(HttpMethod.PUT,
+                  AUTHORIZED_PUT_ENDPOINTS_LOGGED)
               .hasAnyRole( "MANAGEMENT", "ADMIN");
-          req.requestMatchers(HttpMethod.PUT,"/products")
+          req.requestMatchers(HttpMethod.DELETE,
+                  AUTHORIZED_DELETE_ENDPOINTS_LOGGED)
+              .hasAnyRole( "USER", "MANAGEMENT", "ADMIN");
+
+
+          req.requestMatchers(HttpMethod.GET,
+                  AUTHORIZED_GET_ENDPOINTS_MANAGEMENT)
               .hasAnyRole( "MANAGEMENT", "ADMIN");
-          req.requestMatchers(HttpMethod.DELETE,"/products")
+          req.requestMatchers(HttpMethod.POST,
+                  AUTHORIZED_POST_ENDPOINTS_MANAGEMENT)
+              .hasAnyRole( "MANAGEMENT", "ADMIN");
+          req.requestMatchers(HttpMethod.PUT,
+                  AUTHORIZED_PUT_ENDPOINTS_MANAGEMENT)
+              .hasAnyRole( "MANAGEMENT", "ADMIN");
+          req.requestMatchers(HttpMethod.DELETE,
+                  AUTHORIZED_DELETE_ENDPOINTS_MANAGEMENT)
               .hasAnyRole( "MANAGEMENT", "ADMIN");
 
           req.requestMatchers("/**").hasAnyRole("ADMIN");
@@ -69,4 +75,53 @@ public class SecurityConfigurations {
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
+
+  private static final String[] AUTHORIZED_GET_ENDPOINTS_LOGGED = {
+      "/user/check",
+      "/stands",
+      "/stands/{uuid}",
+      "/purchases/last3",
+      "/purchases/{uuid}",
+      "/recharges/last3",
+      "/transactions/last3",
+      "/volunteers/{uuid}"
+  };
+
+  private static final String[] AUTHORIZED_POST_ENDPOINTS_LOGGED = {
+      "/user/logout",
+      "/customers/finalize",
+      "/purchases",
+      "/recharges"
+  };
+
+  private static final String[] AUTHORIZED_PUT_ENDPOINTS_LOGGED = {
+      "/purchases",
+      "/volunteers"
+  };
+
+  private static final String[] AUTHORIZED_DELETE_ENDPOINTS_LOGGED = {
+      "/customers/finalize",
+      "/purchases",
+      "/recharges"
+  };
+
+  private static final String[] AUTHORIZED_GET_ENDPOINTS_MANAGEMENT = {
+      "/volunteers",
+      "/purchase"
+  };
+
+  private static final String[] AUTHORIZED_POST_ENDPOINTS_MANAGEMENT = {
+      "/volunteers/function",
+      "/products",
+      "/transactions"
+  };
+
+  private static final String[] AUTHORIZED_PUT_ENDPOINTS_MANAGEMENT = {
+      "/products"
+  };
+
+  private static final String[] AUTHORIZED_DELETE_ENDPOINTS_MANAGEMENT = {
+      "/products",
+      "/transactions"
+  };
 }

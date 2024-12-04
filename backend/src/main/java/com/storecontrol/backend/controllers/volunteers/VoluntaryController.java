@@ -2,6 +2,7 @@ package com.storecontrol.backend.controllers.volunteers;
 
 import com.storecontrol.backend.models.volunteers.request.RequestRoleVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
 import com.storecontrol.backend.models.volunteers.response.ResponseSummaryVoluntary;
 import com.storecontrol.backend.models.volunteers.response.ResponseVoluntary;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;
@@ -39,6 +40,14 @@ public class VoluntaryController {
   @PutMapping
   public ResponseEntity<ResponseVoluntary> updateVoluntary(@RequestBody @Valid RequestUpdateVoluntary request) {
     var response = new ResponseVoluntary(service.updateVoluntary(request));
+
+    return ResponseEntity.ok(response);
+  }
+
+  @PutMapping("/function")
+  public ResponseEntity<ResponseVoluntary> updateFunctionFromVoluntary(
+      @RequestBody @Valid RequestUpdateVoluntaryFunction request) {
+    var response = new ResponseVoluntary(service.updateFunctionFromVoluntary(request));
 
     return ResponseEntity.ok(response);
   }

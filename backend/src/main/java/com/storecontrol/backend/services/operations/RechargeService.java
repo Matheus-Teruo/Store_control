@@ -1,6 +1,7 @@
 package com.storecontrol.backend.services.operations;
 
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
+import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.request.RequestDeleteRecharge;
 import com.storecontrol.backend.models.customers.Customer;
@@ -68,6 +69,10 @@ public class RechargeService {
 
   public List<Recharge> listRecharges() {
     return repository.findAllValidTrue();
+  }
+
+  public List<Recharge> listLast3Purchases(UUID voluntaryUuid) {
+    return repository.findLast3ValidTrue(voluntaryUuid);
   }
 
   @Transactional

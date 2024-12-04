@@ -14,4 +14,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
 
   @Query("select t from Transaction t where t.valid = true")
   List<Transaction> findAllValidTrue();
+
+  @Query("select t from Transaction t where t.valid = true and t.voluntary.uuid = :voluntaryUuid order by t.transactionTimeStamp desc LIMIT 3")
+  List<Transaction> findLast3ValidTrue(UUID voluntaryUuid);
 }
