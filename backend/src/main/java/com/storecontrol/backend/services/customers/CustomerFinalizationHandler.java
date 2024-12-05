@@ -4,6 +4,7 @@ import com.storecontrol.backend.infra.exceptions.InvalidCustomerException;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
+import com.storecontrol.backend.services.customers.component.CustomerFinalizationValidation;
 import com.storecontrol.backend.services.operations.DonationService;
 import com.storecontrol.backend.services.operations.RefundService;
 import com.storecontrol.backend.services.registers.CashRegisterService;
@@ -12,9 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Component
 public class CustomerFinalizationHandler {
+
+  @Autowired
+  CustomerFinalizationValidation validation;
 
   @Autowired
   CustomerService customerService;
@@ -31,11 +36,13 @@ public class CustomerFinalizationHandler {
   @Autowired
   DonationService donationService;
 
-  public Customer finalizeCustomer(RequestCustomerFinalization request) {
-    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(request.voluntaryId());
-    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterId());
+  public Customer finalizeCustomer(RequestCustomerFinalization request, UUID userUuid) {
+    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
+    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterUuid());
     var customer = customerService.takeActiveFilteredCustomerByCardId(request.orderCardId());
     var remainingDebit = customer.getOrderCard().getDebit();
+
+    validation.checkVoluntaryFunctionMatch(cashRegister, voluntary);
 
     if (remainingDebit.compareTo(BigDecimal.ZERO) > 0) {
       if (request.refundValue()
@@ -56,8 +63,11 @@ public class CustomerFinalizationHandler {
     return customer;
   }
 
-  public Customer undoFinalizeCustomer(RequestOrderCard request) {
+  public Customer undoFinalizeCustomer(RequestOrderCard request, UUID userUuid) {
     var customer = customerService.takeLastActiveFilteredCustomerByCardId(request.cardId());
+    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
+
+    validation.checkVoluntaryFunctionType(voluntary);
 
     if (!customer.isInUse()) {
       if (!customer.getDonations().isEmpty()) {

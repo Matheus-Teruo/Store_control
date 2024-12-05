@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public record RequestCreateItem(
     @NotNull(message = "UUID of product is required")
-    UUID productId,
+    UUID productUuid,
 
     @NotNull(message = "quantity is required")
     @PositiveOrZero(message = "quantity cannot have a negative value")

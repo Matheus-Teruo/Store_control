@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import java.util.List;
-import java.util.UUID;
 
 public record RequestCreatePurchase(
     @NotNull(message = "OnOrder boolean value is required")
@@ -17,9 +16,6 @@ public record RequestCreatePurchase(
 
     @NotNull(message = "OrderCardId is required")
     @Pattern(regexp = "^[A-Za-z0-9]{15}$")
-    String orderCardId,
-
-    @NotNull(message = "VoluntaryId is required")
-    UUID voluntaryId
+    String orderCardId
 ) {
 }

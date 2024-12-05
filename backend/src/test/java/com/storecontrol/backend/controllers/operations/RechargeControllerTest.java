@@ -38,19 +38,20 @@ class RechargeControllerTest extends BaseControllerTest {
     RequestCreateRecharge requestRecharge = createRequestCreateRecharge(mockRecharge);
     ResponseRecharge expectedResponse = new ResponseRecharge(mockRecharge);
 
-    when(service.createRecharge(requestRecharge)).thenReturn(mockRecharge);
+    when(service.createRecharge(requestRecharge, mockRecharge.getVoluntary().getUuid())).thenReturn(mockRecharge);
 
     // When & Then
     mockMvc.perform(post("/recharges")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(requestRecharge)))
+            .content(toJson(requestRecharge))
+            .requestAttr("UserUuid", mockRecharge.getVoluntary().getUuid()))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location",
             containsString("/recharges/" + mockRecharge.getUuid().toString())))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).createRecharge(requestRecharge);
+    verify(service, times(1)).createRecharge(requestRecharge, mockRecharge.getVoluntary().getUuid());
     verifyNoMoreInteractions(service);
   }
 
@@ -146,18 +147,24 @@ class RechargeControllerTest extends BaseControllerTest {
   @Test
   void testDeleteRechargeSuccess() throws Exception {
     // Given
+    String cardId = "CardIDTest12345";
+    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
+    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockOrderCard,false);
+
+    Recharge mockRecharge = createRechargeEntity(UUID.randomUUID(), mockCustomer, false);
     RequestDeleteRecharge deleteRequest = createRequestDeleteRecharge(UUID.randomUUID());
 
-    doNothing().when(service).deleteRecharge(deleteRequest);
+    doNothing().when(service).deleteRecharge(deleteRequest, mockRecharge.getVoluntary().getUuid());
 
     // When & Then
     mockMvc.perform(delete("/recharges")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(deleteRequest)))
+            .content(toJson(deleteRequest))
+            .requestAttr("UserUuid", mockRecharge.getVoluntary().getUuid()))
         .andExpect(status().isNoContent());
 
     // Verify interactions
-    verify(service, times(1)).deleteRecharge(deleteRequest);
+    verify(service, times(1)).deleteRecharge(deleteRequest, mockRecharge.getVoluntary().getUuid());
     verifyNoMoreInteractions(service);
   }
 }

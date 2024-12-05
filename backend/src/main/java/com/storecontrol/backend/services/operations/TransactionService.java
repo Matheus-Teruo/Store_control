@@ -1,7 +1,6 @@
 package com.storecontrol.backend.services.operations;
 
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
-import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Transaction;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
@@ -22,7 +21,7 @@ import java.util.UUID;
 public class TransactionService {
 
   @Autowired
-  TransactionValidation validate;
+  TransactionValidation validation;
 
   @Autowired
   TransactionRepository repository;
@@ -34,12 +33,12 @@ public class TransactionService {
   VoluntaryService voluntaryService;
 
   @Transactional
-  public Transaction createTransaction(RequestCreateTransaction request) {
-    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(request.voluntaryId());
-    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterId());
+  public Transaction createTransaction(RequestCreateTransaction request, UUID userUuid) {
+    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
+    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterUuid());
 
-    validate.checkVoluntaryFunctionMatch(voluntary);
-    validate.checkCashAvailableToTransaction(
+    validation.checkVoluntaryFunctionType(voluntary);
+    validation.checkCashAvailableToTransaction(
         request.amount(),
         request.transactionTypeEnum(),
         cashRegister,
@@ -71,14 +70,18 @@ public class TransactionService {
   }
 
   @Transactional
-  public void deleteTransaction(RequestDeleteTransaction request) {
+  public void deleteTransaction(RequestDeleteTransaction request, UUID userUuid) {
     var transaction = safeTakeTransactionByUuid(request.uuid());
+    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
 
-    validate.checkCashAvailableToTransaction(
+    validation.checkCashAvailableToTransaction(
         transaction.getAmount(),
         transaction.getTransactionTypeEnum().toString(),
         transaction.getCashRegister(),
         true);
+    validation.checkTransactionBelongsToVoluntary(transaction, userUuid);
+    validation.checkIfLastRechargeOfVoluntary(transaction, voluntary);
+
     handleCashTotal(transaction, transaction.getTransactionTypeEnum().isExit());
 
     transaction.deleteTransaction();

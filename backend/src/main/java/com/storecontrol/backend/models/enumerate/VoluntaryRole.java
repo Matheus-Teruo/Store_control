@@ -23,6 +23,6 @@ public enum VoluntaryRole {
   }
 
   public boolean isNotAdmin() {
-    return this.typeBoolean;
+    return !this.typeBoolean;
   }
 }

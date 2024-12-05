@@ -25,8 +25,11 @@ public class TransactionController {
   TransactionService service;
 
   @PostMapping
-  public ResponseEntity<ResponseTransaction> createTransaction(@RequestBody @Valid RequestCreateTransaction request) {
-    var transaction = service.createTransaction(request);
+  public ResponseEntity<ResponseTransaction> createTransaction(
+      @RequestBody @Valid RequestCreateTransaction request,
+      @RequestAttribute("UserUuid") UUID userUuid
+  ) {
+    var transaction = service.createTransaction(request, userUuid);
 
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
@@ -61,8 +64,11 @@ public class TransactionController {
   }
 
   @DeleteMapping
-  public ResponseEntity<Void> deleteTransaction(@RequestBody @Valid RequestDeleteTransaction request) {
-    service.deleteTransaction(request);
+  public ResponseEntity<Void> deleteTransaction(
+      @RequestBody @Valid RequestDeleteTransaction request,
+      @RequestAttribute("UserUuid") UUID userUuid
+  ) {
+    service.deleteTransaction(request, userUuid);
 
     return ResponseEntity.noContent().build();
   }

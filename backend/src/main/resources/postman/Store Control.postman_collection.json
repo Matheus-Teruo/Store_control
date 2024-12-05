@@ -291,6 +291,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cardId\": {{card_id}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{hostPath}}customers/card",
 							"host": [
@@ -376,7 +385,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"donationValue\": \"4\",\r\n    \"refundValue\": \"0\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"cashRegisterId\": \"{{cash_register_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
+							"raw": "{\r\n    \"donationValue\": \"4\",\r\n    \"refundValue\": \"0\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"cashRegisterUuid\": \"{{cash_register_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -454,8 +463,8 @@
 									"    return result;\r",
 									"}\r",
 									"\r",
-									"const generatedId = generateRandomId(15);\r",
-									"pm.collectionVariables.set(\"card_id\", generatedId);\r",
+									"const generatedId = generateRandomId(6);\r",
+									"pm.collectionVariables.set(\"card_id\", \"ordercard\" + generatedId);\r",
 									""
 								],
 								"type": "text/javascript",
@@ -575,7 +584,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"standName\": \"StandExample\",\r\n    \"associationId\": \"{{association_id}}\"\r\n}",
+							"raw": "{\r\n    \"standName\": \"StandExample\",\r\n    \"associationUuid\": \"{{association_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -641,7 +650,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{stand_id}}\",\r\n    \"standName\": \"StandExample\",\r\n    \"associationId\": \"{{association_id}}\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{stand_id}}\",\r\n    \"standName\": null,\r\n    \"associationUuid\": \"{{association_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -720,7 +729,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"productName\": \"productExample1\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"productName\": \"productExample1\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -774,7 +783,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{product_id}}\",\r\n    \"productName\": \"ExampleproductName\",\r\n    \"price\": \"2.00\",\r\n    \"discount\": \"0.00\",\r\n    \"stock\": null,\r\n    \"productImg\": null,\r\n    \"standId\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{product_id}}\",\r\n    \"productName\": \"ExampleproductName\",\r\n    \"price\": \"2.00\",\r\n    \"discount\": \"0.00\",\r\n    \"stock\": null,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -902,7 +911,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"functionId\": \"{{cash_register_id}}\" // \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"functionUuid\": \"{{cash_register_id}}\" // \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1037,7 +1046,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productId\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productId\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ],\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
+									"raw": "{\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ],\r\n    \"orderCardId\": \"{{card_id}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1120,7 +1129,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"uuid\": \"{{purchase_id}}\",\r\n    \"onOrder\": false,\r\n    \"requestUpdateItems\": [\r\n        {\"productId\": \"{{product_id}}\", \"delivered\": 1}\r\n    ]\r\n}",
+									"raw": "{\r\n    \"uuid\": \"{{purchase_id}}\",\r\n    \"onOrder\": false,\r\n    \"requestUpdateItems\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"delivered\": 1}\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1190,7 +1199,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"cashRegisterId\": \"{{cash_register_id}}\",\r\n    \"voluntaryId\": \"{{voluntary_id}}\"\r\n}",
+									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"cashRegisterUuid\": \"{{cash_register_id}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1367,7 +1376,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"amount\": \"7.60\",\r\n    \"transactionTypeEnum\": \"entry\",\r\n    \"cashRegisterId\": \"{{cash_register_id}}\",\r\n    \"voluntaryId\": \"4d79b333-1998-42d4-9fa9-199af56c8483\"\r\n}",
+									"raw": "{\r\n    \"amount\": \"7.60\",\r\n    \"transactionTypeEnum\": \"entry\",\r\n    \"cashRegisterUuid\": \"{{cash_register_id}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1432,7 +1441,7 @@
 							"response": []
 						},
 						{
-							"name": "New Request Copy",
+							"name": "Delete Transaction",
 							"request": {
 								"method": "DELETE",
 								"header": [],

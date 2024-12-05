@@ -21,9 +21,6 @@ public record RequestCustomerFinalization(
     String orderCardId,
 
     @NotNull(message = "Cash register ID is required")
-    UUID cashRegisterId,
-
-    @NotNull(message = "Voluntary ID is required")
-    UUID voluntaryId
+    UUID cashRegisterUuid
 ) {
 }

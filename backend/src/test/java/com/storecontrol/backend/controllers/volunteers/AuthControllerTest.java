@@ -107,10 +107,10 @@ class AuthControllerTest extends BaseControllerTest {
     Voluntary mockVoluntary = createVoluntaryEntity(mockUserUuid);
     ResponseUser expectedResponse = new ResponseUser(mockVoluntary);
 
+    Cookie authCookie = new Cookie("auth", mockJwt);
+
     when(tokenService.recoverVoluntaryUuid(mockJwt)).thenReturn(mockUserUuid);
     when(service.safeTakeVoluntaryByUuid(mockUserUuid)).thenReturn(mockVoluntary);
-
-    Cookie authCookie = new Cookie("auth", mockJwt);
 
     // When & Then
     mockMvc.perform(get("/user/check")

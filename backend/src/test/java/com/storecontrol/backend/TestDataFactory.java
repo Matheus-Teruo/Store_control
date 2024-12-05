@@ -64,7 +64,6 @@ public class TestDataFactory {
         BigDecimal.TWO,
         BigDecimal.ONE,
         customer.getOrderCard().getId(),
-        UUID.randomUUID(),
         UUID.randomUUID()
     );
   }
@@ -135,8 +134,7 @@ public class TestDataFactory {
     return new RequestCreatePurchase(
         purchase.isOnOrder(),
         requestCreateItems,
-        purchase.getCustomer().getOrderCard().getId(),
-        purchase.getVoluntary().getUuid()
+        purchase.getCustomer().getOrderCard().getId()
     );
   }
 
@@ -178,8 +176,7 @@ public class TestDataFactory {
         recharge.getRechargeValue(),
         recharge.getPaymentTypeEnum().toString().toLowerCase(),
         recharge.getCustomer().getOrderCard().getId(),
-        recharge.getCashRegister().getUuid(),
-        recharge.getVoluntary().getUuid()
+        recharge.getCashRegister().getUuid()
     );
   }
 
@@ -217,8 +214,7 @@ public class TestDataFactory {
     return new RequestCreateTransaction(
         transaction.getAmount(),
         transaction.getTransactionTypeEnum().toString().toLowerCase(),
-        transaction.getCashRegister().getUuid(),
-        transaction.getVoluntary().getUuid()
+        transaction.getCashRegister().getUuid()
     );
   }
 

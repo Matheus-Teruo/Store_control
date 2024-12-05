@@ -18,9 +18,6 @@ public record RequestCreateTransaction(
     String transactionTypeEnum,
 
     @NotNull(message = "Cash Register ID is required")
-    UUID cashRegisterId,
-
-    @NotNull(message = "Voluntary ID is required")
-    UUID voluntaryId
+    UUID cashRegisterUuid
 ) {
 }

@@ -36,19 +36,20 @@ class TransactionControllerTest extends BaseControllerTest {
     RequestCreateTransaction requestTransaction = createRequestCreateTransaction(mockTransaction);
     ResponseTransaction expectedResponse = new ResponseTransaction(mockTransaction);
 
-    when(service.createTransaction(requestTransaction)).thenReturn(mockTransaction);
+    when(service.createTransaction(requestTransaction, mockTransaction.getVoluntary().getUuid())).thenReturn(mockTransaction);
 
     // When & Then
     mockMvc.perform(post("/transactions")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(requestTransaction)))
+            .content(toJson(requestTransaction))
+            .requestAttr("UserUuid", mockTransaction.getVoluntary().getUuid()))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location",
             containsString("/transactions/" + mockTransaction.getUuid().toString())))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).createTransaction(requestTransaction);
+    verify(service, times(1)).createTransaction(requestTransaction, mockTransaction.getVoluntary().getUuid());
     verifyNoMoreInteractions(service);
   }
 
@@ -130,18 +131,20 @@ class TransactionControllerTest extends BaseControllerTest {
   @Test
   void testDeleteTransactionSuccess() throws Exception {
     // Given
+    Transaction mockTransaction = createTransactionEntity(UUID.randomUUID(), false);
     RequestDeleteTransaction deleteRequest = createRequestDeleteTransaction(UUID.randomUUID());
 
-    doNothing().when(service).deleteTransaction(deleteRequest);
+    doNothing().when(service).deleteTransaction(deleteRequest, mockTransaction.getVoluntary().getUuid());
 
     // When & Then
     mockMvc.perform(delete("/transactions")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(deleteRequest)))
+            .content(toJson(deleteRequest))
+            .requestAttr("UserUuid", mockTransaction.getVoluntary().getUuid()))
         .andExpect(status().isNoContent());
 
     // Verify interactions
-    verify(service, times(1)).deleteTransaction(deleteRequest);
+    verify(service, times(1)).deleteTransaction(deleteRequest, mockTransaction.getVoluntary().getUuid());
     verifyNoMoreInteractions(service);
   }
 }

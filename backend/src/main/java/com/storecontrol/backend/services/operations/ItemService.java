@@ -26,7 +26,7 @@ public class ItemService {
     var productMap = productService.listProductsAsMap();
 
     for (RequestCreateItem requestCreateItem : request.items()) {
-      var product = productMap.get(requestCreateItem.productId());
+      var product = productMap.get(requestCreateItem.productUuid());
 
       var itemId = new ItemId(product, purchase);
       var item = new Item(requestCreateItem, itemId);
