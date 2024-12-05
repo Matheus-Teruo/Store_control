@@ -14,7 +14,7 @@ services:
       - SECRET_TOKEN=jashduwqekckweasd
       - NODE_ENV=development
     ports:
-      - 80:80
+      - 5000:5000
       # - 9229:9229
       # - 9230:9230
     secrets:
@@ -69,6 +69,18 @@ services:
       - WATCHPACK_POLLING=true
     depends_on:
       - backend
+  proxymanager:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 81:81
+      - 443:443
+    volumes:
+      - ./proxy/data:/data
+      - ./proxy/letsencrypt:/etc/letsencrypt
+    networks:
+      - public
 networks:
   public:
   private:
