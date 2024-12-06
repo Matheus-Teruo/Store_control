@@ -1,12 +1,12 @@
 package com.storecontrol.backend.controllers.operations;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
-import com.storecontrol.backend.models.operations.Donation;
-import com.storecontrol.backend.models.operations.response.ResponseDonation;
-import com.storecontrol.backend.models.operations.response.ResponseSummaryDonation;
-import com.storecontrol.backend.services.operations.DonationService;
+import com.storecontrol.backend.models.operations.Refund;
+import com.storecontrol.backend.models.operations.response.ResponseRefund;
+import com.storecontrol.backend.models.operations.response.ResponseSummaryRefund;
+import com.storecontrol.backend.services.operations.RefundService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -19,62 +19,62 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class DonationControllerTest extends BaseControllerTest {
+class RefundTest extends BaseTest {
 
   @MockBean
-  DonationService service;
+  RefundService service;
 
   @Test
-  void testReadDonationSuccess() throws Exception {
+  void testReadRefundSuccess() throws Exception {
     // Given
-    UUID donationUuid = UUID.randomUUID();
+    UUID refundUuid = UUID.randomUUID();
 
     String cardId = "CardIDTest12345";
-    OrderCard mockOrderCard = createOrderCardEntity(cardId, false);
+    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
     Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockOrderCard,false);
-    Donation mockDonation = createDonationEntity(donationUuid, mockCustomer);
+    Refund mockRefund = createRefundEntity(refundUuid, mockCustomer);
 
-    ResponseDonation expectedResponse = new ResponseDonation(mockDonation);
+    ResponseRefund expectedResponse = new ResponseRefund(mockRefund);
 
-    when(service.takeDonationByUuid(donationUuid)).thenReturn(mockDonation);
+    when(service.takeRefundByUuid(refundUuid)).thenReturn(mockRefund);
 
     // When & Then
-    mockMvc.perform(get("/donations/{uuid}", donationUuid)
+    mockMvc.perform(get("/refunds/{uuid}", refundUuid)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).takeDonationByUuid(donationUuid);
+    verify(service, times(1)).takeRefundByUuid(refundUuid);
     verifyNoMoreInteractions(service);
   }
 
   @Test
-  void testReadDonationsSuccess() throws Exception {
+  void readRefunds() throws Exception {
     // Given
     String cardId1 = "CardIDTest12345";
     OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
     Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
     Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
-    List<Donation> mockDonations = List.of(
-        createDonationEntity(UUID.randomUUID(), mockCustomer1),
-        createDonationEntity(UUID.randomUUID(), mockCustomer2)
+    List<Refund> mockRefunds = List.of(
+        createRefundEntity(UUID.randomUUID(), mockCustomer1),
+        createRefundEntity(UUID.randomUUID(), mockCustomer2)
     );
-    List<ResponseSummaryDonation> expectedResponse = mockDonations.stream()
-        .map(ResponseSummaryDonation::new)
+    List<ResponseSummaryRefund> expectedResponse = mockRefunds.stream()
+        .map(ResponseSummaryRefund::new)
         .toList();
 
-    when(service.listDonations()).thenReturn(mockDonations);
+    when(service.listRefunds()).thenReturn(mockRefunds);
 
     // When & Then
-    mockMvc.perform(get("/donations")
+    mockMvc.perform(get("/refunds")
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listDonations();
+    verify(service, times(1)).listRefunds();
     verifyNoMoreInteractions(service);
   }
 }

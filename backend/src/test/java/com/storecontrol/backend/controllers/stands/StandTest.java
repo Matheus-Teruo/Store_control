@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.stands;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.stands.Association;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.request.RequestCreateStand;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class StandControllerTest extends BaseControllerTest {
+class StandTest extends BaseTest {
 
   @MockBean
   private StandService service;

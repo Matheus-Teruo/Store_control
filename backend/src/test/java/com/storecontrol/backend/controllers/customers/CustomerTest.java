@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.customers;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class CustomerControllerTest extends BaseControllerTest {
+class CustomerTest extends BaseTest {
 
   @MockBean
   CustomerService service;

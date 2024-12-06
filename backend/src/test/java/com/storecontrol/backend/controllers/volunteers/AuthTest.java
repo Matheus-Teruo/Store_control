@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.volunteers;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.infra.auth.security.TokenServiceConfig;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestLoginVoluntary;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class AuthControllerTest extends BaseControllerTest {
+class AuthTest extends BaseTest {
 
   @MockBean
   VoluntaryService service;

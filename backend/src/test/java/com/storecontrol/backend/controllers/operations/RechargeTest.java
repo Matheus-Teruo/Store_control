@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.operations;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.operations.Recharge;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class RechargeControllerTest extends BaseControllerTest {
+class RechargeTest extends BaseTest {
 
   @MockBean
   RechargeService service;

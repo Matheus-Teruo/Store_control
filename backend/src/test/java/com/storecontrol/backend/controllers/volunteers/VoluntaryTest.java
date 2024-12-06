@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.volunteers;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class VoluntaryControllerTest extends BaseControllerTest {
+class VoluntaryTest extends BaseTest {
 
   @MockBean
   VoluntaryService service;

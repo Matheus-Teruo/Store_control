@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.customers;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.customers.response.ResponseOrderCard;
@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class OrderCardControllerTest extends BaseControllerTest {
+class OrderCardTest extends BaseTest {
 
   @MockBean
   OrderCardService service;

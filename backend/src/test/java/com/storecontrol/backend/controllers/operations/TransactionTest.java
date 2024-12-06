@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.operations;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.operations.Transaction;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
-class TransactionControllerTest extends BaseControllerTest {
+class TransactionTest extends BaseTest {
 
   @MockBean
   TransactionService service;

@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.stands;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.stands.Association;
 import com.storecontrol.backend.models.stands.request.RequestCreateAssociation;
 import com.storecontrol.backend.models.stands.request.RequestUpdateAssociation;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class AssociationControllerTest extends BaseControllerTest {
+class AssociationTest extends BaseTest {
 
   @MockBean
   private AssociationService service;

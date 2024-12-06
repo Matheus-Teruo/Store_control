@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.registers;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
 import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class CashRegisterControllerTest extends BaseControllerTest {
+class CashRegisterTest extends BaseTest {
 
   @MockBean
   CashRegisterService service;

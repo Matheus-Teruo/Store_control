@@ -251,7 +251,7 @@ public class TestDataFactory {
         uuid,
         nameOnlyLetters(),
         nameOnlyLettersAndSpace(),
-        null,
+        new ArrayList<>(),
         true
     );
   }
@@ -316,7 +316,7 @@ public class TestDataFactory {
         null,
         true,
         createAssociationEntity(UUID.randomUUID()),
-        null
+        new ArrayList<>()
     );
   }
 
