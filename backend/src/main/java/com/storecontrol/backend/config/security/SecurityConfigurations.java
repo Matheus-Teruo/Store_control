@@ -1,4 +1,4 @@
-package com.storecontrol.backend.infra.auth.security;
+package com.storecontrol.backend.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -113,6 +113,7 @@ public class SecurityConfigurations {
   private static final String[] AUTHORIZED_POST_ENDPOINTS_MANAGEMENT = {
       "/volunteers/function",
       "/products",
+      "/products/upload-image/{uuid}",
       "/transactions"
   };
 

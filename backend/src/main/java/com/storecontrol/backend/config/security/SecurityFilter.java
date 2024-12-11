@@ -1,4 +1,4 @@
-package com.storecontrol.backend.infra.auth.security;
+package com.storecontrol.backend.config.security;
 
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
@@ -68,7 +68,7 @@ public class SecurityFilter extends OncePerRequestFilter {
   private static final List<String> PUBLIC_ROUTES = List.of(
       "/user/login",
       "/user/signup",
-      "/customers/"
+      "/customers/card" // TODO: get de products
   );
 
   private boolean isPublicRoute(String path) {
