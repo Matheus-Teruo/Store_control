@@ -729,7 +729,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"productName\": \"productExample1\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"productName\": \"productExample\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -817,6 +817,34 @@
 							"raw": "{{hostPath}}products",
 							"host": [
 								"{{hostPath}}products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Product Image",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{hostPath}}products/upload-image/{{product_id}}",
+							"host": [
+								"{{hostPath}}products"
+							],
+							"path": [
+								"upload-image",
+								"{{product_id}}"
 							]
 						}
 					},
