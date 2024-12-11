@@ -5,3 +5,7 @@
 *.ipr
 
 .env
+.env.dev
+
+### TEMPORARIO
+table_service/*
