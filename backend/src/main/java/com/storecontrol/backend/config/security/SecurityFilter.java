@@ -30,7 +30,9 @@ public class SecurityFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
     String path = request.getRequestURI();
-    if (isPublicRoute(path)) {
+    String method = request.getMethod();
+
+    if (isPublicRoute(path, method)) {
       filterChain.doFilter(request, response);
       return;
     }
@@ -68,10 +70,13 @@ public class SecurityFilter extends OncePerRequestFilter {
   private static final List<String> PUBLIC_ROUTES = List.of(
       "/user/login",
       "/user/signup",
-      "/customers/card" // TODO: get de products
+      "/customers/card"
   );
 
-  private boolean isPublicRoute(String path) {
-    return PUBLIC_ROUTES.stream().anyMatch(path::startsWith);
+  private boolean isPublicRoute(String path, String method) {
+    if (PUBLIC_ROUTES.stream().anyMatch(path::startsWith)) {
+      return true;
+    }
+    return "/products".equals(path) && "GET".equalsIgnoreCase(method);
   }
 }
