@@ -54,6 +54,17 @@ services:
       - WATCHPACK_POLLING=true
     depends_on:
       - backend
+  table_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: table-service-container
+    networks:
+      - private
+    restart: unless-stopped
+    volumes:
+      - ./app:/app
+    command: python main.py
 networks:
   public:
   private:
