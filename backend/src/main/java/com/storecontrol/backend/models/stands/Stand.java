@@ -17,7 +17,10 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Stand extends Function {
 
-    @ManyToOne @JoinColumn(name = "association_uuid", nullable = false)
+    @Column(name = "association_uuid", insertable = false, updatable = false)
+    private UUID associationUuid;
+
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "association_uuid", nullable = false)
     private Association association;
 
     @OneToMany(mappedBy = "stand")

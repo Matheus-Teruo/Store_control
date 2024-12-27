@@ -8,7 +8,7 @@ import java.util.UUID;
 public record ResponseSummaryVoluntary(
     UUID uuid,
     String fullname,
-    ResponseSummaryFunction SummaryFunction,
+    ResponseSummaryFunction summaryFunction,
     VoluntaryRole voluntaryRole
 ) {
 

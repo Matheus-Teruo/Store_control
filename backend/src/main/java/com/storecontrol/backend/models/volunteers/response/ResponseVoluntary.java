@@ -9,7 +9,7 @@ public record ResponseVoluntary(
     UUID uuid,
     String username,
     String fullname,
-    ResponseSummaryFunction function,
+    ResponseSummaryFunction summaryFunction,
     VoluntaryRole voluntaryRole
 ) {
 

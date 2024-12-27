@@ -31,6 +31,9 @@ public class Donation {
     @ManyToOne @JoinColumn(name = "customer_uuid", nullable = false)
     private Customer customer;
 
+    @Column(name = "voluntary_uuid", insertable = false, updatable = false)
+    private UUID voluntaryUuid;
+
     @ManyToOne @JoinColumn(name = "voluntary_uuid", nullable = false)
     private Voluntary voluntary;
 

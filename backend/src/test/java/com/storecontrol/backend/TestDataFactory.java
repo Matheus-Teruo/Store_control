@@ -84,24 +84,28 @@ public class TestDataFactory {
   }
 
   public static Donation createDonationEntity(UUID uuid, Customer customer) {
+    UUID voluntaryUUID = UUID.randomUUID();
     return new Donation(
         uuid,
         BigDecimal.TWO,
         LocalDateTime.now(),
         customer,
-        createVoluntaryEntity(UUID.randomUUID()),
+        voluntaryUUID,
+        createVoluntaryEntity(voluntaryUUID),
         true
     );
   }
 
   public static Purchase createPurchaseEntity(UUID uuid, Customer customer) {
+    UUID voluntaryUUID = UUID.randomUUID();
     return new Purchase(
         uuid,
         false,
         LocalDateTime.now(),
         null,
         customer,
-        createVoluntaryEntity(UUID.randomUUID()),
+        voluntaryUUID,
+        createVoluntaryEntity(voluntaryUUID),
         true
     );
   }
@@ -159,6 +163,7 @@ public class TestDataFactory {
   public static Recharge createRechargeEntity(UUID uuid, Customer customer, boolean isCash) {
     PaymentType[] paymentTypes = PaymentType.values();
     int randomIndex = new Random().nextInt(paymentTypes.length);
+    UUID voluntaryUUID = UUID.randomUUID();
     return new Recharge(
         uuid,
         BigDecimal.TEN,
@@ -166,7 +171,8 @@ public class TestDataFactory {
         isCash ? PaymentType.CASH : paymentTypes[randomIndex],
         customer,
         createCashRegisterEntity(UUID.randomUUID()),
-        createVoluntaryEntity(UUID.randomUUID()),
+        voluntaryUUID,
+        createVoluntaryEntity(voluntaryUUID),
         true
     );
   }
@@ -187,25 +193,29 @@ public class TestDataFactory {
   }
 
   public static Refund createRefundEntity(UUID uuid, Customer customer) {
+    UUID voluntaryUUID = UUID.randomUUID();
     return new Refund(
         uuid,
         BigDecimal.TWO,
         LocalDateTime.now(),
         customer,
         createCashRegisterEntity(UUID.randomUUID()),
-        createVoluntaryEntity(UUID.randomUUID()),
+        voluntaryUUID,
+        createVoluntaryEntity(voluntaryUUID),
         true
     );
   }
 
   public static Transaction createTransactionEntity(UUID uuid, boolean isEntry) {
+    UUID voluntaryUUID = UUID.randomUUID();
     return new Transaction(
         uuid,
         BigDecimal.valueOf(50),
         isEntry ? TransactionType.ENTRY : TransactionType.EXIT,
         LocalDateTime.now(),
         createCashRegisterEntity(UUID.randomUUID()),
-        createVoluntaryEntity(UUID.randomUUID()),
+        voluntaryUUID,
+        createVoluntaryEntity(voluntaryUUID),
         true
     );
   }
