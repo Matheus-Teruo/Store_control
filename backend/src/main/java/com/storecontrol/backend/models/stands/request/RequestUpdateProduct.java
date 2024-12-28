@@ -12,6 +12,11 @@ public record RequestUpdateProduct(
     @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "Nome de produto deve conter apenas letras, números e espaços")
     String productName,
 
+    @Size(max = 255, message = "Summary must not exceed 255 characters")
+    String summary,
+
+    String description,
+
     @PositiveOrZero(message = "Product cannot have a negative price")
     @Digits(integer = 5, fraction = 2, message = "The price must contain 2 decimal digits and a value below 5 digits")
     BigDecimal price,

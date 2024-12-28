@@ -65,6 +65,8 @@ CREATE TABLE order_cards (
 CREATE TABLE products (
     uuid BINARY(16) PRIMARY KEY,
     product_name VARCHAR(255) UNIQUE NOT NULL,
+    summary VARCHAR(255),
+    description TEXT,
     price DECIMAL(19, 2) NOT NULL,
     discount DECIMAL(19, 2) NOT NULL,
     stock INT NOT NULL,

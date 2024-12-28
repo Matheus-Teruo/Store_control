@@ -286,6 +286,8 @@ public class TestDataFactory {
     return new Product(
         uuid,
         nameOnlyLettersSpaceAndNumbers(),
+        nameOnlyLettersSpaceAndNumbers(),
+        nameOnlyLettersSpaceAndNumbers(),
         BigDecimal.TEN,
         BigDecimal.ZERO,
         1000,
@@ -300,6 +302,8 @@ public class TestDataFactory {
   public static RequestCreateProduct createRequestCreateProduct(Product product) {
     return new RequestCreateProduct(
         product.getProductName(),
+        product.getSummary(),
+        product.getDescription(),
         product.getPrice(),
         product.getStock(),
         product.getProductImg(),
@@ -310,6 +314,8 @@ public class TestDataFactory {
   public static RequestUpdateProduct createRequestUpdateProduct(UUID uuid, UUID standUuid) {
     return new RequestUpdateProduct(
         uuid,
+        nameOnlyLettersSpaceAndNumbers(),
+        nameOnlyLettersSpaceAndNumbers(),
         nameOnlyLettersSpaceAndNumbers(),
         BigDecimal.TEN,
         BigDecimal.TWO,

@@ -10,10 +10,8 @@ import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
 import com.storecontrol.backend.services.stands.ProductService;
 import com.storecontrol.backend.services.stands.S3Service;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import software.amazon.awssdk.services.s3.S3Client;
 
 import java.util.List;
 import java.util.UUID;

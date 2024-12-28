@@ -25,6 +25,12 @@ public class Product {
     @Column(name = "product_name", nullable = false)
     private String productName;
 
+    @Column(name = "summary", length = 255)
+    private String summary;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
     @Column(nullable = false)
     private BigDecimal price;
 
@@ -52,6 +58,12 @@ public class Product {
 
     public Product(RequestCreateProduct request, Stand stand) {
         this.productName = request.productName();
+        if (request.summary() != null) {
+            this.summary = request.summary();
+        }
+        if (request.description() != null) {
+            this.description = request.description();
+        }
         this.price = request.price();
         this.discount = BigDecimal.ZERO;
         this.stock = request.stock();
