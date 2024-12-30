@@ -31,6 +31,7 @@ CREATE TABLE donations (
     donation_value DECIMAL(19, 2) NOT NULL,
     donation_time_stamp TIMESTAMP NOT NULL,
     customer_uuid BINARY(16) NOT NULL,
+    cash_register_uuid binary(16) NOT NULL,
     voluntary_uuid BINARY(16) NOT NULL,
     valid TINYINT NOT NULL
 );

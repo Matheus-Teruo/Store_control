@@ -2,6 +2,7 @@ package com.storecontrol.backend.models.operations;
 
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
 import com.storecontrol.backend.models.customers.Customer;
+import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,9 @@ public class Donation {
     @ManyToOne @JoinColumn(name = "customer_uuid", nullable = false)
     private Customer customer;
 
+    @ManyToOne @JoinColumn(name = "cash_register_uuid", nullable = false)
+    private CashRegister cashRegister;
+
     @Column(name = "voluntary_uuid", insertable = false, updatable = false)
     private UUID voluntaryUuid;
 
@@ -43,10 +47,12 @@ public class Donation {
 
     public Donation(RequestCustomerFinalization request,
                     Customer customer,
+                    CashRegister cashRegister,
                     Voluntary voluntary) {
         this.donationValue = request.donationValue();
         this.donationTimeStamp = LocalDateTime.now();
         this.customer = customer;
+        this.cashRegister = cashRegister;
         this.voluntary = voluntary;
         this.valid = true;
     }

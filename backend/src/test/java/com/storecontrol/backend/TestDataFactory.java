@@ -90,6 +90,7 @@ public class TestDataFactory {
         BigDecimal.TWO,
         LocalDateTime.now(),
         customer,
+        createCashRegisterEntity(UUID.randomUUID()),
         voluntaryUUID,
         createVoluntaryEntity(voluntaryUUID),
         true
