@@ -32,7 +32,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     String path = request.getRequestURI();
     String method = request.getMethod();
 
-    if (isPublicRoute(path, method)) {
+    if (isPublicRoute(path, method) || method.equalsIgnoreCase("OPTIONS")) {
       filterChain.doFilter(request, response);
       return;
     }

@@ -32,6 +32,8 @@ public class SecurityConfigurations {
               "/products").permitAll();
           req.requestMatchers(HttpMethod.POST,
               "/user/login", "/user/signup", "/customers/card").permitAll();
+          req.requestMatchers(HttpMethod.OPTIONS,
+              "/**").permitAll();
 
           req.requestMatchers(HttpMethod.GET,
                   AUTHORIZED_GET_ENDPOINTS_LOGGED)
