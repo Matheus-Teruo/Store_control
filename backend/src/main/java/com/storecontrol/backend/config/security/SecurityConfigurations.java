@@ -20,18 +20,28 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfigurations {
 
   @Autowired
-  SecurityFilter securityFilter;
+  private SecurityFilter securityFilter;
+
+  @Autowired
+  private CustomAuthenticationEntryPoint authenticationEntryPoint;
+
+  @Autowired
+  private CustomAccessDeniedHandler accessDeniedHandler;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http.csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .exceptionHandling(ex -> {
+          ex.authenticationEntryPoint(authenticationEntryPoint);
+          ex.accessDeniedHandler(accessDeniedHandler);
+        })
         .authorizeHttpRequests(req -> {
 
           req.requestMatchers(HttpMethod.GET,
-              "/products").permitAll();
+              AUTHORIZED_GET_ENDPOINTS_ALL).permitAll();
           req.requestMatchers(HttpMethod.POST,
-              "/user/login", "/user/signup", "/customers/card").permitAll();
+              AUTHORIZED_POST_ENDPOINTS_ALL).permitAll();
           req.requestMatchers(HttpMethod.OPTIONS,
               "/**").permitAll();
 
@@ -43,7 +53,7 @@ public class SecurityConfigurations {
               .hasAnyRole( "USER", "MANAGEMENT", "ADMIN");
           req.requestMatchers(HttpMethod.PUT,
                   AUTHORIZED_PUT_ENDPOINTS_LOGGED)
-              .hasAnyRole( "MANAGEMENT", "ADMIN");
+              .hasAnyRole(  "USER", "MANAGEMENT", "ADMIN");
           req.requestMatchers(HttpMethod.DELETE,
                   AUTHORIZED_DELETE_ENDPOINTS_LOGGED)
               .hasAnyRole( "USER", "MANAGEMENT", "ADMIN");
@@ -62,9 +72,10 @@ public class SecurityConfigurations {
                   AUTHORIZED_DELETE_ENDPOINTS_MANAGEMENT)
               .hasAnyRole( "MANAGEMENT", "ADMIN");
 
-          req.requestMatchers("/**").hasAnyRole("ADMIN");
+          req.requestMatchers("/**").hasRole("ADMIN");
 
-        }).addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+        })
+        .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
   }
 
@@ -78,9 +89,21 @@ public class SecurityConfigurations {
     return new BCryptPasswordEncoder();
   }
 
+  private static final String[] AUTHORIZED_GET_ENDPOINTS_ALL = {
+      "/products",
+      "/products/{uuid}",
+      "/stands",
+      "/associations",
+      "/customers/card/{cardId}"
+  };
+
+  private static final String[] AUTHORIZED_POST_ENDPOINTS_ALL = {
+      "/user/login",
+      "/user/signup"
+  };
+
   private static final String[] AUTHORIZED_GET_ENDPOINTS_LOGGED = {
       "/user/check",
-      "/stands",
       "/stands/{uuid}",
       "/purchases/last3",
       "/purchases/{uuid}",
@@ -113,13 +136,13 @@ public class SecurityConfigurations {
   };
 
   private static final String[] AUTHORIZED_POST_ENDPOINTS_MANAGEMENT = {
-      "/volunteers/function",
       "/products",
       "/products/upload-image/{uuid}",
       "/transactions"
   };
 
   private static final String[] AUTHORIZED_PUT_ENDPOINTS_MANAGEMENT = {
+      "/volunteers/function",
       "/products"
   };
 

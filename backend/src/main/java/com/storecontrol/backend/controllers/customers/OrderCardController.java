@@ -34,8 +34,8 @@ public class OrderCardController {
   }
 
   @GetMapping("/{cardId}")
-  public ResponseEntity<ResponseOrderCard> readCard(@PathVariable String cardId) {
-    var response = new ResponseOrderCard(service.takeOrderCardById(cardId));
+  public ResponseEntity<ResponseOrderCard> readCard(@PathVariable @Valid RequestOrderCard cardId) {
+    var response = new ResponseOrderCard(service.takeOrderCardById(cardId.cardId()));
 
     return ResponseEntity.ok(response);
   }

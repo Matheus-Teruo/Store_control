@@ -52,7 +52,7 @@ public class VoluntaryController {
     return ResponseEntity.ok(response);
   }
 
-  @PutMapping("/superuser")
+  @PutMapping("/role")
   public ResponseEntity<ResponseVoluntary> updateVoluntaryRole(@RequestBody @Valid RequestRoleVoluntary request) {
     var response = new ResponseVoluntary(service.updateVoluntaryRole(request));
 

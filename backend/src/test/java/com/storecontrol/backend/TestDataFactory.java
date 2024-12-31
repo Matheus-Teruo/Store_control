@@ -31,10 +31,7 @@ import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.request.*;
 import com.storecontrol.backend.models.volunteers.User;
 import com.storecontrol.backend.models.volunteers.Voluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestLoginVoluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
+import com.storecontrol.backend.models.volunteers.request.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -395,6 +392,13 @@ public class TestDataFactory {
     return new RequestUpdateVoluntaryFunction(
         uuid,
         functionUuid
+    );
+  }
+
+  public static RequestRoleVoluntary createRequestUpdateVoluntaryRole(UUID uuid, String voluntaryRole) {
+    return new RequestRoleVoluntary(
+        uuid,
+        voluntaryRole
     );
   }
 

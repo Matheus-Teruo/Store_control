@@ -31,9 +31,9 @@ public class CustomerController {
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping("/card")
-  public ResponseEntity<ResponseCustomer> readCustomerByCard(@PathVariable RequestOrderCard request) {
-    var response = new ResponseCustomer(service.takeActiveCustomerByCardId(request.cardId()));
+  @GetMapping("/card/{cardId}")
+  public ResponseEntity<ResponseCustomer> readCustomerByCard(@PathVariable @Valid RequestOrderCard cardId) {
+    var response = new ResponseCustomer(service.takeActiveCustomerByCardId(cardId.cardId()));
 
     return ResponseEntity.ok(response);
   }

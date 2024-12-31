@@ -29,13 +29,6 @@ public class SecurityFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
-    String path = request.getRequestURI();
-    String method = request.getMethod();
-
-    if (isPublicRoute(path, method) || method.equalsIgnoreCase("OPTIONS")) {
-      filterChain.doFilter(request, response);
-      return;
-    }
 
     var tokenJWT = recoverToken(request);
 
@@ -65,18 +58,5 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
 
     return null;
-  }
-
-  private static final List<String> PUBLIC_ROUTES = List.of(
-      "/user/login",
-      "/user/signup",
-      "/customers/card"
-  );
-
-  private boolean isPublicRoute(String path, String method) {
-    if (PUBLIC_ROUTES.stream().anyMatch(path::startsWith)) {
-      return true;
-    }
-    return "/products".equals(path) && "GET".equalsIgnoreCase(method);
   }
 }

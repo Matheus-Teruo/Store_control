@@ -3,6 +3,7 @@ package com.storecontrol.backend.controllers.volunteers;
 import com.storecontrol.backend.BaseControllerTest;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.volunteers.Voluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestRoleVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
 import com.storecontrol.backend.models.volunteers.response.ResponseSummaryVoluntary;
@@ -116,6 +117,34 @@ class VoluntaryControllerTest extends BaseControllerTest {
 
     // Verify interactions
     verify(service, times(1)).updateFunctionFromVoluntary(updateRequest);
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
+  void testUpdateRoleFromVoluntarySuccess() throws Exception {
+    // Given
+    String voluntaryRole = "management";
+
+    Voluntary mockVoluntary = createVoluntaryEntity(UUID.randomUUID());
+    RequestRoleVoluntary updateRequest = createRequestUpdateVoluntaryRole(
+        mockVoluntary.getUuid(),
+        voluntaryRole
+        );
+
+    mockVoluntary.updateVoluntaryRole(updateRequest);
+    ResponseVoluntary expectedResponse = new ResponseVoluntary(mockVoluntary);
+
+    when(service.updateVoluntaryRole(updateRequest)).thenReturn(mockVoluntary);
+
+    // When & Then
+    mockMvc.perform(put("/volunteers/role")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(updateRequest)))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
+
+    // Verify interactions
+    verify(service, times(1)).updateVoluntaryRole(updateRequest);
     verifyNoMoreInteractions(service);
   }
 

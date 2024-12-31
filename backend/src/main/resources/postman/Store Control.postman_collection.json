@@ -288,12 +288,15 @@
 				},
 				{
 					"name": "Read Customer By CardID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"cardId\": {{card_id}}\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -301,12 +304,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostPath}}customers/card",
+							"raw": "{{hostPath}}customers/card/{{card_id}}",
 							"host": [
 								"{{hostPath}}customers"
 							],
 							"path": [
-								"card"
+								"card",
+								"{{card_id}}"
 							]
 						}
 					},
@@ -959,6 +963,32 @@
 					"response": []
 				},
 				{
+					"name": "Update Volunteers Role (Auth)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"voluntaryRole\": \"management\" // \"{{stand_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}volunteers/role",
+							"host": [
+								"{{hostPath}}volunteers"
+							],
+							"path": [
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Delete Voluntary",
 					"request": {
 						"method": "DELETE",
@@ -1581,6 +1611,23 @@
 							],
 							"path": [
 								"check"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log out",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}user/logout",
+							"host": [
+								"{{hostPath}}user"
+							],
+							"path": [
+								"logout"
 							]
 						}
 					},
