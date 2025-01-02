@@ -23,8 +23,11 @@ public class RechargeController {
   RechargeService service;
 
   @PostMapping
-  public ResponseEntity<ResponseRecharge> createRecharge(@RequestBody @Valid RequestCreateRecharge request) {
-    var recharge = service.createRecharge(request);
+  public ResponseEntity<ResponseRecharge> createRecharge(
+      @RequestBody @Valid RequestCreateRecharge request,
+      @RequestAttribute("UserUuid") UUID userUuid
+  ) {
+    var recharge = service.createRecharge(request, userUuid);
 
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
@@ -50,9 +53,20 @@ public class RechargeController {
     return ResponseEntity.ok(response);
   }
 
+  @GetMapping("/last3")
+  public ResponseEntity<List<ResponseSummaryRecharge>> readLast3Purchases(@RequestAttribute("UserUuid") UUID userUuid) {
+    var recharges = service.listLast3Purchases(userUuid);
+
+    var response = recharges.stream().map(ResponseSummaryRecharge::new).toList();
+    return ResponseEntity.ok(response);
+  }
+
   @DeleteMapping
-  public ResponseEntity<Void> deleteRecharge(@RequestBody @Valid RequestDeleteRecharge request) {
-    service.deleteRecharge(request);
+  public ResponseEntity<Void> deleteRecharge(
+      @RequestBody @Valid RequestDeleteRecharge request,
+      @RequestAttribute("UserUuid") UUID userUuid
+  ) {
+    service.deleteRecharge(request, userUuid);
 
     return ResponseEntity.noContent().build();
   }

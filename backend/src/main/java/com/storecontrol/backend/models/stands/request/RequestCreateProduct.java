@@ -10,6 +10,11 @@ public record RequestCreateProduct(
     @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "Product name must contain only letters, numbers and space")
     String productName,
 
+    @Size(max = 255, message = "Summary must not exceed 255 characters")
+    String summary,
+
+    String description,
+
     @NotNull(message = "Product price is required")
     @PositiveOrZero(message = "Product cannot have a negative price")
     @Digits(integer = 5, fraction = 2, message = "The price must contain 2 decimal digits and a value below 5 digits")

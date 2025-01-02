@@ -6,12 +6,14 @@ import java.util.UUID;
 
 public record ResponseSummaryStand(
     UUID uuid,
-    String stand
+    String standName,
+    UUID associationUuid
 ) {
 
   public ResponseSummaryStand(Stand stand) {
     this(stand.getUuid(),
-        stand.getFunctionName()
+        stand.getFunctionName(),
+        stand.getAssociationUuid()
     );
   }
 }

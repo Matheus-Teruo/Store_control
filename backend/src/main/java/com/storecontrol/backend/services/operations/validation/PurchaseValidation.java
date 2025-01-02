@@ -11,16 +11,22 @@ import com.storecontrol.backend.models.operations.purchases.request.RequestUpdat
 import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.volunteers.Voluntary;
+import com.storecontrol.backend.repositories.operations.PurchaseRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
 public class PurchaseValidation {
+
+  @Autowired
+  PurchaseRepository repository;
 
   public void checkVoluntaryFunctionMatch(Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {
@@ -36,10 +42,10 @@ public class PurchaseValidation {
 
   public void checkItemPriceAndDiscountMatch(RequestCreatePurchase request, Voluntary voluntary, Map<UUID, Product> productMap) {
     for (RequestCreateItem requestCreateItem : request.items()) {
-      var product = productMap.get(requestCreateItem.productId());
+      var product = productMap.get(requestCreateItem.productUuid());
 
       if (product == null) {
-        throw new InvalidDatabaseQueryException("Non-existent entity", "Product", requestCreateItem.productId().toString());
+        throw new InvalidDatabaseQueryException("Non-existent entity", "Product", requestCreateItem.productUuid().toString());
       }
 
       if (voluntary.getVoluntaryRole().isNotAdmin()) {
@@ -73,7 +79,7 @@ public class PurchaseValidation {
 
   public void checkInsufficientProductStockValidity(RequestCreatePurchase request, Map<UUID, Product> productMap) {
     for (RequestCreateItem requestCreateItem : request.items()) {
-      var product = productMap.get(requestCreateItem.productId());
+      var product = productMap.get(requestCreateItem.productUuid());
 
       if (product.getStock() < requestCreateItem.quantity()) {
         throw new InvalidOperationException("Create Purchase", "Insufficient product stock");
@@ -90,7 +96,7 @@ public class PurchaseValidation {
       ));
 
       requestUpdateItems.forEach(requestUpdateItem -> {
-        var item = itemsMap.get(requestUpdateItem.productId());
+        var item = itemsMap.get(requestUpdateItem.productUuid());
 
         if (item != null) {
           if (requestUpdateItem.delivered() > item.getQuantity()) {
@@ -99,7 +105,7 @@ public class PurchaseValidation {
           }
         } else {
           throw new InvalidOperationException("Update Purchase",
-              "This product (" + requestUpdateItem.productId() + ") is not allocate in this purchase like item");
+              "This product (" + requestUpdateItem.productUuid() + ") is not allocate in this purchase like item");
         }
       });
     }
@@ -109,6 +115,26 @@ public class PurchaseValidation {
     for (Item item : purchase.getItems()) {
       if (item.getDelivered() != null && item.getDelivered() != 0) {
         throw new InvalidOperationException("Delete Purchase", "One item was delivered already");
+      }
+    }
+  }
+
+  public void checkPurchaseBelongsToVoluntary(Purchase purchase, UUID userUuid) {
+    if (purchase.getVoluntary().getVoluntaryRole().isNotAdmin() && purchase.getVoluntary().getUuid() != userUuid) {
+      throw new InvalidOperationException("Delete Purchase", "This purchase don't belongs to this voluntary");
+    }
+  }
+
+  public void checkIfLastPurchaseOfVoluntary(Purchase purchase, Voluntary voluntary) {
+    if (voluntary.getVoluntaryRole().isNotAdmin()) {
+      Optional<Purchase> optionalPurchase = repository.findLastFromVoluntary(voluntary.getUuid());
+
+      if (optionalPurchase.isPresent()) {
+        if (optionalPurchase.get().getUuid() != purchase.getUuid()) {
+          throw new InvalidOperationException("Delete Purchase", "This purchase is not the last form this voluntary");
+        }
+      } else {
+        throw new InvalidOperationException("Delete Purchase", "This voluntary don't have any purchase done");
       }
     }
   }

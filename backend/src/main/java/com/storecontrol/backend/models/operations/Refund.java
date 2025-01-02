@@ -35,6 +35,9 @@ public class Refund {
   @ManyToOne @JoinColumn(name = "cash_register_uuid", nullable = false)
   private CashRegister cashRegister;
 
+  @Column(name = "voluntary_uuid", insertable = false, updatable = false)
+  private UUID voluntaryUuid;
+
   @ManyToOne @JoinColumn(name = "voluntary_uuid", nullable = false)
   private Voluntary voluntary;
 

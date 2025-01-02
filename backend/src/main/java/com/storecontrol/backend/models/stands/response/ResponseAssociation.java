@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public record ResponseAssociation(
     UUID uuid,
-    String association,
+    String associationName,
     String principalName
 ) {
 

@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.stands;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.stands.Association;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.request.RequestCreateStand;
@@ -10,16 +10,18 @@ import com.storecontrol.backend.models.stands.response.ResponseSummaryStand;
 import com.storecontrol.backend.services.stands.StandService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class StandControllerTest extends BaseControllerTest {
+class StandTest extends BaseTest {
 
   @MockBean
   private StandService service;
@@ -34,12 +36,14 @@ class StandControllerTest extends BaseControllerTest {
 
     when(service.createStand(requestStand)).thenReturn(mockStand);
 
-    // When
-    String jsonResponse = performPostCreate("stands", requestStand, mockStand.getUuid());
-
-    // Then
-    ResponseStand actualResponse = fromJson(jsonResponse, ResponseStand.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(post("/stands")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(requestStand)))
+        .andExpect(status().isCreated())
+        .andExpect(header().string("Location",
+            containsString("/stands/" + mockStand.getUuid().toString())))
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).createStand(requestStand);
@@ -56,12 +60,11 @@ class StandControllerTest extends BaseControllerTest {
 
     when(service.takeStandByUuid(standUuid)).thenReturn(mockStand);
 
-    // When
-    String jsonResponse = performGetWithVariablePath("stands", standUuid);
-
-    // Then
-    ResponseStand actualResponse = fromJson(jsonResponse, ResponseStand.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(get("/stands/{uuid}", standUuid)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).takeStandByUuid(standUuid);
@@ -81,14 +84,12 @@ class StandControllerTest extends BaseControllerTest {
 
     when(service.listStands()).thenReturn(mockStands);
 
-    // When
-    String jsonResponse = performGetList("stands")
+    // When & Then
+    mockMvc.perform(get("/stands")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryStand> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryStand[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listStands();
@@ -109,12 +110,12 @@ class StandControllerTest extends BaseControllerTest {
 
     when(service.updateStand(updateRequest)).thenReturn(mockStand);
 
-    // When
-    String jsonResponse = performPut("stands", updateRequest);
-
-    // Then
-    ResponseStand actualResponse = fromJson(jsonResponse, ResponseStand.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(put("/stands")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(updateRequest)))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).updateStand(updateRequest);
@@ -129,7 +130,10 @@ class StandControllerTest extends BaseControllerTest {
     doNothing().when(service).deleteStand(deleteRequest);
 
     // When & Then
-    performDelete("stands", deleteRequest);
+    mockMvc.perform(delete("/stands")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(deleteRequest)))
+        .andExpect(status().isNoContent());
 
     // Verify interactions
     verify(service, times(1)).deleteStand(deleteRequest);

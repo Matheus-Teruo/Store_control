@@ -2,6 +2,7 @@ package com.storecontrol.backend.controllers.operations;
 
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
+import com.storecontrol.backend.models.operations.response.ResponseSummaryRecharge;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryTransaction;
 import com.storecontrol.backend.models.operations.response.ResponseTransaction;
 import com.storecontrol.backend.models.registers.response.ResponseCashRegister;
@@ -24,8 +25,11 @@ public class TransactionController {
   TransactionService service;
 
   @PostMapping
-  public ResponseEntity<ResponseTransaction> createTransaction(@RequestBody @Valid RequestCreateTransaction request) {
-    var transaction = service.createTransaction(request);
+  public ResponseEntity<ResponseTransaction> createTransaction(
+      @RequestBody @Valid RequestCreateTransaction request,
+      @RequestAttribute("UserUuid") UUID userUuid
+  ) {
+    var transaction = service.createTransaction(request, userUuid);
 
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
@@ -45,15 +49,26 @@ public class TransactionController {
 
   @GetMapping
   public ResponseEntity<List<ResponseSummaryTransaction>> readTransactions() {
-    var transaction = service.listTransactions();
+    var transactions = service.listTransactions();
 
-    var response = transaction.stream().map(ResponseSummaryTransaction::new).toList();
+    var response = transactions.stream().map(ResponseSummaryTransaction::new).toList();
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/last3")
+  public ResponseEntity<List<ResponseSummaryTransaction>> readLast3Purchases(@RequestAttribute("UserUuid") String userUuid) {
+    var transactions = service.listLast3Purchases(UUID.fromString(userUuid));
+
+    var response = transactions.stream().map(ResponseSummaryTransaction::new).toList();
     return ResponseEntity.ok(response);
   }
 
   @DeleteMapping
-  public ResponseEntity<Void> deleteTransaction(@RequestBody @Valid RequestDeleteTransaction request) {
-    service.deleteTransaction(request);
+  public ResponseEntity<Void> deleteTransaction(
+      @RequestBody @Valid RequestDeleteTransaction request,
+      @RequestAttribute("UserUuid") UUID userUuid
+  ) {
+    service.deleteTransaction(request, userUuid);
 
     return ResponseEntity.noContent().build();
   }

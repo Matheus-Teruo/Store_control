@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class PurchaseService {
 
   @Autowired
-  PurchaseValidation validate;
+  PurchaseValidation validation;
 
   @Autowired
   PurchaseRepository repository;
@@ -43,15 +43,15 @@ public class PurchaseService {
   ItemService itemService;
 
   @Transactional
-  public Purchase createPurchase(RequestCreatePurchase request) {
-    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(request.voluntaryId());
-    validate.checkVoluntaryFunctionMatch(voluntary);
+  public Purchase createPurchase(RequestCreatePurchase request, UUID userUuid) {
+    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
+    validation.checkVoluntaryFunctionMatch(voluntary);
 
     var productMap = productService.listProductsAsMap();
     var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
-    validate.checkItemPriceAndDiscountMatch(request, voluntary, productMap);
-    validate.checkInsufficientCreditValidity(request, customer);
-    validate.checkInsufficientProductStockValidity(request, productMap);
+    validation.checkItemPriceAndDiscountMatch(request, voluntary, productMap);
+    validation.checkInsufficientCreditValidity(request, customer);
+    validation.checkInsufficientProductStockValidity(request, productMap);
 
     var purchase = new Purchase(request, customer,  voluntary);
     var items = itemService.createItems(request, purchase);
@@ -78,11 +78,15 @@ public class PurchaseService {
     return repository.findAllValidTrue();
   }
 
+  public List<Purchase> listLast3Purchases(UUID voluntaryUuid) {
+    return repository.findLast3ValidTrue(voluntaryUuid);
+  }
+
   @Transactional
   public Purchase updatePurchase(RequestUpdatePurchase request) {
     var purchase = safeTakePurchaseByUuid(request.uuid());
 
-    validate.checkItemsFromPurchaseValidation(request.updateItems(), purchase.getItems());
+    validation.checkItemsFromPurchaseValidation(request.updateItems(), purchase.getItems());
 
     purchase.updatePurchase(request);
     updateItemsFromPurchase(request.updateItems(), purchase.getItems());
@@ -91,10 +95,13 @@ public class PurchaseService {
   }
 
   @Transactional
-  public void deletePurchase(RequestUpdatePurchase request) {
+  public void deletePurchase(RequestUpdatePurchase request, UUID userUuid) {
     var purchase = safeTakePurchaseByUuid(request.uuid());
+    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
 
-    validate.checkSomeItemWasDelivered(purchase);
+    validation.checkSomeItemWasDelivered(purchase);
+    validation.checkPurchaseBelongsToVoluntary(purchase, userUuid);
+    validation.checkIfLastPurchaseOfVoluntary(purchase, voluntary);
 
     updateItemsFromItemsChanged(purchase, true);
     updateCustomerDebit(purchase, true);
@@ -131,7 +138,7 @@ public class PurchaseService {
       ));
 
       request.forEach(requestUpdateItem -> {
-        var item = itemsMap.get(requestUpdateItem.productId());
+        var item = itemsMap.get(requestUpdateItem.productUuid());
         if (item != null) {
           if (requestUpdateItem.delivered() <= item.getQuantity()) {
             item.updateItem(requestUpdateItem);

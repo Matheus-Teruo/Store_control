@@ -1,35 +1,28 @@
 package com.storecontrol.backend.controllers.operations;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
-import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
 import com.storecontrol.backend.models.operations.purchases.response.ResponsePurchase;
 import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
-import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
-import com.storecontrol.backend.models.operations.request.RequestDeleteRecharge;
-import com.storecontrol.backend.models.operations.response.ResponseRecharge;
-import com.storecontrol.backend.models.operations.response.ResponseSummaryRecharge;
-import com.storecontrol.backend.models.registers.CashRegister;
-import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
-import com.storecontrol.backend.models.registers.response.ResponseCashRegister;
-import com.storecontrol.backend.models.stands.response.ResponseProduct;
 import com.storecontrol.backend.services.operations.PurchaseService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class PurchaseControllerTest extends BaseControllerTest {
+class PurchaseTest extends BaseTest {
 
   @MockBean
   PurchaseService service;
@@ -46,17 +39,20 @@ class PurchaseControllerTest extends BaseControllerTest {
     RequestCreatePurchase requestPurchase = createRequestCreatePurchase(mockPurchase);
     ResponsePurchase expectedResponse = new ResponsePurchase(mockPurchase);
 
-    when(service.createPurchase(requestPurchase)).thenReturn(mockPurchase);
+    when(service.createPurchase(requestPurchase, mockPurchase.getVoluntary().getUuid())).thenReturn(mockPurchase);
 
-    // When
-    String jsonResponse = performPostCreate("purchases", requestPurchase, mockPurchase.getUuid());
-
-    // Then
-    ResponsePurchase actualResponse = fromJson(jsonResponse, ResponsePurchase.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(post("/purchases")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(requestPurchase))
+            .requestAttr("UserUuid", mockPurchase.getVoluntary().getUuid()))
+        .andExpect(status().isCreated())
+        .andExpect(header().string("Location",
+            containsString("/purchases/" + mockPurchase.getUuid().toString())))
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).createPurchase(requestPurchase);
+    verify(service, times(1)).createPurchase(requestPurchase, mockPurchase.getVoluntary().getUuid());
     verifyNoMoreInteractions(service);
   }
 
@@ -75,12 +71,11 @@ class PurchaseControllerTest extends BaseControllerTest {
 
     when(service.takePurchaseByUuid(purchaseUuid)).thenReturn(mockPurchase);
 
-    // When
-    String jsonResponse = performGetWithVariablePath("purchases", purchaseUuid);
-
-    // Then
-    ResponsePurchase actualResponse = fromJson(jsonResponse, ResponsePurchase.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(get("/purchases/{uuid}", purchaseUuid)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).takePurchaseByUuid(purchaseUuid);
@@ -108,17 +103,52 @@ class PurchaseControllerTest extends BaseControllerTest {
 
     when(service.listPurchases()).thenReturn(mockPurchases);
 
-    // When
-    String jsonResponse = performGetList("purchases")
+    // When & Then
+    mockMvc.perform(get("/purchases")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryPurchase> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryPurchase[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listPurchases();
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
+  void testReadLast3PurchasesSuccess() throws Exception {
+    // Given
+    UUID userUuid = UUID.randomUUID();
+    String cardId1 = "CardIDTest12345";
+    OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
+    Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
+    Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
+
+    List<Purchase> mockPurchases = List.of(
+        createPurchaseEntity(UUID.randomUUID(), mockCustomer1),
+        createPurchaseEntity(UUID.randomUUID(), mockCustomer2),
+        createPurchaseEntity(UUID.randomUUID(), mockCustomer2)
+    );
+    mockPurchases.get(0).setItems(createItemEntity(mockPurchases.get(0)));
+    mockPurchases.get(1).setItems(createItemEntity(mockPurchases.get(1)));
+    mockPurchases.get(2).setItems(createItemEntity(mockPurchases.get(2)));
+
+    List<ResponseSummaryPurchase> expectedResponse = mockPurchases.stream()
+        .map(ResponseSummaryPurchase::new)
+        .toList();
+
+    when(service.listLast3Purchases(userUuid)).thenReturn(mockPurchases);
+
+    // When & Then
+    mockMvc.perform(get("/purchases/last3")
+            .requestAttr("UserUuid", userUuid)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(3))
+        .andExpect(content().json(toJson(expectedResponse)));
+
+    // Verify interactions
+    verify(service, times(1)).listLast3Purchases(userUuid);
     verifyNoMoreInteractions(service);
   }
 
@@ -142,12 +172,12 @@ class PurchaseControllerTest extends BaseControllerTest {
 
     when(service.updatePurchase(updateRequest)).thenReturn(mockPurchase);
 
-    // When
-    String jsonResponse = performPut("purchases", updateRequest);
-
-    // Then
-    ResponsePurchase actualResponse = fromJson(jsonResponse, ResponsePurchase.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(put("/purchases")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(updateRequest)))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).updatePurchase(updateRequest);
@@ -165,13 +195,17 @@ class PurchaseControllerTest extends BaseControllerTest {
     mockPurchase.setItems(createItemEntity(mockPurchase));
     RequestUpdatePurchase deleteRequest = createRequestUpdatePurchase(UUID.randomUUID(), mockPurchase);
 
-    doNothing().when(service).deletePurchase(deleteRequest);
+    doNothing().when(service).deletePurchase(deleteRequest, mockPurchase.getVoluntary().getUuid());
 
     // When & Then
-    performDelete("purchases", deleteRequest);
+    mockMvc.perform(delete("/purchases")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(deleteRequest))
+            .requestAttr("UserUuid", mockPurchase.getVoluntary().getUuid()))
+        .andExpect(status().isNoContent());
 
     // Verify interactions
-    verify(service, times(1)).deletePurchase(deleteRequest);
+    verify(service, times(1)).deletePurchase(deleteRequest, mockPurchase.getVoluntary().getUuid());
     verifyNoMoreInteractions(service);
   }
 }

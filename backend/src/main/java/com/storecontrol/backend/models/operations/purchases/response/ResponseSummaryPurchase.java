@@ -1,6 +1,5 @@
 package com.storecontrol.backend.models.operations.purchases.response;
 
-import com.storecontrol.backend.models.volunteers.response.ResponseSummaryVoluntary;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 
 import java.math.BigDecimal;
@@ -14,7 +13,7 @@ public record ResponseSummaryPurchase(
     BigDecimal totalPurchaseCost,
     BigDecimal totalPurchaseDiscount,
     BigDecimal finalTotalPurchase,
-    ResponseSummaryVoluntary summaryVoluntary
+    UUID voluntaryUuid
 ) {
 
   public ResponseSummaryPurchase(Purchase purchase) {
@@ -35,7 +34,7 @@ public record ResponseSummaryPurchase(
             .map(item -> BigDecimal.valueOf(item.getQuantity())
                 .multiply(item.getUnitPrice().subtract(item.getDiscount())))
             .reduce(BigDecimal.ZERO, BigDecimal::add),
-        new ResponseSummaryVoluntary(purchase.getVoluntary())
+        purchase.getVoluntaryUuid()
     );
   }
 }

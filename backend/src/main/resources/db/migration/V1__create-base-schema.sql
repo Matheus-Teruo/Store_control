@@ -31,6 +31,7 @@ CREATE TABLE donations (
     donation_value DECIMAL(19, 2) NOT NULL,
     donation_time_stamp TIMESTAMP NOT NULL,
     customer_uuid BINARY(16) NOT NULL,
+    cash_register_uuid binary(16) NOT NULL,
     voluntary_uuid BINARY(16) NOT NULL,
     valid TINYINT NOT NULL
 );
@@ -65,6 +66,8 @@ CREATE TABLE order_cards (
 CREATE TABLE products (
     uuid BINARY(16) PRIMARY KEY,
     product_name VARCHAR(255) UNIQUE NOT NULL,
+    summary VARCHAR(255),
+    description TEXT,
     price DECIMAL(19, 2) NOT NULL,
     discount DECIMAL(19, 2) NOT NULL,
     stock INT NOT NULL,

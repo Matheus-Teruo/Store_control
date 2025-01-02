@@ -31,6 +31,13 @@ public class CustomerController {
     return ResponseEntity.ok(response);
   }
 
+  @GetMapping("/card/{cardId}")
+  public ResponseEntity<ResponseCustomer> readCustomerByCard(@PathVariable @Valid RequestOrderCard cardId) {
+    var response = new ResponseCustomer(service.takeActiveCustomerByCardId(cardId.cardId()));
+
+    return ResponseEntity.ok(response);
+  }
+
   @GetMapping("/active")
   public ResponseEntity<List<ResponseSummaryCustomer>> readActiveCustomers() {
     var customers = service.listActiveCustomers();
@@ -48,15 +55,21 @@ public class CustomerController {
   }
 
   @PostMapping("/finalize")
-  public ResponseEntity<ResponseCustomer> finalizeCustomer(@RequestBody @Valid RequestCustomerFinalization request) {
-    var response = new ResponseCustomer(customerFinalizationHandler.finalizeCustomer(request));
+  public ResponseEntity<ResponseCustomer> finalizeCustomer(
+      @RequestBody @Valid RequestCustomerFinalization request,
+      @RequestAttribute("UserUuid") UUID userUuid
+  ) {
+    var response = new ResponseCustomer(customerFinalizationHandler.finalizeCustomer(request, userUuid));
 
     return ResponseEntity.ok(response);
   }
 
   @DeleteMapping("/finalize")
-  public ResponseEntity<ResponseCustomer> undoFinalizeCustomer(@RequestBody @Valid RequestOrderCard request) {
-    var response = new ResponseCustomer(customerFinalizationHandler.undoFinalizeCustomer(request));
+  public ResponseEntity<ResponseCustomer> undoFinalizeCustomer(
+      @RequestBody @Valid RequestOrderCard request,
+      @RequestAttribute("UserUuid") UUID userUuid
+  ) {
+    var response = new ResponseCustomer(customerFinalizationHandler.undoFinalizeCustomer(request, userUuid));
 
     return ResponseEntity.ok(response);
   }

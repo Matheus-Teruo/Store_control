@@ -1,7 +1,7 @@
 package com.storecontrol.backend.controllers.volunteers;
 
-import com.storecontrol.backend.BaseControllerTest;
-import com.storecontrol.backend.infra.auth.security.TokenServiceConfig;
+import com.storecontrol.backend.BaseTest;
+import com.storecontrol.backend.config.security.TokenServiceConfig;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestLoginVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class AuthControllerTest extends BaseControllerTest {
+class AuthTest extends BaseTest {
 
   @MockBean
   VoluntaryService service;
@@ -107,10 +107,10 @@ class AuthControllerTest extends BaseControllerTest {
     Voluntary mockVoluntary = createVoluntaryEntity(mockUserUuid);
     ResponseUser expectedResponse = new ResponseUser(mockVoluntary);
 
+    Cookie authCookie = new Cookie("auth", mockJwt);
+
     when(tokenService.recoverVoluntaryUuid(mockJwt)).thenReturn(mockUserUuid);
     when(service.safeTakeVoluntaryByUuid(mockUserUuid)).thenReturn(mockVoluntary);
-
-    Cookie authCookie = new Cookie("auth", mockJwt);
 
     // When & Then
     mockMvc.perform(get("/user/check")

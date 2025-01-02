@@ -1,26 +1,28 @@
 package com.storecontrol.backend.controllers.customers;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.customers.response.ResponseCustomer;
 import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
 import com.storecontrol.backend.services.customers.CustomerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class CustomerControllerTest extends BaseControllerTest {
+class CustomerTest extends BaseTest {
 
   @MockBean
   CustomerService service;
@@ -41,15 +43,39 @@ class CustomerControllerTest extends BaseControllerTest {
 
     when(service.takeFilteredCustomerByUuid(customerUuid)).thenReturn(mockCustomer);
 
-    // When
-    String jsonResponse = performGetWithVariablePath("customers", customerUuid);
-
-    // Then
-    ResponseCustomer actualResponse = fromJson(jsonResponse, ResponseCustomer.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(get("/customers/{uuid}", customerUuid)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).takeFilteredCustomerByUuid(customerUuid);
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
+  void testReadCustomersByCardIdSuccess() throws Exception {
+    // Given
+    UUID customerUuid = UUID.randomUUID();
+
+    String cardId = "CardIDTest12345";
+    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
+    RequestOrderCard requestOrderCard = createRequestOrderCard(cardId);
+
+    Customer mockCustomer = createCustomerEntity(customerUuid, mockOrderCard,false);
+    ResponseCustomer expectedResponse = new ResponseCustomer(mockCustomer);
+
+    when(service.takeActiveCustomerByCardId(cardId)).thenReturn(mockCustomer);
+
+    // When & Then
+    mockMvc.perform(get("/customers/card/{cardId}", cardId)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
+
+    // Verify interactions
+    verify(service, times(1)).takeActiveCustomerByCardId(cardId);
     verifyNoMoreInteractions(service);
   }
 
@@ -71,14 +97,12 @@ class CustomerControllerTest extends BaseControllerTest {
 
     when(service.listActiveCustomers()).thenReturn(mockCustomers);
 
-    // When
-    String jsonResponse = performGetList("customers/active")
+    // When & Then
+    mockMvc.perform(get("/customers/active")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryCustomer> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryCustomer[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listActiveCustomers();
@@ -103,14 +127,12 @@ class CustomerControllerTest extends BaseControllerTest {
 
     when(service.listCustomers()).thenReturn(mockCustomers);
 
-    // When
-    String jsonResponse = performGetList("customers")
+    // When & Then
+    mockMvc.perform(get("/customers")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryCustomer> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryCustomer[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listCustomers();
@@ -124,22 +146,24 @@ class CustomerControllerTest extends BaseControllerTest {
 
     String cardId = "CardIDTest12345";
     OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
+    Voluntary mockVoluntary = createVoluntaryEntity(UUID.randomUUID());
 
     Customer mockCustomer = createCustomerEntity(customerUuid, mockOrderCard,false);
     RequestCustomerFinalization request = createRequestCustomerFinalization(mockCustomer);
     ResponseCustomer expectedResponse = new ResponseCustomer(mockCustomer);
 
-    when(customerFinalizationHandler.finalizeCustomer(request)).thenReturn(mockCustomer);
+    when(customerFinalizationHandler.finalizeCustomer(request, mockVoluntary.getUuid())).thenReturn(mockCustomer);
 
-    // When
-    String jsonResponse = performPost("customers/finalize", request);
-
-    // Then
-    ResponseCustomer actualResponse = fromJson(jsonResponse, ResponseCustomer.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(post("/customers/finalize")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(request))
+            .requestAttr("UserUuid", mockVoluntary.getUuid()))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(customerFinalizationHandler, times(1)).finalizeCustomer(request);
+    verify(customerFinalizationHandler, times(1)).finalizeCustomer(request, mockVoluntary.getUuid());
     verifyNoMoreInteractions(customerFinalizationHandler);
     verifyNoMoreInteractions(service);
   }
@@ -153,21 +177,22 @@ class CustomerControllerTest extends BaseControllerTest {
 
     RequestOrderCard requestOrderCard = createRequestOrderCard(cardId);
     OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
+    Voluntary mockVoluntary = createVoluntaryEntity(UUID.randomUUID());
 
     Customer mockCustomer = createCustomerEntity(customerUuid, mockOrderCard,false);
     ResponseCustomer expectedResponse = new ResponseCustomer(mockCustomer);
 
-    when(customerFinalizationHandler.undoFinalizeCustomer(requestOrderCard)).thenReturn(mockCustomer);
+    when(customerFinalizationHandler.undoFinalizeCustomer(requestOrderCard, mockVoluntary.getUuid())).thenReturn(mockCustomer);
 
-    // When
-    String jsonResponse = performDeleteIsOk("customers/finalize", requestOrderCard);
-
-    // Then
-    ResponseCustomer actualResponse = fromJson(jsonResponse, ResponseCustomer.class);
-    assertEquals(expectedResponse, actualResponse);
+    mockMvc.perform(delete("/customers/finalize")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(requestOrderCard))
+            .requestAttr("UserUuid", mockVoluntary.getUuid()))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(customerFinalizationHandler, times(1)).undoFinalizeCustomer(requestOrderCard);
+    verify(customerFinalizationHandler, times(1)).undoFinalizeCustomer(requestOrderCard, mockVoluntary.getUuid());
     verifyNoMoreInteractions(customerFinalizationHandler);
     verifyNoMoreInteractions(service);
   }

@@ -15,8 +15,6 @@ public record RequestUpdateVoluntary(
     String password,
 
     @Pattern(regexp = "^[A-Za-z ]+$", message = "Fullname must contain only letters and space")
-    String fullname,
-
-    UUID functionId
+    String fullname
 ) {
 }

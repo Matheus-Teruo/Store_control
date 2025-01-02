@@ -13,8 +13,8 @@ public record ResponseTransaction(
     BigDecimal amount,
     TransactionType transactionTypeEnum,
     String transactionTimeStamp,
-    ResponseSummaryCashRegister cashRegisterId,
-    ResponseSummaryVoluntary voluntaryId
+    ResponseSummaryCashRegister summaryCashRegister,
+    ResponseSummaryVoluntary summaryVoluntary
 ) {
 
   public ResponseTransaction(Transaction transaction) {

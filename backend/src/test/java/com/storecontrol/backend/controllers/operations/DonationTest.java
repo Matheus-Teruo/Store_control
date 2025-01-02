@@ -1,27 +1,25 @@
 package com.storecontrol.backend.controllers.operations;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.operations.Donation;
 import com.storecontrol.backend.models.operations.response.ResponseDonation;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryDonation;
-import com.storecontrol.backend.models.stands.Association;
-import com.storecontrol.backend.models.stands.response.ResponseSummaryAssociation;
-import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.services.operations.DonationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class DonationControllerTest extends BaseControllerTest {
+class DonationTest extends BaseTest {
 
   @MockBean
   DonationService service;
@@ -40,12 +38,11 @@ class DonationControllerTest extends BaseControllerTest {
 
     when(service.takeDonationByUuid(donationUuid)).thenReturn(mockDonation);
 
-    // When
-    String jsonResponse = performGetWithVariablePath("donations", donationUuid);
-
-    // Then
-    ResponseDonation actualResponse = fromJson(jsonResponse, ResponseDonation.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(get("/donations/{uuid}", donationUuid)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).takeDonationByUuid(donationUuid);
@@ -69,14 +66,12 @@ class DonationControllerTest extends BaseControllerTest {
 
     when(service.listDonations()).thenReturn(mockDonations);
 
-    // When
-    String jsonResponse = performGetList("donations")
+    // When & Then
+    mockMvc.perform(get("/donations")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryDonation> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryDonation[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listDonations();

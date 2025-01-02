@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public record RequestUpdateItem(
     @NotNull(message = "UUID of product is required")
-    UUID productId,
+    UUID productUuid,
 
     Integer delivered
 ) {

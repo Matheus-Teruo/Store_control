@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.stands;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
@@ -8,21 +8,28 @@ import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.stands.response.ResponseProduct;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
 import com.storecontrol.backend.services.stands.ProductService;
+import com.storecontrol.backend.services.stands.S3Service;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class ProductControllerTest extends BaseControllerTest {
+class ProductTest extends BaseTest {
 
   @MockBean
   private ProductService service;
+
+  @MockBean
+  private S3Service s3Service;
 
   @Test
   void testCreateProductSuccess() throws Exception {
@@ -33,12 +40,15 @@ class ProductControllerTest extends BaseControllerTest {
 
     when(service.createProduct(requestProduct)).thenReturn(mockProduct);
 
-    // When
-    String jsonResponse = performPostCreate("products", requestProduct, mockProduct.getUuid());
+    // When & Then
+    mockMvc.perform(post("/products")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(requestProduct)))
+        .andExpect(status().isCreated())
+        .andExpect(header().string("Location",
+            containsString("/products/" + mockProduct.getUuid().toString())))
+        .andExpect(content().json(toJson(expectedResponse)));
 
-    // Then
-    ResponseProduct actualResponse = fromJson(jsonResponse, ResponseProduct.class);
-    assertEquals(expectedResponse, actualResponse);
 
     // Verify interactions
     verify(service, times(1)).createProduct(requestProduct);
@@ -55,12 +65,11 @@ class ProductControllerTest extends BaseControllerTest {
 
     when(service.takeProductByUuid(productUuid)).thenReturn(mockProduct);
 
-    // When
-    String jsonResponse = performGetWithVariablePath("products", productUuid);
-
-    // Then
-    ResponseProduct actualResponse = fromJson(jsonResponse, ResponseProduct.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(get("/products/{uuid}", productUuid)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).takeProductByUuid(productUuid);
@@ -80,14 +89,12 @@ class ProductControllerTest extends BaseControllerTest {
 
     when(service.listProducts()).thenReturn(mockProducts);
 
-    // When
-    String jsonResponse = performGetList("products")
+    // When & Then
+    mockMvc.perform(get("/products")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryProduct> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryProduct[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listProducts();
@@ -108,12 +115,12 @@ class ProductControllerTest extends BaseControllerTest {
 
     when(service.updateProduct(updateRequest)).thenReturn(mockProduct);
 
-    // When
-    String jsonResponse = performPut("products", updateRequest);
-
-    // Then
-    ResponseProduct actualResponse = fromJson(jsonResponse, ResponseProduct.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(put("/products")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(updateRequest)))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).updateProduct(updateRequest);
@@ -128,10 +135,18 @@ class ProductControllerTest extends BaseControllerTest {
     doNothing().when(service).deleteProduct(deleteRequest);
 
     // When & Then
-    performDelete("products", deleteRequest);
+    mockMvc.perform(delete("/products")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(deleteRequest)))
+        .andExpect(status().isNoContent());
 
     // Verify interactions
     verify(service, times(1)).deleteProduct(deleteRequest);
     verifyNoMoreInteractions(service);
+  }
+
+  @Test
+  void contextLoads() {
+    assertNotNull(s3Service, "S3Service should be mocked and not null.");
   }
 }

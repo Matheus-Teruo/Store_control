@@ -39,9 +39,9 @@ public class RechargeService {
   CustomerService customerService;
 
   @Transactional
-  public Recharge createRecharge(RequestCreateRecharge request) {
-    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(request.voluntaryId());
-    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterId());
+  public Recharge createRecharge(RequestCreateRecharge request, UUID userUuid) {
+    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
+    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterUuid());
 
     validation.checkVoluntaryFunctionMatch(cashRegister, voluntary);
 
@@ -70,10 +70,18 @@ public class RechargeService {
     return repository.findAllValidTrue();
   }
 
+  public List<Recharge> listLast3Purchases(UUID voluntaryUuid) {
+    return repository.findLast3ValidTrue(voluntaryUuid);
+  }
+
   @Transactional
-  public void deleteRecharge(RequestDeleteRecharge request) {
+  public void deleteRecharge(RequestDeleteRecharge request, UUID userUuid) {
     var recharge = safeTakeRechargeByUuid(request.uuid());
+    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
+
     validation.checkDebitGreaterThanUndoDonation(recharge);
+    validation.checkRechargeBelongsToVoluntary(recharge, userUuid);
+    validation.checkIfLastRechargeOfVoluntary(recharge, voluntary);
 
     recharge.getCustomer().getOrderCard().incrementDebit(recharge.getRechargeValue().negate());
     handleCashTotal(recharge, recharge.getPaymentTypeEnum(), true);

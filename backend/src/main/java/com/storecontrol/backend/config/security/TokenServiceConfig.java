@@ -1,4 +1,4 @@
-package com.storecontrol.backend.infra.auth.security;
+package com.storecontrol.backend.config.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

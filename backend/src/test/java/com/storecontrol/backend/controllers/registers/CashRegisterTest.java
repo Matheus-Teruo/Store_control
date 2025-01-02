@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.registers;
 
-import com.storecontrol.backend.BaseControllerTest;
+import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
 import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
@@ -9,16 +9,18 @@ import com.storecontrol.backend.models.registers.response.ResponseSummaryCashReg
 import com.storecontrol.backend.services.registers.CashRegisterService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class CashRegisterControllerTest extends BaseControllerTest {
+class CashRegisterTest extends BaseTest {
 
   @MockBean
   CashRegisterService service;
@@ -32,12 +34,14 @@ class CashRegisterControllerTest extends BaseControllerTest {
 
     when(service.createCashRegister(requestStand)).thenReturn(mockCashRegister);
 
-    // When
-    String jsonResponse = performPostCreate("registers", requestStand, mockCashRegister.getUuid());
-
-    // Then
-    ResponseCashRegister actualResponse = fromJson(jsonResponse, ResponseCashRegister.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(post("/registers")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(requestStand)))
+        .andExpect(status().isCreated())
+        .andExpect(header().string("Location",
+            containsString("/registers/" + mockCashRegister.getUuid().toString())))
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).createCashRegister(requestStand);
@@ -54,12 +58,11 @@ class CashRegisterControllerTest extends BaseControllerTest {
 
     when(service.takeCashRegisterByUuid(cashRegisterUuid)).thenReturn(mockCashRegister);
 
-    // When
-    String jsonResponse = performGetWithVariablePath("registers", cashRegisterUuid);
-
-    // Then
-    ResponseCashRegister actualResponse = fromJson(jsonResponse, ResponseCashRegister.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(get("/registers/{uuid}", cashRegisterUuid)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).takeCashRegisterByUuid(cashRegisterUuid);
@@ -79,14 +82,12 @@ class CashRegisterControllerTest extends BaseControllerTest {
 
     when(service.listCashRegisters()).thenReturn(mockCashRegisters);
 
-    // When
-    String jsonResponse = performGetList("registers")
+    // When & Then
+    mockMvc.perform(get("/registers")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
-        .andReturn().getResponse().getContentAsString();
-
-    // Then
-    List<ResponseSummaryCashRegister> actualResponse = List.of(fromJson(jsonResponse, ResponseSummaryCashRegister[].class));
-    assertEquals(expectedResponse, actualResponse);
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).listCashRegisters();
@@ -105,12 +106,12 @@ class CashRegisterControllerTest extends BaseControllerTest {
 
     when(service.updateCashRegister(updateRequest)).thenReturn(mockCashRegisters);
 
-    // When
-    String jsonResponse = performPut("registers", updateRequest);
-
-    // Then
-    ResponseCashRegister actualResponse = fromJson(jsonResponse, ResponseCashRegister.class);
-    assertEquals(expectedResponse, actualResponse);
+    // When & Then
+    mockMvc.perform(put("/registers")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(updateRequest)))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(service, times(1)).updateCashRegister(updateRequest);
@@ -125,7 +126,10 @@ class CashRegisterControllerTest extends BaseControllerTest {
     doNothing().when(service).deleteCashRegister(deleteRequest);
 
     // When & Then
-    performDelete("registers", deleteRequest);
+    mockMvc.perform(delete("/registers")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJson(deleteRequest)))
+        .andExpect(status().isNoContent());
 
     // Verify interactions
     verify(service, times(1)).deleteCashRegister(deleteRequest);

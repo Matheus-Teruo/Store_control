@@ -1,8 +1,7 @@
 package com.storecontrol.backend.models.operations.response;
 
-import com.storecontrol.backend.models.volunteers.response.ResponseSummaryVoluntary;
-import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.enumerate.PaymentType;
+import com.storecontrol.backend.models.operations.Recharge;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -12,7 +11,7 @@ public record ResponseSummaryRecharge(
     BigDecimal rechargeValue,
     String rechargeTimeStamp,
     PaymentType paymentTypeEnum,
-    ResponseSummaryVoluntary summaryVoluntary
+    UUID summaryVoluntary
 ) {
 
   public ResponseSummaryRecharge(Recharge recharge) {
@@ -20,7 +19,7 @@ public record ResponseSummaryRecharge(
         recharge.getRechargeValue(),
         recharge.getRechargeTimeStamp().toString(),
         recharge.getPaymentTypeEnum(),
-        new ResponseSummaryVoluntary(recharge.getVoluntary())
+        recharge.getVoluntaryUuid()
     );
   }
 }

@@ -31,9 +31,7 @@ import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.request.*;
 import com.storecontrol.backend.models.volunteers.User;
 import com.storecontrol.backend.models.volunteers.Voluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestLoginVoluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
+import com.storecontrol.backend.models.volunteers.request.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -63,7 +61,6 @@ public class TestDataFactory {
         BigDecimal.TWO,
         BigDecimal.ONE,
         customer.getOrderCard().getId(),
-        UUID.randomUUID(),
         UUID.randomUUID()
     );
   }
@@ -84,24 +81,29 @@ public class TestDataFactory {
   }
 
   public static Donation createDonationEntity(UUID uuid, Customer customer) {
+    UUID voluntaryUUID = UUID.randomUUID();
     return new Donation(
         uuid,
         BigDecimal.TWO,
         LocalDateTime.now(),
         customer,
-        createVoluntaryEntity(UUID.randomUUID()),
+        createCashRegisterEntity(UUID.randomUUID()),
+        voluntaryUUID,
+        createVoluntaryEntity(voluntaryUUID),
         true
     );
   }
 
   public static Purchase createPurchaseEntity(UUID uuid, Customer customer) {
+    UUID voluntaryUUID = UUID.randomUUID();
     return new Purchase(
         uuid,
         false,
         LocalDateTime.now(),
         null,
         customer,
-        createVoluntaryEntity(UUID.randomUUID()),
+        voluntaryUUID,
+        createVoluntaryEntity(voluntaryUUID),
         true
     );
   }
@@ -134,8 +136,7 @@ public class TestDataFactory {
     return new RequestCreatePurchase(
         purchase.isOnOrder(),
         requestCreateItems,
-        purchase.getCustomer().getOrderCard().getId(),
-        purchase.getVoluntary().getUuid()
+        purchase.getCustomer().getOrderCard().getId()
     );
   }
 
@@ -160,6 +161,7 @@ public class TestDataFactory {
   public static Recharge createRechargeEntity(UUID uuid, Customer customer, boolean isCash) {
     PaymentType[] paymentTypes = PaymentType.values();
     int randomIndex = new Random().nextInt(paymentTypes.length);
+    UUID voluntaryUUID = UUID.randomUUID();
     return new Recharge(
         uuid,
         BigDecimal.TEN,
@@ -167,7 +169,8 @@ public class TestDataFactory {
         isCash ? PaymentType.CASH : paymentTypes[randomIndex],
         customer,
         createCashRegisterEntity(UUID.randomUUID()),
-        createVoluntaryEntity(UUID.randomUUID()),
+        voluntaryUUID,
+        createVoluntaryEntity(voluntaryUUID),
         true
     );
   }
@@ -177,8 +180,7 @@ public class TestDataFactory {
         recharge.getRechargeValue(),
         recharge.getPaymentTypeEnum().toString().toLowerCase(),
         recharge.getCustomer().getOrderCard().getId(),
-        recharge.getCashRegister().getUuid(),
-        recharge.getVoluntary().getUuid()
+        recharge.getCashRegister().getUuid()
     );
   }
 
@@ -189,25 +191,29 @@ public class TestDataFactory {
   }
 
   public static Refund createRefundEntity(UUID uuid, Customer customer) {
+    UUID voluntaryUUID = UUID.randomUUID();
     return new Refund(
         uuid,
         BigDecimal.TWO,
         LocalDateTime.now(),
         customer,
         createCashRegisterEntity(UUID.randomUUID()),
-        createVoluntaryEntity(UUID.randomUUID()),
+        voluntaryUUID,
+        createVoluntaryEntity(voluntaryUUID),
         true
     );
   }
 
   public static Transaction createTransactionEntity(UUID uuid, boolean isEntry) {
+    UUID voluntaryUUID = UUID.randomUUID();
     return new Transaction(
         uuid,
         BigDecimal.valueOf(50),
         isEntry ? TransactionType.ENTRY : TransactionType.EXIT,
         LocalDateTime.now(),
         createCashRegisterEntity(UUID.randomUUID()),
-        createVoluntaryEntity(UUID.randomUUID()),
+        voluntaryUUID,
+        createVoluntaryEntity(voluntaryUUID),
         true
     );
   }
@@ -216,8 +222,7 @@ public class TestDataFactory {
     return new RequestCreateTransaction(
         transaction.getAmount(),
         transaction.getTransactionTypeEnum().toString().toLowerCase(),
-        transaction.getCashRegister().getUuid(),
-        transaction.getVoluntary().getUuid()
+        transaction.getCashRegister().getUuid()
     );
   }
 
@@ -254,7 +259,7 @@ public class TestDataFactory {
         uuid,
         nameOnlyLetters(),
         nameOnlyLettersAndSpace(),
-        null,
+        new ArrayList<>(),
         true
     );
   }
@@ -279,6 +284,8 @@ public class TestDataFactory {
     return new Product(
         uuid,
         nameOnlyLettersSpaceAndNumbers(),
+        nameOnlyLettersSpaceAndNumbers(),
+        nameOnlyLettersSpaceAndNumbers(),
         BigDecimal.TEN,
         BigDecimal.ZERO,
         1000,
@@ -293,6 +300,8 @@ public class TestDataFactory {
   public static RequestCreateProduct createRequestCreateProduct(Product product) {
     return new RequestCreateProduct(
         product.getProductName(),
+        product.getSummary(),
+        product.getDescription(),
         product.getPrice(),
         product.getStock(),
         product.getProductImg(),
@@ -303,6 +312,8 @@ public class TestDataFactory {
   public static RequestUpdateProduct createRequestUpdateProduct(UUID uuid, UUID standUuid) {
     return new RequestUpdateProduct(
         uuid,
+        nameOnlyLettersSpaceAndNumbers(),
+        nameOnlyLettersSpaceAndNumbers(),
         nameOnlyLettersSpaceAndNumbers(),
         BigDecimal.TEN,
         BigDecimal.TWO,
@@ -319,7 +330,7 @@ public class TestDataFactory {
         null,
         true,
         createAssociationEntity(UUID.randomUUID()),
-        null
+        new ArrayList<>()
     );
   }
 
@@ -368,13 +379,26 @@ public class TestDataFactory {
     );
   }
 
-  public static RequestUpdateVoluntary createRequestUpdateVoluntary(UUID uuid, UUID functionUuid) {
+  public static RequestUpdateVoluntary createRequestUpdateVoluntary(UUID uuid) {
     return new RequestUpdateVoluntary(
         uuid,
         nameOnlyLettersAndNumbers(),
         nameOnlyLettersAndNumbers(),
-        nameOnlyLettersAndSpace(),
+        nameOnlyLettersAndSpace()
+    );
+  }
+
+  public static RequestUpdateVoluntaryFunction createRequestUpdateVoluntaryFunction(UUID uuid, UUID functionUuid) {
+    return new RequestUpdateVoluntaryFunction(
+        uuid,
         functionUuid
+    );
+  }
+
+  public static RequestRoleVoluntary createRequestUpdateVoluntaryRole(UUID uuid, String voluntaryRole) {
+    return new RequestRoleVoluntary(
+        uuid,
+        voluntaryRole
     );
   }
 

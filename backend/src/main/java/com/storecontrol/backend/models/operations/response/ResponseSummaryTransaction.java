@@ -1,6 +1,5 @@
 package com.storecontrol.backend.models.operations.response;
 
-import com.storecontrol.backend.models.volunteers.response.ResponseSummaryVoluntary;
 import com.storecontrol.backend.models.enumerate.TransactionType;
 import com.storecontrol.backend.models.operations.Transaction;
 
@@ -12,7 +11,7 @@ public record ResponseSummaryTransaction(
     BigDecimal amount,
     TransactionType transactionTypeEnum,
     String transactionTimeStamp,
-    ResponseSummaryVoluntary voluntaryId
+    UUID summaryVoluntary
 ) {
 
   public ResponseSummaryTransaction(Transaction transaction) {
@@ -20,6 +19,7 @@ public record ResponseSummaryTransaction(
         transaction.getAmount(),
         transaction.getTransactionTypeEnum(),
         transaction.getTransactionTimeStamp().toString(),
-        new ResponseSummaryVoluntary(transaction.getVoluntary()));
+        transaction.getVoluntaryUuid()
+    );
   }
 }

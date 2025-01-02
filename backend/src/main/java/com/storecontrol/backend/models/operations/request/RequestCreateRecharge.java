@@ -19,9 +19,6 @@ public record RequestCreateRecharge(
     String orderCardId,
 
     @NotNull(message = "CashRegisterId is required")
-    UUID cashRegisterId,
-
-    @NotNull(message = "OrderCardId is required")
-    UUID voluntaryId
+    UUID cashRegisterUuid
 ) {
 }

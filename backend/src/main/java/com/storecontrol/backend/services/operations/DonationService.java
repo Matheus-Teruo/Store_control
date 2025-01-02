@@ -3,6 +3,7 @@ package com.storecontrol.backend.services.operations;
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.operations.Donation;
+import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.DonationRepository;
 import com.storecontrol.backend.services.customers.component.CustomerFinalizationValidation;
@@ -30,6 +31,7 @@ public class DonationService {
   @Transactional
   public void createDonation(RequestCustomerFinalization request,
                              Customer customer,
+                             CashRegister cashRegister,
                              Voluntary voluntary) {
     var donationValue = request.donationValue();
 
@@ -37,7 +39,7 @@ public class DonationService {
     finalizationValidation.checkDonationValueValid(donationValue, customer);
 
     customer.getOrderCard().incrementDebit(donationValue.negate());
-    var donation = new Donation(request, customer, voluntary);
+    var donation = new Donation(request, customer, cashRegister, voluntary);
     customer.setDonations(List.of(donation));
 
     repository.save(donation);
