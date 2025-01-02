@@ -8,6 +8,7 @@ import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.stands.response.ResponseProduct;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
 import com.storecontrol.backend.services.stands.ProductService;
+import com.storecontrol.backend.services.stands.S3Service;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -25,6 +27,9 @@ class ProductTest extends BaseTest {
 
   @MockBean
   private ProductService service;
+
+  @MockBean
+  private S3Service s3Service;
 
   @Test
   void testCreateProductSuccess() throws Exception {
@@ -138,5 +143,10 @@ class ProductTest extends BaseTest {
     // Verify interactions
     verify(service, times(1)).deleteProduct(deleteRequest);
     verifyNoMoreInteractions(service);
+  }
+
+  @Test
+  void contextLoads() {
+    assertNotNull(s3Service, "S3Service should be mocked and not null.");
   }
 }

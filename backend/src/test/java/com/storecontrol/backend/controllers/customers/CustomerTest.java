@@ -55,6 +55,31 @@ class CustomerTest extends BaseTest {
   }
 
   @Test
+  void testReadCustomersByCardIdSuccess() throws Exception {
+    // Given
+    UUID customerUuid = UUID.randomUUID();
+
+    String cardId = "CardIDTest12345";
+    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
+    RequestOrderCard requestOrderCard = createRequestOrderCard(cardId);
+
+    Customer mockCustomer = createCustomerEntity(customerUuid, mockOrderCard,false);
+    ResponseCustomer expectedResponse = new ResponseCustomer(mockCustomer);
+
+    when(service.takeActiveCustomerByCardId(cardId)).thenReturn(mockCustomer);
+
+    // When & Then
+    mockMvc.perform(get("/customers/card/{cardId}", cardId)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
+
+    // Verify interactions
+    verify(service, times(1)).takeActiveCustomerByCardId(cardId);
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
   void testReadActiveCustomersSuccess() throws Exception {
     // Given
     String cardId1 = "CardIDTest12345";

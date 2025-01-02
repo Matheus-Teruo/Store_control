@@ -5,14 +5,22 @@ import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.stands.response.ResponseProduct;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
 import com.storecontrol.backend.services.stands.ProductService;
+import com.storecontrol.backend.services.stands.S3Service;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -21,6 +29,9 @@ public class ProductController {
 
   @Autowired
   ProductService service;
+
+  @Autowired
+  S3Service s3Service;
 
   @PostMapping
   public ResponseEntity<ResponseProduct> createProduct(@RequestBody @Valid RequestCreateProduct request) {
@@ -61,5 +72,16 @@ public class ProductController {
     service.deleteProduct(request);
 
     return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/upload-image/{uuid}")
+  public ResponseEntity<Map<String, String>> uploadImage(
+      @PathVariable UUID uuid, @RequestParam("image") MultipartFile image) throws IOException {
+    var tempFile = s3Service.adjustNameFile(uuid, image);
+    image.transferTo(tempFile);
+
+    String url = s3Service.uploadFile(tempFile, tempFile.getName());
+
+    return ResponseEntity.ok(Map.of("url", url));
   }
 }

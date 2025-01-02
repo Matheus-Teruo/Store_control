@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.volunteers;
 
-import com.storecontrol.backend.infra.auth.security.TokenServiceConfig;
+import com.storecontrol.backend.config.security.TokenServiceConfig;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestLoginVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;

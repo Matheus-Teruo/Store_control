@@ -288,12 +288,15 @@
 				},
 				{
 					"name": "Read Customer By CardID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"cardId\": {{card_id}}\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -301,12 +304,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostPath}}customers/card",
+							"raw": "{{hostPath}}customers/card/{{card_id}}",
 							"host": [
 								"{{hostPath}}customers"
 							],
 							"path": [
-								"card"
+								"card",
+								"{{card_id}}"
 							]
 						}
 					},
@@ -729,7 +733,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"productName\": \"productExample1\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"productName\": \"productExample\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -817,6 +821,34 @@
 							"raw": "{{hostPath}}products",
 							"host": [
 								"{{hostPath}}products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Product Image",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{hostPath}}products/upload-image/{{product_id}}",
+							"host": [
+								"{{hostPath}}products"
+							],
+							"path": [
+								"upload-image",
+								"{{product_id}}"
 							]
 						}
 					},
@@ -925,6 +957,32 @@
 							],
 							"path": [
 								"function"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Volunteers Role (Auth)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"voluntaryRole\": \"management\" // \"{{stand_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}volunteers/role",
+							"host": [
+								"{{hostPath}}volunteers"
+							],
+							"path": [
+								"role"
 							]
 						}
 					},
@@ -1553,6 +1611,23 @@
 							],
 							"path": [
 								"check"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log out",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}user/logout",
+							"host": [
+								"{{hostPath}}user"
+							],
+							"path": [
+								"logout"
 							]
 						}
 					},

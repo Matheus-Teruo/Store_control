@@ -1,4 +1,4 @@
-package com.storecontrol.backend.infra.auth.security;
+package com.storecontrol.backend.config.security;
 
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
@@ -29,11 +29,6 @@ public class SecurityFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
-    String path = request.getRequestURI();
-    if (isPublicRoute(path)) {
-      filterChain.doFilter(request, response);
-      return;
-    }
 
     var tokenJWT = recoverToken(request);
 
@@ -63,15 +58,5 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
 
     return null;
-  }
-
-  private static final List<String> PUBLIC_ROUTES = List.of(
-      "/user/login",
-      "/user/signup",
-      "/customers/"
-  );
-
-  private boolean isPublicRoute(String path) {
-    return PUBLIC_ROUTES.stream().anyMatch(path::startsWith);
   }
 }

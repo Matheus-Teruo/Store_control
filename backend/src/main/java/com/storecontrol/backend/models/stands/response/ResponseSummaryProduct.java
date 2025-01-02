@@ -8,6 +8,7 @@ import java.util.UUID;
 public record ResponseSummaryProduct(
     UUID uuid,
     String productName,
+    String summary,
     BigDecimal price,
     BigDecimal discount,
     Integer stock,
@@ -18,6 +19,7 @@ public record ResponseSummaryProduct(
   public ResponseSummaryProduct(Product product) {
     this(product.getUuid(),
         product.getProductName(),
+        product.getSummary(),
         product.getPrice(),
         product.getDiscount(),
         product.getStock(),

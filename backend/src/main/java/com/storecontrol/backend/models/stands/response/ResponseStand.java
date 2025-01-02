@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public record ResponseStand(
     UUID uuid,
-    String stand,
+    String standName,
     ResponseAssociation association
 ) {
 

@@ -14,6 +14,8 @@ FOREIGN KEY (order_card_id) REFERENCES order_cards (card_id);
 ALTER TABLE donations
 ADD CONSTRAINT fk_donations_customer_uuid
 FOREIGN KEY (customer_uuid) REFERENCES customers (uuid),
+ADD CONSTRAINT fk_donations_cash_register_uuid
+FOREIGN KEY (cash_register_uuid) REFERENCES cash_registers (uuid),
 ADD CONSTRAINT fk_donations_voluntary_uuid
 FOREIGN KEY (voluntary_uuid) REFERENCES volunteers (uuid);
 

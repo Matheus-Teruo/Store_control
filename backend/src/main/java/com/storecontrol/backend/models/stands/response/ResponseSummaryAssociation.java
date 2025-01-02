@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public record ResponseSummaryAssociation(
     UUID uuid,
-    String association
+    String associationName
 ) {
 
   public ResponseSummaryAssociation(Association association) {

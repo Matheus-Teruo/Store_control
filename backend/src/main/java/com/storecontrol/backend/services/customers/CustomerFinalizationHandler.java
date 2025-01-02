@@ -52,7 +52,7 @@ public class CustomerFinalizationHandler {
           refundService.createRefund(request, customer, cashRegister, voluntary);
         }
         if (request.donationValue().compareTo(BigDecimal.ZERO) > 0) {
-          donationService.createDonation(request, customer, voluntary);
+          donationService.createDonation(request, customer, cashRegister, voluntary);
         }
       } else {
         throw new InvalidCustomerException("Customer finalization", "Sum of donation and refund is not equal remaining debit");
