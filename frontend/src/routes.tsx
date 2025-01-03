@@ -16,10 +16,12 @@ import Volunteers from "./pages/admin/Volunteers";
 import Purchases from "./pages/analytics/Purchases";
 import Statistics from "./pages/analytics/Statistics";
 import AuthPage from "./components/AuthBackground";
+import NotificationManager from "./components/NotificationManager";
 
 function AppRouter() {
   return (
     <Router>
+      <NotificationManager />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/menu" element={<Menu />} />
