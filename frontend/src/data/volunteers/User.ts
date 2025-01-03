@@ -1,20 +1,20 @@
 import SummaryFunction from "./Function";
 import { VoluntaryRole } from "./Voluntary";
 
-export default interface User{
+export default interface User {
   uuid: string;
   firstName: string;
   summaryFunction: SummaryFunction;
   voluntaryRole: VoluntaryRole;
 }
 
-export interface SignupVoluntary{
+export interface SignupVoluntary {
   username: string;
   password: string;
   fullname: string;
 }
 
-export interface LoginVoluntary{
+export interface LoginVoluntary {
   username: string;
   password: string;
 }

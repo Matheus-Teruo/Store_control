@@ -1,0 +1,40 @@
+@use "@styles/variables" as *;
+
+.title {
+  margin: 50px 0;
+  color: $color-gray-700;
+}
+
+.form {
+  width: 100%;
+
+  .button {
+    margin: 0 10px 25px;
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      display: flex;
+      align-items: center;
+      padding: 5px 12px;
+      border: none;
+      border-radius: 10px;
+      background: $color-secundary-1;
+      box-shadow: 2px 4px 4px 0px $color-shadow-1;
+
+      p {
+        padding-left: 10px;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.footer {
+  display: flex;
+  padding: 10px;
+
+  p {
+    padding-right: 4px;
+  }
+}

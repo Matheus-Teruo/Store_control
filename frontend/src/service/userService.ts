@@ -1,4 +1,4 @@
-import api from "../axios/axios";
+import api from "@/axios/axios";
 import User, { LoginVoluntary, SignupVoluntary } from "@data/volunteers/User";
 import Voluntary from "@data/volunteers/Voluntary";
 
