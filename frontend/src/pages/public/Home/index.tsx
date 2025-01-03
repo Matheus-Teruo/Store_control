@@ -1,4 +1,4 @@
-// import { Logo } from "@/assets/image/LogoStoreControl.png";
+import Logo from "@/assets/image/LogoStoreControl.png";
 import { Link } from "react-router-dom";
 
 function Home() {
@@ -6,7 +6,10 @@ function Home() {
     <div>
       <div>
         <div>
-          {/* <img src={Logo} alt="Logo: imagem circular com um rosto de raposa no meio e com sinais do rabo" /> */}
+          <img
+            src={Logo}
+            alt="Logo: imagem circular com um rosto de raposa no meio"
+          />
           <h1>Store Control</h1>
         </div>
         <div>
