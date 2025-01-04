@@ -33,16 +33,17 @@ class VoluntaryTest extends BaseTest {
     Voluntary mockVoluntary = createVoluntaryEntity(voluntaryUuid);
     ResponseVoluntary expectedResponse = new ResponseVoluntary(mockVoluntary);
 
-    when(service.takeVoluntaryByUuid(voluntaryUuid)).thenReturn(mockVoluntary);
+    when(service.takeVoluntaryByUuid(voluntaryUuid, voluntaryUuid)).thenReturn(mockVoluntary);
 
     // When & Then
     mockMvc.perform(get("/volunteers/{uuid}", voluntaryUuid)
-            .accept(MediaType.APPLICATION_JSON))
+            .accept(MediaType.APPLICATION_JSON)
+            .requestAttr("UserUuid", voluntaryUuid))
         .andExpect(status().isOk())
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).takeVoluntaryByUuid(voluntaryUuid);
+    verify(service, times(1)).takeVoluntaryByUuid(voluntaryUuid, voluntaryUuid);
     verifyNoMoreInteractions(service);
   }
 
@@ -80,17 +81,18 @@ class VoluntaryTest extends BaseTest {
     mockVoluntary.updateVoluntary(updateRequest);
     ResponseVoluntary expectedResponse = new ResponseVoluntary(mockVoluntary);
 
-    when(service.updateVoluntary(updateRequest)).thenReturn(mockVoluntary);
+    when(service.updateVoluntary(updateRequest, mockVoluntary.getUuid())).thenReturn(mockVoluntary);
 
     // When & Then
     mockMvc.perform(put("/volunteers")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(updateRequest)))
+            .content(toJson(updateRequest))
+            .requestAttr("UserUuid", mockVoluntary.getUuid()))
         .andExpect(status().isOk())
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).updateVoluntary(updateRequest);
+    verify(service, times(1)).updateVoluntary(updateRequest, mockVoluntary.getUuid());
     verifyNoMoreInteractions(service);
   }
 

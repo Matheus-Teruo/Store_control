@@ -43,7 +43,8 @@ public class VoluntaryService {
     return voluntary;
   }
 
-  public Voluntary takeVoluntaryByUuid(UUID uuid){
+  public Voluntary takeVoluntaryByUuid(UUID uuid, UUID voluntaryUuid){
+    validation.checkVolyntaryAuthentication(uuid, voluntaryUuid);
     return repository.findByUuidValidTrue(uuid)
         .orElseThrow(EntityNotFoundException::new);
   }
@@ -58,7 +59,8 @@ public class VoluntaryService {
   }
 
   @Transactional
-  public Voluntary updateVoluntary(RequestUpdateVoluntary request) {
+  public Voluntary updateVoluntary(RequestUpdateVoluntary request, UUID voluntaryUuid) {
+    validation.checkVolyntaryAuthentication(request.uuid(), voluntaryUuid);
     validation.checkNameDuplication(request.username(), request.fullname());
     var voluntary = safeTakeVoluntaryByUuid(request.uuid());
 
