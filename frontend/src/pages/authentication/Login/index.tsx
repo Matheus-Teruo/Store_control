@@ -1,6 +1,5 @@
 import styles from "./Login.module.scss";
 import { Link, useNavigate } from "react-router-dom";
-import { isAxiosError } from "axios";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import Input from "@/components/utils/Input";
@@ -10,11 +9,13 @@ import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useUserContext";
+import { useHandleApiError } from "@/axios/handlerApiError";
 
 function Login() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { addNotification } = useAlertsContext();
+  const handleApiError = useHandleApiError();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,17 +29,9 @@ function Login() {
       });
       setUsername("");
       setPassword("");
-      navigate("/workspace");
+      navigate("/workspace", { replace: true });
     } catch (error) {
-      if (isAxiosError(error)) {
-        addNotification({
-          title: error.response?.data.error,
-          message: error.response?.data.message,
-          type: MessageType.WARNING,
-        });
-      } else {
-        console.error("Erro desconhecido:", error);
-      }
+      handleApiError(error);
     }
   };
 

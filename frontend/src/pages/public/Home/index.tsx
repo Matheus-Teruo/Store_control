@@ -1,8 +1,16 @@
 import styles from "./Home.module.scss";
 import Logo from "@/assets/image/LogoStoreControl.png";
+import { useUserContext } from "@context/UserContext/useUserContext";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function Home() {
+  const { checkLogged } = useUserContext();
+
+  useEffect(() => {
+    checkLogged();
+  }, [checkLogged]);
+
   return (
     <div className={styles.background}>
       <div className={styles.body}>

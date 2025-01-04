@@ -4,7 +4,7 @@ import { VoluntaryRole } from "./Voluntary";
 export default interface User {
   uuid: string;
   firstName: string;
-  summaryFunction: SummaryFunction;
+  summaryFunction?: SummaryFunction | null;
   voluntaryRole: VoluntaryRole;
 }
 

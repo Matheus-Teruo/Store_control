@@ -68,8 +68,8 @@ public class GlobalExceptionHandler {
     error.put("errorType", "Insertion Entity Error");
     error.put("entity", ex.getEntityName());
     error.put("invalidFields", ex.getFieldErrors());
-    error.put("description", ex.getDescriptionOfError());
-    error.put("error", ex.getMessage());
+    error.put("error", ex.getError());
+    error.put("message", ex.getMessage());
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
   }

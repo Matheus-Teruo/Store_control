@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Message, Notification, AlertsContext } from "./useUserContext";
 
-export function AlertProvider({ children }: { children: React.ReactNode }) {
+export default function AlertProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const addNotification = (message: Message): void => {

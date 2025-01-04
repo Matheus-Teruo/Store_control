@@ -4,7 +4,7 @@ import { useContext, createContext } from "react";
 interface UserContextType {
   user: User | null;
   isLoggedIn: boolean;
-  login: () => void;
+  checkLogged: () => void;
   logout: () => void;
 }
 

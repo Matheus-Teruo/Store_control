@@ -8,7 +8,8 @@ import {
   MessageType,
   useAlertsContext,
 } from "@/context/AlertsContext/useUserContext";
-import { isAxiosError } from "axios";
+import { useHandleApiError } from "@/axios/handlerApiError";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
   const [username, setUsername] = useState<string>("");
@@ -16,6 +17,8 @@ function Signup() {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const { addNotification } = useAlertsContext();
+  const handleApiError = useHandleApiError();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,17 +34,16 @@ function Signup() {
         setFullname("");
         setPassword("");
         setConfirmPassword("");
+        navigate("/workspace", { replace: true });
       } catch (error) {
-        if (isAxiosError(error)) {
-          addNotification({
-            title: error.response?.data.error,
-            message: error.response?.data.message,
-            type: MessageType.WARNING,
-          });
-        } else {
-          console.error("Erro desconhecido:", error);
-        }
+        handleApiError(error);
       }
+    } else {
+      addNotification({
+        title: "Password Mismatch",
+        message: "Password and Confirm Password must match.",
+        type: MessageType.WARNING,
+      });
     }
   };
 

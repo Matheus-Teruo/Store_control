@@ -7,11 +7,11 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
       "@styles": path.resolve(__dirname, "./src/styles"),
       "@data": path.resolve(__dirname, "./src/data"),
       "@context": path.resolve(__dirname, "./src/context"),
       "@service": path.resolve(__dirname, "./src/service"),
+      "@": path.resolve(__dirname, "./src"),
     },
   },
 });

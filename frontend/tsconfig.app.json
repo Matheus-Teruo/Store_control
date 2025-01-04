@@ -7,10 +7,10 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "paths": {
-      "@/*": ["./src/*"],
       "@data/*": ["./src/data/*"],
       "@context/*": ["./src/context/*"],
-      "@service/*": ["./src/service/*"]
+      "@service/*": ["./src/service/*"],
+      "@/*": ["./src/*"]
     },
 
     /* Bundler mode */
