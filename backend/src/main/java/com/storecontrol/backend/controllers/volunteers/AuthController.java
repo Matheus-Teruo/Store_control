@@ -57,7 +57,7 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<Void> login(
+  public ResponseEntity<ResponseUser> login(
       @RequestBody @Valid
       RequestLoginVoluntary request,
       HttpServletResponse response) {
@@ -68,7 +68,7 @@ public class AuthController {
 
     response.addCookie(createCookie(tokenJWT, 24));
 
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.ok(new ResponseUser((Voluntary) authentication.getPrincipal()));
   }
 
   @GetMapping("/check")
