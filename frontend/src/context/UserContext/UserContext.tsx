@@ -1,7 +1,7 @@
 import User from "@data/volunteers/User";
 import React, { useEffect, useState } from "react";
 import { UserContext } from "./useUserContext";
-import { getUser, LogoutVoluntary } from "@service/userService";
+import { getUser, LogoutVoluntary } from "@service/volunteers/userService";
 
 const LOCAL_STORAGE_KEY = "loggedInUser";
 
@@ -33,12 +33,24 @@ export default function UserProvider({
     }
   };
 
+  function doesCookieExist(cookieName: string) {
+    const cookies = document.cookie
+      .split("; ")
+      .map((cookie) => cookie.split("=")[0]);
+    return cookies.includes(cookieName);
+  }
+
   useEffect(() => {
     if (!user && user !== "unlogged") {
-      const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+      if (doesCookieExist("auth")) {
+        const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        } else {
+          checkLogged();
+        }
       } else {
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
         checkLogged();
       }
     }
