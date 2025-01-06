@@ -2,12 +2,10 @@ import { useEffect, useState } from "react";
 import Button from "@/components/utils/Button";
 import Input from "@/components/utils/Input";
 import { getVoluntary } from "@service/voluntaryService";
-import { isAxiosError } from "axios";
-import {
-  MessageType,
-  useAlertsContext,
-} from "@/context/AlertsContext/useUserContext";
 import Voluntary, { VoluntaryRole } from "@/data/volunteers/Voluntary";
+import { useUserContext } from "@context/UserContext/useUserContext";
+import { useNavigate } from "react-router-dom";
+import { useHandleApiError } from "@/axios/handlerApiError";
 
 const voluntaryInitialValue: Voluntary = {
   uuid: "",
@@ -27,27 +25,27 @@ function User() {
   const [updateUsername, setUpdateUsername] = useState<boolean>(false);
   const [updateFullname, setUpdateFullname] = useState<boolean>(false);
   const [updatePassword, setUpdatePassword] = useState<boolean>(false);
-  const { addNotification } = useAlertsContext();
+  const { user } = useUserContext();
+  const handleApiError = useHandleApiError();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchVoluntary = async () => {
-      try {
-        const voluntary = await getVoluntary("a");
-        setUserProperties(voluntary);
-      } catch (error) {
-        if (isAxiosError(error)) {
-          addNotification({
-            title: error.response?.data.error,
-            message: error.response?.data.message,
-            type: MessageType.WARNING,
-          });
+      if (user) {
+        if (user !== "unlogged") {
+          try {
+            const voluntary = await getVoluntary(user.uuid);
+            setUserProperties(voluntary);
+          } catch (error) {
+            handleApiError(error);
+          }
         } else {
-          console.error("Erro desconhecido:", error);
+          navigate("/");
         }
       }
     };
     fetchVoluntary();
-  }, []);
+  }, [user, navigate, handleApiError]);
 
   function handleUsername(event: React.ChangeEvent<HTMLInputElement>) {
     setNewUsername(event.target.value);
@@ -88,6 +86,28 @@ function User() {
               placeholder="Novo Nome Completo"
               isRequired
             />
+          )}
+        </div>
+        <div>
+          <p>Função</p>
+          {userProperties.summaryFunction ? (
+            <>
+              <p>{userProperties.summaryFunction.typeOfFunction}</p>
+              <p>{userProperties.summaryFunction.functionName}</p>
+            </>
+          ) : (
+            <p></p>
+          )}
+        </div>
+        <div>
+          <p>Permissão</p>
+          {/* Por algum motivo BIZARRO não tem como fazer de forma melhor */}
+          {userProperties.voluntaryRole === VoluntaryRole.ROLE_USER ? (
+            <p>Usuário Voluntário</p>
+          ) : userProperties.voluntaryRole === VoluntaryRole.ROLE_MANAGEMENT ? (
+            <p>Gestor</p>
+          ) : (
+            <p>Administrador</p>
           )}
         </div>
         <div>

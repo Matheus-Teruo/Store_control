@@ -1,36 +1,53 @@
 import User from "@data/volunteers/User";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { UserContext } from "./useUserContext";
 import { getUser, LogoutVoluntary } from "@service/userService";
+
+const LOCAL_STORAGE_KEY = "loggedInUser";
 
 export default function UserProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null | "unlogged">(null);
+
+  const login = (user: User) => {
+    setUser(user);
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(user));
+  };
 
   const checkLogged = async () => {
     const logginUser = await getUser();
     if (logginUser !== null) {
-      setUser({
-        uuid: logginUser.uuid,
-        firstName: logginUser.firstName,
-        summaryFunction: logginUser.summaryFunction,
-        voluntaryRole: logginUser.voluntaryRole,
-      });
+      setUser(logginUser);
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(logginUser));
     }
   };
 
   const logout = async () => {
     if (user) {
       await LogoutVoluntary();
+      setUser("unlogged");
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
     }
   };
 
+  useEffect(() => {
+    if (!user && user !== "unlogged") {
+      const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      } else {
+        checkLogged();
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <UserContext.Provider
-      value={{ user, isLoggedIn: !!user, checkLogged, logout }}
+      value={{ user, isLoggedIn: !!user, login, checkLogged, logout }}
     >
       {children}
     </UserContext.Provider>

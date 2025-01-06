@@ -10,6 +10,7 @@ import {
 } from "@/context/AlertsContext/useUserContext";
 import { useHandleApiError } from "@/axios/handlerApiError";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from "@context/UserContext/useUserContext";
 
 function Signup() {
   const [username, setUsername] = useState<string>("");
@@ -17,6 +18,7 @@ function Signup() {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const { addNotification } = useAlertsContext();
+  const { login } = useUserContext();
   const handleApiError = useHandleApiError();
   const navigate = useNavigate();
 
@@ -24,11 +26,21 @@ function Signup() {
     e.preventDefault();
     if (password === confirmPassword) {
       try {
-        await signupVoluntary({ username, fullname, password });
+        const voluntary = await signupVoluntary({
+          username,
+          fullname,
+          password,
+        });
         addNotification({
           title: "Signup Success",
           message: `Create user ${username} and logged`,
           type: MessageType.OK,
+        });
+        login({
+          uuid: voluntary.uuid,
+          firstName: voluntary.fullname.split(" ")[0],
+          summaryFunction: voluntary.summaryFunction,
+          voluntaryRole: voluntary.voluntaryRole,
         });
         setUsername("");
         setFullname("");

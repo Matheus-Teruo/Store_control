@@ -10,23 +10,26 @@ import {
   useAlertsContext,
 } from "@context/AlertsContext/useUserContext";
 import { useHandleApiError } from "@/axios/handlerApiError";
+import { useUserContext } from "@context/UserContext/useUserContext";
 
 function Login() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { addNotification } = useAlertsContext();
+  const { login } = useUserContext();
   const handleApiError = useHandleApiError();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await loginVoluntary({ username, password });
+      const user = await loginVoluntary({ username, password });
       addNotification({
         title: "Login Success",
         message: `User ${username} logged`,
         type: MessageType.OK,
       });
+      login(user);
       setUsername("");
       setPassword("");
       navigate("/workspace", { replace: true });

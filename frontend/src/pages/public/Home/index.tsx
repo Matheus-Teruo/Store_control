@@ -1,15 +1,10 @@
 import styles from "./Home.module.scss";
 import Logo from "@/assets/image/LogoStoreControl.png";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function Home() {
-  const { checkLogged } = useUserContext();
-
-  useEffect(() => {
-    checkLogged();
-  }, [checkLogged]);
+  const { user } = useUserContext();
 
   return (
     <div className={styles.background}>
@@ -25,15 +20,32 @@ function Home() {
           <Link className={`${styles.link} ${styles.linkMenu}`} to="/menu">
             <span>Cardápio</span>
           </Link>
-          <div className={styles.authSection}>
-            <Link className={styles.link} to="/auth/login">
-              <span>Entrar</span>
-            </Link>
-            <p>ou</p>
-            <Link className={styles.link} to="/auth/signup">
-              <span>Cadastrar</span>
-            </Link>
-          </div>
+          {user ? (
+            <>
+              <Link
+                className={`${styles.link} ${styles.linkMenu}`}
+                to="/workspace"
+              >
+                <span>Funções</span>
+              </Link>
+              <Link
+                className={`${styles.link} ${styles.linkMenu}`}
+                to="/auth/user"
+              >
+                <span>Perfil</span>
+              </Link>
+            </>
+          ) : (
+            <div className={styles.authSection}>
+              <Link className={styles.link} to="/auth/login">
+                <span>Entrar</span>
+              </Link>
+              <p>ou</p>
+              <Link className={styles.link} to="/auth/signup">
+                <span>Cadastrar</span>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

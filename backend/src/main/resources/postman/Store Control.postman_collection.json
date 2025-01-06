@@ -1643,7 +1643,10 @@
 				"type": "text/javascript",
 				"packages": {},
 				"exec": [
-					""
+					"pm.request.headers.add({\r",
+					"  key: \"Accept-Language\",\r",
+					"  value: \"pt-BR\"\r",
+					"});"
 				]
 			}
 		},

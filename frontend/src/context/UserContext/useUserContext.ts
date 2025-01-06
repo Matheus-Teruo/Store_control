@@ -2,8 +2,9 @@ import User from "@data/volunteers/User";
 import { useContext, createContext } from "react";
 
 interface UserContextType {
-  user: User | null;
+  user: User | null | "unlogged";
   isLoggedIn: boolean;
+  login: (user: User) => void;
   checkLogged: () => void;
   logout: () => void;
 }

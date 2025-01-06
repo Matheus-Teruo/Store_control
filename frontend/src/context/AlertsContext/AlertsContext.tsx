@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Message, Notification, AlertsContext } from "./useUserContext";
 
 export default function AlertProvider({
@@ -8,7 +8,7 @@ export default function AlertProvider({
 }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const addNotification = (message: Message): void => {
+  const addNotification = useCallback((message: Message): void => {
     setNotifications((prev) => {
       const newNotification: Notification = {
         id: Date.now(),
@@ -16,14 +16,13 @@ export default function AlertProvider({
       };
       return [newNotification, ...prev];
     });
-  };
+  }, []);
 
-  const removeNotification = (id: number): void => {
-    const newNotifications = notifications.filter(
-      (notification) => notification.id !== id,
+  const removeNotification = useCallback((id: number): void => {
+    setNotifications((prevNotifications) =>
+      prevNotifications.filter((notification) => notification.id !== id),
     );
-    setNotifications(newNotifications);
-  };
+  }, []);
 
   return (
     <AlertsContext.Provider

@@ -9,8 +9,9 @@ export const signupVoluntary = async (
   return response.data;
 };
 
-export const loginVoluntary = async (user: LoginVoluntary): Promise<void> => {
-  await api.post<void>("user/login", user);
+export const loginVoluntary = async (user: LoginVoluntary): Promise<User> => {
+  const response = await api.post<User>("user/login", user);
+  return response.data;
 };
 
 export const getUser = async (): Promise<User> => {
