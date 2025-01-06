@@ -130,18 +130,17 @@ class ProductTest extends BaseTest {
   @Test
   void testDeleteProductSuccess() throws Exception {
     // Given
-    RequestUpdateProduct deleteRequest = createRequestUpdateProduct(UUID.randomUUID(), UUID.randomUUID());
+    UUID productUuid =  UUID.randomUUID();
 
-    doNothing().when(service).deleteProduct(deleteRequest);
+    doNothing().when(service).deleteProduct(productUuid);
 
     // When & Then
-    mockMvc.perform(delete("/products")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(deleteRequest)))
+    mockMvc.perform(delete("/products/{uuid}", productUuid)
+            .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());
 
     // Verify interactions
-    verify(service, times(1)).deleteProduct(deleteRequest);
+    verify(service, times(1)).deleteProduct(productUuid);
     verifyNoMoreInteractions(service);
   }
 

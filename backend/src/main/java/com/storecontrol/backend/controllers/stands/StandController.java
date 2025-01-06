@@ -36,7 +36,7 @@ public class StandController {
   }
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseStand> readStand(@PathVariable UUID uuid) {
+  public ResponseEntity<ResponseStand> readStand(@PathVariable @Valid UUID uuid) {
     var stand = service.takeStandByUuid(uuid);
 
     var response = new ResponseStand(stand);
@@ -58,9 +58,9 @@ public class StandController {
     return ResponseEntity.ok(response);
   }
 
-  @DeleteMapping
-  public ResponseEntity<Void> deleteStand(@RequestBody @Valid RequestUpdateStand request) {
-    service.deleteStand(request);
+  @DeleteMapping("/{uuid}")
+  public ResponseEntity<Void> deleteStand(@PathVariable @Valid UUID uuid) {
+    service.deleteStand(uuid);
 
     return ResponseEntity.noContent().build();
   }

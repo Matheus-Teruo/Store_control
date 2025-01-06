@@ -193,19 +193,17 @@ class PurchaseTest extends BaseTest {
 
     Purchase mockPurchase = createPurchaseEntity(UUID.randomUUID(), mockCustomer);
     mockPurchase.setItems(createItemEntity(mockPurchase));
-    RequestUpdatePurchase deleteRequest = createRequestUpdatePurchase(UUID.randomUUID(), mockPurchase);
 
-    doNothing().when(service).deletePurchase(deleteRequest, mockPurchase.getVoluntary().getUuid());
+    doNothing().when(service).deletePurchase(mockPurchase.getUuid(), mockPurchase.getVoluntary().getUuid());
 
     // When & Then
-    mockMvc.perform(delete("/purchases")
+    mockMvc.perform(delete("/purchases/{uuid}", mockPurchase.getUuid())
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(deleteRequest))
             .requestAttr("UserUuid", mockPurchase.getVoluntary().getUuid()))
         .andExpect(status().isNoContent());
 
     // Verify interactions
-    verify(service, times(1)).deletePurchase(deleteRequest, mockPurchase.getVoluntary().getUuid());
+    verify(service, times(1)).deletePurchase(mockPurchase.getUuid(), mockPurchase.getVoluntary().getUuid());
     verifyNoMoreInteractions(service);
   }
 }

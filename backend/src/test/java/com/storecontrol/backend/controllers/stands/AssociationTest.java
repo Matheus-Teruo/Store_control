@@ -119,18 +119,17 @@ class AssociationTest extends BaseTest {
   @Test
   void testDeleteAssociationSuccess() throws Exception {
     // Given
-    RequestUpdateAssociation deleteRequest = createRequestUpdateAssociation(UUID.randomUUID());
+    UUID associationUuid = UUID.randomUUID();
 
-    doNothing().when(service).deleteAssociation(deleteRequest);
+    doNothing().when(service).deleteAssociation(associationUuid);
 
     // When & Then
-    mockMvc.perform(delete("/associations")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(deleteRequest)))
+    mockMvc.perform(delete("/associations/{uuid}", associationUuid)
+            .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());
 
     // Verify interactions
-    verify(service, times(1)).deleteAssociation(deleteRequest);
+    verify(service, times(1)).deleteAssociation(associationUuid);
     verifyNoMoreInteractions(service);
   }
 }

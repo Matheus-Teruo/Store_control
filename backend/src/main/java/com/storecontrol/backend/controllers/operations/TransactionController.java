@@ -41,7 +41,7 @@ public class TransactionController {
   }
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseTransaction> readTransaction(@PathVariable UUID uuid) {
+  public ResponseEntity<ResponseTransaction> readTransaction(@PathVariable @Valid UUID uuid) {
     var response = new ResponseTransaction(service.takeTransactionByUuid(uuid));
 
     return ResponseEntity.ok(response);
@@ -63,12 +63,12 @@ public class TransactionController {
     return ResponseEntity.ok(response);
   }
 
-  @DeleteMapping
+  @DeleteMapping("/{uuid}")
   public ResponseEntity<Void> deleteTransaction(
-      @RequestBody @Valid RequestDeleteTransaction request,
+      @PathVariable @Valid UUID uuid,
       @RequestAttribute("UserUuid") UUID userUuid
   ) {
-    service.deleteTransaction(request, userUuid);
+    service.deleteTransaction(uuid, userUuid);
 
     return ResponseEntity.noContent().build();
   }

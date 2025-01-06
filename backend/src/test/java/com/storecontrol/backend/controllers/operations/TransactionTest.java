@@ -132,19 +132,17 @@ class TransactionTest extends BaseTest {
   void testDeleteTransactionSuccess() throws Exception {
     // Given
     Transaction mockTransaction = createTransactionEntity(UUID.randomUUID(), false);
-    RequestDeleteTransaction deleteRequest = createRequestDeleteTransaction(UUID.randomUUID());
 
-    doNothing().when(service).deleteTransaction(deleteRequest, mockTransaction.getVoluntary().getUuid());
+    doNothing().when(service).deleteTransaction(mockTransaction.getUuid(), mockTransaction.getVoluntary().getUuid());
 
     // When & Then
-    mockMvc.perform(delete("/transactions")
+    mockMvc.perform(delete("/transactions/{uuid}", mockTransaction.getUuid())
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(deleteRequest))
             .requestAttr("UserUuid", mockTransaction.getVoluntary().getUuid()))
         .andExpect(status().isNoContent());
 
     // Verify interactions
-    verify(service, times(1)).deleteTransaction(deleteRequest, mockTransaction.getVoluntary().getUuid());
+    verify(service, times(1)).deleteTransaction(mockTransaction.getUuid(), mockTransaction.getVoluntary().getUuid());
     verifyNoMoreInteractions(service);
   }
 }

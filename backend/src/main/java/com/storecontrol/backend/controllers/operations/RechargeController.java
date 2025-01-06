@@ -39,7 +39,7 @@ public class RechargeController {
   }
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseRecharge> readRecharge(@PathVariable UUID uuid) {
+  public ResponseEntity<ResponseRecharge> readRecharge(@PathVariable @Valid UUID uuid) {
     var response = new ResponseRecharge(service.takeRechargeByUuid(uuid));
 
     return ResponseEntity.ok(response);
@@ -61,12 +61,12 @@ public class RechargeController {
     return ResponseEntity.ok(response);
   }
 
-  @DeleteMapping
+  @DeleteMapping("/{uuid}")
   public ResponseEntity<Void> deleteRecharge(
-      @RequestBody @Valid RequestDeleteRecharge request,
+      @PathVariable @Valid UUID uuid,
       @RequestAttribute("UserUuid") UUID userUuid
   ) {
-    service.deleteRecharge(request, userUuid);
+    service.deleteRecharge(uuid, userUuid);
 
     return ResponseEntity.noContent().build();
   }

@@ -75,8 +75,8 @@ public class ProductService {
   }
 
   @Transactional
-  public void deleteProduct(RequestUpdateProduct request) {
-    var product = safeTakeProductByUuid(request.uuid());
+  public void deleteProduct(UUID uuid) {
+    var product = safeTakeProductByUuid(uuid);
 
     product.deleteProduct();
   }

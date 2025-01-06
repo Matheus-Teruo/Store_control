@@ -47,7 +47,7 @@ public class ProductController {
   }
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseProduct> readProduct(@PathVariable UUID uuid) {
+  public ResponseEntity<ResponseProduct> readProduct(@PathVariable @Valid UUID uuid) {
     var response = new ResponseProduct(service.takeProductByUuid(uuid));
     return ResponseEntity.ok(response);
   }
@@ -67,9 +67,9 @@ public class ProductController {
     return ResponseEntity.ok(response);
   }
 
-  @DeleteMapping
-  public ResponseEntity<Void> deleteProduct(@RequestBody @Valid RequestUpdateProduct request) {
-    service.deleteProduct(request);
+  @DeleteMapping("/{uuid}")
+  public ResponseEntity<Void> deleteProduct(@PathVariable @Valid UUID uuid) {
+    service.deleteProduct(uuid);
 
     return ResponseEntity.noContent().build();
   }

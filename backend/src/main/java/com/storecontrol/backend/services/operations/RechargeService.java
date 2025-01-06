@@ -80,8 +80,8 @@ public class RechargeService {
   }
 
   @Transactional
-  public void deleteRecharge(RequestDeleteRecharge request, UUID userUuid) {
-    var recharge = safeTakeRechargeByUuid(request.uuid());
+  public void deleteRecharge(UUID uuid, UUID userUuid) {
+    var recharge = safeTakeRechargeByUuid(uuid);
     var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
 
     validation.checkDebitRemainderPositive(recharge);

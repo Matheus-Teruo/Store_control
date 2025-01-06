@@ -24,7 +24,7 @@ public class VoluntaryController {
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseVoluntary> readVoluntary(
-      @PathVariable UUID uuid,
+      @PathVariable @Valid UUID uuid,
       @RequestAttribute("UserUuid") UUID userUuid) {
     var response = new ResponseVoluntary(service.takeVoluntaryByUuid(uuid, userUuid));
 
@@ -63,9 +63,9 @@ public class VoluntaryController {
     return ResponseEntity.ok(response);
   }
 
-  @DeleteMapping
-  public ResponseEntity<Void> deleteVoluntary(@RequestBody @Valid RequestUpdateVoluntary request) {
-    service.deleteVoluntary(request);
+  @DeleteMapping("/{uuid}")
+  public ResponseEntity<Void> deleteVoluntary(@PathVariable @Valid UUID uuid) {
+    service.deleteVoluntary(uuid);
 
     return ResponseEntity.noContent().build();
   }

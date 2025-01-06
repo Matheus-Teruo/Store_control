@@ -93,8 +93,8 @@ public class VoluntaryService {
   }
 
   @Transactional
-  public void deleteVoluntary(RequestUpdateVoluntary request) {
-    var voluntary = safeTakeVoluntaryByUuid(request.uuid());
+  public void deleteVoluntary(UUID uuid) {
+    var voluntary = safeTakeVoluntaryByUuid(uuid);
 
     voluntary.deleteVoluntary();
   }

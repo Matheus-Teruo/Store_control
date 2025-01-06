@@ -121,18 +121,16 @@ class CashRegisterTest extends BaseTest {
   @Test
   void testDeleteCashRegisterSuccess() throws Exception {
     // Given
-    RequestUpdateCashRegister deleteRequest = createRequestUpdateCashRegister(UUID.randomUUID());
-
-    doNothing().when(service).deleteCashRegister(deleteRequest);
+    UUID cashRegisterUuid = UUID.randomUUID();
+    doNothing().when(service).deleteCashRegister(cashRegisterUuid);
 
     // When & Then
-    mockMvc.perform(delete("/registers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(deleteRequest)))
+    mockMvc.perform(delete("/registers/{uuid}", cashRegisterUuid)
+            .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());
 
     // Verify interactions
-    verify(service, times(1)).deleteCashRegister(deleteRequest);
+    verify(service, times(1)).deleteCashRegister(cashRegisterUuid);
     verifyNoMoreInteractions(service);
   }
 }

@@ -3,6 +3,7 @@ package com.storecontrol.backend.controllers.operations;
 import com.storecontrol.backend.models.operations.response.ResponseDonation;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryDonation;
 import com.storecontrol.backend.services.operations.DonationService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,7 @@ public class DonationController {
   DonationService service;
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseDonation> readDonation(@PathVariable UUID uuid) {
+  public ResponseEntity<ResponseDonation> readDonation(@PathVariable @Valid UUID uuid) {
     var response = new ResponseDonation(service.takeDonationByUuid(uuid));
 
     return ResponseEntity.ok(response);

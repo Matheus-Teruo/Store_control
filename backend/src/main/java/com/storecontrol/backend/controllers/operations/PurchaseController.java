@@ -39,7 +39,7 @@ public class PurchaseController {
   }
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponsePurchase> readPurchase(@PathVariable UUID uuid) {
+  public ResponseEntity<ResponsePurchase> readPurchase(@PathVariable @Valid UUID uuid) {
     var response = new ResponsePurchase(service.takePurchaseByUuid(uuid));
 
     return ResponseEntity.ok(response);
@@ -68,12 +68,12 @@ public class PurchaseController {
     return ResponseEntity.ok(response);
   }
 
-  @DeleteMapping
+  @DeleteMapping("/{uuid}")
   public ResponseEntity<Void> deletePurchase(
-      @RequestBody @Valid RequestUpdatePurchase request,
+      @PathVariable @Valid UUID uuid,
       @RequestAttribute("UserUuid") UUID userUuid
   ) {
-    service.deletePurchase(request, userUuid);
+    service.deletePurchase(uuid, userUuid);
 
     return ResponseEntity.noContent().build();
   }

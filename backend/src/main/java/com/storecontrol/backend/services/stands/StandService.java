@@ -68,8 +68,8 @@ public class StandService {
   }
 
   @Transactional
-  public void deleteStand(RequestUpdateStand request) {
-    var stand = safeTakeStandByUuid(request.uuid());
+  public void deleteStand(UUID uuid) {
+    var stand = safeTakeStandByUuid(uuid);
 
     stand.deleteFunction();
   }

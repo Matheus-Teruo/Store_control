@@ -36,7 +36,7 @@ public class CashRegisterController {
   }
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseCashRegister> readCashRegister(@PathVariable UUID uuid) {
+  public ResponseEntity<ResponseCashRegister> readCashRegister(@PathVariable @Valid UUID uuid) {
     var stand = service.takeCashRegisterByUuid(uuid);
 
     var response = new ResponseCashRegister(stand);
@@ -58,9 +58,9 @@ public class CashRegisterController {
     return ResponseEntity.ok(response);
   }
 
-  @DeleteMapping
-  public ResponseEntity<Void> deleteCashRegister(@RequestBody @Valid RequestUpdateCashRegister request) {
-    service.deleteCashRegister(request);
+  @DeleteMapping("/{uuid}")
+  public ResponseEntity<Void> deleteCashRegister(@PathVariable @Valid UUID uuid) {
+    service.deleteCashRegister(uuid);
 
     return ResponseEntity.noContent().build();
   }

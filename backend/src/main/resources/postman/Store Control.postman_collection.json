@@ -112,7 +112,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{association_id}}\"\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -120,9 +120,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostPath}}associations",
+							"raw": "{{hostPath}}associations/{{association_id}}",
 							"host": [
 								"{{hostPath}}associations"
+							],
+							"path": [
+								"{{association_id}}"
 							]
 						}
 					},
@@ -230,13 +233,13 @@
 					"response": []
 				},
 				{
-					"name": "New Request",
+					"name": "Delete CashRegister",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{cash_register_id}}\"\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -244,9 +247,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostPath}}registers",
+							"raw": "{{hostPath}}registers/{{cash_register_id}}",
 							"host": [
 								"{{hostPath}}registers"
+							],
+							"path": [
+								"{{cash_register_id}}"
 							]
 						}
 					},
@@ -415,7 +421,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"cardId\": \"{{card_id}}\"\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -423,12 +429,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostPath}}customers/finalize",
+							"raw": "{{hostPath}}customers/finalize/{{card_id}}",
 							"host": [
 								"{{hostPath}}customers"
 							],
 							"path": [
-								"finalize"
+								"finalize",
+								"{{card_id}}"
 							]
 						}
 					},
@@ -677,7 +684,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{stand_id}}\"\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -685,9 +692,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostPath}}stands",
+							"raw": "{{hostPath}}stands/{{stand_id}}",
 							"host": [
 								"{{hostPath}}stands"
+							],
+							"path": [
+								"{{stand_id}}"
 							]
 						}
 					},
@@ -810,7 +820,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{product_id}}\"\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -818,9 +828,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostPath}}products",
+							"raw": "{{hostPath}}products/{{product_id}}",
 							"host": [
 								"{{hostPath}}products"
+							],
+							"path": [
+								"{{product_id}}"
 							]
 						}
 					},
@@ -995,7 +1008,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\"\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1003,9 +1016,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostPath}}volunteers",
+							"raw": "{{hostPath}}volunteers/{{voluntary_id}}",
 							"host": [
 								"{{hostPath}}volunteers"
+							],
+							"path": [
+								"{{voluntary_id}}"
 							]
 						}
 					},
@@ -1210,7 +1226,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"uuid\": \"{{purchase_id}}\"\r\n}",
+									"raw": "",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1218,9 +1234,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{hostPath}}purchases",
+									"raw": "{{hostPath}}purchases/{{purchase_id}}",
 									"host": [
 										"{{hostPath}}purchases"
+									],
+									"path": [
+										"{{purchase_id}}"
 									]
 								}
 							},
@@ -1328,7 +1347,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"uuid\": \"{{recharge_id}}\"\r\n}",
+									"raw": "",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1336,9 +1355,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{hostPath}}recharges",
+									"raw": "{{hostPath}}recharges/{{recharge_id}}",
 									"host": [
 										"{{hostPath}}recharges"
+									],
+									"path": [
+										"{{recharge_id}}"
 									]
 								}
 							},
@@ -1505,7 +1527,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"uuid\": \"{{transaction_id}}\"\r\n}",
+									"raw": "",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1513,9 +1535,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{hostPath}}transactions",
+									"raw": "{{hostPath}}transactions/{{transaction_id}}",
 									"host": [
 										"{{hostPath}}transactions"
+									],
+									"path": [
+										"{{transaction_id}}"
 									]
 								}
 							},

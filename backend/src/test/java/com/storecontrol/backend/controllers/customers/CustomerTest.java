@@ -184,9 +184,8 @@ class CustomerTest extends BaseTest {
 
     when(customerFinalizationHandler.undoFinalizeCustomer(requestOrderCard, mockVoluntary.getUuid())).thenReturn(mockCustomer);
 
-    mockMvc.perform(delete("/customers/finalize")
+    mockMvc.perform(delete("/customers/finalize/{uuid}", cardId)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(requestOrderCard))
             .requestAttr("UserUuid", mockVoluntary.getUuid()))
         .andExpect(status().isOk())
         .andExpect(content().json(toJson(expectedResponse)));

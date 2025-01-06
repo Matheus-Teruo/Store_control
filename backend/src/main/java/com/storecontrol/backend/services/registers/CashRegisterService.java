@@ -62,8 +62,8 @@ public class CashRegisterService {
   }
 
   @Transactional
-  public void deleteCashRegister(RequestUpdateCashRegister request) {
-    var cashRegister = safeTakeCashRegisterByUuid(request.uuid());
+  public void deleteCashRegister(UUID uuid) {
+    var cashRegister = safeTakeCashRegisterByUuid(uuid);
 
     cashRegister.deleteFunction();
   }

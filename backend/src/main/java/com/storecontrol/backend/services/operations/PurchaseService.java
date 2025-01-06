@@ -100,8 +100,8 @@ public class PurchaseService {
   }
 
   @Transactional
-  public void deletePurchase(RequestUpdatePurchase request, UUID userUuid) {
-    var purchase = safeTakePurchaseByUuid(request.uuid());
+  public void deletePurchase(UUID uuid, UUID userUuid) {
+    var purchase = safeTakePurchaseByUuid(uuid);
     var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
 
     validation.checkSomeItemWasDelivered(purchase);

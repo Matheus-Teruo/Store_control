@@ -125,18 +125,17 @@ class StandTest extends BaseTest {
   @Test
   void testDeleteStandSuccess() throws Exception {
     // Given
-    RequestUpdateStand deleteRequest = createRequestUpdateStand(UUID.randomUUID(), UUID.randomUUID());
+    UUID standUuid = UUID.randomUUID();
 
-    doNothing().when(service).deleteStand(deleteRequest);
+    doNothing().when(service).deleteStand(standUuid);
 
     // When & Then
-    mockMvc.perform(delete("/stands")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(deleteRequest)))
+    mockMvc.perform(delete("/stands/{uuid}", standUuid)
+            .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());
 
     // Verify interactions
-    verify(service, times(1)).deleteStand(deleteRequest);
+    verify(service, times(1)).deleteStand(standUuid);
     verifyNoMoreInteractions(service);
   }
 }

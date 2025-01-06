@@ -152,19 +152,17 @@ class RechargeTest extends BaseTest {
     Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockOrderCard,false);
 
     Recharge mockRecharge = createRechargeEntity(UUID.randomUUID(), mockCustomer, false);
-    RequestDeleteRecharge deleteRequest = createRequestDeleteRecharge(UUID.randomUUID());
 
-    doNothing().when(service).deleteRecharge(deleteRequest, mockRecharge.getVoluntary().getUuid());
+    doNothing().when(service).deleteRecharge(mockRecharge.getUuid(), mockRecharge.getVoluntary().getUuid());
 
     // When & Then
-    mockMvc.perform(delete("/recharges")
+    mockMvc.perform(delete("/recharges/{uuid}", mockRecharge.getUuid())
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(deleteRequest))
             .requestAttr("UserUuid", mockRecharge.getVoluntary().getUuid()))
         .andExpect(status().isNoContent());
 
     // Verify interactions
-    verify(service, times(1)).deleteRecharge(deleteRequest, mockRecharge.getVoluntary().getUuid());
+    verify(service, times(1)).deleteRecharge(mockRecharge.getUuid(), mockRecharge.getVoluntary().getUuid());
     verifyNoMoreInteractions(service);
   }
 }

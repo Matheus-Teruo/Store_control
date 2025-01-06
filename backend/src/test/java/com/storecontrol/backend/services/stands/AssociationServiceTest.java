@@ -128,12 +128,11 @@ class AssociationServiceTest extends BaseTest {
     // Given
     UUID uuid = UUID.randomUUID();
     Association mockAssociation = createAssociationEntity(uuid);
-    RequestUpdateAssociation request = createRequestUpdateAssociation(uuid);
 
     when(repository.findByUuidValidTrue(uuid)).thenReturn(Optional.of(mockAssociation));
 
     // When
-    service.deleteAssociation(request);
+    service.deleteAssociation(uuid);
 
     // Then
     then(repository).should().findByUuidValidTrue(uuid);

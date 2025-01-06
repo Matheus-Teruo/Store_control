@@ -75,8 +75,8 @@ public class TransactionService {
   }
 
   @Transactional
-  public void deleteTransaction(RequestDeleteTransaction request, UUID userUuid) {
-    var transaction = safeTakeTransactionByUuid(request.uuid());
+  public void deleteTransaction(UUID uuid, UUID userUuid) {
+    var transaction = safeTakeTransactionByUuid(uuid);
     var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
 
     validation.checkCashAvailableToTransaction(

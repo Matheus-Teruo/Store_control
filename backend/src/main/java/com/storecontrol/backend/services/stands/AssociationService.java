@@ -63,8 +63,8 @@ public class AssociationService {
   }
 
   @Transactional
-  public void deleteAssociation(RequestUpdateAssociation request) {
-    var association = safeTakeAssociationByUuid(request.uuid());
+  public void deleteAssociation(UUID uuid) {
+    var association = safeTakeAssociationByUuid(uuid);
 
     association.deleteAssociation();
   }

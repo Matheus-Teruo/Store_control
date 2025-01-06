@@ -3,6 +3,7 @@ package com.storecontrol.backend.controllers.operations;
 import com.storecontrol.backend.models.operations.response.ResponseRefund;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryRefund;
 import com.storecontrol.backend.services.operations.RefundService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,7 @@ public class RefundController {
   RefundService service;
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<ResponseRefund> readRefund(@PathVariable UUID uuid) {
+  public ResponseEntity<ResponseRefund> readRefund(@PathVariable @Valid UUID uuid) {
     var response = new ResponseRefund(service.takeRefundByUuid(uuid));
 
     return ResponseEntity.ok(response);

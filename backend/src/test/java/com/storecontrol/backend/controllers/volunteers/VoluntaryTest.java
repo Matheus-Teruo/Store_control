@@ -153,18 +153,17 @@ class VoluntaryTest extends BaseTest {
   @Test
   void testDeleteVoluntarySuccess() throws Exception {
     // Given
-    RequestUpdateVoluntary deleteRequest = createRequestUpdateVoluntary(UUID.randomUUID());
+    UUID voluntaryUuid = UUID.randomUUID();
 
-    doNothing().when(service).deleteVoluntary(deleteRequest);
+    doNothing().when(service).deleteVoluntary(voluntaryUuid);
 
     // When & Then
-    mockMvc.perform(delete("/volunteers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(deleteRequest)))
+    mockMvc.perform(delete("/volunteers/{uuid}", voluntaryUuid)
+            .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());
 
     // Verify interactions
-    verify(service, times(1)).deleteVoluntary(deleteRequest);
+    verify(service, times(1)).deleteVoluntary(voluntaryUuid);
     verifyNoMoreInteractions(service);
   }
 }

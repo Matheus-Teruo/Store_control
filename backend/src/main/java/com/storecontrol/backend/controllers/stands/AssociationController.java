@@ -57,9 +57,9 @@ public class AssociationController {
     return ResponseEntity.ok(response);
   }
 
-  @DeleteMapping
-  public ResponseEntity<Void> deleteAssociation(@RequestBody @Valid RequestUpdateAssociation request) {
-    service.deleteAssociation(request);
+  @DeleteMapping("/{uuid}")
+  public ResponseEntity<Void> deleteAssociation(@PathVariable @Valid UUID uuid) {
+    service.deleteAssociation(uuid);
 
     return ResponseEntity.noContent().build();
   }
