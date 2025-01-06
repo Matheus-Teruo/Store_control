@@ -9,16 +9,16 @@ import java.util.UUID;
 public record ResponseSummaryRecharge(
     UUID uuid,
     BigDecimal rechargeValue,
-    String rechargeTimeStamp,
     PaymentType paymentTypeEnum,
-    UUID summaryVoluntary
+    String rechargeTimeStamp,
+    UUID voluntaryUuid
 ) {
 
   public ResponseSummaryRecharge(Recharge recharge) {
     this(recharge.getUuid(),
         recharge.getRechargeValue(),
-        recharge.getRechargeTimeStamp().toString(),
         recharge.getPaymentTypeEnum(),
+        recharge.getRechargeTimeStamp().toString(),
         recharge.getVoluntaryUuid()
     );
   }

@@ -1,8 +1,10 @@
 import Stand from "./Stand";
 
-export default interface Products{
+export default interface Product {
   uuid: string;
   productName: string;
+  summary: string;
+  description: Text;
   price: number;
   discount: number;
   stock: number;
@@ -10,9 +12,32 @@ export default interface Products{
   stand: Stand;
 }
 
-export interface SummaryProducts{
+export interface SummaryProduct {
   uuid: string;
   productName: string;
+  summary: string;
+  price: number;
+  discount: number;
+  stock: number;
+  productImg?: string | null;
+  standUuid: string;
+}
+
+export interface CreateProduct {
+  productName: string;
+  summary?: string;
+  description?: Text;
+  price: number;
+  stock: number;
+  productImg?: string | null;
+  standUuid: string;
+}
+
+export interface UpdateProduct {
+  uuid: string;
+  productName: string;
+  summary?: string;
+  description?: Text;
   price: number;
   discount: number;
   stock: number;

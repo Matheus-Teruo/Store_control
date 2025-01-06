@@ -4,7 +4,6 @@ import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.operations.Transaction;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
-import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
 import com.storecontrol.backend.repositories.operations.TransactionRepository;
 import com.storecontrol.backend.services.operations.validation.TransactionValidation;
 import com.storecontrol.backend.services.registers.CashRegisterService;

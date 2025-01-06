@@ -2,7 +2,7 @@ import styles from "./Signup.module.scss";
 import Button from "@/components/utils/Button";
 import Input from "@/components/utils/Input";
 import { useState } from "react";
-import { signupVoluntary } from "@service/userService";
+import { signupVoluntary } from "@service/volunteers/userService";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import {
   MessageType,

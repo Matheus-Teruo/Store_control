@@ -9,7 +9,7 @@ public record ResponseSummaryRefund(
     UUID uuid,
     BigDecimal refundValue,
     String refundTimeStamp,
-    UUID summaryVoluntary
+    UUID voluntaryUuid
 ) {
 
   public ResponseSummaryRefund(Refund refund) {

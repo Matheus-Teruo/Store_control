@@ -1,11 +1,8 @@
 package com.storecontrol.backend.controllers.operations;
 
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
-import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
-import com.storecontrol.backend.models.operations.response.ResponseSummaryRecharge;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryTransaction;
 import com.storecontrol.backend.models.operations.response.ResponseTransaction;
-import com.storecontrol.backend.models.registers.response.ResponseCashRegister;
 import com.storecontrol.backend.services.operations.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

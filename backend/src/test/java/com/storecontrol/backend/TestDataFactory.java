@@ -20,8 +20,6 @@ import com.storecontrol.backend.models.operations.purchases.request.RequestUpdat
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
-import com.storecontrol.backend.models.operations.request.RequestDeleteRecharge;
-import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
 import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
@@ -165,8 +163,8 @@ public class TestDataFactory {
     return new Recharge(
         uuid,
         BigDecimal.TEN,
-        LocalDateTime.now(),
         isCash ? PaymentType.CASH : paymentTypes[randomIndex],
+        LocalDateTime.now(),
         customer,
         createCashRegisterEntity(UUID.randomUUID()),
         voluntaryUUID,
@@ -181,12 +179,6 @@ public class TestDataFactory {
         recharge.getPaymentTypeEnum().toString().toLowerCase(),
         recharge.getCustomer().getOrderCard().getId(),
         recharge.getCashRegister().getUuid()
-    );
-  }
-
-  public static RequestDeleteRecharge createRequestDeleteRecharge(UUID uuid) {
-    return new RequestDeleteRecharge(
-        uuid
     );
   }
 
@@ -223,12 +215,6 @@ public class TestDataFactory {
         transaction.getAmount(),
         transaction.getTransactionTypeEnum().toString().toLowerCase(),
         transaction.getCashRegister().getUuid()
-    );
-  }
-
-  public static RequestDeleteTransaction createRequestDeleteTransaction(UUID uuid) {
-    return new RequestDeleteTransaction(
-        uuid
     );
   }
 

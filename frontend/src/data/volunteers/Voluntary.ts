@@ -17,9 +17,9 @@ export interface SummaryVoluntary {
 
 export interface UpdateVoluntary {
   uuid: string;
-  username: string;
-  password: string;
-  fullname: string;
+  username?: string;
+  password?: string;
+  fullname?: string;
 }
 
 export interface UpdateVoluntaryFunction {

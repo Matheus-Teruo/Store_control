@@ -11,8 +11,8 @@ import java.util.UUID;
 public record ResponseRecharge(
     UUID uuid,
     BigDecimal rechargeValue,
-    String rechargeTimeStamp,
     PaymentType paymentTypeEnum,
+    String rechargeTimeStamp,
     ResponseSummaryCustomer summaryCustomer,
     ResponseSummaryVoluntary summaryVoluntary
 ) {
@@ -20,8 +20,8 @@ public record ResponseRecharge(
   public ResponseRecharge(Recharge recharge) {
     this(recharge.getUuid(),
         recharge.getRechargeValue(),
-        recharge.getRechargeTimeStamp().toString(),
         recharge.getPaymentTypeEnum(),
+        recharge.getRechargeTimeStamp().toString(),
         new ResponseSummaryCustomer(recharge.getCustomer()),
         new ResponseSummaryVoluntary(recharge.getVoluntary())
     );

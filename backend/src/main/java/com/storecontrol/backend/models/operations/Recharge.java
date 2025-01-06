@@ -27,12 +27,12 @@ public class Recharge {
     @Column(name = "recharge_value", nullable = false)
     private BigDecimal rechargeValue;
 
-    @Column(name = "recharge_time_stamp", nullable = false)
-    private LocalDateTime rechargeTimeStamp;
-
     @Column(name = "payment_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentType paymentTypeEnum;
+
+    @Column(name = "recharge_time_stamp", nullable = false)
+    private LocalDateTime rechargeTimeStamp;
 
     @ManyToOne @JoinColumn(name = "customer_uuid", nullable = false)
     private Customer customer;
@@ -55,8 +55,8 @@ public class Recharge {
                     CashRegister cashRegister,
                     Voluntary voluntary) {
         this.rechargeValue = request.rechargeValue();
-        this.rechargeTimeStamp = LocalDateTime.now();
         this.paymentTypeEnum = PaymentType.fromString(request.paymentTypeEnum());
+        this.rechargeTimeStamp = LocalDateTime.now();
         this.customer = customer;
         this.cashRegister = cashRegister;
         this.voluntary = voluntary;

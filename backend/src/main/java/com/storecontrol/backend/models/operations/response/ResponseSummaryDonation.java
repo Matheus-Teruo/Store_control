@@ -9,7 +9,7 @@ public record ResponseSummaryDonation(
     UUID uuid,
     BigDecimal donationValue,
     String donationTimeStamp,
-    UUID summaryVoluntary
+    UUID voluntaryUuid
 ) {
 
   public ResponseSummaryDonation(Donation donation) {

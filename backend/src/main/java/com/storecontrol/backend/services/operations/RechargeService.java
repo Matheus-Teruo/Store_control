@@ -6,7 +6,6 @@ import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
-import com.storecontrol.backend.models.operations.request.RequestDeleteRecharge;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
 import com.storecontrol.backend.services.customers.CustomerService;
 import com.storecontrol.backend.services.operations.validation.RechargeValidation;

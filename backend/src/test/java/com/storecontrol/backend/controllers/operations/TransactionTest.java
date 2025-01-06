@@ -3,7 +3,6 @@ package com.storecontrol.backend.controllers.operations;
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.operations.Transaction;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
-import com.storecontrol.backend.models.operations.request.RequestDeleteTransaction;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryTransaction;
 import com.storecontrol.backend.models.operations.response.ResponseTransaction;
 import com.storecontrol.backend.services.operations.TransactionService;
@@ -14,13 +13,12 @@ import org.springframework.http.MediaType;
 import java.util.List;
 import java.util.UUID;
 
-import static com.storecontrol.backend.TestDataFactory.*;
+import static com.storecontrol.backend.TestDataFactory.createRequestCreateTransaction;
+import static com.storecontrol.backend.TestDataFactory.createTransactionEntity;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 class TransactionTest extends BaseTest {
 

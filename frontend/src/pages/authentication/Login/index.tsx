@@ -4,7 +4,7 @@ import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import Input from "@/components/utils/Input";
 import { useState } from "react";
-import { loginVoluntary } from "@service/userService";
+import { loginVoluntary } from "@service/volunteers/userService";
 import {
   MessageType,
   useAlertsContext,

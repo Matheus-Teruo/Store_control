@@ -5,7 +5,7 @@ import com.storecontrol.backend.models.customers.OrderCard;
 import java.math.BigDecimal;
 
 public record ResponseSummaryOrderCard(
-    String id,
+    String cardId,
     BigDecimal debit
 ) {
 

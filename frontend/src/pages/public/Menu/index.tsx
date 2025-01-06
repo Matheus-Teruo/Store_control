@@ -2,29 +2,10 @@ import styles from "./Menu.module.scss";
 import { useEffect, useState } from "react";
 import OptionsFilter from "./OptionsFilter";
 import SearchFilter from "./SearchFilter";
-import { SummaryProducts } from "@data/stands/Product";
+import { SummaryProduct } from "@data/stands/Product";
 import Button from "@/components/utils/Button";
-
-const productsExample: SummaryProducts[] = [
-  {
-    uuid: "b3f6f851-66ad-4e8e-9c47-65def747b72f",
-    productName: "produto 1",
-    price: 10.0,
-    discount: 0.5,
-    stock: 1000,
-    productImg: null,
-    standUuid: "55d399ed-a527-4f81-bcd6-8964b6100094",
-  },
-  {
-    uuid: "670cf9ae-9b64-4eb1-845d-2fb3c04c24cf",
-    productName: "produto 2",
-    price: 20.0,
-    discount: 1.5,
-    stock: 450,
-    productImg: null,
-    standUuid: "55d399ed-a527-4f81-bcd6-8964b6100094",
-  },
-];
+import { useHandleApiError } from "@/axios/handlerApiError";
+import { getProducts } from "@service/stands/productService";
 
 type ViewType = "List" | "Items";
 
@@ -33,18 +14,24 @@ function Menu() {
     undefined,
   );
   const [filter, setFilter] = useState<string>("");
-  const [products, setProducts] = useState<SummaryProducts[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<SummaryProducts[]>(
+  const [products, setProducts] = useState<SummaryProduct[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<SummaryProduct[]>(
     [],
   );
   const [toggleView, setToggleView] = useState<ViewType>("Items");
+  const handleApiError = useHandleApiError();
 
   useEffect(() => {
-    // Simula valores do backend
-    setTimeout(() => {
-      setProducts(productsExample);
-    }, 1000);
-  }, []);
+    const fetchStand = async () => {
+      try {
+        const products = await getProducts();
+        setProducts(products);
+      } catch (error) {
+        handleApiError(error);
+      }
+    };
+    fetchStand();
+  }, [handleApiError]);
 
   useEffect(() => {
     const filtered = products.filter((product) => {

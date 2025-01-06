@@ -90,8 +90,8 @@ CREATE TABLE purchases (
 CREATE TABLE recharges (
     uuid BINARY(16) PRIMARY KEY,
     recharge_value DECIMAL(19, 2) NOT NULL,
-    recharge_time_stamp TIMESTAMP NOT NULL,
     payment_type ENUM('CREDIT', 'DEBIT', 'CASH') NOT NULL,
+    recharge_time_stamp TIMESTAMP NOT NULL,
     customer_uuid BINARY(16) NOT NULL,
     cash_register_uuid binary(16) NOT NULL,
     voluntary_uuid BINARY(16) NOT NULL,

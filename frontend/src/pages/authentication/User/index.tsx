@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
 import Button from "@/components/utils/Button";
 import Input from "@/components/utils/Input";
-import { getVoluntary } from "@service/voluntaryService";
+import {
+  getVoluntary,
+  updateVoluntary,
+} from "@service/volunteers/voluntaryService";
 import Voluntary, { VoluntaryRole } from "@/data/volunteers/Voluntary";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { useNavigate } from "react-router-dom";
 import { useHandleApiError } from "@/axios/handlerApiError";
+import {
+  MessageType,
+  useAlertsContext,
+} from "@context/AlertsContext/useUserContext";
 
 const voluntaryInitialValue: Voluntary = {
   uuid: "",
@@ -25,6 +32,7 @@ function User() {
   const [updateUsername, setUpdateUsername] = useState<boolean>(false);
   const [updateFullname, setUpdateFullname] = useState<boolean>(false);
   const [updatePassword, setUpdatePassword] = useState<boolean>(false);
+  const { addNotification } = useAlertsContext();
   const { user } = useUserContext();
   const handleApiError = useHandleApiError();
   const navigate = useNavigate();
@@ -47,6 +55,34 @@ function User() {
     fetchVoluntary();
   }, [user, navigate, handleApiError]);
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const voluntary = await updateVoluntary({
+        uuid: userProperties.uuid,
+        username: updateUsername ? newUsername : undefined,
+        password: updatePassword ? newPassword : undefined,
+        fullname: updateFullname ? newFullname : undefined,
+      });
+      addNotification({
+        title: "Update Success",
+        message: `Update ${updateUsername ? newUsername : ""}
+        ${updateFullname ? newFullname : ""}
+        ${updatePassword ? newPassword : ""}`,
+        type: MessageType.OK,
+      });
+      setNewUsername("");
+      setUpdateUsername(false);
+      setNewFullname("");
+      setUpdateFullname(false);
+      setNewPassword("");
+      setUpdatePassword(false);
+      setUserProperties(voluntary);
+    } catch (error) {
+      handleApiError(error);
+    }
+  };
+
   function handleUsername(event: React.ChangeEvent<HTMLInputElement>) {
     setNewUsername(event.target.value);
   }
@@ -59,11 +95,13 @@ function User() {
 
   return (
     <div>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div>
           <p>Usuário</p>
           {!updateUsername ? (
-            <p onClick={() => setUpdateUsername}>{userProperties.username}</p>
+            <p onClick={() => setUpdateUsername(true)}>
+              {userProperties.username}
+            </p>
           ) : (
             <Input
               value={newUsername}
@@ -77,7 +115,9 @@ function User() {
         <div>
           <p>Nome Completo</p>
           {!updateFullname ? (
-            <p onClick={() => setUpdateFullname}>{userProperties.fullname}</p>
+            <p onClick={() => setUpdateFullname(true)}>
+              {userProperties.fullname}
+            </p>
           ) : (
             <Input
               value={newFullname}
@@ -101,7 +141,7 @@ function User() {
         </div>
         <div>
           <p>Permissão</p>
-          {/* Por algum motivo BIZARRO não tem como fazer de forma melhor */}
+          {/* TODO: otimizar forma de visualizar enum */}
           {userProperties.voluntaryRole === VoluntaryRole.ROLE_USER ? (
             <p>Usuário Voluntário</p>
           ) : userProperties.voluntaryRole === VoluntaryRole.ROLE_MANAGEMENT ? (

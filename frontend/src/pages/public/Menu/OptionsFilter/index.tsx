@@ -1,30 +1,33 @@
+import { useHandleApiError } from "@/axios/handlerApiError";
 import styles from "./OptionsFilter.module.scss";
 import { SummaryStand } from "@data/stands/Stand";
 import { useEffect, useState } from "react";
+import { getStands } from "@service/stands/standService";
 
 interface OptionsFilterProps {
   value: string | undefined;
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-const standsExample: SummaryStand[] = [
-  { uuid: "55d399ed-a527-4f81-bcd6-8964b6100094", standName: "stand 1" },
-  { uuid: "1242d199-8ee1-4c5c-80bb-36c9c7faaab2", standName: "stand 2" },
-];
-
 function OptionsFilter({ value, onChange }: OptionsFilterProps) {
   const [listStands, setListStands] = useState<SummaryStand[]>([]);
+  const handleApiError = useHandleApiError();
 
   useEffect(() => {
-    // Simula valores do backend
-    setTimeout(() => {
-      setListStands(standsExample);
-    }, 1000);
-  }, []);
+    const fetchStand = async () => {
+      try {
+        const stands = await getStands();
+        setListStands(stands);
+      } catch (error) {
+        handleApiError(error);
+      }
+    };
+    fetchStand();
+  }, [handleApiError]);
 
   return (
     <div className={styles.background}>
-      {/* <label htmlFor="stands"></label> */}
+      {/* <label htmlFor="stands"></label> TODO: trocar para svg */}
       <select id="stands" value={value} onChange={onChange}>
         <option value={undefined}>sem filtro</option>
         {listStands.map((stand) => (
