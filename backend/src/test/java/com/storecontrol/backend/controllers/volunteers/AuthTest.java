@@ -77,6 +77,7 @@ class AuthTest extends BaseTest {
     Voluntary mockVoluntary = createVoluntaryEntity(UUID.randomUUID());
     RequestLoginVoluntary requestVoluntary = createRequestLoginVoluntary(mockVoluntary);
     var authenticationToken = new UsernamePasswordAuthenticationToken(requestVoluntary.username(), requestVoluntary.password());
+    ResponseUser expectedResponse = new ResponseUser(mockVoluntary);
 
     var mockAuthentication = mock(Authentication.class);
     when(mockAuthentication.getPrincipal()).thenReturn(mockVoluntary);
@@ -89,7 +90,8 @@ class AuthTest extends BaseTest {
     mockMvc.perform(post("/user/login")
             .contentType(MediaType.APPLICATION_JSON)
             .content(toJson(requestVoluntary)))
-        .andExpect(status().isNoContent());
+        .andExpect(status().isOk())
+        .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
     verify(manager, times(1)).authenticate(authenticationToken);
