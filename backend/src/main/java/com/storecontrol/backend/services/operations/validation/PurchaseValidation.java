@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.operations.validation;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.infra.exceptions.InvalidOperationException;
 import com.storecontrol.backend.models.customers.Customer;
@@ -31,10 +32,16 @@ public class PurchaseValidation {
   public void checkVoluntaryFunctionMatch(Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {
       if ((voluntary.getFunction() == null)) {
-        throw new InvalidOperationException("Create Purchase", "This voluntary has no role");
+        throw new InvalidOperationException(
+            MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.functionNull.error"),
+            MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.functionNull.message")
+        );
       } else {
         if (!(voluntary.getFunction() instanceof Stand)) {
-          throw new InvalidOperationException("Create Purchase", "This voluntary can't do this operation");
+          throw new InvalidOperationException(
+              MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.functionDifferent.error"),
+              MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.functionDifferent.message")
+          );
         }
       }
     }
@@ -45,25 +52,37 @@ public class PurchaseValidation {
       var product = productMap.get(requestCreateItem.productUuid());
 
       if (product == null) {
-        throw new InvalidDatabaseQueryException("Non-existent entity", "Product", requestCreateItem.productUuid().toString());
+        throw new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("validation.purchase.checkItem.productNull.error"),
+            MessageResolver.getInstance().getMessage("validation.purchase.checkItem.productNull.message"),
+            requestCreateItem.productUuid().toString()
+        );
       }
 
       if (voluntary.getVoluntaryRole().isNotAdmin()) {
         if (product.getPrice().compareTo(requestCreateItem.unitPrice()) != 0) {
-          throw new InvalidOperationException("Create Purchase", "Price of product " +
-              product.getProductName() +
-              " was changed without authorization");
+          throw new InvalidOperationException(
+              MessageResolver.getInstance().getMessage("validation.purchase.checkItem.priceDifferent.error"),
+              MessageResolver.getInstance().getMessage(
+                  "validation.purchase.checkItem.priceDifferent.message",
+                  product.getProductName()
+              )
+          );
         }
         if (product.getDiscount().compareTo(requestCreateItem.discount()) != 0) {
-          throw new InvalidOperationException("Create Purchase", "Discount of product " +
-              product.getProductName() +
-              " was changed without authorization");
+          throw new InvalidOperationException(
+              MessageResolver.getInstance().getMessage("validation.purchase.checkItem.discountDifferent.error"),
+              MessageResolver.getInstance().getMessage(
+                  "validation.purchase.checkItem.discountDifferent.message",
+                  product.getProductName()
+              )
+          );
         }
       }
     }
   }
 
-  public void checkInsufficientCreditValidity(RequestCreatePurchase request, Customer customer) {
+  public void checkInsufficientDebitValidity(RequestCreatePurchase request, Customer customer) {
     var totalValue = request
         .items()
         .stream()
@@ -73,7 +92,10 @@ public class PurchaseValidation {
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     if (totalValue.compareTo(customer.getOrderCard().getDebit()) > 0) {
-      throw new InvalidOperationException("Create Purchase", "Insufficient credit on card");
+      throw new InvalidOperationException(
+          MessageResolver.getInstance().getMessage("validation.purchase.checkDebit.insufficientDebit.error"),
+          MessageResolver.getInstance().getMessage("validation.purchase.checkDebit.insufficientDebit.message")
+      );
     }
   }
 
@@ -82,7 +104,10 @@ public class PurchaseValidation {
       var product = productMap.get(requestCreateItem.productUuid());
 
       if (product.getStock() < requestCreateItem.quantity()) {
-        throw new InvalidOperationException("Create Purchase", "Insufficient product stock");
+        throw new InvalidOperationException(
+            MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStick.error"),
+            MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStick.message")
+        );
       }
     }
   }
@@ -100,12 +125,19 @@ public class PurchaseValidation {
 
         if (item != null) {
           if (requestUpdateItem.delivered() > item.getQuantity()) {
-            throw new InvalidOperationException("Update Purchase",
-                "Delivered not allow to be bigger than quantity");
+            throw new InvalidOperationException(
+                MessageResolver.getInstance().getMessage("validation.purchase.checkItem.deliveredInvalid.error"),
+                MessageResolver.getInstance().getMessage("validation.purchase.checkItem.deliveredInvalid.message")
+            );
           }
         } else {
-          throw new InvalidOperationException("Update Purchase",
-              "This product (" + requestUpdateItem.productUuid() + ") is not allocate in this purchase like item");
+          throw new InvalidOperationException(
+              MessageResolver.getInstance().getMessage("validation.purchase.checkItem.productNotMatch.error"),
+              MessageResolver.getInstance().getMessage(
+                  "validation.purchase.checkItem.productNotMatch.message",
+                  requestUpdateItem.productUuid()
+              )
+          );
         }
       });
     }
@@ -114,14 +146,20 @@ public class PurchaseValidation {
   public void checkSomeItemWasDelivered(Purchase purchase) {
     for (Item item : purchase.getItems()) {
       if (item.getDelivered() != null && item.getDelivered() != 0) {
-        throw new InvalidOperationException("Delete Purchase", "One item was delivered already");
+        throw new InvalidOperationException(
+            MessageResolver.getInstance().getMessage("validation.purchase.checkItem.deliveredNotZero.error"),
+            MessageResolver.getInstance().getMessage("validation.purchase.checkItem.deliveredNotZero.message")
+        );
       }
     }
   }
 
   public void checkPurchaseBelongsToVoluntary(Purchase purchase, UUID userUuid) {
     if (purchase.getVoluntary().getVoluntaryRole().isNotAdmin() && purchase.getVoluntary().getUuid() != userUuid) {
-      throw new InvalidOperationException("Delete Purchase", "This purchase don't belongs to this voluntary");
+      throw new InvalidOperationException(
+          MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.notOwner.error"),
+          MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.notOwner.message")
+      );
     }
   }
 
@@ -131,10 +169,16 @@ public class PurchaseValidation {
 
       if (optionalPurchase.isPresent()) {
         if (optionalPurchase.get().getUuid() != purchase.getUuid()) {
-          throw new InvalidOperationException("Delete Purchase", "This purchase is not the last form this voluntary");
+          throw new InvalidOperationException(
+              MessageResolver.getInstance().getMessage("validation.purchase.checkLastPurchase.notLast.error"),
+              MessageResolver.getInstance().getMessage("validation.purchase.checkLastPurchase.notLast.message")
+          );
         }
       } else {
-        throw new InvalidOperationException("Delete Purchase", "This voluntary don't have any purchase done");
+        throw new InvalidOperationException(
+            MessageResolver.getInstance().getMessage("validation.purchase.checkLastPurchase.notPresent.error"),
+            MessageResolver.getInstance().getMessage("validation.purchase.checkLastPurchase.notPresent.message")
+        );
       }
     }
   }

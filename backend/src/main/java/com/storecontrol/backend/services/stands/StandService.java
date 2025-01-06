@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.stands;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.stands.request.RequestCreateStand;
 import com.storecontrol.backend.models.stands.request.RequestUpdateStand;
@@ -44,7 +45,11 @@ public class StandService {
 
   public Stand safeTakeStandByUuid(UUID uuid) {
     return repository.findByUuidValidTrue(uuid)
-        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "Stand", uuid.toString()));
+        .orElseThrow(() -> new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("service.exception.stand.get.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.stand.get.validation.message"),
+            uuid.toString())
+        );
   }
 
   public List<Stand> listStands() {

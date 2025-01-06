@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.customers.component;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidCustomerException;
 import com.storecontrol.backend.infra.exceptions.InvalidOperationException;
 import com.storecontrol.backend.models.customers.Customer;
@@ -18,10 +19,16 @@ public class CustomerFinalizationValidation {
   public void checkVoluntaryFunctionMatch(Function function, Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {
       if ((voluntary.getFunction() == null)) {
-        throw new InvalidOperationException("Finalize Customer", "This voluntary has no role");
+        throw new InvalidOperationException(
+            MessageResolver.getInstance().getMessage("validation.customerFinalization.checkVoluntary.functionNull.error"),
+            MessageResolver.getInstance().getMessage("validation.customerFinalization.checkVoluntary.functionNull.message")
+        );
       } else {
         if (!(voluntary.getFunction().getUuid() == function.getUuid())) {
-          throw new InvalidOperationException("Finalize Customer", "This voluntary can't do this operation");
+          throw new InvalidOperationException(
+              MessageResolver.getInstance().getMessage("validation.customerFinalization.checkVoluntary.functionDifferent.error"),
+              MessageResolver.getInstance().getMessage("validation.customerFinalization.checkVoluntary.functionDifferent.message")
+          );
         }
       }
     }
@@ -30,10 +37,16 @@ public class CustomerFinalizationValidation {
   public void checkVoluntaryFunctionType(Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {
       if ((voluntary.getFunction() == null)) {
-        throw new InvalidOperationException("Finalize Customer", "This voluntary has no role");
+        throw new InvalidOperationException(
+            MessageResolver.getInstance().getMessage("validation.customerFinalization.checkVoluntary.functionNull.error"),
+            MessageResolver.getInstance().getMessage("validation.customerFinalization.checkVoluntary.functionNull.message")
+        );
       } else {
         if (!(voluntary.getFunction() instanceof CashRegister)) {
-          throw new InvalidOperationException("Finalize Customer", "This voluntary can't do this operation");
+          throw new InvalidOperationException(
+              MessageResolver.getInstance().getMessage("validation.customerFinalization.checkVoluntary.functionDifferent.error"),
+              MessageResolver.getInstance().getMessage("validation.customerFinalization.checkVoluntary.functionDifferent.message")
+          );
         }
       }
     }
@@ -43,7 +56,10 @@ public class CustomerFinalizationValidation {
     var currentDebit = customer.getOrderCard().getDebit();
 
     if (donationValue.compareTo(currentDebit) > 0) {
-      throw new InvalidCustomerException("Donation", "donation value is greater than the current debit amount");
+      throw new InvalidCustomerException(
+          MessageResolver.getInstance().getMessage("validation.customerFinalization.checkDonation.donationInvalid.error"),
+          MessageResolver.getInstance().getMessage("validation.customerFinalization.checkDonation.donationInvalid.message")
+      );
     }
   }
 
@@ -55,17 +71,20 @@ public class CustomerFinalizationValidation {
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     if (remainingDebit.compareTo(viableValueForRefund) >= 0 ) {
-
       if (viableValueForRefund.compareTo(refundValue) < 0) {
-        throw new InvalidCustomerException("Refund", "refund value is greater than the amount available to refund");
+        throw new InvalidCustomerException(
+            MessageResolver.getInstance().getMessage("validation.customerFinalization.checkRefund.refundInvalid.error"),
+            MessageResolver.getInstance().getMessage("validation.customerFinalization.checkRefund.refundInvalid.message")
+        );
       }
 
     } else {
-
       if (remainingDebit.compareTo(refundValue) < 0) {
-        throw new InvalidCustomerException("Refund", "refund value is greater than the remaining debit");
+        throw new InvalidCustomerException(
+            MessageResolver.getInstance().getMessage("validation.customerFinalization.checkRefund.refundInsufficientDebit.error"),
+            MessageResolver.getInstance().getMessage("validation.customerFinalization.checkRefund.refundInsufficientDebit.message")
+        );
       }
-
     }
   }
 }

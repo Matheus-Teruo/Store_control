@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.volunteers;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.volunteers.User;
 import com.storecontrol.backend.models.volunteers.Voluntary;
@@ -44,14 +45,18 @@ public class VoluntaryService {
   }
 
   public Voluntary takeVoluntaryByUuid(UUID uuid, UUID voluntaryUuid){
-    validation.checkVolyntaryAuthentication(uuid, voluntaryUuid);
+    validation.checkVoluntaryAuthentication(uuid, voluntaryUuid);
     return repository.findByUuidValidTrue(uuid)
         .orElseThrow(EntityNotFoundException::new);
   }
 
   public Voluntary safeTakeVoluntaryByUuid(UUID uuid) {
     return repository.findByUuidValidTrue(uuid)
-        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "Voluntary", uuid.toString()));
+        .orElseThrow(() -> new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.message"),
+            uuid.toString())
+        );
   }
 
   public List<Voluntary> listVolunteers() {
@@ -60,7 +65,7 @@ public class VoluntaryService {
 
   @Transactional
   public Voluntary updateVoluntary(RequestUpdateVoluntary request, UUID voluntaryUuid) {
-    validation.checkVolyntaryAuthentication(request.uuid(), voluntaryUuid);
+    validation.checkVoluntaryAuthentication(request.uuid(), voluntaryUuid);
     validation.checkNameDuplication(request.username(), request.fullname());
     var voluntary = safeTakeVoluntaryByUuid(request.uuid());
 

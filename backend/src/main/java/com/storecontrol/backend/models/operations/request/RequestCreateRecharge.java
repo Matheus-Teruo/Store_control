@@ -6,19 +6,19 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record RequestCreateRecharge(
-    @NotNull(message = "Recharge value is required")
-    @Positive(message = "Recharge can't be zero or negative value")
-    @Digits(integer = 5, fraction = 2, message = "The value must contain 2 decimal digits and a value below 5 digits")
+    @NotNull(message = "{request.validation.createRecharge.rechargeValue.notnull}")
+    @Positive(message = "{request.validation.createRecharge.rechargeValue.positive}")
+    @Digits(integer = 5, fraction = 2, message = "{request.validation.createRecharge.rechargeValue.digits}")
     BigDecimal rechargeValue,
 
-    @NotBlank(message = "PaymentType is required")
+    @NotBlank(message = "{request.validation.createRecharge.paymentTypeEnum.notBlank}")
     String paymentTypeEnum,
 
-    @NotBlank(message = "OrderCardId is required")
-    @Pattern(regexp = "^[A-Za-z0-9]{15}$", message = "Card ID must be exactly 15 normal characters")
+    @NotBlank(message = "{request.validation.createRecharge.orderCardId.notBlank}")
+    @Pattern(regexp = "^[A-Za-z0-9]{15}$", message = "{request.validation.createRecharge.orderCardId.pattern}")
     String orderCardId,
 
-    @NotNull(message = "CashRegisterId is required")
+    @NotNull(message = "{request.validation.createRecharge.cashRegisterUuid.notnull}")
     UUID cashRegisterUuid
 ) {
 }

@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.customers;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidCustomerException;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.customers.Customer;
@@ -49,12 +50,19 @@ public class CustomerService {
 
   public Customer takeActiveCustomerByCardId(String cardId) {
     return repository.findByOrderCardIdActiveTrue(cardId)
-        .orElseThrow(() -> new InvalidDatabaseQueryException("Entity not active" , "Customer OrderCard", cardId));
+        .orElseThrow(() -> new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("service.exception.customer.get.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.customer.get.validation.message"),
+            cardId)
+        );
   }
 
   public Customer takeLastActiveFilteredCustomerByCardId(String cardId) {
     var customer = repository.findByOrderCardId(cardId)
-        .orElseThrow(() -> new InvalidDatabaseQueryException("Entity not active" , "Customer OrderCard", cardId));
+        .orElseThrow(() -> new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("service.exception.customer.get.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.customer.get.validation.message"),
+            cardId));
 
     filter.filterInactiveRelations(customer);
 
@@ -80,7 +88,10 @@ public class CustomerService {
   @Transactional
   public void finalizeCustomer(Customer customer) {
     if (customer.getOrderCard().getDebit().compareTo(BigDecimal.ZERO) != 0) {
-      throw new InvalidCustomerException("Customer finalization", "debt has not been cleared");
+      throw new InvalidCustomerException(
+          MessageResolver.getInstance().getMessage("service.exception.customer.finalize.validation.error"),
+          MessageResolver.getInstance().getMessage("service.exception.customer.finalize.validation.message")
+      );
     }
 
     customer.getOrderCard().updateActive(false);

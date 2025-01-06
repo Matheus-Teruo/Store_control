@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.stands;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
@@ -45,7 +46,11 @@ public class ProductService {
 
   public Product safeTakeProductByUuid(UUID uuid) {
     return repository.findByUuidValidTrue(uuid)
-        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "Product", uuid.toString()));
+        .orElseThrow(() -> new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("service.exception.product.get.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.product.get.validation.message"),
+            uuid.toString())
+        );
   }
 
   public List<Product> listProducts() {

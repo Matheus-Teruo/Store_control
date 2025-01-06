@@ -5,10 +5,10 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record RequestUpdateVoluntaryFunction(
-    @NotNull(message = "UUID is required")
+    @NotNull(message = "{request.validation.updateVoluntaryFunction.uuid.notnull}")
     UUID uuid,
 
-    @NotNull(message = "FunctionUUID is required")
+    @NotNull(message = "{request.validation.updateVoluntaryFunction.functionUuid.notnull}")
     UUID functionUuid
 ) {
 }

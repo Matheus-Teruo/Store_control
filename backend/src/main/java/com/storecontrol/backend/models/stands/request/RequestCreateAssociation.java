@@ -4,12 +4,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
 public record RequestCreateAssociation(
-    @NotBlank(message = "Name of association is required")
-    @Pattern(regexp = "^[A-Za-z]+$", message = "Association name must contain only letters")
+    @NotBlank(message = "{request.validation.createAssociation.associationName.notBlank}")
+    @Pattern(regexp = "^[A-Za-z]+$", message = "{request.validation.createAssociation.associationName.pattern}")
     String associationName,
 
-    @NotBlank(message = "Name of principal is required")
-    @Pattern(regexp = "^[A-Za-z ]+$", message = "Principal name must contain only letters and space")
+    @NotBlank(message = "{request.validation.createAssociation.principalName.notBlank}")
+    @Pattern(regexp = "^[A-Za-z ]+$", message = "{request.validation.createAssociation.principalName.pattern}")
     String principalName
 ) {
 }

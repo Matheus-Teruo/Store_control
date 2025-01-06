@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.stands.validation;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.repositories.stands.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,12 @@ public class ProductValidation {
   public void checkNameDuplication(String productName) {
     if (repository.existsByProductName(productName)) {
       throw new InvalidDatabaseInsertionException(
-          "name already used",
-          "Product",
-          Map.of("productName", productName)
+          MessageResolver.getInstance().getMessage("validation.product.checkName.nameDuplication.error"),
+          MessageResolver.getInstance().getMessage("validation.product.checkName.nameDuplication.message"),
+          Map.of(
+              MessageResolver.getInstance().getMessage("validation.product.checkName.nameDuplication.field"),
+              productName
+          )
       );
     }
   }

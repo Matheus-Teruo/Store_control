@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.stands;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.stands.request.RequestCreateAssociation;
 import com.storecontrol.backend.models.stands.request.RequestUpdateAssociation;
@@ -40,7 +41,11 @@ public class AssociationService {
 
   public Association safeTakeAssociationByUuid(UUID uuid) {
     return repository.findByUuidValidTrue(uuid)
-        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "Association", uuid.toString()));
+        .orElseThrow(() -> new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("service.exception.association.get.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.association.get.validation.message"),
+            uuid.toString())
+        );
   }
 
   public List<Association> listAssociations() {

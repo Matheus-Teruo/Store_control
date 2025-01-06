@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record RequestUpdatePurchase(
-    @NotNull(message = "UUID is required")
+    @NotNull(message = "{request.validation.updatePurchase.uuid.notnull}")
     UUID uuid,
 
     Boolean onOrder,

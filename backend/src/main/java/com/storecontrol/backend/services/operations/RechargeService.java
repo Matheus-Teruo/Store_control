@@ -1,16 +1,17 @@
 package com.storecontrol.backend.services.operations;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
-import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
-import com.storecontrol.backend.models.operations.request.RequestDeleteRecharge;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import com.storecontrol.backend.models.operations.Recharge;
+import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
+import com.storecontrol.backend.models.operations.request.RequestDeleteRecharge;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
+import com.storecontrol.backend.services.customers.CustomerService;
 import com.storecontrol.backend.services.operations.validation.RechargeValidation;
 import com.storecontrol.backend.services.registers.CashRegisterService;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;
-import com.storecontrol.backend.services.customers.CustomerService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,11 @@ public class RechargeService {
 
   public Recharge safeTakeRechargeByUuid(UUID uuid) {
     return repository.findByUuidValidTrue(uuid)
-        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "Recharge", uuid.toString()));
+        .orElseThrow(() -> new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("service.exception.recharge.get.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.recharge.get.validation.message"),
+            uuid.toString())
+        );
   }
 
   public List<Recharge> listRecharges() {
@@ -79,7 +84,7 @@ public class RechargeService {
     var recharge = safeTakeRechargeByUuid(request.uuid());
     var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
 
-    validation.checkDebitGreaterThanUndoDonation(recharge);
+    validation.checkDebitRemainderPositive(recharge);
     validation.checkRechargeBelongsToVoluntary(recharge, userUuid);
     validation.checkIfLastRechargeOfVoluntary(recharge, voluntary);
 

@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.stands.validation;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.repositories.stands.AssociationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,12 @@ public class AssociationValidation {
   public void checkNameDuplication(String associationName) {
     if (repository.existsByAssociationName(associationName)) {
       throw new InvalidDatabaseInsertionException(
-          "name already used",
-          "Association",
-          Map.of("assiciationName", associationName)
+          MessageResolver.getInstance().getMessage("validation.association.checkName.nameDuplication.error"),
+          MessageResolver.getInstance().getMessage("validation.association.checkName.nameDuplication.message"),
+          Map.of(
+              MessageResolver.getInstance().getMessage("validation.association.checkName.nameDuplication.field"),
+              associationName
+          )
       );
     }
   }

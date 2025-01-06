@@ -6,21 +6,21 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record RequestCustomerFinalization(
-    @NotNull(message = "Debit is required")
-    @PositiveOrZero(message = "Donation cannot have a negative value")
-    @Digits(integer = 5, fraction = 2, message = "The increment must contain 2 decimal digits and a value below 5 digits")
+    @NotNull(message = "{request.validation.customer.donationValue.notnull}")
+    @PositiveOrZero(message = "{request.validation.customer.donationValue.positiveOrZero}")
+    @Digits(integer = 5, fraction = 2, message = "{request.validation.customer.donationValue.digits}")
     BigDecimal donationValue,
 
-    @NotNull(message = "Refund is required")
-    @PositiveOrZero(message = "Refund cannot have a negative value")
-    @Digits(integer = 5, fraction = 2, message = "The increment must contain 2 decimal digits and a value below 5 digits")
+    @NotNull(message = "{request.validation.customer.refundValue.notnull}")
+    @PositiveOrZero(message = "{request.validation.customer.refundValue.positiveOrZero}")
+    @Digits(integer = 5, fraction = 2, message = "{request.validation.customer.refundValue.digits}")
     BigDecimal refundValue,
 
-    @NotNull(message = "Card ID is required")
-    @Pattern(regexp = "^[A-Za-z0-9]{15}$", message = "Card ID must be exactly 15 normal characters")
+    @NotNull(message = "{request.validation.customer.orderCardId.notnull}")
+    @Pattern(regexp = "^[A-Za-z0-9]{15}$", message = "{request.validation.customer.orderCardId.pattern}")
     String orderCardId,
 
-    @NotNull(message = "Cash register ID is required")
+    @NotNull(message = "{request.validation.customer.cashRegisterUuid.notnull}")
     UUID cashRegisterUuid
 ) {
 }

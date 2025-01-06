@@ -7,15 +7,15 @@ import jakarta.validation.constraints.Pattern;
 import java.util.List;
 
 public record RequestCreatePurchase(
-    @NotNull(message = "OnOrder boolean value is required")
+    @NotNull(message = "{request.validation.createPurchase.onOrder.notnull}")
     Boolean onOrder,
 
     @Valid
-    @NotNull(message = "Items is required")
+    @NotNull(message = "{request.validation.createPurchase.items.notnull}")
     List<RequestCreateItem> items,
 
-    @NotNull(message = "OrderCardId is required")
-    @Pattern(regexp = "^[A-Za-z0-9]{15}$")
+    @NotNull(message = "{request.validation.createPurchase.orderCardId.notnull}")
+    @Pattern(regexp = "^[A-Za-z0-9]{15}$", message = "{request.validation.createPurchase.orderCardId.pattern}")
     String orderCardId
 ) {
 }

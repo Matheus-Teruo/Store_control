@@ -7,11 +7,11 @@ import jakarta.validation.constraints.Pattern;
 import java.util.UUID;
 
 public record RequestCreateStand(
-    @NotBlank(message = "Name of stand is required")
-    @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "Stand name must contain only letters, numbers and space")
+    @NotBlank(message = "{request.validation.createStand.standName.notBlank}")
+    @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "{request.validation.createStand.standName.pattern}")
     String standName,
 
-    @NotNull(message = "Stand must be related to an association")
+    @NotNull(message = "{request.validation.createStand.associationUuid.notnull}")
     UUID associationUuid
 ) {
 }

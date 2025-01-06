@@ -6,10 +6,10 @@ import jakarta.validation.constraints.Pattern;
 import java.util.UUID;
 
 public record RequestUpdateCashRegister(
-    @NotNull(message = "UUID is required")
+    @NotNull(message = "{request.validation.updateCashRegister.uuid.notnull}")
     UUID uuid,
 
-    @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "Register name must contain only letters, numbers and space")
+    @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "{request.validation.updateCashRegister.cashRegisterName.pattern}")
     String cashRegisterName
 ) {
 }

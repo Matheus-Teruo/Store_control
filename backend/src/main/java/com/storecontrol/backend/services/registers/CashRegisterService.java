@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.registers;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
 import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
@@ -39,7 +40,11 @@ public class CashRegisterService {
 
   public CashRegister safeTakeCashRegisterByUuid(UUID uuid) {
     return repository.findByUuidValidTrue(uuid)
-        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "CashRegister", uuid.toString()));
+        .orElseThrow(() -> new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("service.exception.cashRegister.get.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.cashRegister.get.validation.message"),
+            uuid.toString())
+        );
   }
 
   public List<CashRegister> listCashRegisters() {

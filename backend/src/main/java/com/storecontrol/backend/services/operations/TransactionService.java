@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.operations;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.operations.Transaction;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
@@ -58,7 +59,11 @@ public class TransactionService {
 
   public Transaction safeTakeTransactionByUuid(UUID uuid) {
     return repository.findByUuidValidTrue(uuid)
-        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "Transaction", uuid.toString()));
+        .orElseThrow(() -> new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("service.exception.transaction.get.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.transaction.get.validation.message"),
+            uuid.toString())
+        );
   }
 
   public List<Transaction> listTransactions() {
@@ -80,7 +85,7 @@ public class TransactionService {
         transaction.getCashRegister(),
         true);
     validation.checkTransactionBelongsToVoluntary(transaction, userUuid);
-    validation.checkIfLastRechargeOfVoluntary(transaction, voluntary);
+    validation.checkIfLastTransactionOfVoluntary(transaction, voluntary);
 
     handleCashTotal(transaction, transaction.getTransactionTypeEnum().isExit());
 

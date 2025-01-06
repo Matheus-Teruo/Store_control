@@ -6,27 +6,27 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record RequestCreateProduct(
-    @NotBlank(message = "Name of product is required")
-    @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "Product name must contain only letters, numbers and space")
+    @NotBlank(message = "{request.validation.createProduct.productName.notBlank}")
+    @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "{request.validation.createProduct.productName.pattern}")
     String productName,
 
-    @Size(max = 255, message = "Summary must not exceed 255 characters")
+    @Size(max = 255, message = "{request.validation.createProduct.summary.size}")
     String summary,
 
     String description,
 
-    @NotNull(message = "Product price is required")
-    @PositiveOrZero(message = "Product cannot have a negative price")
-    @Digits(integer = 5, fraction = 2, message = "The price must contain 2 decimal digits and a value below 5 digits")
+    @NotNull(message = "{request.validation.createProduct.price.notnull}")
+    @PositiveOrZero(message = "{request.validation.createProduct.price.positiveOrZero}")
+    @Digits(integer = 5, fraction = 2, message = "{request.validation.createProduct.price.digits}")
     BigDecimal price,
 
-    @NotNull(message = "Quantity in stock is required")
-    @PositiveOrZero(message = "Product cannot have negative stock")
+    @NotNull(message = "{request.validation.createProduct.stock.notnull}")
+    @PositiveOrZero(message = "{request.validation.createProduct.stock.positiveOrZero}")
     Integer stock,
 
     String productImg,
 
-    @NotNull(message = "Product must be related to a stand")
+    @NotNull(message = "{request.validation.createProduct.standUuid.notnull}")
     UUID standUuid
 ) {
 }

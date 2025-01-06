@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.customers;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidCustomerException;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
@@ -55,7 +56,10 @@ public class CustomerFinalizationHandler {
           donationService.createDonation(request, customer, cashRegister, voluntary);
         }
       } else {
-        throw new InvalidCustomerException("Customer finalization", "Sum of donation and refund is not equal remaining debit");
+        throw new InvalidCustomerException(
+            MessageResolver.getInstance().getMessage("service.exception.customerFinalization.finalization.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.customerFinalization.finalization.validation.message")
+        );
       }
     }
 
@@ -79,7 +83,10 @@ public class CustomerFinalizationHandler {
 
       customerService.undoFinalizeCustomer(customer);
     } else {
-      throw new InvalidCustomerException("Undo customer finalization", "Customer still in use");
+      throw new InvalidCustomerException(
+          MessageResolver.getInstance().getMessage("service.exception.customerFinalization.undoFinalization.validation.error"),
+          MessageResolver.getInstance().getMessage("service.exception.customerFinalization.undoFinalization.validation.message")
+      );
     }
 
     return customer;

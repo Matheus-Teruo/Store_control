@@ -6,15 +6,15 @@ import jakarta.validation.constraints.Pattern;
 import java.util.UUID;
 
 public record RequestUpdateVoluntary(
-    @NotNull(message = "UUID is required")
+    @NotNull(message = "{request.validation.updateVoluntary.uuid.notnull}")
     UUID uuid,
 
-    @Pattern(regexp = "^[A-Za-z0-9]{3,}$", message = "Username must contain only letters and numbers")
+    @Pattern(regexp = "^[A-Za-z0-9]{3,}$", message = "{request.validation.updateVoluntary.username.pattern}")
     String username,
 
     String password,
 
-    @Pattern(regexp = "^[A-Za-z ]{3,}$", message = "Fullname must contain only letters and space")
+    @Pattern(regexp = "^[A-Za-z ]{3,}$", message = "{request.validation.updateVoluntary.fullname.pattern}")
     String fullname
 ) {
 }

@@ -6,26 +6,26 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record RequestUpdateProduct(
-    @NotNull(message = "UUID is required")
+    @NotNull(message = "{request.validation.updateProduct.uuid.notnull}")
     UUID uuid,
 
-    @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "Nome de produto deve conter apenas letras, números e espaços")
+    @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "{request.validation.updateProduct.productName.pattern}")
     String productName,
 
-    @Size(max = 255, message = "Summary must not exceed 255 characters")
+    @Size(max = 255, message = "{request.validation.updateProduct.summary.size}")
     String summary,
 
     String description,
 
-    @PositiveOrZero(message = "Product cannot have a negative price")
-    @Digits(integer = 5, fraction = 2, message = "The price must contain 2 decimal digits and a value below 5 digits")
+    @PositiveOrZero(message = "{request.validation.updateProduct.price.positiveOrZero}")
+    @Digits(integer = 5, fraction = 2, message = "{request.validation.updateProduct.price.digits}")
     BigDecimal price,
 
-    @PositiveOrZero(message = "Product cannot have a negative price")
-    @Digits(integer = 5, fraction = 2, message = "The price must contain 2 decimal digits and a value below 5 digits")
+    @PositiveOrZero(message = "{request.validation.updateProduct.discount.positiveOrZero}")
+    @Digits(integer = 5, fraction = 2, message = "{request.validation.updateProduct.discount.digits}")
     BigDecimal discount,
 
-    @PositiveOrZero(message = "Product cannot have negative stock")
+    @PositiveOrZero(message = "{request.validation.updateProduct.stock.positiveOrZero}")
     Integer stock,
 
     String productImg,

@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.stands.validation;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.repositories.volunteers.FunctionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,12 @@ public class StandValidation {
   public void checkNameDuplication(String standName) {
     if (repository.existsByFunctionName(standName)) {
       throw new InvalidDatabaseInsertionException(
-          "name already used",
-          "Stand",
-          Map.of("functionName", standName)
+          MessageResolver.getInstance().getMessage("validation.stand.checkName.nameDuplication.error"),
+          MessageResolver.getInstance().getMessage("validation.stand.checkName.nameDuplication.message"),
+          Map.of(
+              MessageResolver.getInstance().getMessage("validation.stand.checkName.nameDuplication.field"),
+              standName
+          )
       );
     }
   }

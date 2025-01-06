@@ -9,15 +9,15 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record RequestCreateTransaction(
-    @NotNull(message = "Transaction amount value is required")
-    @Positive(message = "Amount can't be zero or negative value")
-    @Digits(integer = 5, fraction = 2, message = "The value must contain 2 decimal digits and a value below 5 digits")
+    @NotNull(message = "{request.validation.createTransaction.amount.notnull}")
+    @Positive(message = "{request.validation.createTransaction.amount.positive}")
+    @Digits(integer = 5, fraction = 2, message = "{request.validation.createTransaction.amount.digits}")
     BigDecimal amount,
 
-    @NotBlank(message = "TransactionType is required")
+    @NotBlank(message = "{request.validation.createTransaction.transactionTypeEnum.notBlank}")
     String transactionTypeEnum,
 
-    @NotNull(message = "Cash Register ID is required")
+    @NotNull(message = "{request.validation.createTransaction.cashRegisterUuid.notnull}")
     UUID cashRegisterUuid
 ) {
 }

@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.operations.validation;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidOperationException;
 import com.storecontrol.backend.models.enumerate.TransactionType;
 import com.storecontrol.backend.models.operations.Transaction;
@@ -28,17 +29,26 @@ public class TransactionValidation {
     var transactionType = TransactionType.fromString(transactionTypeEnum);
     boolean aux = isDelete ? transactionType == TransactionType.ENTRY : transactionType == TransactionType.EXIT;
     if (aux && amount.compareTo(cashTotal) > 0) {
-      throw new InvalidOperationException("Create Transaction", "Insufficient cash to transaction");
+      throw new InvalidOperationException(
+          MessageResolver.getInstance().getMessage("validation.transaction.checkCash.notEnoughCash.error"),
+          MessageResolver.getInstance().getMessage("validation.transaction.checkCash.notEnoughCash.message")
+      );
     }
   }
 
   public void checkVoluntaryFunctionType(Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {
       if ((voluntary.getFunction() == null)) {
-        throw new InvalidOperationException("Create Transaction", "This voluntary has no role");
+        throw new InvalidOperationException(
+            MessageResolver.getInstance().getMessage("validation.transaction.checkVoluntary.functionNull.error"),
+            MessageResolver.getInstance().getMessage("validation.transaction.checkVoluntary.functionNull.message")
+        );
       } else {
         if (!(voluntary.getFunction() instanceof CashRegister)) {
-          throw new InvalidOperationException("Create Transaction", "This voluntary can't do this operation");
+          throw new InvalidOperationException(
+              MessageResolver.getInstance().getMessage("validation.transaction.checkVoluntary.functionDifferent.error"),
+              MessageResolver.getInstance().getMessage("validation.transaction.checkVoluntary.functionDifferent.message")
+          );
         }
       }
     }
@@ -46,20 +56,29 @@ public class TransactionValidation {
 
   public void checkTransactionBelongsToVoluntary(Transaction transaction, UUID userUuid) {
     if (transaction.getVoluntary().getVoluntaryRole().isNotAdmin() && transaction.getVoluntary().getUuid() != userUuid) {
-      throw new InvalidOperationException("Delete Transaction", "This transaction don't belongs to this voluntary");
+      throw new InvalidOperationException(
+          MessageResolver.getInstance().getMessage("validation.transaction.checkVoluntary.notOwner.error"),
+          MessageResolver.getInstance().getMessage("validation.transaction.checkVoluntary.notOwner.message")
+      );
     }
   }
 
-  public void checkIfLastRechargeOfVoluntary(Transaction transaction, Voluntary voluntary) {
+  public void checkIfLastTransactionOfVoluntary(Transaction transaction, Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {
       Optional<Transaction> optionalTransaction = repository.findLastFromVoluntary(voluntary.getUuid());
 
       if (optionalTransaction.isPresent()) {
         if (optionalTransaction.get().getUuid() != transaction.getUuid()) {
-          throw new InvalidOperationException("Delete Transaction", "This transaction is not the last form this voluntary");
+          throw new InvalidOperationException(
+              MessageResolver.getInstance().getMessage("validation.transaction.checkLastTransaction.notLast.error"),
+              MessageResolver.getInstance().getMessage("validation.transaction.checkLastPurchase.notLast.message")
+          );
         }
       } else {
-        throw new InvalidOperationException("Delete Transaction", "This voluntary don't have any transaction done");
+        throw new InvalidOperationException(
+            MessageResolver.getInstance().getMessage("validation.transaction.checkLastPurchase.notPresent.error"),
+            MessageResolver.getInstance().getMessage("validation.transaction.checkLastPurchase.notPresent.message")
+        );
       }
     }
   }

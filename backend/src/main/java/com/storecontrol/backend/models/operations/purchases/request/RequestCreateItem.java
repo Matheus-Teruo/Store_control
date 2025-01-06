@@ -8,25 +8,25 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record RequestCreateItem(
-    @NotNull(message = "UUID of product is required")
+    @NotNull(message = "{request.validation.createItem.productUuid.notnull}")
     UUID productUuid,
 
-    @NotNull(message = "quantity is required")
-    @PositiveOrZero(message = "quantity cannot have a negative value")
+    @NotNull(message = "{request.validation.createItem.quantity.notnull}")
+    @PositiveOrZero(message = "{request.validation.createItem.quantity.positiveOrZero}")
     Integer quantity,
 
-    @NotNull(message = "delivered is required")
-    @PositiveOrZero(message = "delivered cannot have a negative value")
+    @NotNull(message = "{request.validation.createItem.delivered.notnull}")
+    @PositiveOrZero(message = "{request.validation.createItem.delivered.positiveOrZero}")
     Integer delivered,
 
-    @NotNull(message = "Unit price is required")
-    @PositiveOrZero(message = "Unit price cannot have a negative price")
-    @Digits(integer = 5, fraction = 2, message = "The unit price must contain 2 decimal digits and a value below 5 digits")
+    @NotNull(message = "{request.validation.createItem.unitPrice.notnull}")
+    @PositiveOrZero(message = "{request.validation.createItem.unitPrice.positiveOrZero}")
+    @Digits(integer = 5, fraction = 2, message = "{request.validation.createItem.unitPrice.digits}")
     BigDecimal unitPrice,
 
-    @NotNull(message = "discount is required")
-    @PositiveOrZero(message = "Unit price cannot have a negative price")
-    @Digits(integer = 5, fraction = 2, message = "The unit price must contain 2 decimal digits and a value below 5 digits")
+    @NotNull(message = "{request.validation.createItem.discount.notnull}")
+    @PositiveOrZero(message = "{request.validation.createItem.discount.positiveOrZero}")
+    @Digits(integer = 5, fraction = 2, message = "{request.validation.createItem.discount.digits}")
     BigDecimal discount
 ) {
 }

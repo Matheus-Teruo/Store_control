@@ -4,11 +4,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
 public record RequestLoginVoluntary(
-    @NotBlank(message = "Username is required")
-    @Pattern(regexp = "^[A-Za-z0-9]{3,}$", message = "Username must contain only letters and numbers")
+    @NotBlank(message = "{request.validation.loginVoluntary.username.notBlank}")
+    @Pattern(regexp = "^[A-Za-z0-9]{3,}$", message = "{request.validation.loginVoluntary.username.pattern}")
     String username,
 
-    @NotBlank(message = "Password is required")
+    @NotBlank(message = "{request.validation.loginVoluntary.password.notBlank}")
     String password
 ) {
 }

@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.operations;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
@@ -50,7 +51,7 @@ public class PurchaseService {
     var productMap = productService.listProductsAsMap();
     var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
     validation.checkItemPriceAndDiscountMatch(request, voluntary, productMap);
-    validation.checkInsufficientCreditValidity(request, customer);
+    validation.checkInsufficientDebitValidity(request, customer);
     validation.checkInsufficientProductStockValidity(request, productMap);
 
     var purchase = new Purchase(request, customer,  voluntary);
@@ -71,7 +72,11 @@ public class PurchaseService {
 
   public Purchase safeTakePurchaseByUuid(UUID uuid) {
     return repository.findByUuidValidTrue(uuid)
-        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity", "Purchase", uuid.toString()));
+        .orElseThrow(() -> new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("service.exception.purchase.get.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.purchase.get.validation.message"),
+            uuid.toString())
+        );
   }
 
   public List<Purchase> listPurchases() {

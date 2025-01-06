@@ -1,5 +1,6 @@
 package com.storecontrol.backend.infra;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidCustomerException;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
@@ -33,8 +34,11 @@ public class GlobalExceptionHandler {
 
     Map<String, Object> response = new HashMap<>();
     response.put("status", HttpStatus.BAD_REQUEST.value());
-    response.put("errorType", "Validation Error");
-    response.put("message", "Request contains invalid fields");
+    response.put("errorType",
+        MessageResolver.getInstance().getMessage(
+        "exception.global.methodNotValid.errorType")
+    );
+    response.put("message", "Request contains invalid fields");  // TODO: regularize according to front
     response.put("details", errors);
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -43,7 +47,10 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(InvalidCustomerException.class)
   public ResponseEntity<Map<String, String>> handleCustomerExceptions(InvalidCustomerException ex) {
     Map<String, String> error = new HashMap<>();
-    error.put("errorType", "Customer Status");
+    error.put("errorType",
+        MessageResolver.getInstance().getMessage(
+        "exception.global.customerException.errorType")
+    );
     error.put("typeOfError", ex.getTypeOfError());
     error.put("error", ex.getError());
     error.put("message", ex.getMessage());
@@ -54,7 +61,10 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(InvalidOperationException.class)
   public ResponseEntity<Map<String, String>> handleOperationExceptions(InvalidOperationException ex) {
     Map<String, String> error = new HashMap<>();
-    error.put("errorType", "Operation Error");
+    error.put("errorType",
+        MessageResolver.getInstance().getMessage(
+            "exception.global.operationException.errorType")
+    );
     error.put("typeOfError", ex.getTypeOfError());
     error.put("error", ex.getError());
     error.put("message", ex.getMessage());
@@ -65,7 +75,10 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(InvalidDatabaseInsertionException.class)
   public ResponseEntity<Map<String, Object>> handleDatabaseInsertionExceptions(InvalidDatabaseInsertionException ex) {
     Map<String, Object> error = new HashMap<>();
-    error.put("errorType", "Insertion Entity Error");
+    error.put("errorType",
+        MessageResolver.getInstance().getMessage(
+            "exception.global.insertEntity.errorType")
+    );
     error.put("entity", ex.getEntityName());
     error.put("invalidFields", ex.getFieldErrors());
     error.put("error", ex.getError());
@@ -77,7 +90,10 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(InvalidDatabaseQueryException.class)
   public ResponseEntity<Map<String, String>> handleDatabaseQueryExceptions(InvalidDatabaseQueryException ex) {
     Map<String, String> error = new HashMap<>();
-    error.put("errorType", "Query Entity Error: " + ex.getTypeOfError());
+    error.put("errorType",
+        MessageResolver.getInstance().getMessage(
+            "exception.global.queryEntity.errorType")
+    );
     error.put("entity", ex.getEntityName());
     error.put("invalidValue", ex.getInvalidValue());
     error.put("error", ex.getMessage());

@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.customers;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
@@ -37,7 +38,11 @@ public class OrderCardService {
 
   public OrderCard safeTakeOrderCardById(String cardId) {
     return repository.findById(cardId)
-        .orElseThrow(() -> new InvalidDatabaseQueryException("Non-existent entity" , "OrderCard", cardId));
+        .orElseThrow(() -> new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("service.exception.oderCard.get.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.oderCard.get.validation.message"),
+            cardId)
+        );
   }
 
   public List<OrderCard> listAllOrderCards() {
