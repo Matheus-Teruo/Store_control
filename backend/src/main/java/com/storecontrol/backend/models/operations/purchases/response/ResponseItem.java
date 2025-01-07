@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record ResponseItem(
-    UUID itemId,
+    UUID productUuid,
     String productName,
     Integer quantity,
     Integer delivered,

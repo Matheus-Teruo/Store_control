@@ -23,6 +23,7 @@ public record ResponseTransaction(
         transaction.getTransactionTypeEnum(),
         transaction.getTransactionTimeStamp().toString(),
         new ResponseSummaryCashRegister(transaction.getCashRegister()),
-        new ResponseSummaryVoluntary(transaction.getVoluntary()));
+        new ResponseSummaryVoluntary(transaction.getVoluntary())
+    );
   }
 }

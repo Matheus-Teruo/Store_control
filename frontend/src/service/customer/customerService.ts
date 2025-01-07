@@ -1,6 +1,7 @@
 import api from "@/axios/axios";
 import Customer, {
   CustomerFinalization,
+  CustomerOrder,
   SummaryCustomer,
 } from "@data/customers/Customer";
 
@@ -9,8 +10,10 @@ export const getCustomer = async (customerUuid: string): Promise<Customer> => {
   return response.data;
 };
 
-export const getCustomerbyCard = async (cardId: string): Promise<Customer> => {
-  const response = await api.get<Customer>(`customers/card/${cardId}`);
+export const getCustomerbyCard = async (
+  cardId: string,
+): Promise<CustomerOrder> => {
+  const response = await api.get<CustomerOrder>(`customers/card/${cardId}`);
   return response.data;
 };
 

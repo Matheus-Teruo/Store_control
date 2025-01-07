@@ -15,3 +15,9 @@ export interface SummaryRefund {
   refundTimeStamp: string; // TODO: data
   voluntaryUuid: string;
 }
+
+export interface RefundOrder {
+  uuid: string;
+  refundValue: number;
+  refundTimeStamp: string; // TODO: data
+}

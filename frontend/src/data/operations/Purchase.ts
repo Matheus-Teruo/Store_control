@@ -22,6 +22,13 @@ export interface SummaryPurchase {
   voluntaryUuid: string;
 }
 
+export interface PurchaseOrder {
+  uuid: string;
+  onOrder: boolean;
+  purchaseTimeStamp: string; // TODO: data
+  items: Item[];
+}
+
 export interface CreatePurchase {
   onOrder: boolean;
   items: CreateItem[];

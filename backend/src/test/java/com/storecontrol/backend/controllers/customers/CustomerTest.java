@@ -6,6 +6,7 @@ import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.customers.response.ResponseCustomer;
+import com.storecontrol.backend.models.customers.response.ResponseCustomerOrder;
 import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
@@ -64,7 +65,7 @@ class CustomerTest extends BaseTest {
     RequestOrderCard requestOrderCard = createRequestOrderCard(cardId);
 
     Customer mockCustomer = createCustomerEntity(customerUuid, mockOrderCard,false);
-    ResponseCustomer expectedResponse = new ResponseCustomer(mockCustomer);
+    ResponseCustomerOrder expectedResponse = new ResponseCustomerOrder(mockCustomer);
 
     when(service.takeActiveCustomerByCardId(cardId)).thenReturn(mockCustomer);
 

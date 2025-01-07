@@ -1,5 +1,5 @@
 export default interface Item {
-  itemId: string;
+  productUuid: string;
   productName: string;
   quantity: number;
   delivered: number;

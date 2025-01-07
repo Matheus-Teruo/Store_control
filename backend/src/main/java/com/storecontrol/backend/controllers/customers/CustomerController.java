@@ -3,6 +3,7 @@ package com.storecontrol.backend.controllers.customers;
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.customers.response.ResponseCustomer;
+import com.storecontrol.backend.models.customers.response.ResponseCustomerOrder;
 import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
 import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
 import com.storecontrol.backend.services.customers.CustomerService;
@@ -32,8 +33,8 @@ public class CustomerController {
   }
 
   @GetMapping("/card/{cardId}")
-  public ResponseEntity<ResponseCustomer> readCustomerByCard(@PathVariable @Valid RequestOrderCard cardId) {
-    var response = new ResponseCustomer(service.takeActiveCustomerByCardId(cardId.cardId()));
+  public ResponseEntity<ResponseCustomerOrder> readCustomerByCard(@PathVariable @Valid RequestOrderCard cardId) {
+    var response = new ResponseCustomerOrder(service.takeActiveCustomerByCardId(cardId.cardId()));
 
     return ResponseEntity.ok(response);
   }

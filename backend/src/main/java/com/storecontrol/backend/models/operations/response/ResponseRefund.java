@@ -20,6 +20,7 @@ public record ResponseRefund(
         refund.getRefundValue(),
         refund.getRefundTimeStamp().toString(),
         new ResponseSummaryCustomer(refund.getCustomer()),
-        new ResponseSummaryVoluntary(refund.getVoluntary()));
+        new ResponseSummaryVoluntary(refund.getVoluntary())
+    );
   }
 }

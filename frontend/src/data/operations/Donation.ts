@@ -15,3 +15,9 @@ export interface SummaryDonation {
   donationTimeStamp: string; // TODO: data
   voluntaryUuid: string;
 }
+
+export interface DonationOrder {
+  uuid: string;
+  donationValue: number;
+  donationTimeStamp: string; // TODO: data
+}

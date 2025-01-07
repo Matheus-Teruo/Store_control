@@ -1,8 +1,8 @@
-import { SummaryRecharge } from "@data/operations/Recharge";
+import { RechargeOrder, SummaryRecharge } from "@data/operations/Recharge";
 import OrderCard, { SummaryOrderCard } from "./OrderCard";
-import { SummaryPurchase } from "@data/operations/Purchase";
-import { SummaryDonation } from "@data/operations/Donation";
-import { SummaryRefund } from "@data/operations/Refund";
+import { PurchaseOrder, SummaryPurchase } from "@data/operations/Purchase";
+import { DonationOrder, SummaryDonation } from "@data/operations/Donation";
+import { RefundOrder, SummaryRefund } from "@data/operations/Refund";
 
 export default interface Customer {
   uuid: string;
@@ -20,6 +20,15 @@ export interface SummaryCustomer {
   summaryOrderCard: SummaryOrderCard;
   customerStart: string; // TODO: data
   customerEnd: string; // TODO: data
+}
+
+export interface CustomerOrder {
+  uuid: string;
+  orderCard: OrderCard;
+  recharges: RechargeOrder[];
+  purchases: PurchaseOrder[];
+  donation: DonationOrder;
+  refund: RefundOrder;
 }
 
 export interface CustomerFinalization {

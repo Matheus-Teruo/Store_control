@@ -18,6 +18,13 @@ export interface SummaryRecharge {
   voluntaryUuid: string;
 }
 
+export interface RechargeOrder {
+  uuid: string;
+  rechargeValue: boolean;
+  paymentTypeEnum: PaymentType;
+  rechargeTimeStamp: string; // TODO: data
+}
+
 export interface CreateRecharge {
   rechargeValue: number;
   paymentTypeEnum: PaymentType;
