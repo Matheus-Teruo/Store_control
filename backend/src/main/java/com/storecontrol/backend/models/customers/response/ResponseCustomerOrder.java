@@ -12,10 +12,10 @@ import java.util.UUID;
 public record ResponseCustomerOrder(
   UUID uuid,
   ResponseOrderCard orderCard,
-  List<ResponseRechargeOrder> summaryRecharges,
-  List<ResponsePurchaseOrder> summaryPurchases,
-  ResponseDonationOrder summaryDonation,
-  ResponseRefundOrder summaryRefund
+  List<ResponseRechargeOrder> recharges,
+  List<ResponsePurchaseOrder> purchases,
+  ResponseDonationOrder donation,
+  ResponseRefundOrder refund
 ) {
 
   public ResponseCustomerOrder(Customer customer) {

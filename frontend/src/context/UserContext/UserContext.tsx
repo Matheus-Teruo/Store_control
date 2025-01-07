@@ -51,7 +51,7 @@ export default function UserProvider({
         }
       } else {
         localStorage.removeItem(LOCAL_STORAGE_KEY);
-        checkLogged();
+        setUser("unlogged");
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

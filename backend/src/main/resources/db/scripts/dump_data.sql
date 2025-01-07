@@ -26,6 +26,8 @@ SET @RECHARGE2_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @RECHARGE3_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @PURCHASE1_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @PURCHASE2_UUID = UNHEX(REPLACE(UUID(), '-', ''));
+SET @PURCHASE3_UUID = UNHEX(REPLACE(UUID(), '-', ''));
+SET @PURCHASE4_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @TRANSACTION1_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @TRANSACTION2_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @DONATION_UUID = UNHEX(REPLACE(UUID(), '-', ''));
@@ -57,17 +59,17 @@ INSERT INTO cash_registers (uuid, cash_total, credit_total, debit_total) VALUES
 
 -- Inserir Produtos
 INSERT INTO products (uuid, product_name, summary, description, price, discount, stock, stand_uuid, valid) VALUES
-(@PRODUCT1_UUID, 'Produto 1 bebida', "bebida gaseificada", "",  10.00, 0.00, 100, @STAND1_UUID, 1),
-(@PRODUCT2_UUID, 'Produto 2 aperitivo', "aperitivo de massa frita", "massa frita doce com gengibre", 8.00, 0.00, 42, @STAND1_UUID, 1),
-(@PRODUCT3_UUID, 'Produto 3 bebida', "bebida lactea com matcha", "bebida com base na cultura japonesa de matcha", 15.00, 0.00, 148, @STAND2_UUID, 1),
-(@PRODUCT4_UUID, 'Produto 4 comida vegetariana', "comida com arroz e legumes", "", 25.00, 0.00, 198, @STAND2_UUID, 1),
-(@PRODUCT5_UUID, 'Produto 5 comida', "comida com arroz, carne e legumes", "", 30.00, 0.00, 250, @STAND2_UUID, 1),
+(@PRODUCT1_UUID, 'Produto 1 bebida', "bebida gaseificada", "",  10.00, 0.00, 99, @STAND1_UUID, 1),
+(@PRODUCT2_UUID, 'Produto 2 aperitivo', "aperitivo de massa frita", "massa frita doce com gengibre", 8.00, 0.00, 41, @STAND1_UUID, 1),
+(@PRODUCT3_UUID, 'Produto 3 bebida', "bebida lactea com matcha", "bebida com base na cultura japonesa de matcha", 15.00, 0.00, 147, @STAND2_UUID, 1),
+(@PRODUCT4_UUID, 'Produto 4 comida vegetariana', "comida com arroz e legumes", "", 25.00, 0.00, 197, @STAND2_UUID, 1),
+(@PRODUCT5_UUID, 'Produto 5 comida', "comida com arroz, carne e legumes", "", 30.00, 0.00, 248, @STAND2_UUID, 1),
 (@PRODUCT6_UUID, 'Produto 6 doce', "doce com base em matcha", "", 8.00, 0.00, 300, @STAND3_UUID, 1);
 
 -- Inserir Cartões de Ordem
 INSERT INTO order_cards (card_id, debit, active) VALUES
 (@ORDER_CARD1_ID, 20.00, 1),
-(@ORDER_CARD2_ID, 200.00, 1);
+(@ORDER_CARD2_ID, 112.00, 1);
 
 -- Inserir Voluntários
 INSERT INTO volunteers (uuid, username, password, fullname, function_uuid, voluntary_role, valid) VALUES
@@ -91,12 +93,19 @@ INSERT INTO recharges (uuid, recharge_value, payment_type, recharge_time_stamp, 
 -- Inserir Purchases
 INSERT INTO purchases (uuid, on_order, purchase_time_stamp, customer_uuid, voluntary_uuid, valid) VALUES
 (@PURCHASE1_UUID, FALSE, NOW(), @CUSTOMER1_UUID, @VOLUNTARY_USER1_UUID, 1),
-(@PURCHASE2_UUID, FALSE, NOW(), @CUSTOMER2_UUID, @VOLUNTARY_MANAGER1_UUID, 1);
+(@PURCHASE2_UUID, FALSE, NOW(), @CUSTOMER2_UUID, @VOLUNTARY_MANAGER1_UUID, 1),
+(@PURCHASE3_UUID, FALSE, NOW(), @CUSTOMER3_UUID, @VOLUNTARY_USER1_UUID, 1),
+(@PURCHASE4_UUID, FALSE, NOW(), @CUSTOMER3_UUID, @VOLUNTARY_MANAGER1_UUID, 1);
 
 INSERT INTO items (product_uuid, purchase_uuid, quantity, delivered, unit_price, discount, valid) VALUES
 (@PRODUCT3_UUID, @PURCHASE1_UUID, 2, NULL, 15.00, 0.00, 1),
 (@PRODUCT4_UUID, @PURCHASE1_UUID, 2, NULL, 25.00, 0.00, 1),
-(@PRODUCT2_UUID, @PURCHASE2_UUID, 8, NULL, 8.00, 0.00, 1);
+(@PRODUCT2_UUID, @PURCHASE2_UUID, 8, NULL, 8.00, 0.00, 1),
+(@PRODUCT3_UUID, @PURCHASE3_UUID, 1, NULL, 15.00, 0.00, 1),
+(@PRODUCT4_UUID, @PURCHASE3_UUID, 1, NULL, 25.00, 0.00, 1),
+(@PRODUCT5_UUID, @PURCHASE3_UUID, 2, NULL, 30.00, 0.00, 1),
+(@PRODUCT1_UUID, @PURCHASE4_UUID, 1, NULL, 10.00, 0.00, 1),
+(@PRODUCT2_UUID, @PURCHASE4_UUID, 1, NULL, 8.00, 0.00, 1);
 
 -- Inserir Transaction
 INSERT INTO transactions (uuid, amount, transaction_type, transaction_time_stamp, cash_register_uuid, voluntary_uuid, valid) VALUES
