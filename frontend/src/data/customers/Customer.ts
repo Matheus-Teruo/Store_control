@@ -1,14 +1,18 @@
+import { SummaryRecharge } from "@data/operations/Recharge";
 import OrderCard, { SummaryOrderCard } from "./OrderCard";
+import { SummaryPurchase } from "@data/operations/Purchase";
+import { SummaryDonation } from "@data/operations/Donation";
+import { SummaryRefund } from "@data/operations/Refund";
 
 export default interface Customer {
   uuid: string;
   orderCard: OrderCard;
   customerStart: string; // TODO: data
   customerEnd: string; // TODO: data
-  summaryRecharges: number; //TODO! adjuste
-  summaryPurchases: number; //TODO! adjuste
-  summaryDonation: number; //TODO! adjuste
-  summaryRefund: number; //TODO! adjuste
+  summaryRecharges: SummaryRecharge;
+  summaryPurchases: SummaryPurchase;
+  summaryDonation: SummaryDonation;
+  summaryRefund: SummaryRefund;
 }
 
 export interface SummaryCustomer {

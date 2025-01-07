@@ -1,9 +1,12 @@
 import styles from "./Home.module.scss";
 import Logo from "@/assets/image/LogoStoreControl.png";
+import Button from "@/components/utils/Button";
 import { useUserContext } from "@context/UserContext/useUserContext";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 function Home() {
+  const [showScanner, setShowScanner] = useState<boolean>(false);
   const { user } = useUserContext();
 
   return (
@@ -20,6 +23,17 @@ function Home() {
           <Link className={`${styles.link} ${styles.linkMenu}`} to="/menu">
             <span>Cardápio</span>
           </Link>
+          {/* MOCKED */}
+          <Link
+            className={`${styles.link} ${styles.linkMenu}`}
+            to="/order/ordercard000002"
+          >
+            <span>MOCKED order</span>
+          </Link>
+          {/*  */}
+          <Button onClick={() => setShowScanner(true)}>
+            <span>Scanner</span>
+          </Button>
           {user ? (
             <>
               <Link
@@ -47,6 +61,7 @@ function Home() {
             </div>
           )}
         </div>
+        {showScanner && <div>scanner</div>}
       </div>
     </div>
   );

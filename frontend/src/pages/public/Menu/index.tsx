@@ -5,7 +5,7 @@ import SearchFilter from "./SearchFilter";
 import { SummaryProduct } from "@data/stands/Product";
 import Button from "@/components/utils/Button";
 import { useHandleApiError } from "@/axios/handlerApiError";
-import { getProducts } from "@service/stands/productService";
+import { getProducts } from "@service/stand/productService";
 
 type ViewType = "List" | "Items";
 
@@ -92,7 +92,9 @@ function Menu() {
                 <div className={styles.priceing}>
                   <p>R${(product.price - product.discount).toFixed(2)}</p>
                   <p>
-                    <s>R${product.price.toFixed(2)}</s>
+                    {product.discount !== 0 && (
+                      <s>R${product.price.toFixed(2)}</s>
+                    )}
                   </p>
                 </div>
                 <p>Estoque: {product.stock}</p>

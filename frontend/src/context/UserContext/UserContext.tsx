@@ -1,7 +1,7 @@
 import User from "@data/volunteers/User";
 import React, { useEffect, useState } from "react";
 import { UserContext } from "./useUserContext";
-import { getUser, LogoutVoluntary } from "@service/volunteers/userService";
+import { getUser, LogoutVoluntary } from "@service/voluntary/userService";
 
 const LOCAL_STORAGE_KEY = "loggedInUser";
 

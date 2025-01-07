@@ -25,7 +25,7 @@ function AppRouter() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/menu" element={<Menu />} />
-        <Route path="/Order" element={<Order />} />
+        <Route path="/order/:cardID" element={<Order />} />
         <Route path="/auth" element={<AuthPage />}>
           <Route path="signup" element={<Signup />} />
           <Route path="login" element={<Login />} />

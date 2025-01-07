@@ -4,7 +4,7 @@ import Input from "@/components/utils/Input";
 import {
   getVoluntary,
   updateVoluntary,
-} from "@service/volunteers/voluntaryService";
+} from "@service/voluntary/voluntaryService";
 import Voluntary, { VoluntaryRole } from "@/data/volunteers/Voluntary";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { useNavigate } from "react-router-dom";

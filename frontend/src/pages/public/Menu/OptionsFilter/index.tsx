@@ -2,7 +2,7 @@ import { useHandleApiError } from "@/axios/handlerApiError";
 import styles from "./OptionsFilter.module.scss";
 import { SummaryStand } from "@data/stands/Stand";
 import { useEffect, useState } from "react";
-import { getStands } from "@service/stands/standService";
+import { getStands } from "@service/stand/standService";
 
 interface OptionsFilterProps {
   value: string | undefined;
@@ -29,7 +29,7 @@ function OptionsFilter({ value, onChange }: OptionsFilterProps) {
     <div className={styles.background}>
       {/* <label htmlFor="stands"></label> TODO: trocar para svg */}
       <select id="stands" value={value} onChange={onChange}>
-        <option value={undefined}>sem filtro</option>
+        <option value={undefined}></option>
         {listStands.map((stand) => (
           <option key={stand.uuid} value={stand.uuid}>
             {stand.standName}
