@@ -9,8 +9,8 @@ export default interface Customer {
   orderCard: OrderCard;
   customerStart: string; // TODO: data
   customerEnd: string; // TODO: data
-  summaryRecharges: SummaryRecharge;
-  summaryPurchases: SummaryPurchase;
+  summaryRecharges: SummaryRecharge[];
+  summaryPurchases: SummaryPurchase[];
   summaryDonation: SummaryDonation;
   summaryRefund: SummaryRefund;
 }
