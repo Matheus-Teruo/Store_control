@@ -9,6 +9,12 @@
   flex-direction: column;
   justify-items: center;
 
+  .headerBackground {
+    width: 100vw;
+    background-color: $color-secundary-2;
+    justify-items: center;
+  }
+
   .main {
     width: 100vw;
     height: 100%;

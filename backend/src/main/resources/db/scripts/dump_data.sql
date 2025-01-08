@@ -14,6 +14,8 @@ SET @PRODUCT5_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @PRODUCT6_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @ORDER_CARD1_ID = 'ordercard000001';
 SET @ORDER_CARD2_ID = 'ordercard000002';
+SET @ORDER_CARD3_ID = 'ordercard000003';
+SET @ORDER_CARD4_ID = 'ordercard000004';
 SET @VOLUNTARY_MANAGER1_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @VOLUNTARY_MANAGER2_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @VOLUNTARY_USER1_UUID = UNHEX(REPLACE(UUID(), '-', ''));
@@ -21,9 +23,11 @@ SET @VOLUNTARY_USER2_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @CUSTOMER1_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @CUSTOMER2_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @CUSTOMER3_UUID = UNHEX(REPLACE(UUID(), '-', ''));
+SET @CUSTOMER4_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @RECHARGE1_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @RECHARGE2_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @RECHARGE3_UUID = UNHEX(REPLACE(UUID(), '-', ''));
+SET @RECHARGE4_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @PURCHASE1_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @PURCHASE2_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @PURCHASE3_UUID = UNHEX(REPLACE(UUID(), '-', ''));
@@ -55,7 +59,7 @@ INSERT INTO stands (uuid, association_uuid) VALUES
 -- Inserir Caixas
 INSERT INTO cash_registers (uuid, cash_total, credit_total, debit_total) VALUES
 (@CASH_REGISTER1_UUID, 700.00, 100.00, 0.00),
-(@CASH_REGISTER2_UUID, 590.00, 0.00, 0.00);
+(@CASH_REGISTER2_UUID, 590.00, 0.00, 120.00);
 
 -- Inserir Produtos
 INSERT INTO products (uuid, product_name, summary, description, price, discount, stock, stand_uuid, valid) VALUES
@@ -69,7 +73,9 @@ INSERT INTO products (uuid, product_name, summary, description, price, discount,
 -- Inserir Cartões de Ordem
 INSERT INTO order_cards (card_id, debit, active) VALUES
 (@ORDER_CARD1_ID, 20.00, 1),
-(@ORDER_CARD2_ID, 112.00, 1);
+(@ORDER_CARD2_ID, 112.00, 1),
+(@ORDER_CARD3_ID, 120.00, 1),
+(@ORDER_CARD4_ID, 0.00, 0);
 
 -- Inserir Voluntários
 INSERT INTO volunteers (uuid, username, password, fullname, function_uuid, voluntary_role, valid) VALUES
@@ -82,13 +88,15 @@ INSERT INTO volunteers (uuid, username, password, fullname, function_uuid, volun
 INSERT INTO customers (uuid, order_card_id, customer_start, customer_end, in_use) VALUES
 (@CUSTOMER1_UUID, @ORDER_CARD1_ID, NOW(), NULL, 1),
 (@CUSTOMER2_UUID, @ORDER_CARD2_ID, NOW(), NOW(), 0),
-(@CUSTOMER3_UUID, @ORDER_CARD2_ID, NOW(), NULL, 1);
+(@CUSTOMER3_UUID, @ORDER_CARD2_ID, NOW(), NULL, 1),
+(@CUSTOMER4_UUID, @ORDER_CARD3_ID, NOW(), NULL, 1);
 
 -- Inserir Recharges
 INSERT INTO recharges (uuid, recharge_value, payment_type, recharge_time_stamp, customer_uuid, cash_register_uuid, voluntary_uuid, valid) VALUES
 (@RECHARGE1_UUID, 100.00, 'CREDIT', NOW(), @CUSTOMER1_UUID, @CASH_REGISTER1_UUID, @VOLUNTARY_USER2_UUID, 1),
 (@RECHARGE2_UUID, 90.00, 'CASH', NOW(), @CUSTOMER2_UUID, @CASH_REGISTER2_UUID, @VOLUNTARY_MANAGER2_UUID, 1),
-(@RECHARGE3_UUID, 200.00, 'CASH', NOW(), @CUSTOMER3_UUID, @CASH_REGISTER1_UUID, @VOLUNTARY_USER2_UUID, 1);
+(@RECHARGE3_UUID, 200.00, 'CASH', NOW(), @CUSTOMER3_UUID, @CASH_REGISTER1_UUID, @VOLUNTARY_USER2_UUID, 1),
+(@RECHARGE4_UUID, 120.00, 'DEBIT', NOW(), @CUSTOMER4_UUID, @CASH_REGISTER2_UUID, @VOLUNTARY_MANAGER2_UUID, 1);
 
 -- Inserir Purchases
 INSERT INTO purchases (uuid, on_order, purchase_time_stamp, customer_uuid, voluntary_uuid, valid) VALUES

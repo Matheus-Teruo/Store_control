@@ -41,7 +41,7 @@ export default function UserProvider({
   }
 
   useEffect(() => {
-    if (!user && user !== "unlogged") {
+    if (!user) {
       if (doesCookieExist("auth")) {
         const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
         if (storedUser) {
@@ -59,7 +59,12 @@ export default function UserProvider({
 
   return (
     <UserContext.Provider
-      value={{ user, isLoggedIn: !!user, login, checkLogged, logout }}
+      value={{
+        user,
+        login,
+        checkLogged,
+        logout,
+      }}
     >
       {children}
     </UserContext.Provider>

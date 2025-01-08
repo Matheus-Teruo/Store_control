@@ -52,6 +52,7 @@ function Order() {
 
   return (
     <div className={styles.background}>
+      <div className={styles.headerBackground}></div>
       <div className={styles.main}>
         <ul>
           {cart?.map((purchase) =>
