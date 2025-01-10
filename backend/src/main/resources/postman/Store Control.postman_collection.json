@@ -848,7 +848,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}products?productName=&page=0&size&sort",
+							"raw": "{{hostPath}}products?productName=&page=0",
 							"host": [
 								"{{hostPath}}products"
 							],
@@ -858,16 +858,23 @@
 									"value": ""
 								},
 								{
+									"key": "standUuid",
+									"value": null,
+									"disabled": true
+								},
+								{
 									"key": "page",
 									"value": "0"
 								},
 								{
 									"key": "size",
-									"value": null
+									"value": null,
+									"disabled": true
 								},
 								{
 									"key": "sort",
-									"value": null
+									"value": null,
+									"disabled": true
 								}
 							]
 						}

@@ -90,17 +90,17 @@ class ProductTest extends BaseTest {
     Page<ResponseSummaryProduct> expectedResponse = mockPage
         .map(ResponseSummaryProduct::new);
 
-    when(service.pageProducts(any(String.class), any(Pageable.class))).thenReturn(mockPage);
+    when(service.pageProducts(any(String.class), any(UUID.class), any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
-    mockMvc.perform(get("/products?productName=")
+    mockMvc.perform(get("/products?productName=&standUuid=550e8400-e29b-41d4-a716-446655440000")
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content.length()").value(2))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).pageProducts(any(String.class), any(Pageable.class));
+    verify(service, times(1)).pageProducts(any(String.class),  any(UUID.class), any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 

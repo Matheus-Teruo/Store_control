@@ -55,8 +55,8 @@ public class ProductService {
         );
   }
 
-  public Page<Product> pageProducts(String productName, Pageable pageable) {
-    return repository.findAllValidTruePage(productName, pageable);
+  public Page<Product> pageProducts(String productName, UUID standUuid, Pageable pageable) {
+    return repository.findAllValidTruePage(productName, standUuid, pageable);
   }
 
   public Map<UUID, Product> listProductsAsMap() {

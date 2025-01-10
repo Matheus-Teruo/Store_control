@@ -52,8 +52,9 @@ public class ProductController {
   @GetMapping()
   public ResponseEntity<Page<ResponseSummaryProduct>> readProducts(
       @RequestParam(required = false) String productName,
+      @RequestParam(required = false) UUID standUuid,
       Pageable pageable) {
-    var items = service.pageProducts(productName, pageable);
+    var items = service.pageProducts(productName, standUuid, pageable);
 
     var response = items.map(ResponseSummaryProduct::new);
     return ResponseEntity.ok(response);

@@ -17,8 +17,8 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
   @Query("select p from Product p where p.valid = true")
   List<Product> findAllValidTrue();
 
-  @Query("select p from Product p where p.valid = true and (:name is null or lower(p.productName) like lower(concat('%', :name, '%')))")
-  Page<Product> findAllValidTruePage(String name, Pageable pageable);
+  @Query("select p from Product p where p.valid = true and (:name is null or lower(p.productName) like lower(concat('%', :name, '%'))) and (:standUuid is null or p.standUuid = :standUuid)")
+  Page<Product> findAllValidTruePage(String name, UUID standUuid, Pageable pageable);
 
   boolean existsByProductName(String productName);
 }
