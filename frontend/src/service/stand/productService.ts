@@ -4,6 +4,7 @@ import Product, {
   SummaryProduct,
   UpdateProduct,
 } from "@data/stands/Product";
+import { PaginatedResponse } from "@service/PagesType";
 
 export const createProduct = async (
   product: CreateProduct,
@@ -23,16 +24,19 @@ export const getProducts = async (
   page?: number,
   size?: number,
   sort?: "asc" | "desc",
-): Promise<SummaryProduct[]> => {
-  const response = await api.get<SummaryProduct[]>("products", {
-    params: {
-      productName: productName,
-      standUuid: standUuid,
-      page: page,
-      size: size,
-      sort: sort,
+): Promise<PaginatedResponse<SummaryProduct>> => {
+  const response = await api.get<PaginatedResponse<SummaryProduct>>(
+    "products",
+    {
+      params: {
+        productName: productName,
+        standUuid: standUuid,
+        page: page,
+        size: size,
+        sort: sort,
+      },
     },
-  });
+  );
   return response.data;
 };
 

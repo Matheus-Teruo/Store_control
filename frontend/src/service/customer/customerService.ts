@@ -4,6 +4,7 @@ import Customer, {
   CustomerOrder,
   SummaryCustomer,
 } from "@data/customers/Customer";
+import { PaginatedResponse } from "@service/PagesType";
 
 export const getCustomer = async (customerUuid: string): Promise<Customer> => {
   const response = await api.get<Customer>(`customers/${customerUuid}`);
@@ -21,14 +22,17 @@ export const getCustomers = async (
   page?: number,
   size?: number,
   sort?: "asc" | "desc",
-): Promise<SummaryCustomer[]> => {
-  const response = await api.get<SummaryCustomer[]>("customers", {
-    params: {
-      page: page,
-      size: size,
-      sort: sort,
+): Promise<PaginatedResponse<SummaryCustomer>> => {
+  const response = await api.get<PaginatedResponse<SummaryCustomer>>(
+    "customers",
+    {
+      params: {
+        page: page,
+        size: size,
+        sort: sort,
+      },
     },
-  });
+  );
   return response.data;
 };
 
@@ -36,14 +40,17 @@ export const getActiveCustomers = async (
   page?: number,
   size?: number,
   sort?: "asc" | "desc",
-): Promise<SummaryCustomer[]> => {
-  const response = await api.get<SummaryCustomer[]>("customers/active", {
-    params: {
-      page: page,
-      size: size,
-      sort: sort,
+): Promise<PaginatedResponse<SummaryCustomer>> => {
+  const response = await api.get<PaginatedResponse<SummaryCustomer>>(
+    "customers/active",
+    {
+      params: {
+        page: page,
+        size: size,
+        sort: sort,
+      },
     },
-  });
+  );
   return response.data;
 };
 

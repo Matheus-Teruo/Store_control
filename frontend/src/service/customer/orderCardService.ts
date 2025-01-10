@@ -3,6 +3,7 @@ import OrderCard, {
   RequestOrderCard,
   SummaryOrderCard,
 } from "@data/customers/OrderCard";
+import { PaginatedResponse } from "@service/PagesType";
 
 export const createCard = async (
   card: RequestOrderCard,
@@ -20,8 +21,8 @@ export const getCards = async (
   page?: number,
   size?: number,
   sort?: "asc" | "desc",
-): Promise<OrderCard[]> => {
-  const response = await api.get<OrderCard[]>("cards", {
+): Promise<PaginatedResponse<OrderCard>> => {
+  const response = await api.get<PaginatedResponse<OrderCard>>("cards", {
     params: {
       page: page,
       size: size,
@@ -35,13 +36,16 @@ export const getActivesCards = async (
   page?: number,
   size?: number,
   sort?: "asc" | "desc",
-): Promise<SummaryOrderCard[]> => {
-  const response = await api.get<SummaryOrderCard[]>("cards/active", {
-    params: {
-      page: page,
-      size: size,
-      sort: sort,
+): Promise<PaginatedResponse<SummaryOrderCard>> => {
+  const response = await api.get<PaginatedResponse<SummaryOrderCard>>(
+    "cards/active",
+    {
+      params: {
+        page: page,
+        size: size,
+        sort: sort,
+      },
     },
-  });
+  );
   return response.data;
 };

@@ -1,5 +1,6 @@
 import api from "@/axios/axios";
 import Refund, { SummaryRefund } from "@data/operations/Refund";
+import { PaginatedResponse } from "@service/PagesType";
 
 export const getRefund = async (refundUuid: string): Promise<Refund> => {
   const response = await api.get<Refund>(`refunds/${refundUuid}`);
@@ -10,8 +11,8 @@ export const getRefunds = async (
   page?: number,
   size?: number,
   sort?: "asc" | "desc",
-): Promise<SummaryRefund[]> => {
-  const response = await api.get<SummaryRefund[]>("refunds", {
+): Promise<PaginatedResponse<SummaryRefund>> => {
+  const response = await api.get<PaginatedResponse<SummaryRefund>>("refunds", {
     params: {
       page: page,
       size: size,

@@ -4,6 +4,7 @@ import Purchase, {
   SummaryPurchase,
   UpdatePurchase,
 } from "@data/operations/Purchase";
+import { PaginatedResponse } from "@service/PagesType";
 
 export const createPurchase = async (
   purchase: CreatePurchase,
@@ -21,14 +22,17 @@ export const getPurchases = async (
   page?: number,
   size?: number,
   sort?: "asc" | "desc",
-): Promise<SummaryPurchase[]> => {
-  const response = await api.get<SummaryPurchase[]>("purchases", {
-    params: {
-      page: page,
-      size: size,
-      sort: sort,
+): Promise<PaginatedResponse<SummaryPurchase>> => {
+  const response = await api.get<PaginatedResponse<SummaryPurchase>>(
+    "purchases",
+    {
+      params: {
+        page: page,
+        size: size,
+        sort: sort,
+      },
     },
-  });
+  );
   return response.data;
 };
 

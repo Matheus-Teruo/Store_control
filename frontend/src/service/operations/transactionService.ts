@@ -3,6 +3,7 @@ import Transaction, {
   CreateTransaction,
   SummaryTransaction,
 } from "@data/operations/Transaction";
+import { PaginatedResponse } from "@service/PagesType";
 
 export const createTransaction = async (
   transaction: CreateTransaction,
@@ -24,14 +25,17 @@ export const getTransactions = async (
   page?: number,
   size?: number,
   sort?: "asc" | "desc",
-): Promise<SummaryTransaction[]> => {
-  const response = await api.get<SummaryTransaction[]>("transactions", {
-    params: {
-      page: page,
-      size: size,
-      sort: sort,
+): Promise<PaginatedResponse<SummaryTransaction>> => {
+  const response = await api.get<PaginatedResponse<SummaryTransaction>>(
+    "transactions",
+    {
+      params: {
+        page: page,
+        size: size,
+        sort: sort,
+      },
     },
-  });
+  );
   return response.data;
 };
 

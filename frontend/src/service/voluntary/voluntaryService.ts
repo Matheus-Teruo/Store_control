@@ -4,6 +4,7 @@ import Voluntary, {
   UpdateVoluntary,
   UpdateVoluntaryFunction,
 } from "@/data/volunteers/Voluntary";
+import { PaginatedResponse } from "@service/PagesType";
 
 export const getVoluntary = async (
   voluntaryUuid: string,
@@ -16,14 +17,17 @@ export const getVolunteers = async (
   page?: number,
   size?: number,
   sort?: "asc" | "desc",
-): Promise<SummaryVoluntary[]> => {
-  const response = await api.get<SummaryVoluntary[]>("/volunteers", {
-    params: {
-      page: page,
-      size: size,
-      sort: sort,
+): Promise<PaginatedResponse<SummaryVoluntary>> => {
+  const response = await api.get<PaginatedResponse<SummaryVoluntary>>(
+    "/volunteers",
+    {
+      params: {
+        page: page,
+        size: size,
+        sort: sort,
+      },
     },
-  });
+  );
   return response.data;
 };
 

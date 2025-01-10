@@ -3,6 +3,7 @@ import Recharge, {
   CreateRecharge,
   SummaryRecharge,
 } from "@data/operations/Recharge";
+import { PaginatedResponse } from "@service/PagesType";
 
 export const createRecharge = async (
   recharge: CreateRecharge,
@@ -20,14 +21,17 @@ export const getRecharges = async (
   page?: number,
   size?: number,
   sort?: "asc" | "desc",
-): Promise<SummaryRecharge[]> => {
-  const response = await api.get<SummaryRecharge[]>("recharges", {
-    params: {
-      page: page,
-      size: size,
-      sort: sort,
+): Promise<PaginatedResponse<SummaryRecharge>> => {
+  const response = await api.get<PaginatedResponse<SummaryRecharge>>(
+    "recharges",
+    {
+      params: {
+        page: page,
+        size: size,
+        sort: sort,
+      },
     },
-  });
+  );
   return response.data;
 };
 
