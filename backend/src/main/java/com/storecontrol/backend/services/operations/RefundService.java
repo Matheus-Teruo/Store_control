@@ -11,6 +11,8 @@ import com.storecontrol.backend.services.operations.validation.RefundValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,8 +53,8 @@ public class RefundService {
         .orElseThrow(EntityNotFoundException::new);
   }
 
-  public List<Refund> listRefunds() {
-    return repository.findAllValidTrue();
+  public Page<Refund> pageRefunds(Pageable pageable) {
+    return repository.findAllValidTrue(pageable);
   }
 
   @Transactional

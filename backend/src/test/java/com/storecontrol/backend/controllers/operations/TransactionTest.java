@@ -1,13 +1,18 @@
 package com.storecontrol.backend.controllers.operations;
 
 import com.storecontrol.backend.BaseTest;
+import com.storecontrol.backend.models.operations.Refund;
 import com.storecontrol.backend.models.operations.Transaction;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
+import com.storecontrol.backend.models.operations.response.ResponseSummaryRefund;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryTransaction;
 import com.storecontrol.backend.models.operations.response.ResponseTransaction;
 import com.storecontrol.backend.services.operations.TransactionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
 import java.util.List;
@@ -75,15 +80,15 @@ class TransactionTest extends BaseTest {
   @Test
   void testReadTransactionsSuccess() throws Exception {
     // Given
-    List<Transaction> mockRecharges = List.of(
+    List<Transaction> mockTransactions = List.of(
         createTransactionEntity(UUID.randomUUID(), false),
         createTransactionEntity(UUID.randomUUID(), false)
     );
-    List<ResponseSummaryTransaction> expectedResponse = mockRecharges.stream()
-        .map(ResponseSummaryTransaction::new)
-        .toList();
+    Page<Transaction> mockPage = new PageImpl<>(mockTransactions);
+    Page<ResponseSummaryTransaction> expectedResponse = mockPage
+        .map(ResponseSummaryTransaction::new);
 
-    when(service.listTransactions()).thenReturn(mockRecharges);
+    when(service.pageTransactions(any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
     mockMvc.perform(get("/transactions")
@@ -93,7 +98,7 @@ class TransactionTest extends BaseTest {
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listTransactions();
+    verify(service, times(1)).pageTransactions(any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 

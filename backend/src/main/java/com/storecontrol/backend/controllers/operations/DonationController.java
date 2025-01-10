@@ -5,6 +5,8 @@ import com.storecontrol.backend.models.operations.response.ResponseSummaryDonati
 import com.storecontrol.backend.services.operations.DonationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,10 +31,10 @@ public class DonationController {
   }
 
   @GetMapping
-  public ResponseEntity<List<ResponseSummaryDonation>> readDonations() {
-    var donation = service.listDonations();
+  public ResponseEntity<Page<ResponseSummaryDonation>> readDonations(Pageable pageable) {
+    var donation = service.pageDonations(pageable);
 
-    var response = donation.stream().map(ResponseSummaryDonation::new).toList();
+    var response = donation.map(ResponseSummaryDonation::new);
     return ResponseEntity.ok(response);
   }
 }

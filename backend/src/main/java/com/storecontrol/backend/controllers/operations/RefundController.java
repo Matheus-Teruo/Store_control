@@ -5,6 +5,8 @@ import com.storecontrol.backend.models.operations.response.ResponseSummaryRefund
 import com.storecontrol.backend.services.operations.RefundService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,10 +31,10 @@ public class RefundController {
   }
 
   @GetMapping
-  public ResponseEntity<List<ResponseSummaryRefund>> readRefunds() {
-    var donation = service.listRefunds();
+  public ResponseEntity<Page<ResponseSummaryRefund>> readRefunds(Pageable pageable) {
+    var donation = service.pageRefunds(pageable);
 
-    var response = donation.stream().map(ResponseSummaryRefund::new).toList();
+    var response = donation.map(ResponseSummaryRefund::new);
     return ResponseEntity.ok(response);
   }
 }

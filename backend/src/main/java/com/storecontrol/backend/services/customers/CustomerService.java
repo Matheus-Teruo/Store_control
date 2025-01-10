@@ -9,6 +9,8 @@ import com.storecontrol.backend.services.customers.component.CustomerFilter;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -77,12 +79,12 @@ public class CustomerService {
     return customer;
   }
 
-  public List<Customer> listActiveCustomers() {
-    return repository.findAllActiveTrue();
+  public Page<Customer> pageActiveCustomers(Pageable pageable) {
+    return repository.findAllActiveTrue(pageable);
   }
 
-  public List<Customer> listCustomers() {
-    return repository.findAll();
+  public Page<Customer> pageCustomers(Pageable pageable) {
+    return repository.findAll(pageable);
   }
 
   @Transactional

@@ -6,6 +6,8 @@ import com.storecontrol.backend.models.operations.response.ResponseSummaryRechar
 import com.storecontrol.backend.services.operations.RechargeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -45,10 +47,10 @@ public class RechargeController {
   }
 
   @GetMapping
-  public ResponseEntity<List<ResponseSummaryRecharge>> readRecharges() {
-    var recharges = service.listRecharges();
+  public ResponseEntity<Page<ResponseSummaryRecharge>> readRecharges(Pageable pageable) {
+    var recharges = service.pageRecharges(pageable);
 
-    var response = recharges.stream().map(ResponseSummaryRecharge::new).toList();
+    var response = recharges.map(ResponseSummaryRecharge::new);
     return ResponseEntity.ok(response);
   }
 

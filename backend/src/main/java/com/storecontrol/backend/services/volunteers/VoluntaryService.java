@@ -13,10 +13,11 @@ import com.storecontrol.backend.services.volunteers.validation.VoluntaryValidati
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -59,8 +60,8 @@ public class VoluntaryService {
         );
   }
 
-  public List<Voluntary> listVolunteers() {
-    return repository.findAllValidTrue();
+  public Page<Voluntary> pageVolunteers(Pageable pageable) {
+    return repository.findAllValidTrue(pageable);
   }
 
   @Transactional

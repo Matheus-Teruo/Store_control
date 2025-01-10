@@ -3,12 +3,17 @@ package com.storecontrol.backend.controllers.operations;
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
+import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Refund;
 import com.storecontrol.backend.models.operations.response.ResponseRefund;
+import com.storecontrol.backend.models.operations.response.ResponseSummaryRecharge;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryRefund;
 import com.storecontrol.backend.services.operations.RefundService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
 import java.util.List;
@@ -60,11 +65,11 @@ class RefundTest extends BaseTest {
         createRefundEntity(UUID.randomUUID(), mockCustomer1),
         createRefundEntity(UUID.randomUUID(), mockCustomer2)
     );
-    List<ResponseSummaryRefund> expectedResponse = mockRefunds.stream()
-        .map(ResponseSummaryRefund::new)
-        .toList();
+    Page<Refund> mockPage = new PageImpl<>(mockRefunds);
+    Page<ResponseSummaryRefund> expectedResponse = mockPage
+        .map(ResponseSummaryRefund::new);
 
-    when(service.listRefunds()).thenReturn(mockRefunds);
+    when(service.pageRefunds(any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
     mockMvc.perform(get("/refunds")
@@ -74,7 +79,7 @@ class RefundTest extends BaseTest {
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listRefunds();
+    verify(service, times(1)).pageRefunds(any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 }

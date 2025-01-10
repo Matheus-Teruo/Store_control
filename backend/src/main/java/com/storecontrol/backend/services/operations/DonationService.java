@@ -11,6 +11,8 @@ import com.storecontrol.backend.services.operations.validation.DonationValidatio
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,8 +52,8 @@ public class DonationService {
         .orElseThrow(EntityNotFoundException::new);
   }
 
-  public List<Donation> listDonations() {
-    return repository.findAllValidTrue();
+  public Page<Donation> pageDonations(Pageable pageable) {
+    return repository.findAllValidTrue(pageable);
   }
 
   @Transactional

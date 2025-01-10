@@ -11,6 +11,9 @@ import com.storecontrol.backend.models.volunteers.response.ResponseVoluntary;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
 import java.util.List;
@@ -54,11 +57,11 @@ class VoluntaryTest extends BaseTest {
         createVoluntaryEntity(UUID.randomUUID()),
         createVoluntaryEntity(UUID.randomUUID())
     );
-    List<ResponseSummaryVoluntary> expectedResponse = mockVolunteers.stream()
-        .map(ResponseSummaryVoluntary::new)
-        .toList();
+    Page<Voluntary> mockPage = new PageImpl<>(mockVolunteers);
+    Page<ResponseSummaryVoluntary> expectedResponse = mockPage
+        .map(ResponseSummaryVoluntary::new);
 
-    when(service.listVolunteers()).thenReturn(mockVolunteers);
+    when(service.pageVolunteers(any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
     mockMvc.perform(get("/volunteers")
@@ -68,7 +71,7 @@ class VoluntaryTest extends BaseTest {
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listVolunteers();
+    verify(service, times(1)).pageVolunteers(any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 

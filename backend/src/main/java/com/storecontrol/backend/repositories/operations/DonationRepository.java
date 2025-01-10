@@ -1,6 +1,8 @@
 package com.storecontrol.backend.repositories.operations;
 
 import com.storecontrol.backend.models.operations.Donation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,5 +15,5 @@ public interface DonationRepository extends JpaRepository<Donation, UUID> {
   Optional<Donation> findByUuidValidTrue(UUID uuid);
 
   @Query("select d from Donation d where d.valid = true")
-  List<Donation> findAllValidTrue();
+  Page<Donation> findAllValidTrue(Pageable pageable);
 }

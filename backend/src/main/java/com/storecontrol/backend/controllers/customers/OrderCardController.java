@@ -6,6 +6,8 @@ import com.storecontrol.backend.models.customers.response.ResponseSummaryOrderCa
 import com.storecontrol.backend.services.customers.OrderCardService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -41,18 +43,18 @@ public class OrderCardController {
   }
 
   @GetMapping()
-  public ResponseEntity<List<ResponseOrderCard>> readAllCards() {
-    var cards = service.listAllOrderCards();
+  public ResponseEntity<Page<ResponseOrderCard>> readAllCards(Pageable pageable) {
+    var cards = service.pageAllOrderCards(pageable);
 
-    var response = cards.stream().map(ResponseOrderCard::new).toList();
+    var response = cards.map(ResponseOrderCard::new);
     return ResponseEntity.ok(response);
   }
 
   @GetMapping("/active")
-  public ResponseEntity<List<ResponseSummaryOrderCard>> readActiveCards() {
-    var cards = service.listActiveOrderCards();
+  public ResponseEntity<Page<ResponseSummaryOrderCard>> readActiveCards(Pageable pageable) {
+    var cards = service.pageActiveOrderCards(pageable);
 
-    var response = cards.stream().map(ResponseSummaryOrderCard::new).toList();
+    var response = cards.map(ResponseSummaryOrderCard::new);
     return ResponseEntity.ok(response);
   }
 }

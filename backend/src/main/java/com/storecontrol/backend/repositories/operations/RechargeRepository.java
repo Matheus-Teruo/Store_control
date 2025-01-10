@@ -1,6 +1,8 @@
 package com.storecontrol.backend.repositories.operations;
 
 import com.storecontrol.backend.models.operations.Recharge;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,7 +15,7 @@ public interface RechargeRepository extends JpaRepository<Recharge, UUID> {
   Optional<Recharge> findByUuidValidTrue(UUID uuid);
 
   @Query("select r from Recharge r where r.valid = true")
-  List<Recharge> findAllValidTrue();
+  Page<Recharge> findAllValidTrue(Pageable pageable);
 
   @Query("select r from Recharge r where r.valid = true and r.voluntary.uuid = :voluntaryUuid order by r.rechargeTimeStamp desc limit 3")
   List<Recharge> findLast3ValidTrue(UUID voluntaryUuid);

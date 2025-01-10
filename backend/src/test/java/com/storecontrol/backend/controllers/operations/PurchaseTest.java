@@ -3,14 +3,19 @@ package com.storecontrol.backend.controllers.operations;
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
+import com.storecontrol.backend.models.operations.Donation;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
 import com.storecontrol.backend.models.operations.purchases.response.ResponsePurchase;
 import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
+import com.storecontrol.backend.models.operations.response.ResponseSummaryDonation;
 import com.storecontrol.backend.services.operations.PurchaseService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
 import java.util.List;
@@ -97,11 +102,11 @@ class PurchaseTest extends BaseTest {
     mockPurchases.get(0).setItems(createItemEntity(mockPurchases.get(0)));
     mockPurchases.get(1).setItems(createItemEntity(mockPurchases.get(1)));
 
-    List<ResponseSummaryPurchase> expectedResponse = mockPurchases.stream()
-        .map(ResponseSummaryPurchase::new)
-        .toList();
+    Page<Purchase> mockPage = new PageImpl<>(mockPurchases);
+    Page<ResponseSummaryPurchase> expectedResponse = mockPage
+        .map(ResponseSummaryPurchase::new);
 
-    when(service.listPurchases()).thenReturn(mockPurchases);
+    when(service.pagePurchases(any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
     mockMvc.perform(get("/purchases")
@@ -111,7 +116,7 @@ class PurchaseTest extends BaseTest {
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listPurchases();
+    verify(service, times(1)).pagePurchases(any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 

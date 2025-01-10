@@ -8,6 +8,8 @@ import com.storecontrol.backend.services.stands.ProductService;
 import com.storecontrol.backend.services.stands.S3Service;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +17,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -48,11 +49,13 @@ public class ProductController {
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping
-  public ResponseEntity<List<ResponseSummaryProduct>> readProducts() {
-    var items = service.listProducts();
+  @GetMapping()
+  public ResponseEntity<Page<ResponseSummaryProduct>> readProducts(
+      @RequestParam(required = false) String productName,
+      Pageable pageable) {
+    var items = service.pageProducts(productName, pageable);
 
-    var response = items.stream().map(ResponseSummaryProduct::new).toList();
+    var response = items.map(ResponseSummaryProduct::new);
     return ResponseEntity.ok(response);
   }
 

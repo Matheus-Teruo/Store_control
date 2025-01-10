@@ -9,10 +9,14 @@ import com.storecontrol.backend.models.customers.response.ResponseCustomer;
 import com.storecontrol.backend.models.customers.response.ResponseCustomerOrder;
 import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
 import com.storecontrol.backend.models.volunteers.Voluntary;
+import com.storecontrol.backend.models.volunteers.response.ResponseSummaryVoluntary;
 import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
 import com.storecontrol.backend.services.customers.CustomerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
 import java.util.List;
@@ -92,11 +96,11 @@ class CustomerTest extends BaseTest {
         createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false),
         createCustomerEntity(UUID.randomUUID(), mockOrderCard2,true)
     );
-    List<ResponseSummaryCustomer> expectedResponse = mockCustomers.stream()
-        .map(ResponseSummaryCustomer::new)
-        .toList();
+    Page<Customer> mockPage = new PageImpl<>(mockCustomers);
+    Page<ResponseSummaryCustomer> expectedResponse = mockPage
+        .map(ResponseSummaryCustomer::new);
 
-    when(service.listActiveCustomers()).thenReturn(mockCustomers);
+    when(service.pageActiveCustomers(any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
     mockMvc.perform(get("/customers/active")
@@ -106,7 +110,7 @@ class CustomerTest extends BaseTest {
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listActiveCustomers();
+    verify(service, times(1)).pageActiveCustomers(any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 
@@ -122,11 +126,11 @@ class CustomerTest extends BaseTest {
         createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false),
         createCustomerEntity(UUID.randomUUID(), mockOrderCard2,true)
     );
-    List<ResponseSummaryCustomer> expectedResponse = mockCustomers.stream()
-        .map(ResponseSummaryCustomer::new)
-        .toList();
+    Page<Customer> mockPage = new PageImpl<>(mockCustomers);
+    Page<ResponseSummaryCustomer> expectedResponse = mockPage
+        .map(ResponseSummaryCustomer::new);
 
-    when(service.listCustomers()).thenReturn(mockCustomers);
+    when(service.pageCustomers(any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
     mockMvc.perform(get("/customers")
@@ -136,7 +140,7 @@ class CustomerTest extends BaseTest {
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listCustomers();
+    verify(service, times(1)).pageCustomers(any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 

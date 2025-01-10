@@ -7,6 +7,8 @@ import com.storecontrol.backend.models.operations.purchases.response.ResponseSum
 import com.storecontrol.backend.services.operations.PurchaseService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -46,10 +48,10 @@ public class PurchaseController {
   }
 
   @GetMapping
-  public ResponseEntity<List<ResponseSummaryPurchase>> readPurchases() {
-    var purchases = service.listPurchases();
+  public ResponseEntity<Page<ResponseSummaryPurchase>> readPurchases(Pageable pageable) {
+    var purchases = service.pagePurchases(pageable);
 
-    var response = purchases.stream().map(ResponseSummaryPurchase::new).toList();
+    var response = purchases.map(ResponseSummaryPurchase::new);
     return ResponseEntity.ok(response);
   }
 

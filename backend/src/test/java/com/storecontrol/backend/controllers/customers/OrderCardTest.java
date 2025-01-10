@@ -1,13 +1,18 @@
 package com.storecontrol.backend.controllers.customers;
 
 import com.storecontrol.backend.BaseTest;
+import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.customers.response.ResponseOrderCard;
+import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
 import com.storecontrol.backend.models.customers.response.ResponseSummaryOrderCard;
 import com.storecontrol.backend.services.customers.OrderCardService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
 import java.util.List;
@@ -78,11 +83,11 @@ class OrderCardTest extends BaseTest {
         createOrderCardEntity(cardId1, false),
         createOrderCardEntity(cardId2, true)
     );
-    List<ResponseSummaryOrderCard> expectedResponse = mockOrderCard.stream()
-        .map(ResponseSummaryOrderCard::new)
-        .toList();
+    Page<OrderCard> mockPage = new PageImpl<>(mockOrderCard);
+    Page<ResponseOrderCard> expectedResponse = mockPage
+        .map(ResponseOrderCard::new);
 
-    when(service.listAllOrderCards()).thenReturn(mockOrderCard);
+    when(service.pageAllOrderCards(any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
     mockMvc.perform(get("/cards")
@@ -92,7 +97,7 @@ class OrderCardTest extends BaseTest {
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listAllOrderCards();
+    verify(service, times(1)).pageAllOrderCards(any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 
@@ -105,11 +110,11 @@ class OrderCardTest extends BaseTest {
         createOrderCardEntity(cardId1, false),
         createOrderCardEntity(cardId2, true)
     );
-    List<ResponseSummaryOrderCard> expectedResponse = mockOrderCard.stream()
-        .map(ResponseSummaryOrderCard::new)
-        .toList();
+    Page<OrderCard> mockPage = new PageImpl<>(mockOrderCard);
+    Page<ResponseSummaryOrderCard> expectedResponse = mockPage
+        .map(ResponseSummaryOrderCard::new);
 
-    when(service.listActiveOrderCards()).thenReturn(mockOrderCard);
+    when(service.pageActiveOrderCards(any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
     mockMvc.perform(get("/cards/active")
@@ -119,7 +124,7 @@ class OrderCardTest extends BaseTest {
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listActiveOrderCards();
+    verify(service, times(1)).pageActiveOrderCards(any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 }

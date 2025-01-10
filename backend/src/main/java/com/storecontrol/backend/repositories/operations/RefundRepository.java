@@ -1,6 +1,8 @@
 package com.storecontrol.backend.repositories.operations;
 
 import com.storecontrol.backend.models.operations.Refund;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,5 +15,5 @@ public interface RefundRepository extends JpaRepository<Refund, UUID> {
   Optional<Refund> findByUuidValidTrue(UUID uuid);
 
   @Query("select r from Refund r where r.valid = true")
-  List<Refund> findAllValidTrue();
+  Page<Refund> findAllValidTrue(Pageable pageable);
 }

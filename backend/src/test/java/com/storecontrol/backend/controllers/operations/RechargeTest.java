@@ -4,12 +4,17 @@ import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.operations.Recharge;
+import com.storecontrol.backend.models.operations.purchases.Purchase;
+import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.response.ResponseRecharge;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryRecharge;
 import com.storecontrol.backend.services.operations.RechargeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
 import java.util.List;
@@ -92,11 +97,11 @@ class RechargeTest extends BaseTest {
         createRechargeEntity(UUID.randomUUID(), mockCustomer1, false),
         createRechargeEntity(UUID.randomUUID(), mockCustomer2, false)
     );
-    List<ResponseSummaryRecharge> expectedResponse = mockRecharges.stream()
-        .map(ResponseSummaryRecharge::new)
-        .toList();
+    Page<Recharge> mockPage = new PageImpl<>(mockRecharges);
+    Page<ResponseSummaryRecharge> expectedResponse = mockPage
+        .map(ResponseSummaryRecharge::new);
 
-    when(service.listRecharges()).thenReturn(mockRecharges);
+    when(service.pageRecharges(any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
     mockMvc.perform(get("/recharges")
@@ -106,7 +111,7 @@ class RechargeTest extends BaseTest {
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listRecharges();
+    verify(service, times(1)).pageRecharges(any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 

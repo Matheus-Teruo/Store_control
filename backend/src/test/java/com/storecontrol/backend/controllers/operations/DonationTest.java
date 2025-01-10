@@ -3,12 +3,16 @@ package com.storecontrol.backend.controllers.operations;
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
+import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
 import com.storecontrol.backend.models.operations.Donation;
 import com.storecontrol.backend.models.operations.response.ResponseDonation;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryDonation;
 import com.storecontrol.backend.services.operations.DonationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
 import java.util.List;
@@ -60,11 +64,11 @@ class DonationTest extends BaseTest {
         createDonationEntity(UUID.randomUUID(), mockCustomer1),
         createDonationEntity(UUID.randomUUID(), mockCustomer2)
     );
-    List<ResponseSummaryDonation> expectedResponse = mockDonations.stream()
-        .map(ResponseSummaryDonation::new)
-        .toList();
+    Page<Donation> mockPage = new PageImpl<>(mockDonations);
+    Page<ResponseSummaryDonation> expectedResponse = mockPage
+        .map(ResponseSummaryDonation::new);
 
-    when(service.listDonations()).thenReturn(mockDonations);
+    when(service.pageDonations(any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
     mockMvc.perform(get("/donations")
@@ -74,7 +78,7 @@ class DonationTest extends BaseTest {
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listDonations();
+    verify(service, times(1)).pageDonations(any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 }

@@ -1,6 +1,8 @@
 package com.storecontrol.backend.repositories.stands;
 
 import com.storecontrol.backend.models.stands.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -14,6 +16,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
   @Query("select p from Product p where p.valid = true")
   List<Product> findAllValidTrue();
+
+  @Query("select p from Product p where p.valid = true and (:name is null or lower(p.productName) like lower(concat('%', :name, '%')))")
+  Page<Product> findAllValidTruePage(String name, Pageable pageable);
 
   boolean existsByProductName(String productName);
 }

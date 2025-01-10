@@ -11,6 +11,9 @@ import com.storecontrol.backend.services.stands.ProductService;
 import com.storecontrol.backend.services.stands.S3Service;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
 import java.util.List;
@@ -83,21 +86,21 @@ class ProductTest extends BaseTest {
         createProductEntity(UUID.randomUUID()),
         createProductEntity(UUID.randomUUID())
     );
-    List<ResponseSummaryProduct> expectedResponse = mockProducts.stream()
-        .map(ResponseSummaryProduct::new)
-        .toList();
+    Page<Product> mockPage = new PageImpl<>(mockProducts);
+    Page<ResponseSummaryProduct> expectedResponse = mockPage
+        .map(ResponseSummaryProduct::new);
 
-    when(service.listProducts()).thenReturn(mockProducts);
+    when(service.pageProducts(any(String.class), any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
-    mockMvc.perform(get("/products")
+    mockMvc.perform(get("/products?productName=")
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(jsonPath("$.content.length()").value(2))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listProducts();
+    verify(service, times(1)).pageProducts(any(String.class), any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 

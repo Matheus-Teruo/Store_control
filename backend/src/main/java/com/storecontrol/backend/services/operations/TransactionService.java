@@ -11,6 +11,8 @@ import com.storecontrol.backend.services.volunteers.VoluntaryService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -65,8 +67,8 @@ public class TransactionService {
         );
   }
 
-  public List<Transaction> listTransactions() {
-    return repository.findAllValidTrue();
+  public Page<Transaction> pageTransactions(Pageable pageable) {
+    return repository.findAllValidTrue(pageable);
   }
 
   public List<Transaction> listLast3Purchases(UUID voluntaryUuid) {

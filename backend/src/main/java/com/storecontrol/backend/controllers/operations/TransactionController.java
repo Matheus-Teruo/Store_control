@@ -6,6 +6,8 @@ import com.storecontrol.backend.models.operations.response.ResponseTransaction;
 import com.storecontrol.backend.services.operations.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -45,10 +47,10 @@ public class TransactionController {
   }
 
   @GetMapping
-  public ResponseEntity<List<ResponseSummaryTransaction>> readTransactions() {
-    var transactions = service.listTransactions();
+  public ResponseEntity<Page<ResponseSummaryTransaction>> readTransactions(Pageable pageable) {
+    var transactions = service.pageTransactions(pageable);
 
-    var response = transactions.stream().map(ResponseSummaryTransaction::new).toList();
+    var response = transactions.map(ResponseSummaryTransaction::new);
     return ResponseEntity.ok(response);
   }
 

@@ -8,10 +8,11 @@ import com.storecontrol.backend.models.volunteers.response.ResponseVoluntary;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -32,10 +33,12 @@ public class VoluntaryController {
   }
 
   @GetMapping
-  public ResponseEntity<List<ResponseSummaryVoluntary>> readVolunteers() {
-    var volunteers = service.listVolunteers();
+  public ResponseEntity<Page<ResponseSummaryVoluntary>> readVolunteers(
+      Pageable pageable
+  ) {
+    var volunteers = service.pageVolunteers(pageable);
 
-    var response = volunteers.stream().map(ResponseSummaryVoluntary::new).toList();
+    var response = volunteers.map(ResponseSummaryVoluntary::new);
     return ResponseEntity.ok(response);
   }
 

@@ -9,6 +9,8 @@ import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
 import com.storecontrol.backend.services.customers.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,18 +42,18 @@ public class CustomerController {
   }
 
   @GetMapping("/active")
-  public ResponseEntity<List<ResponseSummaryCustomer>> readActiveCustomers() {
-    var customers = service.listActiveCustomers();
+  public ResponseEntity<Page<ResponseSummaryCustomer>> readActiveCustomers(Pageable pageable) {
+    var customers = service.pageActiveCustomers(pageable);
 
-    var response = customers.stream().map(ResponseSummaryCustomer::new).toList();
+    var response = customers.map(ResponseSummaryCustomer::new);
     return ResponseEntity.ok(response);
   }
 
   @GetMapping
-  public ResponseEntity<List<ResponseSummaryCustomer>> readCustomers() {
-    var customers = service.listCustomers();
+  public ResponseEntity<Page<ResponseSummaryCustomer>> readCustomers(Pageable pageable) {
+    var customers = service.pageCustomers(pageable);
 
-    var response = customers.stream().map(ResponseSummaryCustomer::new).toList();
+    var response = customers.map(ResponseSummaryCustomer::new);
     return ResponseEntity.ok(response);
   }
 

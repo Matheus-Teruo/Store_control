@@ -1,6 +1,8 @@
 package com.storecontrol.backend.repositories.customers;
 
 import com.storecontrol.backend.models.customers.Customer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,5 +18,5 @@ public interface CustomerRepository extends JpaRepository<Customer, UUID> {
   Optional<Customer> findByOrderCardId(String card_id);
 
   @Query("select c from Customer c where c.inUse = true")
-  List<Customer> findAllActiveTrue();
+  Page<Customer> findAllActiveTrue(Pageable pageable);
 }
