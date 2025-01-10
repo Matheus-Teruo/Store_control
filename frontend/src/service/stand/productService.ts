@@ -18,12 +18,20 @@ export const getProduct = async (productUuid: string): Promise<Product> => {
 };
 
 export const getProducts = async (
-  page: number = 0,
-  size: number = 20,
+  productName?: string,
+  standUuid?: string,
+  page?: number,
+  size?: number,
   sort?: "asc" | "desc",
 ): Promise<SummaryProduct[]> => {
   const response = await api.get<SummaryProduct[]>("products", {
-    params: { page: page, size: size, sort: sort },
+    params: {
+      productName: productName,
+      standUuid: standUuid,
+      page: page,
+      size: size,
+      sort: sort,
+    },
   });
   return response.data;
 };

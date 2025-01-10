@@ -16,12 +16,32 @@ export const getCard = async (cardId: string): Promise<OrderCard> => {
   return response.data;
 };
 
-export const getCards = async (): Promise<OrderCard[]> => {
-  const response = await api.get<OrderCard[]>("cards");
+export const getCards = async (
+  page?: number,
+  size?: number,
+  sort?: "asc" | "desc",
+): Promise<OrderCard[]> => {
+  const response = await api.get<OrderCard[]>("cards", {
+    params: {
+      page: page,
+      size: size,
+      sort: sort,
+    },
+  });
   return response.data;
 };
 
-export const getActivesCards = async (): Promise<SummaryOrderCard[]> => {
-  const response = await api.get<SummaryOrderCard[]>("cards");
+export const getActivesCards = async (
+  page?: number,
+  size?: number,
+  sort?: "asc" | "desc",
+): Promise<SummaryOrderCard[]> => {
+  const response = await api.get<SummaryOrderCard[]>("cards/active", {
+    params: {
+      page: page,
+      size: size,
+      sort: sort,
+    },
+  });
   return response.data;
 };

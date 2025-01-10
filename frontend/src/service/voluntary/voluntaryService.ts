@@ -12,8 +12,18 @@ export const getVoluntary = async (
   return response.data;
 };
 
-export const getVolunteers = async (): Promise<SummaryVoluntary[]> => {
-  const response = await api.get<SummaryVoluntary[]>("/volunteers");
+export const getVolunteers = async (
+  page?: number,
+  size?: number,
+  sort?: "asc" | "desc",
+): Promise<SummaryVoluntary[]> => {
+  const response = await api.get<SummaryVoluntary[]>("/volunteers", {
+    params: {
+      page: page,
+      size: size,
+      sort: sort,
+    },
+  });
   return response.data;
 };
 

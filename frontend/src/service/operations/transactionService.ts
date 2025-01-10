@@ -20,8 +20,18 @@ export const getTransaction = async (
   return response.data;
 };
 
-export const getTransactions = async (): Promise<SummaryTransaction[]> => {
-  const response = await api.get<SummaryTransaction[]>("transactions");
+export const getTransactions = async (
+  page?: number,
+  size?: number,
+  sort?: "asc" | "desc",
+): Promise<SummaryTransaction[]> => {
+  const response = await api.get<SummaryTransaction[]>("transactions", {
+    params: {
+      page: page,
+      size: size,
+      sort: sort,
+    },
+  });
   return response.data;
 };
 

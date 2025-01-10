@@ -16,8 +16,18 @@ export const getRecharge = async (rechargeUuid: string): Promise<Recharge> => {
   return response.data;
 };
 
-export const getRecharges = async (): Promise<SummaryRecharge[]> => {
-  const response = await api.get<SummaryRecharge[]>("recharges");
+export const getRecharges = async (
+  page?: number,
+  size?: number,
+  sort?: "asc" | "desc",
+): Promise<SummaryRecharge[]> => {
+  const response = await api.get<SummaryRecharge[]>("recharges", {
+    params: {
+      page: page,
+      size: size,
+      sort: sort,
+    },
+  });
   return response.data;
 };
 

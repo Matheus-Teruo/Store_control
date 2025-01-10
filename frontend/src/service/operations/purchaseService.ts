@@ -17,8 +17,18 @@ export const getPurchase = async (purchaseUuid: string): Promise<Purchase> => {
   return response.data;
 };
 
-export const getPurchases = async (): Promise<SummaryPurchase[]> => {
-  const response = await api.get<SummaryPurchase[]>("purchases");
+export const getPurchases = async (
+  page?: number,
+  size?: number,
+  sort?: "asc" | "desc",
+): Promise<SummaryPurchase[]> => {
+  const response = await api.get<SummaryPurchase[]>("purchases", {
+    params: {
+      page: page,
+      size: size,
+      sort: sort,
+    },
+  });
   return response.data;
 };
 

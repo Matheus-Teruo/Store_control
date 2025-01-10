@@ -6,7 +6,17 @@ export const getRefund = async (refundUuid: string): Promise<Refund> => {
   return response.data;
 };
 
-export const getRefunds = async (): Promise<SummaryRefund[]> => {
-  const response = await api.get<SummaryRefund[]>("refunds");
+export const getRefunds = async (
+  page?: number,
+  size?: number,
+  sort?: "asc" | "desc",
+): Promise<SummaryRefund[]> => {
+  const response = await api.get<SummaryRefund[]>("refunds", {
+    params: {
+      page: page,
+      size: size,
+      sort: sort,
+    },
+  });
   return response.data;
 };

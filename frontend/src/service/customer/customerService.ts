@@ -17,13 +17,33 @@ export const getCustomerbyCard = async (
   return response.data;
 };
 
-export const getCustomers = async (): Promise<SummaryCustomer[]> => {
-  const response = await api.get<SummaryCustomer[]>("customers");
+export const getCustomers = async (
+  page?: number,
+  size?: number,
+  sort?: "asc" | "desc",
+): Promise<SummaryCustomer[]> => {
+  const response = await api.get<SummaryCustomer[]>("customers", {
+    params: {
+      page: page,
+      size: size,
+      sort: sort,
+    },
+  });
   return response.data;
 };
 
-export const getActiveCustomers = async (): Promise<SummaryCustomer[]> => {
-  const response = await api.get<SummaryCustomer[]>("customers/active");
+export const getActiveCustomers = async (
+  page?: number,
+  size?: number,
+  sort?: "asc" | "desc",
+): Promise<SummaryCustomer[]> => {
+  const response = await api.get<SummaryCustomer[]>("customers/active", {
+    params: {
+      page: page,
+      size: size,
+      sort: sort,
+    },
+  });
   return response.data;
 };
 

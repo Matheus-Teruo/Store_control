@@ -6,7 +6,17 @@ export const getDonation = async (donationUuid: string): Promise<Donation> => {
   return response.data;
 };
 
-export const getDonations = async (): Promise<SummaryDonation[]> => {
-  const response = await api.get<SummaryDonation[]>("donations");
+export const getDonations = async (
+  page?: number,
+  size?: number,
+  sort?: "asc" | "desc",
+): Promise<SummaryDonation[]> => {
+  const response = await api.get<SummaryDonation[]>("donations", {
+    params: {
+      page: page,
+      size: size,
+      sort: sort,
+    },
+  });
   return response.data;
 };
