@@ -17,6 +17,8 @@ import Purchases from "./pages/analytics/Purchases";
 import Statistics from "./pages/analytics/Statistics";
 import AuthPage from "./components/AuthBackground";
 import NotificationManager from "./components/NotificationManager";
+import AdminHeader from "./components/AdminHeader";
+import Transactions from "./pages/admin/Transactions";
 
 function AppRouter() {
   return (
@@ -41,10 +43,11 @@ function AppRouter() {
           <Route path="purchases" element={<Purchases />} />
           <Route path="statistics" element={<Statistics />} />
         </Route>
-        <Route path="/admin">
-          <Route path="association" element={<Associations />} />
+        <Route path="/admin" element={<AdminHeader />}>
+          <Route path="associations" element={<Associations />} />
           <Route path="cards" element={<Cards />} />
           <Route path="stands" element={<Stands />} />
+          <Route path="transactions" element={<Transactions />} />
           <Route path="volunteers" element={<Volunteers />} />
         </Route>
       </Routes>

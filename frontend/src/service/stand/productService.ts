@@ -17,8 +17,14 @@ export const getProduct = async (productUuid: string): Promise<Product> => {
   return response.data;
 };
 
-export const getProducts = async (): Promise<SummaryProduct[]> => {
-  const response = await api.get<SummaryProduct[]>("products");
+export const getProducts = async (
+  page: number = 0,
+  size: number = 20,
+  sort?: "asc" | "desc",
+): Promise<SummaryProduct[]> => {
+  const response = await api.get<SummaryProduct[]>("products", {
+    params: { page: page, size: size, sort: sort },
+  });
   return response.data;
 };
 

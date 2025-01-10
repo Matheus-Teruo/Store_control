@@ -13,6 +13,7 @@ import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useUserContext";
+import { isUserLogged, isUserUnlogged } from "@/utils/checkAuthentication";
 
 const voluntaryInitialValue: Voluntary = {
   uuid: "",
@@ -39,17 +40,15 @@ function User() {
 
   useEffect(() => {
     const fetchVoluntary = async () => {
-      if (user) {
-        if (user !== "unlogged") {
-          try {
-            const voluntary = await getVoluntary(user.uuid);
-            setUserProperties(voluntary);
-          } catch (error) {
-            handleApiError(error);
-          }
-        } else {
-          navigate("/");
+      if (isUserLogged(user)) {
+        try {
+          const voluntary = await getVoluntary(user.uuid);
+          setUserProperties(voluntary);
+        } catch (error) {
+          handleApiError(error);
         }
+      } else if (isUserUnlogged(user)) {
+        navigate("/");
       }
     };
     fetchVoluntary();
