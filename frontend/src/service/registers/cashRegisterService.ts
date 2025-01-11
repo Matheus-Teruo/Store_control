@@ -4,6 +4,7 @@ import CashRegister, {
   SummaryCashRegister,
   UpdateCashRegister,
 } from "@data/registers/CashRegister";
+import { PaginatedResponse } from "@service/PagesType";
 
 export const createRegister = async (
   register: CreateCashRegister,
@@ -19,8 +20,26 @@ export const getRegister = async (
   return response.data;
 };
 
-export const getRegisters = async (): Promise<SummaryCashRegister[]> => {
-  const response = await api.get<SummaryCashRegister[]>("registers");
+export const getRegisters = async (
+  page?: number,
+  size?: number,
+  sort?: "asc" | "desc",
+): Promise<PaginatedResponse<SummaryCashRegister>> => {
+  const response = await api.get<PaginatedResponse<SummaryCashRegister>>(
+    "registers",
+    {
+      params: {
+        page: page,
+        size: size,
+        sort: sort,
+      },
+    },
+  );
+  return response.data;
+};
+
+export const getListRegisters = async (): Promise<SummaryCashRegister[]> => {
+  const response = await api.get<SummaryCashRegister[]>("registers/list");
   return response.data;
 };
 
