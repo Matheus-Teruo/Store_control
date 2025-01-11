@@ -1,13 +1,13 @@
 import { useHandleApiError } from "@/axios/handlerApiError";
 import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import { SummaryStand } from "@data/stands/Stand";
-import { getStands } from "@service/stand/standService";
+import { SummaryTransaction } from "@data/operations/Transaction";
+import { getTransactions } from "@service/operations/transactionService";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Stands() {
-  const [stands, setStands] = useState<SummaryStand[]>([]);
+function Transactions() {
+  const [transactions, setTransactions] = useState<SummaryTransaction[]>([]);
   const handleApiError = useHandleApiError();
   const { user } = useUserContext();
   const navigate = useNavigate();
@@ -16,8 +16,8 @@ function Stands() {
     const fetchVoluntary = async () => {
       if (isUserLogged(user)) {
         try {
-          const response = await getStands();
-          setStands(response.content);
+          const response = await getTransactions();
+          setTransactions(response.content);
         } catch (error) {
           handleApiError(error);
         }
@@ -30,11 +30,15 @@ function Stands() {
 
   return (
     <div>
-      {stands.map((stand) => (
-        <div key={stand.uuid}>{stand.standName}</div>
+      {transactions.map((transaction) => (
+        <div key={transaction.uuid}>
+          <p>{transaction.amount}</p>
+          <p>{transaction.transactionTypeEnum}</p>
+          <p>{transaction.transactionTimeStamp}</p>
+        </div>
       ))}
     </div>
   );
 }
 
-export default Stands;
+export default Transactions;

@@ -2,7 +2,7 @@ import { useHandleApiError } from "@/axios/handlerApiError";
 import styles from "./OptionsFilter.module.scss";
 import { SummaryStand } from "@data/stands/Stand";
 import { useEffect, useState } from "react";
-import { getStands } from "@service/stand/standService";
+import { getListStands } from "@service/stand/standService";
 
 interface OptionsFilterProps {
   value: string | undefined;
@@ -16,7 +16,7 @@ function OptionsFilter({ value, onChange }: OptionsFilterProps) {
   useEffect(() => {
     const fetchStand = async () => {
       try {
-        const stands = await getStands();
+        const stands = await getListStands();
         setListStands(stands);
       } catch (error) {
         handleApiError(error);

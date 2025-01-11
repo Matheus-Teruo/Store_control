@@ -35,6 +35,9 @@ function Hub() {
         <li>
           <Link to="/workspace/products">Produtos</Link>
         </li>
+        <li>
+          <Link to="/workspace/transaction">Transação</Link>
+        </li>
         {isManegement(user) && <div>sessão gerente</div>}
         {isAdmin(user) && (
           <>
