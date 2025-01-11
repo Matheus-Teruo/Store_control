@@ -33,7 +33,7 @@ export interface UpdateRoleVoluntary {
 }
 
 export enum VoluntaryRole {
-  ROLE_USER = "voluntary",
-  ROLE_MANAGEMENT = "management",
-  ROLE_ADMIN = "admin",
+  ROLE_USER = "ROLE_USER",
+  ROLE_MANAGEMENT = "ROLE_MANAGEMENT",
+  ROLE_ADMIN = "ROLE_ADMIN",
 }

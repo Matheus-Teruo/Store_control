@@ -1,6 +1,7 @@
 import styles from "./Home.module.scss";
 import Logo from "@/assets/image/LogoStoreControl.png";
 import Button from "@/components/utils/Button";
+import { isUserLogged } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -34,7 +35,7 @@ function Home() {
           <Button onClick={() => setShowScanner(true)}>
             <span>Scanner</span>
           </Button>
-          {user ? (
+          {isUserLogged(user) ? (
             <>
               <Link
                 className={`${styles.link} ${styles.linkMenu}`}

@@ -25,15 +25,15 @@ function Hub() {
       <ul>
         {isUserLogged(user) && isCashier(user.summaryFunction) ? (
           <li>
-            <Link to="/cashiers">Caixas</Link>
+            <Link to="/workspace/cashiers">Caixas</Link>
           </li>
         ) : (
           <li>
-            <Link to="/sales">Vendas</Link>
+            <Link to="/workspace/sales">Vendas</Link>
           </li>
         )}
         <li>
-          <Link to="/products">Produtos</Link>
+          <Link to="/workspace/products">Produtos</Link>
         </li>
         {isManegement(user) && <div>sessão gerente</div>}
         {isAdmin(user) && (
