@@ -40,6 +40,11 @@ export const getProducts = async (
   return response.data;
 };
 
+export const getListProducts = async (): Promise<SummaryProduct[]> => {
+  const response = await api.get<SummaryProduct[]>("products/list");
+  return response.data;
+};
+
 export const updateProduct = async (
   product: UpdateProduct,
 ): Promise<Product> => {

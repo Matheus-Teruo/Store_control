@@ -4,6 +4,7 @@ import Association, {
   SummaryAssociation,
   UpdateAssociation,
 } from "@data/stands/Association";
+import { PaginatedResponse } from "@service/PagesType";
 
 export const createAssociation = async (
   association: CreateAssociation,
@@ -21,8 +22,26 @@ export const getAssociation = async (
   return response.data;
 };
 
-export const getAssociations = async (): Promise<SummaryAssociation[]> => {
-  const response = await api.get<SummaryAssociation[]>("associations");
+export const getAssociations = async (
+  page?: number,
+  size?: number,
+  sort?: "asc" | "desc",
+): Promise<PaginatedResponse<SummaryAssociation>> => {
+  const response = await api.get<PaginatedResponse<SummaryAssociation>>(
+    "associations",
+    {
+      params: {
+        page: page,
+        size: size,
+        sort: sort,
+      },
+    },
+  );
+  return response.data;
+};
+
+export const getListAssociations = async (): Promise<SummaryAssociation[]> => {
+  const response = await api.get<SummaryAssociation[]>("associations/list");
   return response.data;
 };
 

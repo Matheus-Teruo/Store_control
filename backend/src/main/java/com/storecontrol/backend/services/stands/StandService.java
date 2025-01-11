@@ -10,6 +10,8 @@ import com.storecontrol.backend.services.stands.validation.StandValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,6 +52,10 @@ public class StandService {
             MessageResolver.getInstance().getMessage("service.exception.stand.get.validation.message"),
             uuid.toString())
         );
+  }
+
+  public Page<Stand> pageStands(Pageable pageable) {
+    return repository.findAllValidTruePage(pageable);
   }
 
   public List<Stand> listStands() {

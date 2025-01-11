@@ -7,6 +7,8 @@ import com.storecontrol.backend.models.stands.response.ResponseSummaryStand;
 import com.storecontrol.backend.services.stands.StandService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -44,7 +46,15 @@ public class StandController {
   }
 
   @GetMapping
-  public ResponseEntity<List<ResponseSummaryStand>> readStands() {
+  public ResponseEntity<Page<ResponseSummaryStand>> readStands(Pageable pageable) {
+    var stands = service.pageStands(pageable);
+
+    var response = stands.map(ResponseSummaryStand::new);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/list")
+  public ResponseEntity<List<ResponseSummaryStand>> readListStands() {
     var stands = service.listStands();
 
     var response = stands.stream().map(ResponseSummaryStand::new).toList();

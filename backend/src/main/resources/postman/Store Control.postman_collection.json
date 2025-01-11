@@ -69,6 +69,34 @@
 					"response": []
 				},
 				{
+					"name": "Page Associations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}associations?page&size&sort",
+							"host": [
+								"{{hostPath}}associations"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": null
+								},
+								{
+									"key": "size",
+									"value": null
+								},
+								{
+									"key": "sort",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "List Associations",
 					"request": {
 						"method": "GET",
@@ -707,6 +735,34 @@
 					"response": []
 				},
 				{
+					"name": "Page Stands",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}stands?page&size&sort",
+							"host": [
+								"{{hostPath}}stands"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": null
+								},
+								{
+									"key": "size",
+									"value": null
+								},
+								{
+									"key": "sort",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "List Stands",
 					"request": {
 						"method": "GET",
@@ -876,6 +932,20 @@
 									"value": null,
 									"disabled": true
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}products",
+							"host": [
+								"{{hostPath}}products"
 							]
 						}
 					},

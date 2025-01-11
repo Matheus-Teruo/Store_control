@@ -7,6 +7,8 @@ import com.storecontrol.backend.models.stands.response.ResponseSummaryAssociatio
 import com.storecontrol.backend.services.stands.AssociationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -43,7 +45,15 @@ public class AssociationController {
   }
 
   @GetMapping
-  public ResponseEntity<List<ResponseSummaryAssociation>> readAssociations() {
+  public ResponseEntity<Page<ResponseSummaryAssociation>> readAssociations(Pageable pageable) {
+    var associations = service.pageAssociations(pageable);
+
+    var response = associations.map(ResponseSummaryAssociation::new);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/list")
+  public ResponseEntity<List<ResponseSummaryAssociation>> readListAssociations() {
     var associations = service.listAssociations();
 
     var response = associations.stream().map(ResponseSummaryAssociation::new).toList();

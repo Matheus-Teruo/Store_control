@@ -2,13 +2,18 @@ package com.storecontrol.backend.controllers.stands;
 
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.stands.Association;
+import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.stands.request.RequestCreateAssociation;
 import com.storecontrol.backend.models.stands.request.RequestUpdateAssociation;
 import com.storecontrol.backend.models.stands.response.ResponseAssociation;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryAssociation;
+import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
 import com.storecontrol.backend.services.stands.AssociationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
 import java.util.List;
@@ -75,6 +80,31 @@ class AssociationTest extends BaseTest {
         createAssociationEntity(UUID.randomUUID()),
         createAssociationEntity(UUID.randomUUID())
     );
+    Page<Association> mockPage = new PageImpl<>(mockAssociations);
+    Page<ResponseSummaryAssociation> expectedResponse = mockPage
+        .map(ResponseSummaryAssociation::new);
+
+    when(service.pageAssociations(any(Pageable.class))).thenReturn(mockPage);
+
+    // When & Then
+    mockMvc.perform(get("/associations")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(content().json(toJson(expectedResponse)));
+
+    // Verify interactions
+    verify(service, times(1)).pageAssociations(any(Pageable.class));
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
+  void testReadListAssociationsSuccess() throws Exception {
+    // Given
+    List<Association> mockAssociations = List.of(
+        createAssociationEntity(UUID.randomUUID()),
+        createAssociationEntity(UUID.randomUUID())
+    );
     List<ResponseSummaryAssociation> expectedResponse = mockAssociations.stream()
         .map(ResponseSummaryAssociation::new)
         .toList();
@@ -82,7 +112,7 @@ class AssociationTest extends BaseTest {
     when(service.listAssociations()).thenReturn(mockAssociations);
 
     // When & Then
-    mockMvc.perform(get("/associations")
+    mockMvc.perform(get("/associations/list")
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))

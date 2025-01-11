@@ -33,8 +33,8 @@ function Cashier() {
     const fetchVoluntary = async () => {
       if (isUserLogged(user) && isCashier(user.summaryFunction)) {
         try {
-          const products = await getProducts();
-          setProducts(products);
+          const response = await getProducts();
+          setProducts(response.content);
         } catch (error) {
           handleApiError(error);
         }

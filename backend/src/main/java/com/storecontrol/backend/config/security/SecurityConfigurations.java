@@ -91,9 +91,9 @@ public class SecurityConfigurations {
 
   private static final String[] AUTHORIZED_GET_ENDPOINTS_ALL = {
       "/products",
+      "/products/list",
       "/products/{uuid}",
-      "/stands",
-      "/associations",
+      "/stands/list",
       "/customers/card/{cardId}"
   };
 
@@ -108,7 +108,6 @@ public class SecurityConfigurations {
       "/purchases/last3",
       "/purchases/{uuid}",
       "/recharges/last3",
-      "/transactions/last3",
       "/volunteers/{uuid}"
   };
 
@@ -132,7 +131,8 @@ public class SecurityConfigurations {
 
   private static final String[] AUTHORIZED_GET_ENDPOINTS_MANAGEMENT = {
       "/volunteers",
-      "/purchase"
+      "/purchase",
+      "/transactions/last3",
   };
 
   private static final String[] AUTHORIZED_POST_ENDPOINTS_MANAGEMENT = {

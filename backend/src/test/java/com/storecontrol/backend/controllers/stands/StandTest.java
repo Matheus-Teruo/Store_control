@@ -2,14 +2,19 @@ package com.storecontrol.backend.controllers.stands;
 
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.stands.Association;
+import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.request.RequestCreateStand;
 import com.storecontrol.backend.models.stands.request.RequestUpdateStand;
 import com.storecontrol.backend.models.stands.response.ResponseStand;
+import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryStand;
 import com.storecontrol.backend.services.stands.StandService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
 import java.util.List;
@@ -78,6 +83,31 @@ class StandTest extends BaseTest {
         createStandEntity(UUID.randomUUID()),
         createStandEntity(UUID.randomUUID())
     );
+    Page<Stand> mockPage = new PageImpl<>(mockStands);
+    Page<ResponseSummaryStand> expectedResponse = mockPage
+        .map(ResponseSummaryStand::new);
+
+    when(service.pageStands(any(Pageable.class))).thenReturn(mockPage);
+
+    // When & Then
+    mockMvc.perform(get("/stands")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(content().json(toJson(expectedResponse)));
+
+    // Verify interactions
+    verify(service, times(1)).pageStands(any(Pageable.class));
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
+  void testReadListStandsSuccess() throws Exception {
+    // Given
+    List<Stand> mockStands = List.of(
+        createStandEntity(UUID.randomUUID()),
+        createStandEntity(UUID.randomUUID())
+    );
     List<ResponseSummaryStand> expectedResponse = mockStands.stream()
         .map(ResponseSummaryStand::new)
         .toList();
@@ -85,7 +115,7 @@ class StandTest extends BaseTest {
     when(service.listStands()).thenReturn(mockStands);
 
     // When & Then
-    mockMvc.perform(get("/stands")
+    mockMvc.perform(get("/stands/list")
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))

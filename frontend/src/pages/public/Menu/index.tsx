@@ -15,36 +15,23 @@ function Menu() {
   );
   const [filter, setFilter] = useState<string>("");
   const [products, setProducts] = useState<SummaryProduct[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<SummaryProduct[]>(
-    [],
-  );
   const [toggleView, setToggleView] = useState<ViewType>("Items");
   const handleApiError = useHandleApiError();
 
   useEffect(() => {
     const fetchStand = async () => {
       try {
-        const products = await getProducts();
-        setProducts(products);
+        const response = await getProducts(
+          filter.toLowerCase(),
+          selectedStands,
+        );
+        setProducts(response.content);
       } catch (error) {
         handleApiError(error);
       }
     };
     fetchStand();
-  }, [handleApiError]);
-
-  useEffect(() => {
-    const filtered = products.filter((product) => {
-      const isInStock = selectedStands
-        ? product.standUuid === selectedStands
-        : true;
-      const matchesFilter = product.productName
-        .toLowerCase()
-        .includes(filter.toLowerCase());
-      return isInStock && matchesFilter;
-    });
-    setFilteredProducts(filtered);
-  }, [filter, selectedStands, products]);
+  }, [handleApiError, filter, selectedStands]);
 
   const handleFilterStand = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedStands(event.target.value);
@@ -75,15 +62,11 @@ function Menu() {
           <Button onClick={handleToggleView}>Alternar</Button>
         </div>
         <ul>
-          {filteredProducts.map((product) => (
+          {products.map((product) => (
             <li key={product.uuid}>
               <div className={styles.frame}>
                 {
-                  product.productImg !== null ? (
-                    <img src={product.productImg} />
-                  ) : (
-                    <></>
-                  )
+                  product.productImg ? <img src={product.productImg} /> : <></>
                   // futuramente usar SVG padrão
                 }
               </div>

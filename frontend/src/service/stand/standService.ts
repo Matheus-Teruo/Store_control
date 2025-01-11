@@ -4,6 +4,7 @@ import Stand, {
   SummaryStand,
   UpdateStand,
 } from "@data/stands/Stand";
+import { PaginatedResponse } from "@service/PagesType";
 
 export const createStand = async (stand: CreateStand): Promise<Stand> => {
   const response = await api.post<Stand>("stands", stand);
@@ -15,8 +16,23 @@ export const getStand = async (standUuid: string): Promise<Stand> => {
   return response.data;
 };
 
-export const getStands = async (): Promise<SummaryStand[]> => {
-  const response = await api.get<SummaryStand[]>("stands");
+export const getStands = async (
+  page?: number,
+  size?: number,
+  sort?: "asc" | "desc",
+): Promise<PaginatedResponse<SummaryStand>> => {
+  const response = await api.get<PaginatedResponse<SummaryStand>>("stands", {
+    params: {
+      page: page,
+      size: size,
+      sort: sort,
+    },
+  });
+  return response.data;
+};
+
+export const getListStands = async (): Promise<SummaryStand[]> => {
+  const response = await api.get<SummaryStand[]>("stands/list");
   return response.data;
 };
 

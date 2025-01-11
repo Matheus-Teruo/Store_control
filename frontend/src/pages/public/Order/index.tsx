@@ -4,7 +4,7 @@ import { useHandleApiError } from "@/axios/handlerApiError";
 import { getCustomerbyCard } from "@service/customer/customerService";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getProducts } from "@service/stand/productService";
+import { getListProducts } from "@service/stand/productService";
 import { SummaryProduct } from "@data/stands/Product";
 
 function Order() {
@@ -18,7 +18,7 @@ function Order() {
   useEffect(() => {
     const fetchStand = async () => {
       try {
-        const products = await getProducts();
+        const products = await getListProducts();
         const productsObject = products.reduce(
           (acc, product) => {
             const { uuid, ...rest } = product; // Extrai o uuid e o resto do objeto

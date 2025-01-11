@@ -6,6 +6,7 @@ import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.stands.response.ResponseProduct;
+import com.storecontrol.backend.models.stands.response.ResponseSummaryAssociation;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
 import com.storecontrol.backend.services.stands.ProductService;
 import com.storecontrol.backend.services.stands.S3Service;
@@ -101,6 +102,31 @@ class ProductTest extends BaseTest {
 
     // Verify interactions
     verify(service, times(1)).pageProducts(any(String.class),  any(UUID.class), any(Pageable.class));
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
+  void testReadListProductsSuccess() throws Exception {
+    // Given
+    List<Product> mockProducts = List.of(
+        createProductEntity(UUID.randomUUID()),
+        createProductEntity(UUID.randomUUID())
+    );
+    List<ResponseSummaryProduct> expectedResponse = mockProducts.stream()
+        .map(ResponseSummaryProduct::new)
+        .toList();
+
+    when(service.listProducts()).thenReturn(mockProducts);
+
+    // When & Then
+    mockMvc.perform(get("/products/list")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(content().json(toJson(expectedResponse)));
+
+    // Verify interactions
+    verify(service, times(1)).listProducts();
     verifyNoMoreInteractions(service);
   }
 

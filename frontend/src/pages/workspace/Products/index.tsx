@@ -21,8 +21,8 @@ function Products() {
     const fetchVoluntary = async () => {
       if (isUserLogged(user) && hasFunction(user.summaryFunction)) {
         try {
-          const products = await getProducts(page);
-          setProducts(products);
+          const response = await getProducts(undefined, undefined, page);
+          setProducts(response.content);
         } catch (error) {
           handleApiError(error);
         }

@@ -17,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -57,6 +58,14 @@ public class ProductController {
     var items = service.pageProducts(productName, standUuid, pageable);
 
     var response = items.map(ResponseSummaryProduct::new);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/list")
+  public ResponseEntity<List<ResponseSummaryProduct>> readListProducts() {
+    var items = service.listProducts();
+
+    var response = items.stream().map(ResponseSummaryProduct::new).toList();
     return ResponseEntity.ok(response);
   }
 

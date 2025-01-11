@@ -59,6 +59,10 @@ public class ProductService {
     return repository.findAllValidTruePage(productName, standUuid, pageable);
   }
 
+  public List<Product> listProducts() {
+    return repository.findAllValidTrue();
+  }
+
   public Map<UUID, Product> listProductsAsMap() {
     List<Product> products = repository.findAllValidTrue();
     return products.stream()
