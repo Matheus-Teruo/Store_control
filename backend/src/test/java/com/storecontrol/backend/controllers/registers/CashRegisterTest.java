@@ -6,9 +6,14 @@ import com.storecontrol.backend.models.registers.request.RequestCreateCashRegist
 import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
 import com.storecontrol.backend.models.registers.response.ResponseCashRegister;
 import com.storecontrol.backend.models.registers.response.ResponseSummaryCashRegister;
+import com.storecontrol.backend.models.stands.Association;
+import com.storecontrol.backend.models.stands.response.ResponseSummaryAssociation;
 import com.storecontrol.backend.services.registers.CashRegisterService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
 import java.util.List;
@@ -76,6 +81,31 @@ class CashRegisterTest extends BaseTest {
         createCashRegisterEntity(UUID.randomUUID()),
         createCashRegisterEntity(UUID.randomUUID())
     );
+    Page<CashRegister> mockPage = new PageImpl<>(mockCashRegisters);
+    Page<ResponseSummaryCashRegister> expectedResponse = mockPage
+        .map(ResponseSummaryCashRegister::new);
+
+    when(service.pageCashRegisters(any(Pageable.class))).thenReturn(mockPage);
+
+    // When & Then
+    mockMvc.perform(get("/registers")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content.length()").value(2))
+        .andExpect(content().json(toJson(expectedResponse)));
+
+    // Verify interactions
+    verify(service, times(1)).pageCashRegisters(any(Pageable.class));
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
+  void testReadListCashRegistersSuccess() throws Exception {
+    // Given
+    List<CashRegister> mockCashRegisters = List.of(
+        createCashRegisterEntity(UUID.randomUUID()),
+        createCashRegisterEntity(UUID.randomUUID())
+    );
     List<ResponseSummaryCashRegister> expectedResponse = mockCashRegisters.stream()
         .map(ResponseSummaryCashRegister::new)
         .toList();
@@ -83,7 +113,7 @@ class CashRegisterTest extends BaseTest {
     when(service.listCashRegisters()).thenReturn(mockCashRegisters);
 
     // When & Then
-    mockMvc.perform(get("/registers")
+    mockMvc.perform(get("/registers/list")
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))

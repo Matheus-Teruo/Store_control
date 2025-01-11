@@ -7,6 +7,8 @@ import com.storecontrol.backend.models.registers.response.ResponseSummaryCashReg
 import com.storecontrol.backend.services.registers.CashRegisterService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -44,6 +46,14 @@ public class CashRegisterController {
   }
 
   @GetMapping
+  public ResponseEntity<Page<ResponseSummaryCashRegister>> readCashRegisters(Pageable pageable) {
+    var stands = service.pageCashRegisters(pageable);
+
+    var response = stands.map(ResponseSummaryCashRegister::new);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/list")
   public ResponseEntity<List<ResponseSummaryCashRegister>> readCashRegisters() {
     var stands = service.listCashRegisters();
 

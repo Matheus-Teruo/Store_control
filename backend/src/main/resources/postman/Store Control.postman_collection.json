@@ -102,9 +102,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}associations",
+							"raw": "{{hostPath}}associations/list",
 							"host": [
 								"{{hostPath}}associations"
+							],
+							"path": [
+								"list"
 							]
 						}
 					},
@@ -224,14 +227,45 @@
 					"response": []
 				},
 				{
+					"name": "Page CashRegisters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}registers?page&size&sort",
+							"host": [
+								"{{hostPath}}registers"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": null
+								},
+								{
+									"key": "size",
+									"value": null
+								},
+								{
+									"key": "sort",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "List CashRegisters",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}registers",
+							"raw": "{{hostPath}}registers/list",
 							"host": [
 								"{{hostPath}}registers"
+							],
+							"path": [
+								"list"
 							]
 						}
 					},
@@ -768,9 +802,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}stands",
+							"raw": "{{hostPath}}stands/list",
 							"host": [
 								"{{hostPath}}stands"
+							],
+							"path": [
+								"list"
 							]
 						}
 					},
@@ -943,9 +980,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}products",
+							"raw": "{{hostPath}}products/list",
 							"host": [
 								"{{hostPath}}products"
+							],
+							"path": [
+								"list"
 							]
 						}
 					},
