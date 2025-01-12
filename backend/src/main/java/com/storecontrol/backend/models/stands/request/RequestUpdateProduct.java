@@ -9,12 +9,16 @@ public record RequestUpdateProduct(
     @NotNull(message = "{request.validation.updateProduct.uuid.notnull}")
     UUID uuid,
 
-    @Pattern(regexp = "^[\\p{L}\\p{N} ]{3,}$", message = "{request.validation.updateProduct.productName.pattern}")
+    @Size(min = 3, message = "{request.validation.updateProduct.productName.size}")
+    @Pattern(regexp = "^[\\p{L}\\p{N} ]*$", message = "{request.validation.updateProduct.productName.pattern}")
     String productName,
 
-    @Size(max = 255, message = "{request.validation.updateProduct.summary.size}")
+    @Size(min=3, max = 255, message = "{request.validation.updateProduct.summary.size}")
+    @Pattern(regexp = "^[\\p{L}\\p{N} ,.!()?]*$", message = "{request.validation.updateProduct.summary.pattern}")
     String summary,
 
+    @Size(min = 30, message = "{request.validation.updateProduct.description.size}")
+    @Pattern(regexp = "^[\\p{L}\\p{N} ,.!()?]*$", message = "{request.validation.updateProduct.description.pattern}")
     String description,
 
     @PositiveOrZero(message = "{request.validation.updateProduct.price.positiveOrZero}")

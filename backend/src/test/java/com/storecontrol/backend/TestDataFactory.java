@@ -271,7 +271,7 @@ public class TestDataFactory {
         uuid,
         nameOnlyLettersSpaceAndNumbers(),
         nameOnlyLettersSpaceAndNumbers(),
-        nameOnlyLettersSpaceAndNumbers(),
+        textOnlyLettersSpaceAndNumbers(),
         BigDecimal.TEN,
         BigDecimal.ZERO,
         1000,
@@ -300,7 +300,7 @@ public class TestDataFactory {
         uuid,
         nameOnlyLettersSpaceAndNumbers(),
         nameOnlyLettersSpaceAndNumbers(),
-        nameOnlyLettersSpaceAndNumbers(),
+        textOnlyLettersSpaceAndNumbers(),
         BigDecimal.TEN,
         BigDecimal.TWO,
         1000,
@@ -401,6 +401,12 @@ public class TestDataFactory {
   private static String nameOnlyLettersAndSpace() {
     String character = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ";
     int length = generateRandomLength(6, 30);
+    return generateRandomName(length, character);
+  }
+
+  private static String textOnlyLettersSpaceAndNumbers() {
+    String character = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789";
+    int length = generateRandomLength(35, 100);
     return generateRandomName(length, character);
   }
 

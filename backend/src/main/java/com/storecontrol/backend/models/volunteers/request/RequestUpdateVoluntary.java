@@ -2,6 +2,7 @@ package com.storecontrol.backend.models.volunteers.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.util.UUID;
 
@@ -9,13 +10,16 @@ public record RequestUpdateVoluntary(
     @NotNull(message = "{request.validation.updateVoluntary.uuid.notnull}")
     UUID uuid,
 
-    @Pattern(regexp = "^[\\p{L}\\p{N}]{3,}$", message = "{request.validation.updateVoluntary.username.pattern}")
+    @Size(min = 3, message = "{request.validation.updateVoluntary.username.size}")
+    @Pattern(regexp = "^[\\p{L}\\p{N}]*$", message = "{request.validation.updateVoluntary.username.pattern}")
     String username,
 
-    @Pattern(regexp = "^[\\w@#$%^&+=!]{8,}$", message = "{request.validation.signupVoluntary.password.pattern}")
+    @Size(min = 8, message = "{request.validation.updateVoluntary.password.size}")
+    @Pattern(regexp = "^[\\w@#$%^&+=!]*$", message = "{request.validation.signupVoluntary.password.pattern}")
     String password,
 
-    @Pattern(regexp = "^[\\p{L} ]{3,}$", message = "{request.validation.updateVoluntary.fullname.pattern}")
+    @Size(min = 3, message = "{request.validation.updateVoluntary.fullname.size}")
+    @Pattern(regexp = "^[\\p{L} ]*$", message = "{request.validation.updateVoluntary.fullname.pattern}")
     String fullname
 ) {
 }
