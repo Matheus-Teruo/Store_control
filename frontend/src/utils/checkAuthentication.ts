@@ -14,27 +14,35 @@ export function isUserUnlogged(
 
 export function hasFunction(
   userFunction: SummaryFunction | null | undefined,
+  admin?: VoluntaryRole,
 ): userFunction is SummaryFunction {
-  return userFunction !== null && userFunction !== undefined;
+  return (
+    (userFunction !== null && userFunction !== undefined) ||
+    admin === VoluntaryRole.ROLE_ADMIN
+  );
 }
 
 export function isSeller(
   userFunction: SummaryFunction | null | undefined,
+  admin?: VoluntaryRole,
 ): userFunction is SummaryFunction {
   return (
-    userFunction !== null &&
-    userFunction !== undefined &&
-    userFunction.typeOfFunction === "Stand"
+    (userFunction !== null &&
+      userFunction !== undefined &&
+      userFunction.typeOfFunction === "Stand") ||
+    admin === VoluntaryRole.ROLE_ADMIN
   );
 }
 
 export function isCashier(
   userFunction: SummaryFunction | null | undefined,
+  admin?: VoluntaryRole,
 ): userFunction is SummaryFunction {
   return (
-    userFunction !== null &&
-    userFunction !== undefined &&
-    userFunction.typeOfFunction === "Register"
+    (userFunction !== null &&
+      userFunction !== undefined &&
+      userFunction.typeOfFunction === "Register") ||
+    admin === VoluntaryRole.ROLE_ADMIN
   );
 }
 

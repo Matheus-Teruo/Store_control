@@ -1,6 +1,5 @@
 import { useHandleApiError } from "@/axios/handlerApiError";
 import {
-  hasFunction,
   isCashier,
   isUserLogged,
   isUserUnlogged,
@@ -31,7 +30,10 @@ function Cashier() {
 
   useEffect(() => {
     const fetchVoluntary = async () => {
-      if (isUserLogged(user) && isCashier(user.summaryFunction)) {
+      if (
+        isUserLogged(user) &&
+        isCashier(user.summaryFunction, user.voluntaryRole)
+      ) {
         try {
           const response = await getProducts();
           setProducts(response.content);
@@ -40,7 +42,7 @@ function Cashier() {
         }
       } else if (
         isUserUnlogged(user) ||
-        (user && !isCashier(user.summaryFunction))
+        (user && !isCashier(user.summaryFunction, user.voluntaryRole))
       ) {
         navigate("/");
       }
@@ -55,7 +57,7 @@ function Cashier() {
       rechargeType !== undefined &&
       cardID.length === 15 &&
       isUserLogged(user) &&
-      hasFunction(user.summaryFunction)
+      isCashier(user.summaryFunction)
     ) {
       try {
         const recharge = await createRecharge({
