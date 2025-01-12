@@ -9,12 +9,13 @@ public record RequestUpdateVoluntary(
     @NotNull(message = "{request.validation.updateVoluntary.uuid.notnull}")
     UUID uuid,
 
-    @Pattern(regexp = "^[A-Za-z0-9]{3,}$", message = "{request.validation.updateVoluntary.username.pattern}")
+    @Pattern(regexp = "^[\\p{L}\\p{N}]{3,}$", message = "{request.validation.updateVoluntary.username.pattern}")
     String username,
 
+    @Pattern(regexp = "^[\\w@#$%^&+=!]{8,}$", message = "{request.validation.signupVoluntary.password.pattern}")
     String password,
 
-    @Pattern(regexp = "^[A-Za-z ]{3,}$", message = "{request.validation.updateVoluntary.fullname.pattern}")
+    @Pattern(regexp = "^[\\p{L} ]{3,}$", message = "{request.validation.updateVoluntary.fullname.pattern}")
     String fullname
 ) {
 }

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Pattern;
 
 public record RequestLoginVoluntary(
     @NotBlank(message = "{request.validation.loginVoluntary.username.notBlank}")
-    @Pattern(regexp = "^[A-Za-z0-9]{3,}$", message = "{request.validation.loginVoluntary.username.pattern}")
+    @Pattern(regexp = "^[\\p{L}\\p{N}]{3,}$", message = "{request.validation.loginVoluntary.username.pattern}")
     String username,
 
     @NotBlank(message = "{request.validation.loginVoluntary.password.notBlank}")

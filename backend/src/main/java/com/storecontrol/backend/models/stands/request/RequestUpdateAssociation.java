@@ -9,10 +9,10 @@ public record RequestUpdateAssociation(
     @NotNull(message = "{request.validation.updateAssociation.uuid.notnull}")
     UUID uuid,
 
-    @Pattern(regexp = "^[A-Za-z]+$", message = "{request.validation.updateAssociation.associationName.pattern}")
+    @Pattern(regexp = "^[\\p{L} ]{3,}$", message = "{request.validation.updateAssociation.associationName.pattern}")
     String associationName,
 
-    @Pattern(regexp = "^[A-Za-z ]+$", message = "{request.validation.updateAssociation.principalName.pattern}")
+    @Pattern(regexp = "^[\\p{L} ]{3,}$", message = "{request.validation.updateAssociation.principalName.pattern}")
     String principalName
 ) {
 }

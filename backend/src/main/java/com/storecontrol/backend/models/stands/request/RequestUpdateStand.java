@@ -9,7 +9,7 @@ public record RequestUpdateStand(
     @NotNull(message = "{request.validation.updateStand.uuid.notnull}")
     UUID uuid,
 
-    @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "{request.validation.updateStand.standName.pattern}")
+    @Pattern(regexp = "^[\\p{L}\\p{N} ]{3,}$", message = "{request.validation.updateStand.standName.pattern}")
     String standName,
 
     UUID associationUuid

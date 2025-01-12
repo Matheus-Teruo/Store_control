@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public record RequestCreateProduct(
     @NotBlank(message = "{request.validation.createProduct.productName.notBlank}")
-    @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "{request.validation.createProduct.productName.pattern}")
+    @Pattern(regexp = "^[\\p{L}\\p{N} ]{3,}$", message = "{request.validation.createProduct.productName.pattern}")
     String productName,
 
     @Size(max = 255, message = "{request.validation.createProduct.summary.size}")

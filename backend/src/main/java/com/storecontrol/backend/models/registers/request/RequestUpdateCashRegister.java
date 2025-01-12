@@ -9,7 +9,7 @@ public record RequestUpdateCashRegister(
     @NotNull(message = "{request.validation.updateCashRegister.uuid.notnull}")
     UUID uuid,
 
-    @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "{request.validation.updateCashRegister.cashRegisterName.pattern}")
+    @Pattern(regexp = "^[\\p{L}\\p{N} ]{3,}$", message = "{request.validation.updateCashRegister.cashRegisterName.pattern}")
     String cashRegisterName
 ) {
 }

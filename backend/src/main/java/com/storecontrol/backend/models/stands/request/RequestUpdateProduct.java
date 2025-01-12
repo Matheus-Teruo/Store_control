@@ -9,7 +9,7 @@ public record RequestUpdateProduct(
     @NotNull(message = "{request.validation.updateProduct.uuid.notnull}")
     UUID uuid,
 
-    @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "{request.validation.updateProduct.productName.pattern}")
+    @Pattern(regexp = "^[\\p{L}\\p{N} ]{3,}$", message = "{request.validation.updateProduct.productName.pattern}")
     String productName,
 
     @Size(max = 255, message = "{request.validation.updateProduct.summary.size}")

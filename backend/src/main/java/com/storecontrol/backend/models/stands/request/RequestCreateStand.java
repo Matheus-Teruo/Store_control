@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public record RequestCreateStand(
     @NotBlank(message = "{request.validation.createStand.standName.notBlank}")
-    @Pattern(regexp = "^[A-Za-z0-9 ]+$", message = "{request.validation.createStand.standName.pattern}")
+    @Pattern(regexp = "^[\\p{L}\\p{N} ]{3,}$", message = "{request.validation.createStand.standName.pattern}")
     String standName,
 
     @NotNull(message = "{request.validation.createStand.associationUuid.notnull}")
