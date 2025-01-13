@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import Button from "@/components/utils/Button";
 import Input from "@/components/utils/Input";
 import {
@@ -14,6 +14,7 @@ import {
   useAlertsContext,
 } from "@context/AlertsContext/useUserContext";
 import { isUserLogged, isUserUnlogged } from "@/utils/checkAuthentication";
+import { initialUserState, userReducer } from "@reducer/userReducer";
 
 const voluntaryInitialValue: Voluntary = {
   uuid: "",
@@ -27,12 +28,10 @@ function User() {
   const [userProperties, setUserProperties] = useState<Voluntary>(
     voluntaryInitialValue,
   );
-  const [newUsername, setNewUsername] = useState<string>("");
-  const [newFullname, setNewFullname] = useState<string>("");
-  const [newPassword, setNewPassword] = useState<string>("");
-  const [updateUsername, setUpdateUsername] = useState<boolean>(false);
-  const [updateFullname, setUpdateFullname] = useState<boolean>(false);
-  const [updatePassword, setUpdatePassword] = useState<boolean>(false);
+  const [state, dispatch] = useReducer(userReducer, initialUserState);
+  const [update, setUpdate] = useState<
+    "username" | "fullname" | "password" | ""
+  >("");
   const { addNotification } = useAlertsContext();
   const { user } = useUserContext();
   const handleApiError = useHandleApiError();
@@ -59,70 +58,58 @@ function User() {
     try {
       const voluntary = await updateVoluntary({
         uuid: userProperties.uuid,
-        username: updateUsername ? newUsername : undefined,
-        password: updatePassword ? newPassword : undefined,
-        fullname: updateFullname ? newFullname : undefined,
+        username: update === "username" ? state.username : undefined,
+        password: update === "password" ? state.password : undefined,
+        fullname: update === "fullname" ? state.fullname : undefined,
       });
       addNotification({
         title: "Update Success",
-        message: `Update ${updateUsername ? newUsername : ""}
-        ${updateFullname ? newFullname : ""}
-        ${updatePassword ? newPassword : ""}`,
+        message: `Update ${update}: ${update === "username" ? state.username : update === "password" ? "successful" : update === "fullname" ? state.fullname : ""}`,
         type: MessageType.OK,
       });
-      setNewUsername("");
-      setUpdateUsername(false);
-      setNewFullname("");
-      setUpdateFullname(false);
-      setNewPassword("");
-      setUpdatePassword(false);
+      dispatch({ type: "RESET" });
+      setUpdate("");
       setUserProperties(voluntary);
     } catch (error) {
       handleApiError(error);
     }
   };
 
-  function handleUsername(event: React.ChangeEvent<HTMLInputElement>) {
-    setNewUsername(event.target.value);
-  }
-  function handleFullname(event: React.ChangeEvent<HTMLInputElement>) {
-    setNewFullname(event.target.value);
-  }
-  function handlePassword(event: React.ChangeEvent<HTMLInputElement>) {
-    setNewPassword(event.target.value);
-  }
-
   return (
     <div>
       <form onSubmit={handleSubmit}>
         <div>
           <p>Usuário</p>
-          {!updateUsername ? (
-            <p onClick={() => setUpdateUsername(true)}>
+          {update !== "username" ? (
+            <p onClick={() => setUpdate("fullname")}>
               {userProperties.username}
             </p>
           ) : (
             <Input
-              value={newUsername}
-              onChange={handleUsername}
-              id="password"
-              placeholder="Novo Usuário"
+              value={state.username}
+              onChange={(e) =>
+                dispatch({ type: "SET_USERNAME", payload: e.target.value })
+              }
+              id="username"
+              placeholder="Alterar Usuário"
               isRequired
             />
           )}
         </div>
         <div>
           <p>Nome Completo</p>
-          {!updateFullname ? (
-            <p onClick={() => setUpdateFullname(true)}>
+          {update !== "fullname" ? (
+            <p onClick={() => setUpdate("fullname")}>
               {userProperties.fullname}
             </p>
           ) : (
             <Input
-              value={newFullname}
-              onChange={handleFullname}
-              id="password"
-              placeholder="Novo Nome Completo"
+              value={state.fullname}
+              onChange={(e) =>
+                dispatch({ type: "SET_FULLNAME", payload: e.target.value })
+              }
+              id="fullname"
+              placeholder="Alterar Nome Completo"
               isRequired
             />
           )}
@@ -150,18 +137,30 @@ function User() {
           )}
         </div>
         <div>
-          {!updatePassword ? (
-            <Button onClick={() => setUpdatePassword(true)}>
-              Alterar Senha
-            </Button>
+          {update !== "password" ? (
+            <Button onClick={() => setUpdate("password")}>Alterar Senha</Button>
           ) : (
             <>
               <p>Editar Senha</p>
               <Input
-                value={newPassword}
-                onChange={handlePassword}
+                value={state.password}
+                onChange={(e) =>
+                  dispatch({ type: "SET_PASSWORD", payload: e.target.value })
+                }
                 id="password"
                 placeholder="Nova Senha"
+                isRequired
+              />
+              <Input
+                value={state.confirmPassword}
+                onChange={(e) =>
+                  dispatch({
+                    type: "SET_CONFIRM_PASSWORD",
+                    payload: e.target.value,
+                  })
+                }
+                id="confirmPassword"
+                placeholder="Confirmar Nova Senha"
                 isRequired
               />
             </>

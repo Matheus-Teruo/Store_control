@@ -1,7 +1,7 @@
 import styles from "./Signup.module.scss";
 import Button from "@/components/utils/Button";
 import Input from "@/components/utils/Input";
-import { useState } from "react";
+import { useReducer } from "react";
 import { signupVoluntary } from "@service/voluntary/userService";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import {
@@ -11,12 +11,10 @@ import {
 import { useHandleApiError } from "@/axios/handlerApiError";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "@context/UserContext/useUserContext";
+import { initialUserState, userReducer } from "@reducer/userReducer";
 
 function Signup() {
-  const [username, setUsername] = useState<string>("");
-  const [fullname, setFullname] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [state, dispatch] = useReducer(userReducer, initialUserState);
   const { addNotification } = useAlertsContext();
   const { login } = useUserContext();
   const handleApiError = useHandleApiError();
@@ -24,86 +22,78 @@ function Signup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === confirmPassword) {
-      try {
-        const voluntary = await signupVoluntary({
-          username,
-          fullname,
-          password,
-        });
-        addNotification({
-          title: "Signup Success",
-          message: `Create user ${username} and logged`,
-          type: MessageType.OK,
-        });
-        login({
-          uuid: voluntary.uuid,
-          firstName: voluntary.fullname.split(" ")[0],
-          summaryFunction: voluntary.summaryFunction,
-          voluntaryRole: voluntary.voluntaryRole,
-        });
-        setUsername("");
-        setFullname("");
-        setPassword("");
-        setConfirmPassword("");
-        navigate("/workspace", { replace: true });
-      } catch (error) {
-        handleApiError(error);
-      }
-    } else {
+    const { username, fullname, password, confirmPassword } = state;
+
+    if (password !== confirmPassword) {
       addNotification({
         title: "Password Mismatch",
         message: "Password and Confirm Password must match.",
         type: MessageType.WARNING,
       });
+      return;
+    }
+
+    try {
+      const voluntary = await signupVoluntary({
+        username,
+        fullname,
+        password,
+      });
+      addNotification({
+        title: "Signup Success",
+        message: `Create user ${username} and logged`,
+        type: MessageType.OK,
+      });
+      login({
+        uuid: voluntary.uuid,
+        firstName: voluntary.fullname.split(" ")[0],
+        summaryFunction: voluntary.summaryFunction,
+        voluntaryRole: voluntary.voluntaryRole,
+      });
+      dispatch({ type: "RESET" });
+      navigate("/workspace", { replace: true });
+    } catch (error) {
+      handleApiError(error);
     }
   };
-
-  function handleUsername(event: React.ChangeEvent<HTMLInputElement>) {
-    setUsername(event.target.value);
-  }
-
-  function handleFullname(event: React.ChangeEvent<HTMLInputElement>) {
-    setFullname(event.target.value);
-  }
-
-  function handlePassword(event: React.ChangeEvent<HTMLInputElement>) {
-    setPassword(event.target.value);
-  }
-
-  function handleConfirmPassword(event: React.ChangeEvent<HTMLInputElement>) {
-    setConfirmPassword(event.target.value);
-  }
 
   return (
     <>
       <h1 className={styles.title}>Cadastrar</h1>
       <form className={styles.form} onSubmit={handleSubmit}>
         <Input
-          value={username}
-          onChange={handleUsername}
+          value={state.username}
+          onChange={(e) =>
+            dispatch({ type: "SET_USERNAME", payload: e.target.value })
+          }
           id="username"
           placeholder="Usuário"
           isRequired
         />
         <Input
-          value={fullname}
-          onChange={handleFullname}
+          value={state.fullname}
+          onChange={(e) =>
+            dispatch({ type: "SET_FULLNAME", payload: e.target.value })
+          }
           id="fullname"
           placeholder="Nome Completo"
           isRequired
         />
         <Input
-          value={password}
-          onChange={handlePassword}
+          value={state.password}
+          onChange={(e) =>
+            dispatch({ type: "SET_PASSWORD", payload: e.target.value })
+          }
           id="password"
           placeholder="Senha"
           isSecret
           isRequired
         />
         <Input
-          value={confirmPassword}
-          onChange={handleConfirmPassword}
+          value={state.confirmPassword}
+          onChange={(e) =>
+            dispatch({ type: "SET_CONFIRM_PASSWORD", payload: e.target.value })
+          }
           id="confirmPassword"
           placeholder="Confirmar Senha"
           isSecret
