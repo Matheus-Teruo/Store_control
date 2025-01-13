@@ -9,6 +9,7 @@
     "paths": {
       "@data/*": ["./src/data/*"],
       "@context/*": ["./src/context/*"],
+      "@reducer/*": ["./src/reducer/*"],
       "@service/*": ["./src/service/*"],
       "@/*": ["./src/*"]
     },

@@ -10,6 +10,7 @@ export default defineConfig({
       "@styles": path.resolve(__dirname, "./src/styles"),
       "@data": path.resolve(__dirname, "./src/data"),
       "@context": path.resolve(__dirname, "./src/context"),
+      "@reducer": path.resolve(__dirname, "./src/reducer"),
       "@service": path.resolve(__dirname, "./src/service"),
       "@": path.resolve(__dirname, "./src"),
     },
