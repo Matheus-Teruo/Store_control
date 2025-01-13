@@ -11,7 +11,11 @@ import {
 import { useHandleApiError } from "@/axios/handlerApiError";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import { initialUserState, userReducer } from "@reducer/userReducer";
+import {
+  checkSignupUser,
+  initialUserState,
+  userReducer,
+} from "@reducer/userReducer";
 
 function Signup() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
@@ -22,14 +26,23 @@ function Signup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { username, fullname, password, confirmPassword } = state;
+    const { username, fullname, password } = state;
 
-    if (password !== confirmPassword) {
-      addNotification({
-        title: "Password Mismatch",
-        message: "Password and Confirm Password must match.",
-        type: MessageType.WARNING,
-      });
+    if (checkSignupUser(state)) {
+      switch (checkSignupUser(state)) {
+        case "username":
+          // TODO: interface input error
+          break;
+        case "fullname":
+          // TODO: interface input error
+          break;
+        case "password":
+          // TODO: interface input error
+          break;
+        case "confirmPassword":
+          // TODO: interface input error
+          break;
+      }
       return;
     }
 

@@ -14,7 +14,11 @@ import {
   useAlertsContext,
 } from "@context/AlertsContext/useUserContext";
 import { isUserLogged, isUserUnlogged } from "@/utils/checkAuthentication";
-import { initialUserState, userReducer } from "@reducer/userReducer";
+import {
+  checkUpdateUser,
+  initialUserState,
+  userReducer,
+} from "@reducer/userReducer";
 
 const voluntaryInitialValue: Voluntary = {
   uuid: "",
@@ -55,6 +59,23 @@ function User() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (checkUpdateUser(state, update)) {
+      switch (checkUpdateUser(state, update)) {
+        case "username":
+          // TODO: interface input error
+          break;
+        case "fullname":
+          // TODO: interface input error
+          break;
+        case "password":
+          // TODO: interface input error
+          break;
+        case "confirmPassword":
+          // TODO: interface input error
+          break;
+      }
+      return;
+    }
     try {
       const voluntary = await updateVoluntary({
         uuid: userProperties.uuid,

@@ -60,3 +60,43 @@ export function userReducer(
       throw new Error("Ação desconhecida no reducer");
   }
 }
+
+export function checkSignupUser(
+  state: SignupFormState,
+): "username" | "fullname" | "password" | "confirmPassword" | null {
+  if (state.username.length < 3 && !regexLeterNumber.test(state.username))
+    return "username";
+  if (state.fullname.length < 3 && !regexLeterSpace.test(state.fullname))
+    return "fullname";
+  if (state.password.length < 8 && !regexPassword.test(state.password))
+    return "password";
+  if (state.password === state.confirmPassword) return "password";
+  return null;
+}
+
+export function checkUpdateUser(
+  state: SignupFormState,
+  update: "username" | "fullname" | "password" | "",
+): "username" | "fullname" | "password" | "confirmPassword" | null {
+  if (
+    update === "username" &&
+    state.username.length < 3 &&
+    !regexLeterNumber.test(state.username)
+  )
+    return "username";
+  if (
+    update === "fullname" &&
+    state.fullname.length < 3 &&
+    !regexLeterSpace.test(state.fullname)
+  )
+    return "fullname";
+  if (
+    update === "password" &&
+    state.password.length < 8 &&
+    !regexPassword.test(state.password)
+  )
+    return "password";
+  if (update === "password" && state.password === state.confirmPassword)
+    return "confirmPassword";
+  return null;
+}
