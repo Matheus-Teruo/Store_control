@@ -26,7 +26,7 @@ export interface SummaryProduct {
 export interface CreateProduct {
   productName: string;
   summary?: string;
-  description?: Text;
+  description?: string;
   price: number;
   stock: number;
   productImg?: string | null;
@@ -37,7 +37,7 @@ export interface UpdateProduct {
   uuid: string;
   productName: string;
   summary?: string;
-  description?: Text;
+  description?: string;
   price: number;
   discount: number;
   stock: number;

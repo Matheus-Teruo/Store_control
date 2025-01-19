@@ -1,6 +1,7 @@
 import { useHandleApiError } from "@/axios/handlerApiError";
 import {
-  hasFunction,
+  isAdmin,
+  isSeller,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
@@ -13,31 +14,44 @@ import { useNavigate } from "react-router-dom";
 function Products() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
   const [page, setPage] = useState<number>(0);
+  const [modeAdmin, setModeAdmin] = useState<boolean>(false);
   const handleApiError = useHandleApiError();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchVoluntary = async () => {
-      if (isUserLogged(user) && hasFunction(user.summaryFunction)) {
+      if (isUserLogged(user) && isSeller(user.summaryFunction)) {
         try {
-          const response = await getProducts(undefined, undefined, page);
+          const response = await getProducts(
+            undefined,
+            modeAdmin ? undefined : user.summaryFunction.uuid,
+            page,
+          );
           setProducts(response.content);
         } catch (error) {
           handleApiError(error);
         }
       } else if (
         isUserUnlogged(user) ||
-        (user && !hasFunction(user.summaryFunction))
+        (user && !isSeller(user.summaryFunction))
       ) {
         navigate("/");
       }
     };
     fetchVoluntary();
-  }, [user, page, navigate, handleApiError]);
+  }, [user, page, modeAdmin, navigate, handleApiError]);
+
+  const handleAdmin = () => {
+    setModeAdmin((prev) => !prev.valueOf);
+  };
+
   return (
     <div>
       <div>page</div>
+      {isAdmin(user) && (
+        <div onClick={handleAdmin}>{modeAdmin ? "Normal" : "Admin"}</div>
+      )}
       <div>
         {products.map((product) => (
           <div key={product.uuid}>{product.productName}</div>
