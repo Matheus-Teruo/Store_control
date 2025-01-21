@@ -1,4 +1,5 @@
 import { useHandleApiError } from "@/axios/handlerApiError";
+import PageSelect from "@/components/PageSelect";
 import {
   isAdmin,
   isSeller,
@@ -10,10 +11,12 @@ import { SummaryProduct } from "@data/stands/Product";
 import { getProducts } from "@service/stand/productService";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import CUDProduct from "./CUDProduct";
 
 function Products() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
   const [page, setPage] = useState<number>(0);
+  const [createProduct, setCreateProduct] = useState<boolean>(false);
   const [modeAdmin, setModeAdmin] = useState<boolean>(false);
   const handleApiError = useHandleApiError();
   const { user } = useUserContext();
@@ -21,11 +24,14 @@ function Products() {
 
   useEffect(() => {
     const fetchVoluntary = async () => {
-      if (isUserLogged(user) && isSeller(user.summaryFunction)) {
+      if (
+        isUserLogged(user) &&
+        isSeller(user.summaryFunction, user.voluntaryRole)
+      ) {
         try {
           const response = await getProducts(
             undefined,
-            modeAdmin ? undefined : user.summaryFunction.uuid,
+            modeAdmin ? user.summaryFunction.uuid : undefined,
             page,
           );
           setProducts(response.content);
@@ -34,9 +40,10 @@ function Products() {
         }
       } else if (
         isUserUnlogged(user) ||
-        (user && !isSeller(user.summaryFunction))
+        (user && !isSeller(user.summaryFunction, user.voluntaryRole))
       ) {
-        navigate("/");
+        console.log(isSeller);
+        navigate("/login");
       }
     };
     fetchVoluntary();
@@ -49,6 +56,7 @@ function Products() {
   return (
     <div>
       <div>page</div>
+      <button onClick={() => setCreateProduct(true)}>Create Product</button>
       {isAdmin(user) && (
         <div onClick={handleAdmin}>{modeAdmin ? "Normal" : "Admin"}</div>
       )}
@@ -57,7 +65,17 @@ function Products() {
           <div key={product.uuid}>{product.productName}</div>
         ))}
       </div>
-      <div></div>
+      <PageSelect
+        value={page}
+        onChange={(e) => setPage(parseInt(e.target.value))}
+        onValueChange={(value) => setPage(value)}
+      />
+      {createProduct && (
+        <>
+          <CUDProduct />
+          <div onClick={() => setCreateProduct(false)} />
+        </>
+      )}
     </div>
   );
 }

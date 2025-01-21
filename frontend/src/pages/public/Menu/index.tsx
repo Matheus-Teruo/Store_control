@@ -1,6 +1,6 @@
 import styles from "./Menu.module.scss";
 import { useEffect, useState } from "react";
-import OptionsFilter from "./OptionsFilter";
+import StandOptionsFilter from "@/components/StandSelect";
 import SearchFilter from "./SearchFilter";
 import { SummaryProduct } from "@data/stands/Product";
 import Button from "@/components/utils/Button";
@@ -53,7 +53,10 @@ function Menu() {
     <div className={styles.background}>
       <div className={styles.headerBackground}>
         <div className={styles.header}>
-          <OptionsFilter value={selectedStands} onChange={handleFilterStand} />
+          <StandOptionsFilter
+            value={selectedStands}
+            onChange={handleFilterStand}
+          />
           <SearchFilter value={filter} onChange={handleFilter} />
         </div>
       </div>
