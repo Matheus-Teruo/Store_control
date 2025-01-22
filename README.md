@@ -1,41 +1,68 @@
-# Sales monitoring project
+# Sales Monitoring Project
 
-A project with the objective of controlling the sales and inventory of a fundraiser for a charity event
+A project designed to control sales and inventory for a fundraiser in a charity event.
 
-The following diagram summarizes the entities and relationships used as a basis to make a web page
-![entity relationship diagram](Diagrama_relação_entidade.png)
+## Overview
 
+This application is based on an Entity-Relationship Diagram that models the core entities and their relationships. Below is a summary of the architecture used for the project:
+<img src="use_case_diagram.png" alt="Use Case Diagram" style="width:80%; display: block; margin: auto;">
 
-### Depoy docker compose
+### Entity-Relationship Diagram and Implementation
 
-To run the project it is necessary to use Docker and Docker Compose.
-simply run the following command
+The **Entity-Relationship Diagram** was created based on the **General Use Case Diagram** and served as the foundation for designing the database classes. These classes were implemented using an ORM (Object-Relational Mapping) framework, which maps application classes to database tables, ensuring seamless integration between the application and the database.
 
-```
-$ docker compose up -d
-```
+![entity relationship diagram](entity_relationship_diagram.png)
 
-the project will run 4 containers, namely:
- * Frontend
- * Backend
- * DB (mysql)
- * Proxy (nginx)
+Additionally:
 
-### Setup
+- The Use Case Diagrams guided the development of the frontend application, helping to align user interactions with the underlying data models and workflows.
 
-After initialization it is necessary to configure the nginx-proxy-manager proxy,
-configuration example https://www.youtube.com/watch?v=qlcVx-k-02E&t=639s
+### Use Case Diagrams
 
-#### Setup database
+The backend includes use cases modeled in the following diagrams:
 
-Some commands can be used to start the database
+- General Use Case Diagram: Describes all interactions between users and the database, (first diagram)
 
-```
-$ docker exec store_control_backend_1 node ./codes/setup.js
-```
+- Event Type Use Case Diagram: Outlines three specific scenarios for managing events:
+  <img src="use_case_event_types_diagram.png" alt="Use Case Event Types Diagram" style="width:80%; display: block; margin: auto;">
 
-This way the root and initial stands for cash control will be created
+1. Basic (Only Stand):
+   A single person manages sales, payments, and delivery of orders.
+   Suitable for small-scale events with unified responsibilities.
+2. Order Card (Festival do Japão):
 
-With this user it is possible to change the role of each user who registers in the system
+- One agent, the Cashier, handles orders, payments, and issues a card to the customer.
+- The customer takes the card to a Counter Attendant to retrieve their order.
+  Ideal for events requiring faster order processing by splitting responsibilities.
 
-the repository was used as a base: https://github.com/docker/awesome-compose
+3. Tokens (Order Card) (Festa Junina):
+
+- A central cashier sells tokens (internal event currency).
+  Customers use these tokens to purchase food or goods at various stands.
+- This method simplifies payment handling during large-scale events.
+
+### File Structure
+
+The project's structure follows best practices, ensuring scalability and maintainability. Key directories include:
+
+`frontend/`: Contains the React application.
+`backend/`: Contains the Spring Boot backend service.
+`db/`: Database initialization scripts.
+`table_service/`: Contains the Python application for table extraction using computer vision.
+`docker-compose.yml`: Configuration file for Docker Compose.
+
+### Running the Project with Docker Compose
+
+The project uses Docker and Docker Compose to simplify deployment and ensure a consistent environment. To run the application:
+
+1. Ensure Docker and Docker Compose are installed on your machine.
+2. Execute the following command in the project directory:
+   `$ docker compose up -d`
+
+This will start the application with 5 containers:
+
+- Frontend: A web interface built with React (using Vite and TypeScript).
+- Backend: A REST API built with Java (Spring Boot).
+- MinIO: Local storage (simulate AWS storage)
+- Database: MySQL for data storage.
+- Table Service: A Python application designed for extracting tables from images
