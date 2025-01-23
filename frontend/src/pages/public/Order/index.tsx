@@ -16,7 +16,7 @@ function Order() {
   const { cardID } = useParams();
 
   useEffect(() => {
-    const fetchStand = async () => {
+    const fetchProducts = async () => {
       try {
         const products = await getListProducts();
         const productsObject = products.reduce(
@@ -32,11 +32,11 @@ function Order() {
         handleApiError(error);
       }
     };
-    fetchStand();
+    fetchProducts();
   }, [handleApiError]);
 
   useEffect(() => {
-    const fetchStand = async () => {
+    const fetchCustomer = async () => {
       if (cardID !== undefined) {
         try {
           const customer = await getCustomerbyCard(cardID);
@@ -47,7 +47,7 @@ function Order() {
       }
     };
 
-    fetchStand();
+    fetchCustomer();
   }, [handleApiError, cardID]);
 
   return (

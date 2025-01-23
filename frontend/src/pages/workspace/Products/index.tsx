@@ -9,13 +9,14 @@ import {
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { SummaryProduct } from "@data/stands/Product";
 import { getProducts } from "@service/stand/productService";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CUDProduct from "./CUDProduct";
+import { initialPageState, pageReducer } from "@reducer/pageReducer";
 
 function Products() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
-  const [page, setPage] = useState<number>(0);
+  const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [createProduct, setCreateProduct] = useState<boolean>(false);
   const [modeAdmin, setModeAdmin] = useState<boolean>(false);
   const handleApiError = useHandleApiError();
@@ -32,7 +33,7 @@ function Products() {
           const response = await getProducts(
             undefined,
             modeAdmin ? user.summaryFunction.uuid : undefined,
-            page,
+            page.number,
           );
           setProducts(response.content);
         } catch (error) {
@@ -65,11 +66,7 @@ function Products() {
           <div key={product.uuid}>{product.productName}</div>
         ))}
       </div>
-      <PageSelect
-        value={page}
-        onChange={(e) => setPage(parseInt(e.target.value))}
-        onValueChange={(value) => setPage(value)}
-      />
+      <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
       {createProduct && (
         <>
           <CUDProduct />

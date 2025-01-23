@@ -3,7 +3,7 @@ import { CreateItem } from "@data/operations/Item";
 import { CreatePurchase } from "@data/operations/Purchase";
 import { SummaryProduct } from "@data/stands/Product";
 
-type PurchaseAction =
+export type PurchaseAction =
   | { type: "SET_ON_ORDER"; payload: boolean }
   | { type: "ADD_ITEM"; payload: SummaryProduct }
   | {
