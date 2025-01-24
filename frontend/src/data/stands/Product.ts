@@ -4,7 +4,7 @@ export default interface Product {
   uuid: string;
   productName: string;
   summary: string;
-  description: Text;
+  description: string;
   price: number;
   discount: number;
   stock: number;
@@ -35,12 +35,12 @@ export interface CreateProduct {
 
 export interface UpdateProduct {
   uuid: string;
-  productName: string;
+  productName?: string;
   summary?: string;
   description?: string;
-  price: number;
-  discount: number;
-  stock: number;
+  price?: number;
+  discount?: number;
+  stock?: number;
   productImg?: string | null;
-  standUuid: string;
+  standUuid?: string;
 }

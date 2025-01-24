@@ -16,6 +16,6 @@ export interface CreateAssociation {
 
 export interface UpdateAssociation {
   uuid: string;
-  associaitonName: string;
-  principalName: string;
+  associaitonName?: string;
+  principalName?: string;
 }

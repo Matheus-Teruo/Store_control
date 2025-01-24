@@ -19,6 +19,6 @@ export interface CreateStand {
 
 export interface UpdateStand {
   uuid: string;
-  standName: string;
-  associationUuid: string;
+  standName?: string;
+  associationUuid?: string;
 }
