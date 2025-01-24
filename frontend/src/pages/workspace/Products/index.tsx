@@ -11,31 +11,21 @@ import { SummaryProduct } from "@data/stands/Product";
 import { getProducts } from "@service/stand/productService";
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import CUDProduct from "./CUDProduct";
+import FormProduct from "./FormProduct";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
-
-interface CRUDState {
-  show: boolean;
-  type: "create" | "update";
-  uuid?: string;
-}
-
-const initialCRUDState: CRUDState = {
-  show: false,
-  type: "create",
-  uuid: undefined,
-};
+import Button from "@/components/utils/Button";
+import { formReducer, initialFormState } from "@reducer/formReducer";
 
 function Products() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
-  const [CRUDProduct, setCRUDProduct] = useState<CRUDState>(initialCRUDState);
+  const [formState, formDispach] = useReducer(formReducer, initialFormState);
   const [modeAdmin, setModeAdmin] = useState<boolean>(false);
   const handleApiError = useHandleApiError();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
-  const fetchVoluntary = useCallback(async () => {
+  const fetchProducts = useCallback(async () => {
     if (
       isUserLogged(user) &&
       isSeller(user.summaryFunction, user.voluntaryRole)
@@ -57,27 +47,27 @@ function Products() {
       console.log(isSeller);
       navigate("/login");
     }
-  }, [user, page, modeAdmin, navigate, handleApiError]);
+  }, [user, page.number, modeAdmin, navigate, handleApiError]);
 
   useEffect(() => {
-    fetchVoluntary();
-  }, [fetchVoluntary]);
+    fetchProducts();
+  }, [fetchProducts]);
 
   const handleAdmin = () => {
     setModeAdmin((prev) => !prev.valueOf);
   };
 
-  const handleCRUDShow = () => {
-    setCRUDProduct({ ...CRUDProduct, show: false });
-    fetchVoluntary();
+  const handleFormShow = () => {
+    formDispach({ type: "SET_FALSE" });
+    fetchProducts();
   };
 
   return (
     <div>
       <div>page</div>
-      <button onClick={() => setCRUDProduct({ show: true, type: "create" })}>
-        Create Product
-      </button>
+      <Button onClick={() => formDispach({ type: "SET_CREATE" })}>
+        Criar Produto
+      </Button>
       {isAdmin(user) && (
         <div onClick={handleAdmin}>{modeAdmin ? "Normal" : "Admin"}</div>
       )}
@@ -98,11 +88,7 @@ function Products() {
             </div>
             <div
               onClick={() =>
-                setCRUDProduct({
-                  show: true,
-                  type: "update",
-                  uuid: product.uuid,
-                })
+                formDispach({ type: "SET_UPDATE", payload: product.uuid })
               }
             >
               Editar
@@ -111,16 +97,14 @@ function Products() {
         ))}
       </div>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
-      {CRUDProduct.show && (
+      {formState.show && (
         <>
-          <CUDProduct
-            type={CRUDProduct.type}
-            show={handleCRUDShow}
-            uuid={CRUDProduct.uuid}
+          <FormProduct
+            type={formState.type}
+            hide={handleFormShow}
+            uuid={formState.uuid}
           />
-          <div
-            onClick={() => setCRUDProduct({ ...CRUDProduct, show: false })}
-          />
+          <div onClick={() => formDispach({ type: "SET_FALSE" })} />
         </>
       )}
     </div>

@@ -25,11 +25,11 @@ import { useEffect, useReducer, useState } from "react";
 
 type FormPurchaseProps = {
   type: "create" | "update";
-  show: () => void;
+  hide: () => void;
   uuid?: string;
 };
 
-function CUDProduct({ type, show, uuid }: FormPurchaseProps) {
+function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
   const [state, dispatch] = useReducer(productReducer, initialProductState);
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
@@ -37,10 +37,7 @@ function CUDProduct({ type, show, uuid }: FormPurchaseProps) {
   const { user } = useUserContext();
 
   useEffect(() => {
-    if (
-      isUserLogged(user) &&
-      isSeller(user.summaryFunction, user.voluntaryRole)
-    ) {
+    if (isUserLogged(user) && isSeller(user.summaryFunction)) {
       dispatch({
         type: "SET_STAND_UUID",
         payload: user.summaryFunction.uuid,
@@ -49,7 +46,7 @@ function CUDProduct({ type, show, uuid }: FormPurchaseProps) {
   }, [user]);
 
   useEffect(() => {
-    const fetchVoluntary = async () => {
+    const fetchProduct = async () => {
       if (
         type === "update" &&
         uuid &&
@@ -67,7 +64,7 @@ function CUDProduct({ type, show, uuid }: FormPurchaseProps) {
       }
     };
 
-    fetchVoluntary();
+    fetchProduct();
   }, [uuid, type, user, handleApiError]);
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
@@ -84,7 +81,7 @@ function CUDProduct({ type, show, uuid }: FormPurchaseProps) {
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
-        show();
+        hide();
       } catch (error) {
         handleApiError(error);
       }
@@ -106,7 +103,7 @@ function CUDProduct({ type, show, uuid }: FormPurchaseProps) {
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
-        show();
+        hide();
       } catch (error) {
         handleApiError(error);
       }
@@ -128,7 +125,7 @@ function CUDProduct({ type, show, uuid }: FormPurchaseProps) {
         });
         dispatch({ type: "RESET" });
         setConfirmDelete(false);
-        show();
+        hide();
       } catch (error) {
         handleApiError(error);
       }
@@ -220,4 +217,4 @@ function CUDProduct({ type, show, uuid }: FormPurchaseProps) {
   );
 }
 
-export default CUDProduct;
+export default FormProduct;
