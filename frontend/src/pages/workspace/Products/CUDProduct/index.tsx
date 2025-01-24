@@ -1,10 +1,8 @@
 import { useHandleApiError } from "@/axios/handlerApiError";
 import StandSelect from "@/components/StandSelect";
-import {
-  hasFunction,
-  isSeller,
-  isUserLogged,
-} from "@/utils/checkAuthentication";
+import Button from "@/components/utils/Button";
+import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
+import { isSeller, isUserLogged } from "@/utils/checkAuthentication";
 import {
   MessageType,
   useAlertsContext,
@@ -12,21 +10,37 @@ import {
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { VoluntaryRole } from "@data/volunteers/Voluntary";
 import {
-  checkCreateProduct,
+  createProductPayload,
   initialProductState,
   productReducer,
+  updateProductPayload,
 } from "@reducer/productReducer";
-import { createProduct } from "@service/stand/productService";
-import { useEffect, useReducer } from "react";
+import {
+  createProduct,
+  deleteProduct,
+  getProduct,
+  updateProduct,
+} from "@service/stand/productService";
+import { useEffect, useReducer, useState } from "react";
 
-function CUDProduct() {
+type FormPurchaseProps = {
+  type: "create" | "update";
+  show: () => void;
+  uuid?: string;
+};
+
+function CUDProduct({ type, show, uuid }: FormPurchaseProps) {
   const [state, dispatch] = useReducer(productReducer, initialProductState);
+  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
   const handleApiError = useHandleApiError();
   const { user } = useUserContext();
 
   useEffect(() => {
-    if (isUserLogged(user) && hasFunction(user.summaryFunction)) {
+    if (
+      isUserLogged(user) &&
+      isSeller(user.summaryFunction, user.voluntaryRole)
+    ) {
       dispatch({
         type: "SET_STAND_UUID",
         payload: user.summaryFunction.uuid,
@@ -34,21 +48,87 @@ function CUDProduct() {
     }
   }, [user]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    const fetchVoluntary = async () => {
+      if (
+        type === "update" &&
+        uuid &&
+        isUserLogged(user) &&
+        isSeller(user.summaryFunction, user.voluntaryRole)
+      ) {
+        try {
+          const product = await getProduct(uuid);
+          dispatch({ type: "SET_PRODUCT", payload: product });
+        } catch (error) {
+          handleApiError(error);
+        }
+      } else if (uuid === undefined) {
+        console.error("uuid need to be defined when type is update");
+      }
+    };
+
+    fetchVoluntary();
+  }, [uuid, type, user, handleApiError]);
+
+  const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (
-      checkCreateProduct(state) &&
       isUserLogged(user) &&
-      isSeller(user.summaryFunction)
+      isSeller(user.summaryFunction, user.voluntaryRole)
     ) {
       try {
-        const product = await createProduct(state);
+        const product = await createProduct(createProductPayload(state));
         addNotification({
           title: "Create Product Success",
           message: `Create product ${product.productName}${product.description && ", description:"}${product.description}, price: ${product.price}, stock: ${product.stock}`,
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
+        show();
+      } catch (error) {
+        handleApiError(error);
+      }
+    }
+  };
+
+  const handleUpdateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (
+      uuid &&
+      isUserLogged(user) &&
+      isSeller(user.summaryFunction, user.voluntaryRole)
+    ) {
+      try {
+        const product = await updateProduct(updateProductPayload(state));
+        addNotification({
+          title: "Update Product Success",
+          message: `Update product ${product.productName}${product.description && ", description:"}${product.description}, price: ${product.price}, stock: ${product.stock}`,
+          type: MessageType.OK,
+        });
+        dispatch({ type: "RESET" });
+        show();
+      } catch (error) {
+        handleApiError(error);
+      }
+    }
+  };
+
+  const handleDeleteSubmit = async () => {
+    if (
+      uuid &&
+      isUserLogged(user) &&
+      isSeller(user.summaryFunction, user.voluntaryRole)
+    ) {
+      try {
+        await deleteProduct(state.uuid);
+        addNotification({
+          title: "Delete Product Success",
+          message: `Delete product ${state.productName}`,
+          type: MessageType.OK,
+        });
+        dispatch({ type: "RESET" });
+        setConfirmDelete(false);
+        show();
       } catch (error) {
         handleApiError(error);
       }
@@ -57,7 +137,9 @@ function CUDProduct() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={type === "create" ? handleCreateSubmit : handleUpdateSubmit}
+      >
         <label>Nome do produto</label>
         <input
           value={state.productName}
@@ -87,12 +169,27 @@ function CUDProduct() {
             dispatch({ type: "SET_PRICE", payload: parseFloat(e.target.value) })
           }
         />
+        {type === "update" && state.discount && (
+          <>
+            <label>Desconto</label>
+            <input
+              type="number"
+              value={state.discount.toFixed(2)}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_DISCOUNT",
+                  payload: parseFloat(e.target.value),
+                })
+              }
+            />
+          </>
+        )}
         <label>Estoque</label>
         <input
           type="number"
-          value={state.stock.toFixed(2)}
+          value={state.stock}
           onChange={(e) =>
-            dispatch({ type: "SET_STOCK", payload: parseFloat(e.target.value) })
+            dispatch({ type: "SET_STOCK", payload: parseInt(e.target.value) })
           }
         />
         <label>Imagem</label>
@@ -106,7 +203,19 @@ function CUDProduct() {
               }
             />
           )}
+        <Button type={ButtonHTMLType.Submit}>
+          {type === "create" ? "Criar" : "Editar"}
+        </Button>
       </form>
+      {type === "update" && !confirmDelete && (
+        <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
+      )}
+      {confirmDelete && (
+        <div>
+          <p>Quer deletar esse item?</p>
+          <Button onClick={handleDeleteSubmit}>Excluir</Button>
+        </div>
+      )}
     </div>
   );
 }

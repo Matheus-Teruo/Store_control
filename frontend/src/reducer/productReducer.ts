@@ -1,31 +1,55 @@
 import { regexLeterNumberSpace, regexText, regexUuid } from "@/utils/regex";
-import { CreateProduct } from "@data/stands/Product";
+import Product, { CreateProduct, UpdateProduct } from "@data/stands/Product";
 
 type ProductAction =
+  | { type: "SET_PRODUCT"; payload: Product }
   | { type: "SET_PRODUCT_NAME"; payload: string }
   | { type: "SET_SUMMARY"; payload: string }
   | { type: "SET_DESCRIPTION"; payload: string }
   | { type: "SET_PRICE"; payload: number }
+  | { type: "SET_DISCOUNT"; payload: number }
   | { type: "SET_STOCK"; payload: number }
-  | { type: "SET_PRODUCT_IMG"; payload: string | null }
+  | { type: "SET_PRODUCT_IMG"; payload: string }
   | { type: "SET_STAND_UUID"; payload: string }
   | { type: "RESET" };
 
-export const initialProductState: CreateProduct = {
+export const initialProductState: CreateProduct & UpdateProduct = {
+  uuid: "",
   productName: "",
-  summary: "",
-  description: "",
+  summary: undefined,
+  description: undefined,
   price: 0,
+  discount: 0,
   stock: 0,
-  productImg: null,
+  productImg: undefined,
   standUuid: "",
 };
 
 export function productReducer(
-  state: CreateProduct,
+  state: CreateProduct & UpdateProduct,
   action: ProductAction,
-): CreateProduct {
+): CreateProduct & UpdateProduct {
   switch (action.type) {
+    case "SET_PRODUCT": {
+      return {
+        uuid: action.payload.uuid,
+        productName: action.payload.productName,
+        summary:
+          action.payload.summary !== "" ? action.payload.summary : undefined,
+        description:
+          action.payload.description !== ""
+            ? action.payload.description
+            : undefined,
+        price: action.payload.price,
+        discount: action.payload.discount,
+        stock: action.payload.stock,
+        productImg:
+          action.payload.productImg !== ""
+            ? action.payload.productImg
+            : undefined,
+        standUuid: action.payload.stand.uuid,
+      };
+    }
     case "SET_PRODUCT_NAME": {
       if (!regexLeterNumberSpace.test(action.payload)) {
         return state;
@@ -36,10 +60,16 @@ export function productReducer(
       if (!regexText.test(action.payload)) {
         return state;
       }
+      if (action.payload === "") {
+        return { ...state, summary: undefined };
+      }
       return { ...state, summary: action.payload };
     case "SET_DESCRIPTION":
       if (!regexText.test(action.payload)) {
         return state;
+      }
+      if (action.payload === "") {
+        return { ...state, description: undefined };
       }
       return { ...state, description: action.payload };
     case "SET_PRICE":
@@ -47,6 +77,11 @@ export function productReducer(
         return state;
       }
       return { ...state, price: action.payload };
+    case "SET_DISCOUNT":
+      if (action.payload < 0 && action.payload <= state.price) {
+        return state;
+      }
+      return { ...state, discount: action.payload };
     case "SET_STOCK":
       if (action.payload < 0) {
         return state;
@@ -66,56 +101,18 @@ export function productReducer(
   }
 }
 
-export function checkCreateProduct(
-  state: CreateProduct,
-):
-  | "productName"
-  | "summary"
-  | "description"
-  | "price"
-  | "stock"
-  | "standUuid"
-  | null {
-  if (
-    state.productName.length < 3 &&
-    !regexLeterNumberSpace.test(state.productName)
-  )
-    return "productName";
-  if (state.summary && !regexText.test(state.summary)) return "summary";
-  if (state.description && !regexText.test(state.description))
-    return "description";
-  if (state.price < 0) return "price";
-  if (state.stock < 0) return "stock";
-  if (!regexUuid.test(state.standUuid) || state.standUuid === "")
-    return "standUuid";
-  return null;
-}
+export const createProductPayload = (
+  state: CreateProduct & Partial<UpdateProduct>,
+): CreateProduct => {
+  const { uuid: _uuid, discount: _discount, ...createPayload } = state;
+  return createPayload;
+};
 
-export function checkUpdateProduct(
-  state: CreateProduct,
-):
-  | "productName"
-  | "summary"
-  | "description"
-  | "price"
-  | "stock"
-  | "standUuid"
-  | null {
-  if (
-    state.productName &&
-    state.productName.length < 3 &&
-    !regexLeterNumberSpace.test(state.productName)
-  )
-    return "productName";
-  if (state.summary && !regexText.test(state.summary)) return "summary";
-  if (state.description && !regexText.test(state.description))
-    return "description";
-  if (state.price && state.price < 0) return "price";
-  if (state.stock && state.stock < 0) return "stock";
-  if (
-    (state.standUuid && !regexUuid.test(state.standUuid)) ||
-    state.standUuid === ""
-  )
-    return "standUuid";
-  return null;
-}
+export const updateProductPayload = (
+  state: CreateProduct & Partial<UpdateProduct>,
+): UpdateProduct => {
+  const { uuid, ...rest } = state;
+  if (!uuid || !regexUuid.test(uuid))
+    throw new Error("UUID é obrigatório para atualizar o produto");
+  return { ...rest, uuid };
+};
