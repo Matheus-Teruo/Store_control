@@ -131,6 +131,7 @@ public class SecurityConfigurations {
 
   private static final String[] AUTHORIZED_GET_ENDPOINTS_MANAGEMENT = {
       "/volunteers",
+      "/functions",
       "/purchase",
       "/transactions/last3",
   };

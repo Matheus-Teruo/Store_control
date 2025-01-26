@@ -3,7 +3,7 @@ package com.storecontrol.backend.controllers.volunteers;
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.volunteers.Voluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestRoleVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
 import com.storecontrol.backend.models.volunteers.response.ResponseSummaryVoluntary;
@@ -131,7 +131,7 @@ class VoluntaryTest extends BaseTest {
     String voluntaryRole = "management";
 
     Voluntary mockVoluntary = createVoluntaryEntity(UUID.randomUUID());
-    RequestRoleVoluntary updateRequest = createRequestUpdateVoluntaryRole(
+    RequestVoluntaryRole updateRequest = createRequestUpdateVoluntaryRole(
         mockVoluntary.getUuid(),
         voluntaryRole
         );

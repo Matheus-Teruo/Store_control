@@ -1071,6 +1071,25 @@
 			]
 		},
 		{
+			"name": "Function",
+			"item": [
+				{
+					"name": "List Functions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}functions",
+							"host": [
+								"{{hostPath}}functions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Voluntary",
 			"item": [
 				{

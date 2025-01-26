@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public record RequestRoleVoluntary(
+public record RequestVoluntaryRole(
     @NotNull(message = "{request.validation.roleVoluntary.uuid.notnull}")
     UUID uuid,
 

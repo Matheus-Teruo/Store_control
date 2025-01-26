@@ -27,6 +27,7 @@ import com.storecontrol.backend.models.stands.Association;
 import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.request.*;
+import com.storecontrol.backend.models.volunteers.Function;
 import com.storecontrol.backend.models.volunteers.User;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.models.volunteers.request.*;
@@ -335,6 +336,16 @@ public class TestDataFactory {
     );
   }
 
+  public static Function createFunctionEntity(UUID uuid) {
+    return new Function(
+        uuid,
+        nameOnlyLettersSpaceAndNumbers(),
+        null,
+        true
+    ) {
+    };
+  }
+
   public static Voluntary createVoluntaryEntity(UUID uuid) {
     return new Voluntary(
         uuid,
@@ -381,8 +392,8 @@ public class TestDataFactory {
     );
   }
 
-  public static RequestRoleVoluntary createRequestUpdateVoluntaryRole(UUID uuid, String voluntaryRole) {
-    return new RequestRoleVoluntary(
+  public static RequestVoluntaryRole createRequestUpdateVoluntaryRole(UUID uuid, String voluntaryRole) {
+    return new RequestVoluntaryRole(
         uuid,
         voluntaryRole
     );

@@ -1,6 +1,6 @@
 package com.storecontrol.backend.controllers.volunteers;
 
-import com.storecontrol.backend.models.volunteers.request.RequestRoleVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
 import com.storecontrol.backend.models.volunteers.response.ResponseSummaryVoluntary;
@@ -60,7 +60,7 @@ public class VoluntaryController {
   }
 
   @PutMapping("/role")
-  public ResponseEntity<ResponseVoluntary> updateVoluntaryRole(@RequestBody @Valid RequestRoleVoluntary request) {
+  public ResponseEntity<ResponseVoluntary> updateVoluntaryRole(@RequestBody @Valid RequestVoluntaryRole request) {
     var response = new ResponseVoluntary(service.updateVoluntaryRole(request));
 
     return ResponseEntity.ok(response);

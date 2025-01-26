@@ -4,7 +4,7 @@ import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.volunteers.User;
 import com.storecontrol.backend.models.volunteers.Voluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestRoleVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
 import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
@@ -85,7 +85,7 @@ public class VoluntaryService {
   }
 
   @Transactional
-  public Voluntary updateVoluntaryRole(RequestRoleVoluntary request) {
+  public Voluntary updateVoluntaryRole(RequestVoluntaryRole request) {
     var voluntary = safeTakeVoluntaryByUuid(request.uuid());
 
     voluntary.updateVoluntaryRole(request);

@@ -5,7 +5,7 @@ import com.storecontrol.backend.models.operations.Donation;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Refund;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
-import com.storecontrol.backend.models.volunteers.request.RequestRoleVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
 import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import jakarta.persistence.*;
@@ -77,7 +77,7 @@ public class Voluntary implements UserDetails {
     this.function = function;
   }
 
-  public void updateVoluntaryRole(RequestRoleVoluntary request) {
+  public void updateVoluntaryRole(RequestVoluntaryRole request) {
     this.voluntaryRole = VoluntaryRole.fromString(request.voluntaryRole());
   }
 
