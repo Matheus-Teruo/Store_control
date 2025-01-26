@@ -1,6 +1,5 @@
 import { useHandleApiError } from "@/axios/handlerApiError";
 import Button from "@/components/utils/Button";
-import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
 import {
   MessageType,
@@ -8,30 +7,29 @@ import {
 } from "@context/AlertsContext/useUserContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import {
-  associationReducer,
-  createAssociationPayload,
-  initialAssociationState,
-  updateAssociationPayload,
-} from "@reducer/associationReducer";
+  createStandPayload,
+  initialStandState,
+  standReducer,
+  updateStandPayload,
+} from "@reducer/standReducer";
 import {
-  createAssociation,
-  deleteAssociation,
-  getAssociation,
-  updateAssociation,
-} from "@service/stand/associationService";
+  createStand,
+  deleteStand,
+  getStand,
+  updateStand,
+} from "@service/stand/standService";
 import { useEffect, useReducer, useState } from "react";
+import AssociationSelect from "../AssociationSelect";
+import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 
-type FormAssociationProps = {
+type FormStandProps = {
   type: "create" | "update";
   hide: () => void;
   uuid?: string;
 };
 
-function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
-  const [state, dispatch] = useReducer(
-    associationReducer,
-    initialAssociationState,
-  );
+function FormStand({ type, hide, uuid }: FormStandProps) {
+  const [state, dispatch] = useReducer(standReducer, initialStandState);
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
   const handleApiError = useHandleApiError();
@@ -41,8 +39,8 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
     const fetchAssociation = async () => {
       if (type === "update" && uuid && isUserLogged(user) && isAdmin(user)) {
         try {
-          const association = await getAssociation(uuid);
-          dispatch({ type: "SET_ASSOCIATION", payload: association });
+          const stand = await getStand(uuid);
+          dispatch({ type: "SET_STAND", payload: stand });
         } catch (error) {
           handleApiError(error);
         }
@@ -58,12 +56,10 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
     e.preventDefault();
     if (isUserLogged(user) && isAdmin(user)) {
       try {
-        const association = await createAssociation(
-          createAssociationPayload(state),
-        );
+        const stand = await createStand(createStandPayload(state));
         addNotification({
-          title: "Create Association Success",
-          message: `Create associatione: ${association.associationName}, with president: ${association.principalName}`,
+          title: "Create Stand Success",
+          message: `Create stand: ${stand.standName}, with president: ${stand.association.associationName}`,
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
@@ -78,12 +74,10 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
     e.preventDefault();
     if (uuid && isUserLogged(user) && isAdmin(user)) {
       try {
-        const association = await updateAssociation(
-          updateAssociationPayload(state),
-        );
+        const stand = await updateStand(updateStandPayload(state));
         addNotification({
-          title: "Update Association Success",
-          message: `Update association: ${association.associationName}, with president: ${association.principalName}`,
+          title: "Update Stand Success",
+          message: `Update stand: ${stand.standName}, with president: ${stand.association.associationName}`,
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
@@ -97,10 +91,10 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
   const handleDeleteSubmit = async () => {
     if (uuid && isUserLogged(user) && isAdmin(user)) {
       try {
-        await deleteAssociation(state.uuid);
+        await deleteStand(state.uuid);
         addNotification({
-          title: "Delete Association Success",
-          message: `Delete association ${state.associationName}`,
+          title: "Delete Stand Success",
+          message: `Delete stand: ${state.standName}`,
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
@@ -117,18 +111,17 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
       <form
         onSubmit={type === "create" ? handleCreateSubmit : handleUpdateSubmit}
       >
-        <label>Nome da Associação</label>
+        <label>Nome do estande</label>
         <input
-          value={state.associationName}
+          value={state.standName}
           onChange={(e) =>
-            dispatch({ type: "SET_ASSOCIATION_NAME", payload: e.target.value })
+            dispatch({ type: "SET_STAND_NAME", payload: e.target.value })
           }
         />
-        <label>{"Nome do(a) presente"}</label>
-        <input
-          value={state.principalName}
+        <AssociationSelect
+          value={state.associationUuid}
           onChange={(e) =>
-            dispatch({ type: "SET_PRINCIPAL_NAME", payload: e.target.value })
+            dispatch({ type: "SET_ASSOCIATION_UUID", payload: e.target.value })
           }
         />
         <Button type={ButtonHTMLType.Submit}>
@@ -148,4 +141,4 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
   );
 }
 
-export default FormAssociation;
+export default FormStand;
