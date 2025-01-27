@@ -102,14 +102,14 @@ export function productReducer(
 }
 
 export const createProductPayload = (
-  state: CreateProduct & Partial<UpdateProduct>,
+  state: CreateProduct & UpdateProduct,
 ): CreateProduct => {
   const { uuid: _uuid, discount: _discount, ...createPayload } = state;
   return createPayload;
 };
 
 export const updateProductPayload = (
-  state: CreateProduct & Partial<UpdateProduct>,
+  state: CreateProduct & UpdateProduct,
 ): UpdateProduct => {
   const { uuid, ...rest } = state;
   if (!uuid || !regexUuid.test(uuid))

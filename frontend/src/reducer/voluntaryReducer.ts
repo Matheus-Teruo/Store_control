@@ -8,7 +8,7 @@ import Voluntary, {
 type VoluntaryAction =
   | { type: "SET_VOLUNTARY"; payload: Voluntary }
   | { type: "SET_FUNCTION"; payload: string }
-  | { type: "SET_ROLE"; payload: string }
+  | { type: "SET_ROLE"; payload: VoluntaryRole }
   | { type: "RESET" };
 
 export const initialVoluntaryState: UpdateVoluntaryFunction &
@@ -18,13 +18,6 @@ export const initialVoluntaryState: UpdateVoluntaryFunction &
   functionUuid: "",
   voluntaryRole: VoluntaryRole.VOLUNTARY,
 };
-
-function parseVoluntaryRole(value: string): VoluntaryRole | undefined {
-  if (Object.values(VoluntaryRole).includes(value as VoluntaryRole)) {
-    return value as VoluntaryRole;
-  }
-  return undefined;
-}
 
 export function voluntaryReducer(
   state: UpdateVoluntaryFunction & UpdateVoluntaryRole & { fullname: string },
@@ -55,14 +48,9 @@ export function voluntaryReducer(
       };
     }
     case "SET_ROLE": {
-      const parsedRole = parseVoluntaryRole(action.payload);
-      if (!parsedRole) {
-        console.error("Invalid role value:", action.payload);
-        return state;
-      }
       return {
         ...state,
-        voluntaryRole: parsedRole,
+        voluntaryRole: action.payload,
       };
     }
     case "RESET": {

@@ -1,5 +1,7 @@
 import { useHandleApiError } from "@/axios/handlerApiError";
+import PaymentSelect from "@/components/PaymentSelect";
 import {
+  hasFunction,
   isCashier,
   isUserLogged,
   isUserUnlogged,
@@ -9,20 +11,22 @@ import {
   useAlertsContext,
 } from "@context/AlertsContext/useUserContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import { PaymentType } from "@data/operations/Recharge";
 import { SummaryProduct } from "@data/stands/Product";
+import {
+  initialRechargeState,
+  rechargeReducer,
+} from "@reducer/rechargeReducer";
 import { createRecharge } from "@service/operations/rechargeService";
 import { getProducts } from "@service/stand/productService";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import OrderCard from "./OrderCard";
+import { PaymentType } from "@data/operations/Recharge";
 
 function Cashier() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
-  const [rechargeValue, setRechargeValue] = useState<number>(0);
-  const [rechargeType, setRechagerType] = useState<PaymentType | undefined>(
-    undefined,
-  );
-  const [cardID, setCardID] = useState<string>("");
+  const [showItemCalculater, setShowItemCalculater] = useState<boolean>(false);
+  const [state, dispatch] = useReducer(rechargeReducer, initialRechargeState);
   const { addNotification } = useAlertsContext();
   const handleApiError = useHandleApiError();
   const { user } = useUserContext();
@@ -50,30 +54,30 @@ function Cashier() {
     fetchVoluntary();
   }, [user, navigate, handleApiError]);
 
+  useEffect(() => {
+    if (isUserLogged(user) && hasFunction(user.summaryFunction))
+      dispatch({
+        type: "SET_CASH_REGISTER_UUID",
+        payload: user.summaryFunction.uuid,
+      });
+  }, [user]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      rechargeValue > 0 &&
-      rechargeType !== undefined &&
-      cardID.length === 15 &&
-      isUserLogged(user) &&
-      isCashier(user.summaryFunction)
-    ) {
+    if (isUserLogged(user) && isCashier(user.summaryFunction)) {
       try {
         const recharge = await createRecharge({
-          rechargeValue: rechargeValue,
-          paymentTypeEnum: rechargeType,
-          orderCardId: cardID,
-          cashRegisterUuid: user.summaryFunction.uuid,
+          rechargeValue: state.rechargeValue,
+          paymentTypeEnum: state.paymentTypeEnum!,
+          orderCardId: state.orderCardId,
+          cashRegisterUuid: state.cashRegisterUuid,
         });
         addNotification({
           title: "Create Recharge Success",
           message: `Value ${recharge.rechargeValue} on ${recharge.paymentTypeEnum} to card ${recharge.summaryCustomer.summaryOrderCard.cardId}`,
           type: MessageType.OK,
         });
-        setRechargeValue(0);
-        setRechagerType(undefined);
-        setCardID("");
+        dispatch({ type: "RESET" });
       } catch (error) {
         handleApiError(error);
       }
@@ -83,9 +87,42 @@ function Cashier() {
   return (
     <div>
       <div>Cashier</div>
-      {products.map((product) => (
-        <div key={product.uuid}>{product.productName}</div>
-      ))}
+      <div onClick={() => setShowItemCalculater(true)}>Calculadora</div>
+      {showItemCalculater && (
+        <>
+          <div onClick={() => setShowItemCalculater(false)} />
+          {products.map((product) => (
+            <div key={product.uuid}>{product.productName}</div>
+          ))}
+        </>
+      )}
+      <form onSubmit={handleSubmit}>
+        <OrderCard
+          value={state.orderCardId}
+          onChange={(e) =>
+            dispatch({ type: "SET_CARD_ID", payload: e.target.value })
+          }
+        />
+        <input
+          value={state.rechargeValue.toFixed(2)}
+          onChange={(e) =>
+            dispatch({
+              type: "SET_RECHARGE_VALUE",
+              payload: parseFloat(e.target.value),
+            })
+          }
+          type="number"
+        />
+        <PaymentSelect
+          payment={state.paymentTypeEnum}
+          onChange={(e) =>
+            dispatch({
+              type: "SET_RECHARGE_TYPE",
+              payload: e.target.value as PaymentType,
+            })
+          }
+        />
+      </form>
     </div>
   );
 }

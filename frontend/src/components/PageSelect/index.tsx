@@ -27,6 +27,7 @@ function PageSelect({ value, max, dispatch }: PageSelectProps) {
         {"<"}
       </button>
       <input
+        name="page"
         type="number"
         value={value + 1}
         onChange={handleInputChange}

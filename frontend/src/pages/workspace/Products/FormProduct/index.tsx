@@ -2,13 +2,12 @@ import { useHandleApiError } from "@/axios/handlerApiError";
 import StandSelect from "@/components/StandSelect";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
-import { isSeller, isUserLogged } from "@/utils/checkAuthentication";
+import { isAdmin, isSeller, isUserLogged } from "@/utils/checkAuthentication";
 import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useUserContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import { VoluntaryRole } from "@data/volunteers/Voluntary";
 import {
   createProductPayload,
   initialProductState,
@@ -191,15 +190,14 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
         />
         <label>Imagem</label>
         <input type="file" />
-        {isUserLogged(user) &&
-          user.voluntaryRole === VoluntaryRole.ROLE_ADMIN && (
-            <StandSelect
-              value={state.standUuid}
-              onChange={(e) =>
-                dispatch({ type: "SET_STAND_UUID", payload: e.target.value })
-              }
-            />
-          )}
+        {isUserLogged(user) && isAdmin(user) && (
+          <StandSelect
+            value={state.standUuid}
+            onChange={(e) =>
+              dispatch({ type: "SET_STAND_UUID", payload: e.target.value })
+            }
+          />
+        )}
         <Button type={ButtonHTMLType.Submit}>
           {type === "create" ? "Criar" : "Editar"}
         </Button>

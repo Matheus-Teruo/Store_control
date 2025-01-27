@@ -1,7 +1,7 @@
 import { VoluntaryRole } from "@data/volunteers/Voluntary";
 
 interface RoleSelectProps {
-  value: VoluntaryRole | undefined;
+  value: VoluntaryRole;
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 

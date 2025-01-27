@@ -21,6 +21,7 @@ import {
 import { useEffect, useReducer } from "react";
 import FunctionSelect from "../FunctionSelect";
 import RoleSelect from "../RoleSelect";
+import { VoluntaryRole } from "@data/volunteers/Voluntary";
 
 type FormVoluntaryProps = {
   hide: () => void;
@@ -109,7 +110,10 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
         <RoleSelect
           value={state.voluntaryRole}
           onChange={(e) =>
-            dispatch({ type: "SET_ROLE", payload: e.target.value })
+            dispatch({
+              type: "SET_ROLE",
+              payload: e.target.value as VoluntaryRole,
+            })
           }
         />
         <Button type={ButtonHTMLType.Submit}>Editar</Button>
