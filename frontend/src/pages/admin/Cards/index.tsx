@@ -9,6 +9,7 @@ import { getCards } from "@service/customer/orderCardService";
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FormCard from "./FormCard";
+import Button from "@/components/utils/Button";
 
 function Cards() {
   const [cards, setCards] = useState<OrderCard[]>([]);
@@ -42,6 +43,9 @@ function Cards() {
 
   return (
     <div>
+      <Button onClick={() => formDispach({ type: "SET_CREATE" })}>
+        Criar Cartão
+      </Button>
       <ul>
         {cards.map((card) => (
           <li key={card.cardId}>

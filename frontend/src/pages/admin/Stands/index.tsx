@@ -9,6 +9,7 @@ import { getStands } from "@service/stand/standService";
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FormStand from "./FormStand";
+import Button from "@/components/utils/Button";
 
 function Stands() {
   const [stands, setStands] = useState<SummaryStand[]>([]);
@@ -42,9 +43,21 @@ function Stands() {
 
   return (
     <div>
+      <Button onClick={() => formDispach({ type: "SET_CREATE" })}>
+        Criar Estande
+      </Button>
       <ul>
         {stands.map((stand) => (
-          <li key={stand.uuid}>{stand.standName}</li>
+          <li key={stand.uuid}>
+            {stand.standName}
+            <div
+              onClick={() =>
+                formDispach({ type: "SET_UPDATE", payload: stand.uuid })
+              }
+            >
+              Editar
+            </div>
+          </li>
         ))}
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />

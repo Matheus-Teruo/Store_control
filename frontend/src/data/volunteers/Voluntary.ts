@@ -4,14 +4,14 @@ export default interface Voluntary {
   uuid: string;
   username: string;
   fullname: string;
-  summaryFunction?: SummaryFunction | null;
+  summaryFunction?: SummaryFunction;
   voluntaryRole: VoluntaryRole;
 }
 
 export interface SummaryVoluntary {
   uuid: string;
   fullname: string;
-  summaryFunction: SummaryFunction;
+  summaryFunction?: SummaryFunction;
   voluntaryRole: VoluntaryRole;
 }
 
@@ -27,13 +27,13 @@ export interface UpdateVoluntaryFunction {
   functionUuid: string;
 }
 
-export interface UpdateRoleVoluntary {
+export interface UpdateVoluntaryRole {
   uuid: string;
   voluntaryRole: VoluntaryRole;
 }
 
 export enum VoluntaryRole {
-  ROLE_USER = "ROLE_USER",
-  ROLE_MANAGEMENT = "ROLE_MANAGEMENT",
-  ROLE_ADMIN = "ROLE_ADMIN",
+  VOLUNTARY = "voluntary",
+  MANAGEMENT = "management",
+  ADMIN = "admin",
 }

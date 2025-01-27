@@ -12,19 +12,19 @@ function AdminHeader() {
         {isAdmin(user) && (
           <>
             <li>
-              <Link to="admin/associations">Associations</Link>
+              <Link to="/admin/associations">Associations</Link>
             </li>
             <li>
-              <Link to="admin/cards">Cards</Link>
+              <Link to="/admin/cards">Cards</Link>
             </li>
             <li>
-              <Link to="admin/stands">Stands</Link>
+              <Link to="/admin/stands">Stands</Link>
             </li>
           </>
         )}
 
         <li>
-          <Link to="admin/volunteers">Volunteers</Link>
+          <Link to="/admin/volunteers">Volunteers</Link>
         </li>
       </ul>
       <Outlet />

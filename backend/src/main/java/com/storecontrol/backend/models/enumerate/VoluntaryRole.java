@@ -22,6 +22,10 @@ public enum VoluntaryRole {
     throw new IllegalArgumentException("No role type found from the passed String");
   }
 
+  public String toString() {
+    return this.voluntaryRoleLower;
+  }
+
   public boolean isNotAdmin() {
     return !this.typeBoolean;
   }

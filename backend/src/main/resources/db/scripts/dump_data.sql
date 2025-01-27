@@ -79,8 +79,8 @@ INSERT INTO order_cards (card_id, debit, active) VALUES
 
 -- Inserir Voluntários
 INSERT INTO volunteers (uuid, username, password, fullname, function_uuid, voluntary_role, valid) VALUES
-(@VOLUNTARY_MANAGER1_UUID, 'manager1', 'password_hash', 'Manager 1 Name', @STAND1_UUID, 'ROLE_ADMIN', 1),
-(@VOLUNTARY_MANAGER2_UUID, 'manager2', 'password_hash', 'Manager 2 Name', @CASH_REGISTER2_UUID, 'ROLE_ADMIN', 1),
+(@VOLUNTARY_MANAGER1_UUID, 'manager1', 'password_hash', 'Manager 1 Name', @STAND1_UUID, 'ROLE_MANAGEMENT', 1),
+(@VOLUNTARY_MANAGER2_UUID, 'manager2', 'password_hash', 'Manager 2 Name', @CASH_REGISTER2_UUID, 'ROLE_MANAGEMENT', 1),
 (@VOLUNTARY_USER1_UUID, 'user1', 'password_hash', 'User 1 Name', @STAND2_UUID, 'ROLE_USER', 1),
 (@VOLUNTARY_USER2_UUID, 'user2', 'password_hash', 'User 2 Name', @CASH_REGISTER1_UUID, 'ROLE_USER', 1);
 

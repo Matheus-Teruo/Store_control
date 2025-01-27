@@ -2,6 +2,7 @@ import {
   isAdmin,
   isCashier,
   isManegement,
+  isSeller,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
@@ -23,15 +24,18 @@ function Hub() {
     <div>
       <div>header</div>
       <ul>
-        {isUserLogged(user) && isCashier(user.summaryFunction) ? (
-          <li>
-            <Link to="/workspace/cashiers">Caixas</Link>
-          </li>
-        ) : (
-          <li>
-            <Link to="/workspace/sales">Vendas</Link>
-          </li>
-        )}
+        {isUserLogged(user) &&
+          isCashier(user.summaryFunction, user.voluntaryRole) && (
+            <li>
+              <Link to="/workspace/cashiers">Caixas</Link>
+            </li>
+          )}
+        {isUserLogged(user) &&
+          isSeller(user.summaryFunction, user.voluntaryRole) && (
+            <li>
+              <Link to="/workspace/sales">Vendas</Link>
+            </li>
+          )}
         <li>
           <Link to="/workspace/products">Produtos</Link>
         </li>
@@ -41,20 +45,20 @@ function Hub() {
         {isManegement(user) && (
           <>
             <li>
-              <Link to="admin/Volunteers">Volunteers</Link>
+              <Link to="/admin/volunteers">Volunteers</Link>
             </li>
           </>
         )}
         {isAdmin(user) && (
           <>
             <li>
-              <Link to="admin/associations">Associations</Link>
+              <Link to="/admin/associations">Associations</Link>
             </li>
             <li>
-              <Link to="admin/cards">Cards</Link>
+              <Link to="/admin/cards">Cards</Link>
             </li>
             <li>
-              <Link to="admin/Stands">Stands</Link>
+              <Link to="/admin/stands">Stands</Link>
             </li>
           </>
         )}

@@ -18,7 +18,7 @@ export function hasFunction(
 ): userFunction is SummaryFunction {
   return (
     (userFunction !== null && userFunction !== undefined) ||
-    admin === VoluntaryRole.ROLE_ADMIN
+    admin === VoluntaryRole.ADMIN
   );
 }
 
@@ -30,7 +30,7 @@ export function isSeller(
     (userFunction !== null &&
       userFunction !== undefined &&
       userFunction.typeOfFunction === "Stand") ||
-    admin === VoluntaryRole.ROLE_ADMIN
+    admin === VoluntaryRole.ADMIN
   );
 }
 
@@ -42,14 +42,14 @@ export function isCashier(
     (userFunction !== null &&
       userFunction !== undefined &&
       userFunction.typeOfFunction === "Register") ||
-    admin === VoluntaryRole.ROLE_ADMIN
+    admin === VoluntaryRole.ADMIN
   );
 }
 
 export function isManegement(user: User | null | "unlogged"): user is User {
-  return isUserLogged(user) && user.voluntaryRole !== VoluntaryRole.ROLE_USER;
+  return isUserLogged(user) && user.voluntaryRole !== VoluntaryRole.VOLUNTARY;
 }
 
 export function isAdmin(user: User | null | "unlogged"): user is User {
-  return isUserLogged(user) && user.voluntaryRole === VoluntaryRole.ROLE_ADMIN;
+  return isUserLogged(user) && user.voluntaryRole === VoluntaryRole.ADMIN;
 }

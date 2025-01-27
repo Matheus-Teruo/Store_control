@@ -4,6 +4,7 @@ import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,11 +19,14 @@ public class VoluntaryValidation {
 
   public void checkVoluntaryAuthentication(UUID requestUuid, UUID loggedUuid){
     if (!requestUuid.equals(loggedUuid)) {
-      throw new InvalidDatabaseQueryException(
-          MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.error"),
-          MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.message"),
-          requestUuid.toString()
-      );
+      var user = repository.findByUuidValidTrue(loggedUuid).orElseThrow(EntityNotFoundException::new);
+      if (user.getVoluntaryRole().isNotAdmin()) {
+        throw new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.error"),
+            MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.message"),
+            requestUuid.toString()
+        );
+      }
     }
   }
 

@@ -3,6 +3,7 @@ import Voluntary, {
   SummaryVoluntary,
   UpdateVoluntary,
   UpdateVoluntaryFunction,
+  UpdateVoluntaryRole,
 } from "@/data/volunteers/Voluntary";
 import { PaginatedResponse } from "@service/PagesType";
 
@@ -42,5 +43,12 @@ export const updateVoluntaryFunction = async (
   voluntary: UpdateVoluntaryFunction,
 ): Promise<Voluntary> => {
   const response = await api.put<Voluntary>("/volunteers/function", voluntary);
+  return response.data;
+};
+
+export const updateVoluntaryRole = async (
+  voluntary: UpdateVoluntaryRole,
+): Promise<Voluntary> => {
+  const response = await api.put<Voluntary>("/volunteers/role", voluntary);
   return response.data;
 };
