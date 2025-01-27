@@ -13,7 +13,7 @@ import {
   initialProductState,
   productReducer,
   updateProductPayload,
-} from "@reducer/productReducer";
+} from "@reducer/stand/productReducer";
 import {
   createProduct,
   deleteProduct,

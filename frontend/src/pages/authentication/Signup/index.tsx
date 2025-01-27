@@ -15,7 +15,7 @@ import {
   checkSignupUser,
   initialUserState,
   userReducer,
-} from "@reducer/userReducer";
+} from "@reducer/voluntary/userReducer";
 
 function Signup() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);

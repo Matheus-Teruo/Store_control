@@ -7,7 +7,7 @@ import {
   useAlertsContext,
 } from "@context/AlertsContext/useUserContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import { cardReducer, initialCardState } from "@reducer/cardReducer";
+import { cardReducer, initialCardState } from "@reducer/customer/cardReducer";
 import { createCard } from "@service/customer/orderCardService";
 import { useReducer } from "react";
 

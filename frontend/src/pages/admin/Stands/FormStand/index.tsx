@@ -11,7 +11,7 @@ import {
   initialStandState,
   standReducer,
   updateStandPayload,
-} from "@reducer/standReducer";
+} from "@reducer/stand/standReducer";
 import {
   createStand,
   deleteStand,

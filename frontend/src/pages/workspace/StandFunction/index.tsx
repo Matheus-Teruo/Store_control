@@ -15,7 +15,7 @@ import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import {
   initialPurchaseState,
   purchaseReducer,
-} from "@reducer/purchaseReducer";
+} from "@reducer/operation/purchaseReducer";
 import { createPurchase } from "@service/operations/purchaseService";
 import { getProducts } from "@service/stand/productService";
 import { useEffect, useReducer, useState } from "react";

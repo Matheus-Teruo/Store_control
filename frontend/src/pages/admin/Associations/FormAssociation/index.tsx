@@ -12,7 +12,7 @@ import {
   createAssociationPayload,
   initialAssociationState,
   updateAssociationPayload,
-} from "@reducer/associationReducer";
+} from "@reducer/stand/associationReducer";
 import {
   createAssociation,
   deleteAssociation,

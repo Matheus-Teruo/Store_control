@@ -15,7 +15,7 @@ import { SummaryProduct } from "@data/stands/Product";
 import {
   initialRechargeState,
   rechargeReducer,
-} from "@reducer/rechargeReducer";
+} from "@reducer/operation/rechargeReducer";
 import { createRecharge } from "@service/operations/rechargeService";
 import { getProducts } from "@service/stand/productService";
 import { useEffect, useReducer, useState } from "react";

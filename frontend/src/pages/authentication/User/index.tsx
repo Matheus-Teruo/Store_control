@@ -18,14 +18,14 @@ import {
   checkUpdateUser,
   initialUserState,
   userReducer,
-} from "@reducer/userReducer";
+} from "@reducer/voluntary/userReducer";
 
 const voluntaryInitialValue: Voluntary = {
   uuid: "",
   username: "username",
   fullname: "fullname",
-  summaryFunction: null,
-  voluntaryRole: VoluntaryRole.ROLE_USER,
+  summaryFunction: undefined,
+  voluntaryRole: VoluntaryRole.VOLUNTARY,
 };
 
 function User() {
@@ -149,9 +149,9 @@ function User() {
         <div>
           <p>Permissão</p>
           {/* TODO: otimizar forma de visualizar enum */}
-          {userProperties.voluntaryRole === VoluntaryRole.ROLE_USER ? (
+          {userProperties.voluntaryRole === VoluntaryRole.VOLUNTARY ? (
             <p>Usuário Voluntário</p>
-          ) : userProperties.voluntaryRole === VoluntaryRole.ROLE_MANAGEMENT ? (
+          ) : userProperties.voluntaryRole === VoluntaryRole.MANAGEMENT ? (
             <p>Gestor</p>
           ) : (
             <p>Administrador</p>

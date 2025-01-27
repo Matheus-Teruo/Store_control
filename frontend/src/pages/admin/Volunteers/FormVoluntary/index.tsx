@@ -12,7 +12,7 @@ import {
   updateVoluntaryFunctionPayload,
   updateVoluntaryRolePayload,
   voluntaryReducer,
-} from "@reducer/voluntaryReducer";
+} from "@reducer/voluntary/voluntaryReducer";
 import {
   getVoluntary,
   updateVoluntaryFunction,

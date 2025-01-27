@@ -1,7 +1,7 @@
 import { useHandleApiError } from "@/axios/handlerApiError";
 import { CreatePurchase } from "@data/operations/Purchase";
 import { SummaryProduct } from "@data/stands/Product";
-import { PurchaseAction } from "@reducer/purchaseReducer";
+import { PurchaseAction } from "@reducer/operation/purchaseReducer";
 import { getListProducts } from "@service/stand/productService";
 import { useEffect, useState } from "react";
 
