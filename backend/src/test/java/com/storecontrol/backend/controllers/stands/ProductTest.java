@@ -6,7 +6,6 @@ import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.stands.response.ResponseProduct;
-import com.storecontrol.backend.models.stands.response.ResponseSummaryAssociation;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
 import com.storecontrol.backend.services.stands.ProductService;
 import com.storecontrol.backend.services.stands.S3Service;

@@ -1,10 +1,8 @@
 package com.storecontrol.backend.controllers.operations;
 
 import com.storecontrol.backend.BaseTest;
-import com.storecontrol.backend.models.operations.Refund;
 import com.storecontrol.backend.models.operations.Transaction;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
-import com.storecontrol.backend.models.operations.response.ResponseSummaryRefund;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryTransaction;
 import com.storecontrol.backend.models.operations.response.ResponseTransaction;
 import com.storecontrol.backend.services.operations.TransactionService;

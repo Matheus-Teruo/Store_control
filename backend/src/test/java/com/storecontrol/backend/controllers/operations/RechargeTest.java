@@ -4,8 +4,6 @@ import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.operations.Recharge;
-import com.storecontrol.backend.models.operations.purchases.Purchase;
-import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.response.ResponseRecharge;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryRecharge;

@@ -1851,6 +1851,34 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "Trade",
+					"item": [
+						{
+							"name": "Create Trade",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"OrderCardSimple\",\r\n    \"cashRegisterUuid\": \"12345678-abcd-4efa-bcde-f1234567890a\",\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}trades",
+									"host": [
+										"{{hostPath}}trades"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},

@@ -9,7 +9,6 @@ import com.storecontrol.backend.models.customers.response.ResponseCustomer;
 import com.storecontrol.backend.models.customers.response.ResponseCustomerOrder;
 import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
 import com.storecontrol.backend.models.volunteers.Voluntary;
-import com.storecontrol.backend.models.volunteers.response.ResponseSummaryVoluntary;
 import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
 import com.storecontrol.backend.services.customers.CustomerService;
 import org.junit.jupiter.api.Test;
@@ -66,7 +65,6 @@ class CustomerTest extends BaseTest {
 
     String cardId = "CardIDTest12345";
     OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
-    RequestOrderCard requestOrderCard = createRequestOrderCard(cardId);
 
     Customer mockCustomer = createCustomerEntity(customerUuid, mockOrderCard,false);
     ResponseCustomerOrder expectedResponse = new ResponseCustomerOrder(mockCustomer);

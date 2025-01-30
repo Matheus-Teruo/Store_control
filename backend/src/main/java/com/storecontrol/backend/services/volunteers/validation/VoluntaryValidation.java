@@ -3,6 +3,7 @@ package com.storecontrol.backend.services.volunteers.validation;
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
+import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
 import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,19 @@ public class VoluntaryValidation {
           Map.of(
               MessageResolver.getInstance().getMessage("validation.voluntary.checkFullname.nameDuplication.field"),
               fullname
+          )
+      );
+    }
+  }
+
+  public void checkManagerSetOwnsFunction(RequestUpdateVoluntaryFunction request, UUID functionUuid) {
+    if (request.functionUuid() != functionUuid) {
+      throw new InvalidDatabaseInsertionException(
+          MessageResolver.getInstance().getMessage("validation.voluntary.checkManagementFunction.invalid.error"),
+          MessageResolver.getInstance().getMessage("validation.voluntary.checkManagementFunction.invalid.message"),
+          Map.of(
+              MessageResolver.getInstance().getMessage("validation.voluntary.checkManagementFunction.invalid.field"),
+              request.functionUuid().toString()
           )
       );
     }

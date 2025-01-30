@@ -2,12 +2,10 @@ package com.storecontrol.backend.controllers.stands;
 
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.stands.Association;
-import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.stands.request.RequestCreateAssociation;
 import com.storecontrol.backend.models.stands.request.RequestUpdateAssociation;
 import com.storecontrol.backend.models.stands.response.ResponseAssociation;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryAssociation;
-import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
 import com.storecontrol.backend.services.stands.AssociationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;

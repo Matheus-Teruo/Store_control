@@ -53,8 +53,9 @@ public class VoluntaryController {
 
   @PutMapping("/function")
   public ResponseEntity<ResponseVoluntary> updateFunctionFromVoluntary(
-      @RequestBody @Valid RequestUpdateVoluntaryFunction request) {
-    var response = new ResponseVoluntary(service.updateFunctionFromVoluntary(request));
+      @RequestBody @Valid RequestUpdateVoluntaryFunction request,
+      @RequestAttribute("UserUuid") UUID userUuid) {
+    var response = new ResponseVoluntary(service.updateFunctionFromVoluntary(request, userUuid));
 
     return ResponseEntity.ok(response);
   }

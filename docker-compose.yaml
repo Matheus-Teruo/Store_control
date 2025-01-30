@@ -29,7 +29,7 @@ services:
     volumes:
       - db-data:/var/lib/mysql
       - ./db/export:/var/lib/mysql-files
-      - ./backend/src/main/resources/db/scripts:/aux-scripts
+      - ./db/scripts:/aux-scripts
     ports:
       - 3307:3306
     networks:

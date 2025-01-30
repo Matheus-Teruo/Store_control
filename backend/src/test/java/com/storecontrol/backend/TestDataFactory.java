@@ -19,6 +19,7 @@ import com.storecontrol.backend.models.operations.purchases.request.RequestCreat
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
+import com.storecontrol.backend.models.operations.request.RequestCreateTrade;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
@@ -194,6 +195,33 @@ public class TestDataFactory {
         voluntaryUUID,
         createVoluntaryEntity(voluntaryUUID),
         true
+    );
+  }
+
+  public static RequestCreateTrade createRequestCreateTrade(Recharge recharge, Purchase purchase, OrderCard orderCard) {
+    List<RequestCreateItem> requestCreateItems = List.of(
+        new RequestCreateItem(
+            purchase.getItems().get(0).getItemId().getProduct().getUuid(),
+            purchase.getItems().get(0).getQuantity(),
+            purchase.getItems().get(0).getDelivered(),
+            purchase.getItems().get(0).getUnitPrice(),
+            purchase.getItems().get(0).getDiscount()
+        ),
+        new RequestCreateItem(
+            purchase.getItems().get(1).getItemId().getProduct().getUuid(),
+            purchase.getItems().get(1).getQuantity(),
+            purchase.getItems().get(1).getDelivered(),
+            purchase.getItems().get(1).getUnitPrice(),
+            purchase.getItems().get(1).getDiscount()
+        )
+    );
+    return new RequestCreateTrade(
+        recharge.getRechargeValue(),
+        recharge.getPaymentTypeEnum().toString(),
+        orderCard.getId(),
+        recharge.getCashRegister().getUuid(),
+        purchase.isOnOrder(),
+        requestCreateItems
     );
   }
 

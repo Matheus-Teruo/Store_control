@@ -115,7 +115,8 @@ public class SecurityConfigurations {
       "/user/logout",
       "/customers/finalize",
       "/purchases",
-      "/recharges"
+      "/recharges",
+      "/trades"
   };
 
   private static final String[] AUTHORIZED_PUT_ENDPOINTS_LOGGED = {

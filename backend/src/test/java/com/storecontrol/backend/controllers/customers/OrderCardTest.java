@@ -1,11 +1,9 @@
 package com.storecontrol.backend.controllers.customers;
 
 import com.storecontrol.backend.BaseTest;
-import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.customers.response.ResponseOrderCard;
-import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
 import com.storecontrol.backend.models.customers.response.ResponseSummaryOrderCard;
 import com.storecontrol.backend.services.customers.OrderCardService;
 import org.junit.jupiter.api.Test;

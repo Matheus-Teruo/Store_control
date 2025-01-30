@@ -3,7 +3,6 @@ package com.storecontrol.backend.controllers.operations;
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
-import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
 import com.storecontrol.backend.models.operations.Donation;
 import com.storecontrol.backend.models.operations.response.ResponseDonation;
 import com.storecontrol.backend.models.operations.response.ResponseSummaryDonation;

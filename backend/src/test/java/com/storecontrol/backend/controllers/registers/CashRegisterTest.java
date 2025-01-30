@@ -6,8 +6,6 @@ import com.storecontrol.backend.models.registers.request.RequestCreateCashRegist
 import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
 import com.storecontrol.backend.models.registers.response.ResponseCashRegister;
 import com.storecontrol.backend.models.registers.response.ResponseSummaryCashRegister;
-import com.storecontrol.backend.models.stands.Association;
-import com.storecontrol.backend.models.stands.response.ResponseSummaryAssociation;
 import com.storecontrol.backend.services.registers.CashRegisterService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;

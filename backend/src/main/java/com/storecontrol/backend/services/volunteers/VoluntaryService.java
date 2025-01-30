@@ -76,7 +76,9 @@ public class VoluntaryService {
   }
 
   @Transactional
-  public Voluntary updateFunctionFromVoluntary(RequestUpdateVoluntaryFunction request) {
+  public Voluntary updateFunctionFromVoluntary(RequestUpdateVoluntaryFunction request, UUID userUuid) {
+    var management = safeTakeVoluntaryByUuid(userUuid);
+    validation.checkManagerSetOwnsFunction(request, management.getFunction().getUuid());
     var voluntary = safeTakeVoluntaryByUuid(request.uuid());
 
     verifyUpdateFunction(request.functionUuid(), voluntary);
