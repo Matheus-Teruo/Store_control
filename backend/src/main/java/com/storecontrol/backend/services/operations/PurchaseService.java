@@ -54,6 +54,7 @@ public class PurchaseService {
     var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
     validation.checkItemPriceAndDiscountMatch(request, voluntary, productMap);
     validation.checkInsufficientDebitValidity(request, customer);
+    validation.checkPurchaseHaveItems(request);
     validation.checkInsufficientProductStockValidity(request, productMap);
 
     var purchase = new Purchase(request, customer,  voluntary);

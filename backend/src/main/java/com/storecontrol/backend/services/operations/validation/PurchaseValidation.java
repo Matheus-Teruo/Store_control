@@ -99,14 +99,36 @@ public class PurchaseValidation {
     }
   }
 
+  public void checkPurchaseHaveItems(RequestCreatePurchase request) {
+    int totalQuantity = request.items().stream()
+        .map(RequestCreateItem::quantity)
+        .reduce(0, Integer::sum);
+    boolean hasInvalidQuantity = request.items().stream()
+        .anyMatch(item -> item.quantity() <= 0);
+
+    if (hasInvalidQuantity) {
+      throw new InvalidOperationException(
+          MessageResolver.getInstance().getMessage("validation.purchase.checkQuantity.null.error"),
+          MessageResolver.getInstance().getMessage("validation.purchase.checkQuantity.null.message")
+      );
+    }
+
+    if (totalQuantity == 0) {
+      throw new InvalidOperationException(
+          MessageResolver.getInstance().getMessage("validation.purchase.checkQuantity.noItem.error"),
+          MessageResolver.getInstance().getMessage("validation.purchase.checkQuantity.noItem.message")
+      );
+    }
+  }
+
   public void checkInsufficientProductStockValidity(RequestCreatePurchase request, Map<UUID, Product> productMap) {
     for (RequestCreateItem requestCreateItem : request.items()) {
       var product = productMap.get(requestCreateItem.productUuid());
 
       if (product.getStock() < requestCreateItem.quantity()) {
         throw new InvalidOperationException(
-            MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStick.error"),
-            MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStick.message")
+            MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.error"),
+            MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.message")
         );
       }
     }

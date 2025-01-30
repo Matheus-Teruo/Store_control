@@ -61,6 +61,7 @@ public class TradeService {
 
     var productMap = productService.listProductsAsMap();
     purchaseValidation.checkItemPriceAndDiscountMatch(purchaseRequest, voluntary, productMap);
+    purchaseValidation.checkPurchaseHaveItems(purchaseRequest);
     purchaseValidation.checkInsufficientProductStockValidity(purchaseRequest, productMap);
     validation.checkRechargeMatchTotalPrice(rechargeRequest, purchaseRequest);
 
