@@ -9,7 +9,7 @@ import {
 import {
   MessageType,
   useAlertsContext,
-} from "@context/AlertsContext/useUserContext";
+} from "@context/AlertsContext/useAlertsContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { SummaryProduct } from "@data/stands/Product";
 import {

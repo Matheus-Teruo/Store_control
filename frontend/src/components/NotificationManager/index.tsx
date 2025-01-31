@@ -1,6 +1,6 @@
 import styles from "./NotificationManager.module.scss";
 import MessageAlert from "./MessageAlert";
-import { useAlertsContext } from "@/context/AlertsContext/useUserContext";
+import { useAlertsContext } from "@context/AlertsContext/useAlertsContext";
 
 function NotificationManager() {
   const { notifications } = useAlertsContext();

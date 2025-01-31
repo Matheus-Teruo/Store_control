@@ -8,7 +8,7 @@ import { loginVoluntary } from "@service/voluntary/userService";
 import {
   MessageType,
   useAlertsContext,
-} from "@context/AlertsContext/useUserContext";
+} from "@context/AlertsContext/useAlertsContext";
 import { useHandleApiError } from "@/axios/handlerApiError";
 import { useUserContext } from "@context/UserContext/useUserContext";
 

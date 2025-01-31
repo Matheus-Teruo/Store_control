@@ -1,7 +1,7 @@
 import {
   MessageType,
   useAlertsContext,
-} from "@/context/AlertsContext/useUserContext";
+} from "@context/AlertsContext/useAlertsContext";
 import { isAxiosError } from "axios";
 import { useCallback } from "react";
 

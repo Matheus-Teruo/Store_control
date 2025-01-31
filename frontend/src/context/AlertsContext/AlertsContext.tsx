@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Message, Notification, AlertsContext } from "./useUserContext";
+import { Message, Notification, AlertsContext } from "./useAlertsContext";
 
 export default function AlertProvider({
   children,

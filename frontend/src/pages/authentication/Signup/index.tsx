@@ -7,7 +7,7 @@ import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import {
   MessageType,
   useAlertsContext,
-} from "@/context/AlertsContext/useUserContext";
+} from "@context/AlertsContext/useAlertsContext";
 import { useHandleApiError } from "@/axios/handlerApiError";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "@context/UserContext/useUserContext";

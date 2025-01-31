@@ -6,7 +6,7 @@ import { isAdmin, isSeller, isUserLogged } from "@/utils/checkAuthentication";
 import {
   MessageType,
   useAlertsContext,
-} from "@context/AlertsContext/useUserContext";
+} from "@context/AlertsContext/useAlertsContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import {
   createProductPayload,

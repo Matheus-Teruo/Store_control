@@ -2,7 +2,7 @@ import styles from "./MessageAlert.module.scss";
 import {
   MessageType,
   useAlertsContext,
-} from "@/context/AlertsContext/useUserContext";
+} from "@context/AlertsContext/useAlertsContext";
 
 type MessageAlertProps = {
   id: number;

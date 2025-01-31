@@ -12,7 +12,7 @@ import { useHandleApiError } from "@/axios/handlerApiError";
 import {
   MessageType,
   useAlertsContext,
-} from "@context/AlertsContext/useUserContext";
+} from "@context/AlertsContext/useAlertsContext";
 import { isUserLogged, isUserUnlogged } from "@/utils/checkAuthentication";
 import {
   checkUpdateUser,
