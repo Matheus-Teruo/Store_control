@@ -108,6 +108,7 @@ public class SecurityConfigurations {
       "/purchases/last3",
       "/purchases/{uuid}",
       "/recharges/last3",
+      "/recharges/{uuid}",
       "/volunteers/{uuid}"
   };
 
@@ -133,7 +134,7 @@ public class SecurityConfigurations {
   private static final String[] AUTHORIZED_GET_ENDPOINTS_MANAGEMENT = {
       "/volunteers",
       "/functions",
-      "/purchase",
+      "/purchases",
       "/transactions/last3",
   };
 

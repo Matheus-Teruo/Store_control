@@ -457,7 +457,7 @@ public class TestDataFactory {
 
   private static String nameOnlyLettersAndNumbers() {
     String character = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    int length = generateRandomLength(6, 25);
+    int length = generateRandomLength(8, 25);
     return generateRandomName(length, character);
   }
 
