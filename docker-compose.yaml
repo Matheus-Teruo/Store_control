@@ -67,6 +67,7 @@ services:
     networks:
       - public
     environment:
+      # TODO env do front
       - WATCHPACK_POLLING=true
     depends_on:
       - backend

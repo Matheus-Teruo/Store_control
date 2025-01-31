@@ -1,4 +1,5 @@
 import { useHandleApiError } from "@/axios/handlerApiError";
+import PaymentSelect from "@/components/PaymentSelect";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import { isSeller, isUserLogged } from "@/utils/checkAuthentication";
@@ -7,24 +8,25 @@ import {
   useAlertsContext,
 } from "@context/AlertsContext/useUserContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import { CreatePurchase } from "@data/operations/Purchase";
+import { PaymentType } from "@data/operations/Recharge";
+import { CreateTrade } from "@data/operations/Trade";
 import { SummaryProduct } from "@data/stands/Product";
 import {
-  createPurchasePayload,
-  PurchaseAction,
-} from "@reducer/operation/purchaseReducer";
-import { createPurchase } from "@service/operations/purchaseService";
+  createTradePayload,
+  TradeAction,
+} from "@reducer/operation/tradeReducer";
+import { createTrade } from "@service/operations/tradeService";
 import { getListProducts } from "@service/stand/productService";
 import { useEffect, useState } from "react";
 
 type FormPurchaseProps = {
   reducer: [
-    CreatePurchase & { totalPrice: number; totalQuantity: number },
-    React.Dispatch<PurchaseAction>,
+    CreateTrade & { totalQuantity: number },
+    React.Dispatch<TradeAction>,
   ];
 };
 
-function FormPurchase({ reducer }: FormPurchaseProps) {
+function FormTrade({ reducer }: FormPurchaseProps) {
   const [productsRecord, setProductsRecord] = useState<
     Record<string, Omit<SummaryProduct, "uuid">>
   >({});
@@ -57,7 +59,7 @@ function FormPurchase({ reducer }: FormPurchaseProps) {
     e.preventDefault();
     if (isUserLogged(user) && isSeller(user.summaryFunction)) {
       try {
-        const purchase = await createPurchase(createPurchasePayload(state));
+        const purchase = await createTrade(createTradePayload(state));
         addNotification({
           title: "Create Purchase Success",
           message: `Create purchase with ${purchase.items.length} itens diferent`,
@@ -79,7 +81,7 @@ function FormPurchase({ reducer }: FormPurchaseProps) {
             return (
               <li key={item.productUuid}>
                 <p>{product.productName}</p>
-                <p>R${(product.price - product.discount).toFixed(2)}</p>
+                <p>R${(item.unitPrice - item.discount).toFixed(2)}</p>
                 <div
                   onClick={() =>
                     dispatch({
@@ -94,7 +96,7 @@ function FormPurchase({ reducer }: FormPurchaseProps) {
                   onClick={() =>
                     dispatch({
                       type: "DECREASE_ITEM",
-                      payload: product.standUuid,
+                      payload: item.productUuid,
                     })
                   }
                 >
@@ -127,10 +129,19 @@ function FormPurchase({ reducer }: FormPurchaseProps) {
             );
           })}
         </ul>
+        <PaymentSelect
+          payment={state.paymentTypeEnum}
+          onChange={(e) =>
+            dispatch({
+              type: "SET_RECHARGE_TYPE",
+              payload: e.target.value as PaymentType,
+            })
+          }
+        />
         <Button type={ButtonHTMLType.Submit}>Finalizar</Button>
       </form>
     </div>
   );
 }
 
-export default FormPurchase;
+export default FormTrade;

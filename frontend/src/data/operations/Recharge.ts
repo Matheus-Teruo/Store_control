@@ -3,7 +3,7 @@ import { SummaryVoluntary } from "@data/volunteers/Voluntary";
 
 export default interface Recharge {
   uuid: string;
-  rechargeValue: boolean;
+  rechargeValue: number;
   paymentTypeEnum: PaymentType;
   rechargeTimeStamp: string; // TODO: data
   summaryCustomer: SummaryCustomer;
@@ -12,7 +12,7 @@ export default interface Recharge {
 
 export interface SummaryRecharge {
   uuid: string;
-  rechargeValue: boolean;
+  rechargeValue: number;
   paymentTypeEnum: PaymentType;
   rechargeTimeStamp: string; // TODO: data
   voluntaryUuid: string;
@@ -20,7 +20,7 @@ export interface SummaryRecharge {
 
 export interface RechargeOrder {
   uuid: string;
-  rechargeValue: boolean;
+  rechargeValue: number;
   paymentTypeEnum: PaymentType;
   rechargeTimeStamp: string; // TODO: data
 }

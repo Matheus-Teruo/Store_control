@@ -21,7 +21,7 @@ function Order() {
         const products = await getListProducts();
         const productsObject = products.reduce(
           (acc, product) => {
-            const { uuid, ...rest } = product; // Extrai o uuid e o resto do objeto
+            const { uuid, ...rest } = product;
             acc[uuid] = rest;
             return acc;
           },

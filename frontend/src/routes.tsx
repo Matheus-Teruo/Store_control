@@ -6,8 +6,10 @@ import Home from "./pages/public/Home";
 import Menu from "./pages/public/Menu";
 import Order from "./pages/public/Order";
 import Hub from "./pages/workspace/Hub";
+import HubSimple from "./pages/workspace/Hub/HubSimple";
 import CashierFunction from "./pages/workspace/CashierFunction";
 import StandFunction from "./pages/workspace/StandFunction";
+import StandFunctionSimple from "./pages/workspace/StandFunction/StandFunctionSimple";
 import Products from "./pages/workspace/Products";
 import Associations from "./pages/admin/Associations";
 import Cards from "./pages/admin/Cards";
@@ -20,8 +22,19 @@ import NotificationManager from "./components/NotificationManager";
 import AdminHeader from "./components/AdminHeader";
 import Transactions from "./pages/analytics/Statistics/Transactions";
 import Transaction from "./pages/workspace/TrasactionOperation";
+import activeConfig from "./config/activeConfig";
 
 function AppRouter() {
+  let workspaceHub;
+  let salesComponent;
+  if (activeConfig.version === "simple") {
+    workspaceHub = <HubSimple />;
+    salesComponent = <StandFunctionSimple />;
+  } else {
+    workspaceHub = <Hub />;
+    salesComponent = <StandFunction />;
+  }
+
   return (
     <Router>
       <NotificationManager />
@@ -35,9 +48,9 @@ function AppRouter() {
           <Route path="user" element={<User />} />
         </Route>
         <Route path="/workspace">
-          <Route path="" element={<Hub />} />
+          <Route path="" element={workspaceHub} />
           <Route path="cashiers" element={<CashierFunction />} />
-          <Route path="sales" element={<StandFunction />} />
+          <Route path="sales" element={salesComponent} />
           <Route path="products" element={<Products />} />
           <Route path="transaction" element={<Transaction />} />
         </Route>

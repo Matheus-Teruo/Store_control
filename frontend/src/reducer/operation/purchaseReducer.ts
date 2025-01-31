@@ -4,7 +4,6 @@ import { CreatePurchase } from "@data/operations/Purchase";
 import { SummaryProduct } from "@data/stands/Product";
 
 export type PurchaseAction =
-  | { type: "SET_ON_ORDER"; payload: boolean }
   | { type: "ADD_ITEM"; payload: SummaryProduct }
   | {
       type: "ON_CHANGE_ITEM";
@@ -12,21 +11,18 @@ export type PurchaseAction =
     }
   | { type: "DECREASE_ITEM"; payload: string }
   | { type: "REMOVE_ITEM"; payload: string }
-  | { type: "ADD_DELIVERED_ITEM"; payload: string }
-  | { type: "COMPLETE_DELIVERED_ITEM"; payload: string }
-  | {
-      type: "ON_CHANGE_DELIVERED_ITEM";
-      payload: { uuid: string; delivered: number };
-    }
-  | { type: "DECREASE_DELIVERED_ITEM"; payload: string }
-  | { type: "REMOVE_DELIVERED_ITEM"; payload: string }
-  | { type: "SET_ORDER_CARD_ID"; payload: string }
+  | { type: "SET_CARD_ID"; payload: string }
   | { type: "RESET" };
 
-export const initialPurchaseState: CreatePurchase = {
+export const initialPurchaseState: CreatePurchase & {
+  totalPrice: number;
+  totalQuantity: number;
+} = {
   onOrder: false,
   items: [],
   orderCardId: "",
+  totalPrice: 0,
+  totalQuantity: 0,
 };
 
 function findProductIndex(items: CreateItem[], productUuid: string): number {
@@ -55,52 +51,60 @@ function updateQuantity(item: CreateItem, newQuantity: number): CreateItem {
   return { ...item, quantity: newQuantity };
 }
 
-function updateDelivered(item: CreateItem, newDelivered: number): CreateItem {
-  return { ...item, delivered: newDelivered };
+function calculateTotals(items: CreateItem[]): {
+  totalPrice: number;
+  totalQuantity: number;
+} {
+  const totalPrice = items.reduce(
+    (sum, item) =>
+      sum + item.quantity * (item.unitPrice - (item.discount || 0)),
+    0,
+  );
+  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  return { totalPrice, totalQuantity };
 }
 
 export function purchaseReducer(
-  state: CreatePurchase,
+  state: CreatePurchase & { totalPrice: number; totalQuantity: number },
   action: PurchaseAction,
-): CreatePurchase {
+): CreatePurchase & { totalPrice: number; totalQuantity: number } {
   switch (action.type) {
-    case "SET_ON_ORDER":
-      return { ...state, onOrder: action.payload };
-
     case "ADD_ITEM": {
       const newProduct = action.payload;
       if (newProduct.stock === 0) return state;
 
       const productIndex = findProductIndex(state.items, newProduct.uuid);
 
+      let updatedItems;
       if (productIndex === -1) {
         const newItem = createNewItem(newProduct);
-        return { ...state, items: [...state.items, newItem] };
+        updatedItems = [...state.items, newItem];
       } else {
-        return {
-          ...state,
-          items: updateItemInList(state.items, productIndex, (item) =>
-            updateQuantity(
-              item,
-              item.quantity < newProduct.stock
-                ? item.quantity + 1
-                : item.quantity,
-            ),
+        updatedItems = updateItemInList(state.items, productIndex, (item) =>
+          updateQuantity(
+            item,
+            item.quantity < newProduct.stock
+              ? item.quantity + 1
+              : item.quantity,
           ),
-        };
+        );
       }
+
+      const totals = calculateTotals(updatedItems);
+      return { ...state, items: updatedItems, ...totals };
     }
 
     case "ON_CHANGE_ITEM": {
       if (action.payload.quantity >= action.payload.stock) return state;
 
       const productIndex = findProductIndex(state.items, action.payload.uuid);
-      return {
-        ...state,
-        items: updateItemInList(state.items, productIndex, (item) =>
-          updateQuantity(item, action.payload.quantity),
-        ),
-      };
+      const updatedItems = updateItemInList(state.items, productIndex, (item) =>
+        updateQuantity(item, action.payload.quantity),
+      );
+
+      const totals = calculateTotals(updatedItems);
+      return { ...state, items: updatedItems, ...totals };
     }
 
     case "DECREASE_ITEM": {
@@ -108,80 +112,31 @@ export function purchaseReducer(
       if (productIndex === -1) return state;
 
       const item = state.items[productIndex];
-      if (item.quantity === 1) {
-        return {
-          ...state,
-          items: state.items.filter(
-            (item) => item.productUuid !== action.payload,
-          ),
-        };
+      let updatedItems;
+      if (item.quantity <= 1) {
+        updatedItems = state.items.filter(
+          (item) => item.productUuid !== action.payload,
+        );
+      } else {
+        updatedItems = updateItemInList(state.items, productIndex, (item) =>
+          updateQuantity(item, item.quantity - 1),
+        );
       }
 
-      return {
-        ...state,
-        items: updateItemInList(state.items, productIndex, (item) =>
-          updateQuantity(item, item.quantity - 1),
-        ),
-      };
+      const totals = calculateTotals(updatedItems);
+      return { ...state, items: updatedItems, ...totals };
     }
 
-    case "REMOVE_ITEM":
-      return {
-        ...state,
-        items: state.items.filter(
-          (item) => item.productUuid !== action.payload,
-        ),
-      };
+    case "REMOVE_ITEM": {
+      const updatedItems = state.items.filter(
+        (item) => item.productUuid !== action.payload,
+      );
 
-    case "ADD_DELIVERED_ITEM": {
-      const productIndex = findProductIndex(state.items, action.payload);
-      return {
-        ...state,
-        items: updateItemInList(state.items, productIndex, (item) =>
-          updateDelivered(
-            item,
-            item.delivered < item.quantity
-              ? item.delivered + 1
-              : item.delivered,
-          ),
-        ),
-      };
+      const totals = calculateTotals(updatedItems);
+      return { ...state, items: updatedItems, ...totals };
     }
 
-    case "COMPLETE_DELIVERED_ITEM": {
-      const productIndex = findProductIndex(state.items, action.payload);
-      return {
-        ...state,
-        items: updateItemInList(state.items, productIndex, (item) =>
-          updateDelivered(item, item.quantity),
-        ),
-      };
-    }
-
-    case "ON_CHANGE_DELIVERED_ITEM": {
-      const productIndex = findProductIndex(state.items, action.payload.uuid);
-      return {
-        ...state,
-        items: updateItemInList(state.items, productIndex, (item) =>
-          updateDelivered(
-            item,
-            Math.min(action.payload.delivered, item.quantity),
-          ),
-        ),
-      };
-    }
-
-    case "REMOVE_DELIVERED_ITEM": {
-      const productIndex = findProductIndex(state.items, action.payload);
-      return {
-        ...state,
-        items: updateItemInList(state.items, productIndex, (item) =>
-          updateDelivered(item, 0),
-        ),
-      };
-    }
-
-    case "SET_ORDER_CARD_ID":
+    case "SET_CARD_ID":
       if (!regexUuid.test(action.payload)) {
         return state;
       }
@@ -194,3 +149,15 @@ export function purchaseReducer(
       throw new Error("Ação desconhecida no reducer");
   }
 }
+
+export const createPurchasePayload = (
+  state: CreatePurchase & { totalPrice: number; totalQuantity: number },
+): CreatePurchase => {
+  const {
+    totalPrice: _totalPrice,
+    totalQuantity: _totalQuantity,
+    ...rest
+  } = state;
+
+  return { ...rest };
+};

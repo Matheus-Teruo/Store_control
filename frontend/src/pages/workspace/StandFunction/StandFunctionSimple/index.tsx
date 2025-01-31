@@ -8,22 +8,20 @@ import {
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { SummaryProduct } from "@data/stands/Product";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
-import {
-  initialPurchaseState,
-  purchaseReducer,
-} from "@reducer/operation/purchaseReducer";
 import { getProducts } from "@service/stand/productService";
 import { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import OrderCard from "../CashierFunction/OrderCard";
-import { VoluntaryRole } from "@data/volunteers/Voluntary";
-import FormPurchase from "./FormPurchase";
 import Button from "@/components/utils/Button";
-import LastPurchaseList from "./LastPurchaseList";
+import {
+  initialTradeState,
+  tradeReducer,
+} from "@reducer/operation/tradeReducer";
+import LastPurchaseList from "../LastPurchaseList";
+import FormTrade from "./FormTrade";
 
-function StandFunction() {
+function StandFunctionSimple() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
-  const [state, dispatch] = useReducer(purchaseReducer, initialPurchaseState);
+  const [state, dispatch] = useReducer(tradeReducer, initialTradeState);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [showLast, setShowLast] = useState<boolean>(false);
   const handleApiError = useHandleApiError();
@@ -39,9 +37,7 @@ function StandFunction() {
         try {
           const response = await getProducts(
             undefined,
-            user.voluntaryRole === VoluntaryRole.ADMIN
-              ? undefined
-              : user.summaryFunction.uuid,
+            user.summaryFunction ? user.summaryFunction.uuid : undefined,
             page.number,
           );
           setProducts(response.content);
@@ -68,14 +64,6 @@ function StandFunction() {
             <LastPurchaseList />
           </>
         )}
-      </div>
-      <div>
-        <OrderCard
-          value={state.orderCardId}
-          onChange={(e) =>
-            dispatch({ type: "SET_CARD_ID", payload: e.target.value })
-          }
-        />
       </div>
       <ul>
         {products.map((product) => (
@@ -112,9 +100,9 @@ function StandFunction() {
         ))}
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
-      <FormPurchase reducer={[state, dispatch]} />
+      <FormTrade reducer={[state, dispatch]} />
     </div>
   );
 }
 
-export default StandFunction;
+export default StandFunctionSimple;
