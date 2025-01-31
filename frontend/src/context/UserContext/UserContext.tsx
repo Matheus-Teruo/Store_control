@@ -18,10 +18,17 @@ export default function UserProvider({
   };
 
   const checkLogged = async () => {
-    const logginUser = await getUser();
-    if (logginUser !== null) {
-      setUser(logginUser);
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(logginUser));
+    try {
+      const logginUser = await getUser();
+      if (logginUser !== null) {
+        setUser(logginUser);
+      } else {
+        setUser("unlogged");
+      }
+    } catch (error) {
+      setUser("unlogged");
+      console.log(error);
+      // TODO: verificar o que fazer com as response do axios
     }
   };
 
@@ -29,32 +36,11 @@ export default function UserProvider({
     if (user) {
       await LogoutVoluntary();
       setUser("unlogged");
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
     }
   };
 
-  function doesCookieExist(cookieName: string) {
-    const cookies = document.cookie
-      .split("; ")
-      .map((cookie) => cookie.split("=")[0]);
-    return cookies.includes(cookieName);
-  }
-
   useEffect(() => {
-    if (!user) {
-      if (doesCookieExist("auth")) {
-        const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
-        } else {
-          checkLogged();
-        }
-      } else {
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
-        setUser("unlogged");
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    checkLogged();
   }, []);
 
   return (

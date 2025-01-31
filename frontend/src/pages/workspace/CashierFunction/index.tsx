@@ -22,10 +22,13 @@ import { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OrderCard from "./OrderCard";
 import { PaymentType } from "@data/operations/Recharge";
+import { initialPageState, pageReducer } from "@reducer/pageReducer";
+import PageSelect from "@/components/PageSelect";
 
 function Cashier() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
   const [showItemCalculater, setShowItemCalculater] = useState<boolean>(false);
+  const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [state, dispatch] = useReducer(rechargeReducer, initialRechargeState);
   const { addNotification } = useAlertsContext();
   const handleApiError = useHandleApiError();
@@ -91,9 +94,16 @@ function Cashier() {
       {showItemCalculater && (
         <>
           <div onClick={() => setShowItemCalculater(false)} />
-          {products.map((product) => (
-            <div key={product.uuid}>{product.productName}</div>
-          ))}
+          <ul>
+            {products.map((product) => (
+              <li key={product.uuid}>{product.productName}</li>
+            ))}
+          </ul>
+          <PageSelect
+            value={page.number}
+            max={page.max}
+            dispatch={pageDispatch}
+          />
         </>
       )}
       <form onSubmit={handleSubmit}>

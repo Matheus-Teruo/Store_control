@@ -3,7 +3,7 @@ import styles from "./Order.module.scss";
 import { useHandleApiError } from "@/axios/handlerApiError";
 import { getCustomerbyCard } from "@service/customer/customerService";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getListProducts } from "@service/stand/productService";
 import { SummaryProduct } from "@data/stands/Product";
 
@@ -13,6 +13,7 @@ function Order() {
     Record<string, Omit<SummaryProduct, "uuid">>
   >({});
   const handleApiError = useHandleApiError();
+  const navigate = useNavigate();
   const { cardID } = useParams();
 
   useEffect(() => {
@@ -43,12 +44,13 @@ function Order() {
           setCart(customer.purchases);
         } catch (error) {
           handleApiError(error);
+          navigate("/");
         }
       }
     };
 
     fetchCustomer();
-  }, [handleApiError, cardID]);
+  }, [cardID, handleApiError, navigate]);
 
   return (
     <div className={styles.background}>
