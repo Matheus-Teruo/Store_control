@@ -1,4 +1,3 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import {
   isCashier,
   isUserLogged,
@@ -6,13 +5,13 @@ import {
 } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { SummaryCashRegister } from "@data/registers/CashRegister";
-import { getListRegisters } from "@service/registers/cashRegisterService";
+import useCashRegisterService from "@service/registers/useCashRegisterService";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Transaction() {
   const [registers, setRegisters] = useState<SummaryCashRegister[]>([]);
-  const handleApiError = useHandleApiError();
+  const { getListRegisters } = useCashRegisterService();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
@@ -22,11 +21,9 @@ function Transaction() {
         isUserLogged(user) &&
         isCashier(user.summaryFunction, user.voluntaryRole)
       ) {
-        try {
-          const response = await getListRegisters();
+        const response = await getListRegisters();
+        if (response) {
           setRegisters(response);
-        } catch (error) {
-          handleApiError(error);
         }
       } else if (
         isUserUnlogged(user) ||
@@ -36,7 +33,7 @@ function Transaction() {
       }
     };
     fetchVoluntary();
-  }, [user, navigate, handleApiError]);
+  }, [user, navigate, getListRegisters]);
 
   return <div>Transaction</div>;
 }

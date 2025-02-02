@@ -1,6 +1,5 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import SummaryFunction from "@data/volunteers/Function";
-import { getListFunctions } from "@service/voluntary/functionsService";
+import useFunctionService from "@service/voluntary/useFunctionsService";
 import { useEffect, useState } from "react";
 
 interface FunctionSelectProps {
@@ -10,19 +9,18 @@ interface FunctionSelectProps {
 
 function FunctionSelect({ value, onChange }: FunctionSelectProps) {
   const [listFunctions, setListFunctions] = useState<SummaryFunction[]>([]);
-  const handleApiError = useHandleApiError();
+  const { getListFunctions } = useFunctionService();
 
   useEffect(() => {
     const fetchAssociation = async () => {
-      try {
-        const voluntaryFunctions = await getListFunctions();
+      const voluntaryFunctions = await getListFunctions();
+      if (voluntaryFunctions) {
         setListFunctions(voluntaryFunctions);
-      } catch (error) {
-        handleApiError(error);
       }
     };
+
     fetchAssociation();
-  }, [handleApiError]);
+  }, [getListFunctions]);
 
   return (
     <div>

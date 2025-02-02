@@ -1,4 +1,3 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
@@ -13,11 +12,7 @@ import {
   updateVoluntaryRolePayload,
   voluntaryReducer,
 } from "@reducer/voluntary/voluntaryReducer";
-import {
-  getVoluntary,
-  updateVoluntaryFunction,
-  updateVoluntaryRole,
-} from "@service/voluntary/voluntaryService";
+import useVoluntaryService from "@service/voluntary/useVoluntaryService";
 import { useEffect, useReducer } from "react";
 import FunctionSelect from "../FunctionSelect";
 import RoleSelect from "../RoleSelect";
@@ -31,17 +26,16 @@ type FormVoluntaryProps = {
 function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
   const [state, dispatch] = useReducer(voluntaryReducer, initialVoluntaryState);
   const { addNotification } = useAlertsContext();
-  const handleApiError = useHandleApiError();
+  const { getVoluntary, updateVoluntaryFunction, updateVoluntaryRole } =
+    useVoluntaryService();
   const { user } = useUserContext();
 
   useEffect(() => {
     const fetchAssociation = async () => {
       if (uuid && isUserLogged(user) && isAdmin(user)) {
-        try {
-          const voluntary = await getVoluntary(uuid);
+        const voluntary = await getVoluntary(uuid);
+        if (voluntary) {
           dispatch({ type: "SET_VOLUNTARY", payload: voluntary });
-        } catch (error) {
-          handleApiError(error);
         }
       } else if (uuid === undefined) {
         console.error("uuid need to be defined when type is update");
@@ -49,15 +43,15 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
     };
 
     fetchAssociation();
-  }, [uuid, user, handleApiError]);
+  }, [uuid, user, getVoluntary]);
 
   const handleUpdateFunctionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isUserLogged(user) && isAdmin(user)) {
-      try {
-        const voluntary = await updateVoluntaryFunction(
-          updateVoluntaryFunctionPayload(state),
-        );
+      const voluntary = await updateVoluntaryFunction(
+        updateVoluntaryFunctionPayload(state),
+      );
+      if (voluntary) {
         addNotification({
           title: "Update Voluntary Function Success",
           message: `Update voluntary ${voluntary.fullname} to function: ${voluntary.summaryFunction}`,
@@ -65,8 +59,6 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
         });
         dispatch({ type: "RESET" });
         hide();
-      } catch (error) {
-        handleApiError(error);
       }
     }
   };
@@ -74,10 +66,10 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
   const handleUpdateRoleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (uuid && isUserLogged(user) && isAdmin(user)) {
-      try {
-        const voluntary = await updateVoluntaryRole(
-          updateVoluntaryRolePayload(state),
-        );
+      const voluntary = await updateVoluntaryRole(
+        updateVoluntaryRolePayload(state),
+      );
+      if (voluntary) {
         addNotification({
           title: "Update Voluntary Role Success",
           message: `Update voluntary ${voluntary.fullname} to role: ${voluntary.voluntaryRole}`,
@@ -85,8 +77,6 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
         });
         dispatch({ type: "RESET" });
         hide();
-      } catch (error) {
-        handleApiError(error);
       }
     }
   };

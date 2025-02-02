@@ -4,12 +4,11 @@ import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import Input from "@/components/utils/Input";
 import { useState } from "react";
-import { loginVoluntary } from "@service/voluntary/userService";
+import useUserService from "@service/voluntary/useUserService";
 import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
-import { useHandleApiError } from "@/axios/handlerApiError";
 import { useUserContext } from "@context/UserContext/useUserContext";
 
 function Login() {
@@ -17,13 +16,13 @@ function Login() {
   const [password, setPassword] = useState<string>("");
   const { addNotification } = useAlertsContext();
   const { login } = useUserContext();
-  const handleApiError = useHandleApiError();
+  const { loginVoluntary } = useUserService();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const user = await loginVoluntary({ username, password });
+    const user = await loginVoluntary({ username, password });
+    if (user) {
       addNotification({
         title: "Login Success",
         message: `User ${username} logged`,
@@ -33,8 +32,6 @@ function Login() {
       setUsername("");
       setPassword("");
       navigate("/workspace", { replace: true });
-    } catch (error) {
-      handleApiError(error);
     }
   };
 

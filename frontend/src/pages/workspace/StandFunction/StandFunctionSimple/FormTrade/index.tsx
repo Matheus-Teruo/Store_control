@@ -1,4 +1,3 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import PaymentSelect from "@/components/PaymentSelect";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
@@ -15,8 +14,8 @@ import {
   createTradePayload,
   TradeAction,
 } from "@reducer/operation/tradeReducer";
-import { createTrade } from "@service/operations/tradeService";
-import { getListProducts } from "@service/stand/productService";
+import useTradeService from "@service/operations/useTradeService";
+import useProductService from "@service/stand/useProductService";
 import { useEffect, useState } from "react";
 
 type FormPurchaseProps = {
@@ -31,14 +30,15 @@ function FormTrade({ reducer }: FormPurchaseProps) {
     Record<string, Omit<SummaryProduct, "uuid">>
   >({});
   const { addNotification } = useAlertsContext();
-  const handleApiError = useHandleApiError();
+  const { createTrade } = useTradeService();
+  const { getListProducts } = useProductService();
   const { user } = useUserContext();
   const [state, dispatch] = reducer;
 
   useEffect(() => {
     const fetchProducts = async () => {
-      try {
-        const products = await getListProducts();
+      const products = await getListProducts();
+      if (products) {
         const productsObject = products.reduce(
           (acc, product) => {
             const { uuid, ...rest } = product;
@@ -48,26 +48,23 @@ function FormTrade({ reducer }: FormPurchaseProps) {
           {} as Record<string, Omit<SummaryProduct, "uuid">>,
         );
         setProductsRecord(productsObject);
-      } catch (error) {
-        handleApiError(error);
       }
     };
+
     fetchProducts();
-  }, [handleApiError]);
+  }, [getListProducts]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isUserLogged(user) && isSeller(user.summaryFunction)) {
-      try {
-        const purchase = await createTrade(createTradePayload(state));
+      const purchase = await createTrade(createTradePayload(state));
+      if (purchase) {
         addNotification({
           title: "Create Purchase Success",
           message: `Create purchase with ${purchase.items.length} itens diferent`,
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
-      } catch (error) {
-        handleApiError(error);
       }
     }
   };

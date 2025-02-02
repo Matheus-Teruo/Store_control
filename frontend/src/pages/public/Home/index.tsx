@@ -1,5 +1,6 @@
 import styles from "./Home.module.scss";
 import Logo from "@/assets/image/LogoStoreControl.png";
+import LanguageSelect from "@/components/LanguageSelect";
 import Button from "@/components/utils/Button";
 import { isUserLogged } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
@@ -61,6 +62,9 @@ function Home() {
               </Link>
             </div>
           )}
+          <div>
+            <LanguageSelect />
+          </div>
         </div>
         {showScanner && <div>scanner</div>}
       </div>

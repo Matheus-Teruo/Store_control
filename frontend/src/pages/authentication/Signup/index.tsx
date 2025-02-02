@@ -2,56 +2,33 @@ import styles from "./Signup.module.scss";
 import Button from "@/components/utils/Button";
 import Input from "@/components/utils/Input";
 import { useReducer } from "react";
-import { signupVoluntary } from "@service/voluntary/userService";
+import useUserService from "@service/voluntary/useUserService";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
-import { useHandleApiError } from "@/axios/handlerApiError";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import {
-  checkSignupUser,
-  initialUserState,
-  userReducer,
-} from "@reducer/voluntary/userReducer";
+import { initialUserState, userReducer } from "@reducer/voluntary/userReducer";
 
 function Signup() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
   const { addNotification } = useAlertsContext();
   const { login } = useUserContext();
-  const handleApiError = useHandleApiError();
+  const { signupVoluntary } = useUserService();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const { username, fullname, password } = state;
 
-    if (checkSignupUser(state)) {
-      switch (checkSignupUser(state)) {
-        case "username":
-          // TODO: interface input error
-          break;
-        case "fullname":
-          // TODO: interface input error
-          break;
-        case "password":
-          // TODO: interface input error
-          break;
-        case "confirmPassword":
-          // TODO: interface input error
-          break;
-      }
-      return;
-    }
-
-    try {
-      const voluntary = await signupVoluntary({
-        username,
-        fullname,
-        password,
-      });
+    const voluntary = await signupVoluntary({
+      username,
+      fullname,
+      password,
+    });
+    if (voluntary) {
       addNotification({
         title: "Signup Success",
         message: `Create user ${username} and logged`,
@@ -65,8 +42,6 @@ function Signup() {
       });
       dispatch({ type: "RESET" });
       navigate("/workspace", { replace: true });
-    } catch (error) {
-      handleApiError(error);
     }
   };
 
@@ -113,7 +88,7 @@ function Signup() {
           isRequired
         />
         <div className={styles.button}>
-          <Button type={ButtonHTMLType.Submit}>Login</Button>
+          <Button type={ButtonHTMLType.Submit}>Cadastrar</Button>
         </div>
       </form>
     </>

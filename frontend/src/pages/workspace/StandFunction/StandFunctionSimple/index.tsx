@@ -1,4 +1,3 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import PageSelect from "@/components/PageSelect";
 import {
   isSeller,
@@ -8,7 +7,7 @@ import {
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { SummaryProduct } from "@data/stands/Product";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
-import { getProducts } from "@service/stand/productService";
+import useProductService from "@service/stand/useProductService";
 import { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "@/components/utils/Button";
@@ -24,7 +23,7 @@ function StandFunctionSimple() {
   const [state, dispatch] = useReducer(tradeReducer, initialTradeState);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [showLast, setShowLast] = useState<boolean>(false);
-  const handleApiError = useHandleApiError();
+  const { getProducts } = useProductService();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
@@ -34,16 +33,12 @@ function StandFunctionSimple() {
         isUserLogged(user) &&
         isSeller(user.summaryFunction, user.voluntaryRole)
       ) {
-        try {
-          const response = await getProducts(
-            undefined,
-            user.summaryFunction ? user.summaryFunction.uuid : undefined,
-            page.number,
-          );
-          setProducts(response.content);
-        } catch (error) {
-          handleApiError(error);
-        }
+        const response = await getProducts(
+          undefined,
+          user.summaryFunction ? user.summaryFunction.uuid : undefined,
+          page.number,
+        );
+        if (response) setProducts(response.content);
       } else if (
         isUserUnlogged(user) ||
         (user && !isSeller(user.summaryFunction, user.voluntaryRole))
@@ -52,7 +47,7 @@ function StandFunctionSimple() {
       }
     };
     fetchVoluntary();
-  }, [user, page, navigate, handleApiError]);
+  }, [user, page, navigate, getProducts]);
 
   return (
     <div>

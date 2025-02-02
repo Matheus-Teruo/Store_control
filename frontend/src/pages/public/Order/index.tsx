@@ -1,25 +1,25 @@
 import { PurchaseOrder } from "@data/operations/Purchase";
 import styles from "./Order.module.scss";
-import { useHandleApiError } from "@/axios/handlerApiError";
-import { getCustomerbyCard } from "@service/customer/customerService";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getListProducts } from "@service/stand/productService";
+import useProductService from "@service/stand/useProductService";
 import { SummaryProduct } from "@data/stands/Product";
+import useCustomersApi from "@service/customer/useCustomerService";
 
 function Order() {
   const [cart, setCart] = useState<PurchaseOrder[]>([]);
   const [productsRecord, setProductsRecord] = useState<
     Record<string, Omit<SummaryProduct, "uuid">>
   >({});
-  const handleApiError = useHandleApiError();
+  const { getCustomerByCard } = useCustomersApi();
+  const { getListProducts } = useProductService();
   const navigate = useNavigate();
   const { cardID } = useParams();
 
   useEffect(() => {
     const fetchProducts = async () => {
-      try {
-        const products = await getListProducts();
+      const products = await getListProducts();
+      if (products) {
         const productsObject = products.reduce(
           (acc, product) => {
             const { uuid, ...rest } = product;
@@ -29,28 +29,26 @@ function Order() {
           {} as Record<string, Omit<SummaryProduct, "uuid">>,
         );
         setProductsRecord(productsObject);
-      } catch (error) {
-        handleApiError(error);
       }
     };
+
     fetchProducts();
-  }, [handleApiError]);
+  }, [getListProducts]);
 
   useEffect(() => {
     const fetchCustomer = async () => {
       if (cardID !== undefined) {
-        try {
-          const customer = await getCustomerbyCard(cardID);
+        const customer = await getCustomerByCard(cardID);
+        if (customer) {
           setCart(customer.purchases);
-        } catch (error) {
-          handleApiError(error);
+        } else {
           navigate("/");
         }
       }
     };
 
     fetchCustomer();
-  }, [cardID, handleApiError, navigate]);
+  }, [cardID, getCustomerByCard, navigate]);
 
   return (
     <div className={styles.background}>

@@ -1,4 +1,3 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
@@ -8,20 +7,20 @@ import {
 } from "@context/AlertsContext/useAlertsContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { cardReducer, initialCardState } from "@reducer/customer/cardReducer";
-import { createCard } from "@service/customer/orderCardService";
+import useCardService from "@service/customer/useOrderCardService";
 import { useReducer } from "react";
 
 function FormCard({ hide }: { hide: () => void }) {
   const [state, dispatch] = useReducer(cardReducer, initialCardState);
   const { addNotification } = useAlertsContext();
-  const handleApiError = useHandleApiError();
+  const { createCard } = useCardService();
   const { user } = useUserContext();
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isUserLogged(user) && isAdmin(user)) {
-      try {
-        const card = await createCard(state);
+      const card = await createCard(state);
+      if (card) {
         addNotification({
           title: "Create Card Success",
           message: `Create OrderCard: ${card.cardId}`,
@@ -29,8 +28,6 @@ function FormCard({ hide }: { hide: () => void }) {
         });
         dispatch({ type: "RESET" });
         hide();
-      } catch (error) {
-        handleApiError(error);
       }
     }
   };

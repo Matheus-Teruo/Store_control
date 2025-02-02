@@ -1,4 +1,3 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import StandSelect from "@/components/StandSelect";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
@@ -14,12 +13,7 @@ import {
   productReducer,
   updateProductPayload,
 } from "@reducer/stand/productReducer";
-import {
-  createProduct,
-  deleteProduct,
-  getProduct,
-  updateProduct,
-} from "@service/stand/productService";
+import useProductService from "@service/stand/useProductService";
 import { useEffect, useReducer, useState } from "react";
 
 type FormPurchaseProps = {
@@ -32,7 +26,8 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
   const [state, dispatch] = useReducer(productReducer, initialProductState);
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
-  const handleApiError = useHandleApiError();
+  const { getProduct, createProduct, updateProduct, deleteProduct } =
+    useProductService();
   const { user } = useUserContext();
 
   useEffect(() => {
@@ -52,11 +47,9 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
         isUserLogged(user) &&
         isSeller(user.summaryFunction, user.voluntaryRole)
       ) {
-        try {
-          const product = await getProduct(uuid);
+        const product = await getProduct(uuid);
+        if (product) {
           dispatch({ type: "SET_PRODUCT", payload: product });
-        } catch (error) {
-          handleApiError(error);
         }
       } else if (uuid === undefined) {
         console.error("uuid need to be defined when type is update");
@@ -64,7 +57,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
     };
 
     fetchProduct();
-  }, [uuid, type, user, handleApiError]);
+  }, [uuid, type, user, getProduct]);
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,8 +65,8 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
       isUserLogged(user) &&
       isSeller(user.summaryFunction, user.voluntaryRole)
     ) {
-      try {
-        const product = await createProduct(createProductPayload(state));
+      const product = await createProduct(createProductPayload(state));
+      if (product) {
         addNotification({
           title: "Create Product Success",
           message: `Create product ${product.productName}${product.description && ", description:"}${product.description}, price: ${product.price}, stock: ${product.stock}`,
@@ -81,8 +74,6 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
         });
         dispatch({ type: "RESET" });
         hide();
-      } catch (error) {
-        handleApiError(error);
       }
     }
   };
@@ -94,8 +85,8 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
       isUserLogged(user) &&
       isSeller(user.summaryFunction, user.voluntaryRole)
     ) {
-      try {
-        const product = await updateProduct(updateProductPayload(state));
+      const product = await updateProduct(updateProductPayload(state));
+      if (product) {
         addNotification({
           title: "Update Product Success",
           message: `Update product ${product.productName}${product.description && ", description:"}${product.description}, price: ${product.price}, stock: ${product.stock}`,
@@ -103,8 +94,6 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
         });
         dispatch({ type: "RESET" });
         hide();
-      } catch (error) {
-        handleApiError(error);
       }
     }
   };
@@ -115,19 +104,15 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
       isUserLogged(user) &&
       isSeller(user.summaryFunction, user.voluntaryRole)
     ) {
-      try {
-        await deleteProduct(state.uuid);
-        addNotification({
-          title: "Delete Product Success",
-          message: `Delete product ${state.productName}`,
-          type: MessageType.OK,
-        });
-        dispatch({ type: "RESET" });
-        setConfirmDelete(false);
-        hide();
-      } catch (error) {
-        handleApiError(error);
-      }
+      await deleteProduct(state.uuid);
+      addNotification({
+        title: "Delete Product Success",
+        message: `Delete product ${state.productName}`,
+        type: MessageType.OK,
+      });
+      dispatch({ type: "RESET" });
+      setConfirmDelete(false);
+      hide();
     }
   };
 

@@ -1,4 +1,3 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import Button from "@/components/utils/Button";
 import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
 import {
@@ -12,12 +11,7 @@ import {
   standReducer,
   updateStandPayload,
 } from "@reducer/stand/standReducer";
-import {
-  createStand,
-  deleteStand,
-  getStand,
-  updateStand,
-} from "@service/stand/standService";
+import useStandService from "@service/stand/useStandService";
 import { useEffect, useReducer, useState } from "react";
 import AssociationSelect from "../AssociationSelect";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
@@ -32,17 +26,15 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   const [state, dispatch] = useReducer(standReducer, initialStandState);
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
-  const handleApiError = useHandleApiError();
+  const { getStand, createStand, updateStand, deleteStand } = useStandService();
   const { user } = useUserContext();
 
   useEffect(() => {
     const fetchAssociation = async () => {
       if (type === "update" && uuid && isUserLogged(user) && isAdmin(user)) {
-        try {
-          const stand = await getStand(uuid);
+        const stand = await getStand(uuid);
+        if (stand) {
           dispatch({ type: "SET_STAND", payload: stand });
-        } catch (error) {
-          handleApiError(error);
         }
       } else if (uuid === undefined) {
         console.error("uuid need to be defined when type is update");
@@ -50,13 +42,13 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
     };
 
     fetchAssociation();
-  }, [uuid, type, user, handleApiError]);
+  }, [uuid, type, user, getStand]);
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isUserLogged(user) && isAdmin(user)) {
-      try {
-        const stand = await createStand(createStandPayload(state));
+      const stand = await createStand(createStandPayload(state));
+      if (stand) {
         addNotification({
           title: "Create Stand Success",
           message: `Create stand: ${stand.standName}, with president: ${stand.association.associationName}`,
@@ -64,8 +56,6 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
         });
         dispatch({ type: "RESET" });
         hide();
-      } catch (error) {
-        handleApiError(error);
       }
     }
   };
@@ -73,8 +63,8 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (uuid && isUserLogged(user) && isAdmin(user)) {
-      try {
-        const stand = await updateStand(updateStandPayload(state));
+      const stand = await updateStand(updateStandPayload(state));
+      if (stand) {
         addNotification({
           title: "Update Stand Success",
           message: `Update stand: ${stand.standName}, with president: ${stand.association.associationName}`,
@@ -82,27 +72,21 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
         });
         dispatch({ type: "RESET" });
         hide();
-      } catch (error) {
-        handleApiError(error);
       }
     }
   };
 
   const handleDeleteSubmit = async () => {
     if (uuid && isUserLogged(user) && isAdmin(user)) {
-      try {
-        await deleteStand(state.uuid);
-        addNotification({
-          title: "Delete Stand Success",
-          message: `Delete stand: ${state.standName}`,
-          type: MessageType.OK,
-        });
-        dispatch({ type: "RESET" });
-        setConfirmDelete(false);
-        hide();
-      } catch (error) {
-        handleApiError(error);
-      }
+      await deleteStand(state.uuid);
+      addNotification({
+        title: "Delete Stand Success",
+        message: `Delete stand: ${state.standName}`,
+        type: MessageType.OK,
+      });
+      dispatch({ type: "RESET" });
+      setConfirmDelete(false);
+      hide();
     }
   };
 

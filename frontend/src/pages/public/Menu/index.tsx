@@ -4,8 +4,7 @@ import StandOptionsFilter from "@/components/StandSelect";
 import SearchFilter from "./SearchFilter";
 import { SummaryProduct } from "@data/stands/Product";
 import Button from "@/components/utils/Button";
-import { useHandleApiError } from "@/axios/handlerApiError";
-import { getProducts } from "@service/stand/productService";
+import useProductService from "@service/stand/useProductService";
 
 type ViewType = "List" | "Items";
 
@@ -16,22 +15,17 @@ function Menu() {
   const [filter, setFilter] = useState<string>("");
   const [products, setProducts] = useState<SummaryProduct[]>([]);
   const [toggleView, setToggleView] = useState<ViewType>("Items");
-  const handleApiError = useHandleApiError();
+  const { getProducts } = useProductService();
 
   useEffect(() => {
     const fetchStand = async () => {
-      try {
-        const response = await getProducts(
-          filter.toLowerCase(),
-          selectedStands,
-        );
+      const response = await getProducts(filter.toLowerCase(), selectedStands);
+      if (response) {
         setProducts(response.content);
-      } catch (error) {
-        handleApiError(error);
       }
     };
     fetchStand();
-  }, [handleApiError, filter, selectedStands]);
+  }, [filter, selectedStands, getProducts]);
 
   const handleFilterStand = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedStands(event.target.value);

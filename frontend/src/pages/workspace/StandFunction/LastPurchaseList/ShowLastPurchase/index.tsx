@@ -1,26 +1,21 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import Purchase from "@data/operations/Purchase";
-import { getPurchase } from "@service/operations/purchaseService";
+import usePurchaseService from "@service/operations/usePurchaseService";
 import { useEffect, useState } from "react";
 
 function ShowLastPurchase({ uuid }: { uuid: string | undefined }) {
   const [purchase, setPurchase] = useState<Purchase | undefined>();
-  const handleApiError = useHandleApiError();
+  const { getPurchase } = usePurchaseService();
 
   useEffect(() => {
     const fetchPurchase = async () => {
       if (uuid) {
-        try {
-          const purchase = await getPurchase(uuid);
-          setPurchase(purchase);
-        } catch (error) {
-          handleApiError(error);
-        }
+        const purchase = await getPurchase(uuid);
+        if (purchase) setPurchase(purchase);
       }
     };
 
     fetchPurchase();
-  }, [uuid, handleApiError]);
+  }, [uuid, getPurchase]);
 
   return (
     <div>

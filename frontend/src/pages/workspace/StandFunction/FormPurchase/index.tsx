@@ -1,4 +1,3 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import { isSeller, isUserLogged } from "@/utils/checkAuthentication";
@@ -13,8 +12,8 @@ import {
   createPurchasePayload,
   PurchaseAction,
 } from "@reducer/operation/purchaseReducer";
-import { createPurchase } from "@service/operations/purchaseService";
-import { getListProducts } from "@service/stand/productService";
+import usePurchaseService from "@service/operations/usePurchaseService";
+import useProductService from "@service/stand/useProductService";
 import { useEffect, useState } from "react";
 
 type FormPurchaseProps = {
@@ -29,14 +28,15 @@ function FormPurchase({ reducer }: FormPurchaseProps) {
     Record<string, Omit<SummaryProduct, "uuid">>
   >({});
   const { addNotification } = useAlertsContext();
-  const handleApiError = useHandleApiError();
+  const { getListProducts } = useProductService();
+  const { createPurchase } = usePurchaseService();
   const { user } = useUserContext();
   const [state, dispatch] = reducer;
 
   useEffect(() => {
     const fetchProducts = async () => {
-      try {
-        const products = await getListProducts();
+      const products = await getListProducts();
+      if (products) {
         const productsObject = products.reduce(
           (acc, product) => {
             const { uuid, ...rest } = product;
@@ -46,26 +46,22 @@ function FormPurchase({ reducer }: FormPurchaseProps) {
           {} as Record<string, Omit<SummaryProduct, "uuid">>,
         );
         setProductsRecord(productsObject);
-      } catch (error) {
-        handleApiError(error);
       }
     };
     fetchProducts();
-  }, [handleApiError]);
+  }, [getListProducts]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isUserLogged(user) && isSeller(user.summaryFunction)) {
-      try {
-        const purchase = await createPurchase(createPurchasePayload(state));
+      const purchase = await createPurchase(createPurchasePayload(state));
+      if (purchase) {
         addNotification({
           title: "Create Purchase Success",
           message: `Create purchase with ${purchase.items.length} itens diferent`,
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
-      } catch (error) {
-        handleApiError(error);
       }
     }
   };

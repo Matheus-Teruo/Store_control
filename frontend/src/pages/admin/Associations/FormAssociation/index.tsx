@@ -1,4 +1,3 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
@@ -13,12 +12,7 @@ import {
   initialAssociationState,
   updateAssociationPayload,
 } from "@reducer/stand/associationReducer";
-import {
-  createAssociation,
-  deleteAssociation,
-  getAssociation,
-  updateAssociation,
-} from "@service/stand/associationService";
+import useAssociationService from "@service/stand/useAssociationService";
 import { useEffect, useReducer, useState } from "react";
 
 type FormAssociationProps = {
@@ -34,17 +28,20 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
   );
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
-  const handleApiError = useHandleApiError();
+  const {
+    getAssociation,
+    createAssociation,
+    updateAssociation,
+    deleteAssociation,
+  } = useAssociationService();
   const { user } = useUserContext();
 
   useEffect(() => {
     const fetchAssociation = async () => {
       if (type === "update" && uuid && isUserLogged(user) && isAdmin(user)) {
-        try {
-          const association = await getAssociation(uuid);
+        const association = await getAssociation(uuid);
+        if (association) {
           dispatch({ type: "SET_ASSOCIATION", payload: association });
-        } catch (error) {
-          handleApiError(error);
         }
       } else if (uuid === undefined) {
         console.error("uuid need to be defined when type is update");
@@ -52,15 +49,15 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
     };
 
     fetchAssociation();
-  }, [uuid, type, user, handleApiError]);
+  }, [uuid, type, user, getAssociation]);
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isUserLogged(user) && isAdmin(user)) {
-      try {
-        const association = await createAssociation(
-          createAssociationPayload(state),
-        );
+      const association = await createAssociation(
+        createAssociationPayload(state),
+      );
+      if (association) {
         addNotification({
           title: "Create Association Success",
           message: `Create associatione: ${association.associationName}, with president: ${association.principalName}`,
@@ -68,8 +65,6 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
         });
         dispatch({ type: "RESET" });
         hide();
-      } catch (error) {
-        handleApiError(error);
       }
     }
   };
@@ -77,10 +72,10 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (uuid && isUserLogged(user) && isAdmin(user)) {
-      try {
-        const association = await updateAssociation(
-          updateAssociationPayload(state),
-        );
+      const association = await updateAssociation(
+        updateAssociationPayload(state),
+      );
+      if (association) {
         addNotification({
           title: "Update Association Success",
           message: `Update association: ${association.associationName}, with president: ${association.principalName}`,
@@ -88,27 +83,21 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
         });
         dispatch({ type: "RESET" });
         hide();
-      } catch (error) {
-        handleApiError(error);
       }
     }
   };
 
   const handleDeleteSubmit = async () => {
     if (uuid && isUserLogged(user) && isAdmin(user)) {
-      try {
-        await deleteAssociation(state.uuid);
-        addNotification({
-          title: "Delete Association Success",
-          message: `Delete association ${state.associationName}`,
-          type: MessageType.OK,
-        });
-        dispatch({ type: "RESET" });
-        setConfirmDelete(false);
-        hide();
-      } catch (error) {
-        handleApiError(error);
-      }
+      await deleteAssociation(state.uuid);
+      addNotification({
+        title: "Delete Association Success",
+        message: `Delete association ${state.associationName}`,
+        type: MessageType.OK,
+      });
+      dispatch({ type: "RESET" });
+      setConfirmDelete(false);
+      hide();
     }
   };
 

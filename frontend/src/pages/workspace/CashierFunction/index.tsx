@@ -1,4 +1,3 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import PaymentSelect from "@/components/PaymentSelect";
 import {
   hasFunction,
@@ -16,8 +15,8 @@ import {
   initialRechargeState,
   rechargeReducer,
 } from "@reducer/operation/rechargeReducer";
-import { createRecharge } from "@service/operations/rechargeService";
-import { getProducts } from "@service/stand/productService";
+import useRechargeService from "@service/operations/useRechargeService";
+import useProductService from "@service/stand/useProductService";
 import { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OrderCard from "./OrderCard";
@@ -31,7 +30,8 @@ function Cashier() {
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [state, dispatch] = useReducer(rechargeReducer, initialRechargeState);
   const { addNotification } = useAlertsContext();
-  const handleApiError = useHandleApiError();
+  const { getProducts } = useProductService();
+  const { createRecharge } = useRechargeService();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
@@ -41,11 +41,9 @@ function Cashier() {
         isUserLogged(user) &&
         isCashier(user.summaryFunction, user.voluntaryRole)
       ) {
-        try {
-          const response = await getProducts();
+        const response = await getProducts();
+        if (response) {
           setProducts(response.content);
-        } catch (error) {
-          handleApiError(error);
         }
       } else if (
         isUserUnlogged(user) ||
@@ -55,7 +53,7 @@ function Cashier() {
       }
     };
     fetchVoluntary();
-  }, [user, navigate, handleApiError]);
+  }, [user, navigate, getProducts]);
 
   useEffect(() => {
     if (isUserLogged(user) && hasFunction(user.summaryFunction))
@@ -68,21 +66,19 @@ function Cashier() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isUserLogged(user) && isCashier(user.summaryFunction)) {
-      try {
-        const recharge = await createRecharge({
-          rechargeValue: state.rechargeValue,
-          paymentTypeEnum: state.paymentTypeEnum!,
-          orderCardId: state.orderCardId,
-          cashRegisterUuid: state.cashRegisterUuid,
-        });
+      const recharge = await createRecharge({
+        rechargeValue: state.rechargeValue,
+        paymentTypeEnum: state.paymentTypeEnum!,
+        orderCardId: state.orderCardId,
+        cashRegisterUuid: state.cashRegisterUuid,
+      });
+      if (recharge) {
         addNotification({
           title: "Create Recharge Success",
           message: `Value ${recharge.rechargeValue} on ${recharge.paymentTypeEnum} to card ${recharge.summaryCustomer.summaryOrderCard.cardId}`,
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
-      } catch (error) {
-        handleApiError(error);
       }
     }
   };

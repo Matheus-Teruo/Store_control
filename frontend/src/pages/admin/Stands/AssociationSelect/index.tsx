@@ -1,6 +1,5 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import { SummaryAssociation } from "@data/stands/Association";
-import { getListAssociations } from "@service/stand/associationService";
+import useAssociationService from "@service/stand/useAssociationService";
 import { useEffect, useState } from "react";
 
 interface AssociationSelectProps {
@@ -12,19 +11,17 @@ function AssociationSelect({ value, onChange }: AssociationSelectProps) {
   const [listAssociations, setListAssociations] = useState<
     SummaryAssociation[]
   >([]);
-  const handleApiError = useHandleApiError();
+  const { getListAssociations } = useAssociationService();
 
   useEffect(() => {
     const fetchAssociation = async () => {
-      try {
-        const association = await getListAssociations();
+      const association = await getListAssociations();
+      if (association) {
         setListAssociations(association);
-      } catch (error) {
-        handleApiError(error);
       }
     };
     fetchAssociation();
-  }, [handleApiError]);
+  }, [getListAssociations]);
 
   return (
     <div>

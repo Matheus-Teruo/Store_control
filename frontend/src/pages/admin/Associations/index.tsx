@@ -1,4 +1,3 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import PageSelect from "@/components/PageSelect";
 import Button from "@/components/utils/Button";
 import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
@@ -6,7 +5,7 @@ import { useUserContext } from "@context/UserContext/useUserContext";
 import { SummaryAssociation } from "@data/stands/Association";
 import { formReducer, initialFormState } from "@reducer/formReducer";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
-import { getAssociations } from "@service/stand/associationService";
+import useAssociationService from "@service/stand/useAssociationService";
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FormAssociation from "./FormAssociation";
@@ -15,22 +14,18 @@ function Associations() {
   const [associations, setAssociations] = useState<SummaryAssociation[]>([]);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [formState, formDispach] = useReducer(formReducer, initialFormState);
-  const handleApiError = useHandleApiError();
+  const { getAssociations } = useAssociationService();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
   const fetchAssociations = useCallback(async () => {
     if (isUserLogged(user)) {
-      try {
-        const response = await getAssociations(page.number);
-        setAssociations(response.content);
-      } catch (error) {
-        handleApiError(error);
-      }
+      const response = await getAssociations(page.number);
+      if (response) setAssociations(response.content);
     } else if (isAdmin(user)) {
       navigate("/");
     }
-  }, [user, page.number, navigate, handleApiError]);
+  }, [user, page.number, navigate, getAssociations]);
 
   useEffect(() => {
     fetchAssociations();

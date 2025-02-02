@@ -1,11 +1,10 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import PageSelect from "@/components/PageSelect";
 import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { SummaryVoluntary } from "@data/volunteers/Voluntary";
 import { formReducer, initialFormState } from "@reducer/formReducer";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
-import { getVolunteers } from "@service/voluntary/voluntaryService";
+import useVoluntaryService from "@service/voluntary/useVoluntaryService";
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FormVoluntary from "./FormVoluntary";
@@ -14,22 +13,20 @@ function Volunteers() {
   const [volunteers, setVolunteers] = useState<SummaryVoluntary[]>([]);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [formState, formDispach] = useReducer(formReducer, initialFormState);
-  const handleApiError = useHandleApiError();
+  const { getVolunteers } = useVoluntaryService();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
   const fetchVolunteers = useCallback(async () => {
     if (isUserLogged(user)) {
-      try {
-        const response = await getVolunteers();
+      const response = await getVolunteers();
+      if (response) {
         setVolunteers(response.content);
-      } catch (error) {
-        handleApiError(error);
       }
     } else if (isAdmin(user)) {
       navigate("/");
     }
-  }, [user, navigate, handleApiError]);
+  }, [user, navigate, getVolunteers]);
 
   useEffect(() => {
     fetchVolunteers();

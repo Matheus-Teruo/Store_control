@@ -1,6 +1,5 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import { SummaryPurchase } from "@data/operations/Purchase";
-import { getLast3Purchases } from "@service/operations/purchaseService";
+import usePurchaseService from "@service/operations/usePurchaseService";
 import { useEffect, useReducer, useState } from "react";
 import ShowLastPurchase from "./ShowLastPurchase";
 import { formReducer, initialFormState } from "@reducer/formReducer";
@@ -8,19 +7,15 @@ import { formReducer, initialFormState } from "@reducer/formReducer";
 function LastPurchaseList() {
   const [purchases, setPurchases] = useState<SummaryPurchase[]>([]);
   const [state, dispatch] = useReducer(formReducer, initialFormState);
-  const handleApiError = useHandleApiError();
+  const { getLast3Purchases } = usePurchaseService();
 
   useEffect(() => {
     const fetchPurchases = async () => {
-      try {
-        const purchases = await getLast3Purchases();
-        setPurchases(purchases);
-      } catch (error) {
-        handleApiError(error);
-      }
+      const purchases = await getLast3Purchases();
+      if (purchases) setPurchases(purchases);
     };
     fetchPurchases();
-  }, [handleApiError]);
+  }, [getLast3Purchases]);
 
   return (
     <div>

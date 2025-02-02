@@ -1,8 +1,7 @@
 import styles from "./StandSelect.module.scss";
-import { useHandleApiError } from "@/axios/handlerApiError";
 import { SummaryStand } from "@data/stands/Stand";
 import { useEffect, useState } from "react";
-import { getListStands } from "@service/stand/standService";
+import useStandService from "@service/stand/useStandService";
 
 interface StandSelectProps {
   value: string | undefined;
@@ -11,19 +10,15 @@ interface StandSelectProps {
 
 function StandSelect({ value, onChange }: StandSelectProps) {
   const [listStands, setListStands] = useState<SummaryStand[]>([]);
-  const handleApiError = useHandleApiError();
+  const { getListStands } = useStandService();
 
   useEffect(() => {
     const fetchStand = async () => {
-      try {
-        const stands = await getListStands();
-        setListStands(stands);
-      } catch (error) {
-        handleApiError(error);
-      }
+      const stands = await getListStands();
+      if (stands) setListStands(stands);
     };
     fetchStand();
-  }, [handleApiError]);
+  }, [getListStands]);
 
   return (
     <div className={styles.background}>

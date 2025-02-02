@@ -1,24 +1,16 @@
 import { useEffect, useReducer, useState } from "react";
 import Button from "@/components/utils/Button";
 import Input from "@/components/utils/Input";
-import {
-  getVoluntary,
-  updateVoluntary,
-} from "@service/voluntary/voluntaryService";
+import useVoluntaryService from "@service/voluntary/useVoluntaryService";
 import Voluntary, { VoluntaryRole } from "@/data/volunteers/Voluntary";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { useNavigate } from "react-router-dom";
-import { useHandleApiError } from "@/axios/handlerApiError";
 import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
 import { isUserLogged, isUserUnlogged } from "@/utils/checkAuthentication";
-import {
-  checkUpdateUser,
-  initialUserState,
-  userReducer,
-} from "@reducer/voluntary/userReducer";
+import { initialUserState, userReducer } from "@reducer/voluntary/userReducer";
 
 const voluntaryInitialValue: Voluntary = {
   uuid: "",
@@ -38,51 +30,32 @@ function User() {
   >("");
   const { addNotification } = useAlertsContext();
   const { user } = useUserContext();
-  const handleApiError = useHandleApiError();
+  const { getVoluntary, updateVoluntary } = useVoluntaryService();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchVoluntary = async () => {
       if (isUserLogged(user)) {
-        try {
-          const voluntary = await getVoluntary(user.uuid);
+        const voluntary = await getVoluntary(user.uuid);
+        if (voluntary) {
           setUserProperties(voluntary);
-        } catch (error) {
-          handleApiError(error);
         }
       } else if (isUserUnlogged(user)) {
         navigate("/");
       }
     };
     fetchVoluntary();
-  }, [user, navigate, handleApiError]);
+  }, [user, navigate, getVoluntary]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (checkUpdateUser(state, update)) {
-      switch (checkUpdateUser(state, update)) {
-        case "username":
-          // TODO: interface input error
-          break;
-        case "fullname":
-          // TODO: interface input error
-          break;
-        case "password":
-          // TODO: interface input error
-          break;
-        case "confirmPassword":
-          // TODO: interface input error
-          break;
-      }
-      return;
-    }
-    try {
-      const voluntary = await updateVoluntary({
-        uuid: userProperties.uuid,
-        username: update === "username" ? state.username : undefined,
-        password: update === "password" ? state.password : undefined,
-        fullname: update === "fullname" ? state.fullname : undefined,
-      });
+    const voluntary = await updateVoluntary({
+      uuid: userProperties.uuid,
+      username: update === "username" ? state.username : undefined,
+      password: update === "password" ? state.password : undefined,
+      fullname: update === "fullname" ? state.fullname : undefined,
+    });
+    if (voluntary) {
       addNotification({
         title: "Update Success",
         message: `Update ${update}: ${update === "username" ? state.username : update === "password" ? "successful" : update === "fullname" ? state.fullname : ""}`,
@@ -91,8 +64,6 @@ function User() {
       dispatch({ type: "RESET" });
       setUpdate("");
       setUserProperties(voluntary);
-    } catch (error) {
-      handleApiError(error);
     }
   };
 

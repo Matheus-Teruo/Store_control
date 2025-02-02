@@ -1,4 +1,3 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import PageSelect from "@/components/PageSelect";
 import {
   isAdmin,
@@ -8,7 +7,7 @@ import {
 } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { SummaryProduct } from "@data/stands/Product";
-import { getProducts } from "@service/stand/productService";
+import useProductService from "@service/stand/useProductService";
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FormProduct from "./FormProduct";
@@ -21,7 +20,7 @@ function Products() {
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [formState, formDispach] = useReducer(formReducer, initialFormState);
   const [modeAdmin, setModeAdmin] = useState<boolean>(false);
-  const handleApiError = useHandleApiError();
+  const { getProducts } = useProductService();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
@@ -30,24 +29,21 @@ function Products() {
       isUserLogged(user) &&
       isSeller(user.summaryFunction, user.voluntaryRole)
     ) {
-      try {
-        const response = await getProducts(
-          undefined,
-          modeAdmin ? user.summaryFunction.uuid : undefined,
-          page.number,
-        );
+      const response = await getProducts(
+        undefined,
+        modeAdmin ? user.summaryFunction.uuid : undefined,
+        page.number,
+      );
+      if (response) {
         setProducts(response.content);
-      } catch (error) {
-        handleApiError(error);
       }
     } else if (
       isUserUnlogged(user) ||
       (user && !isSeller(user.summaryFunction, user.voluntaryRole))
     ) {
-      console.log(isSeller);
       navigate("/login");
     }
-  }, [user, page.number, modeAdmin, navigate, handleApiError]);
+  }, [user, page.number, modeAdmin, navigate, getProducts]);
 
   useEffect(() => {
     fetchProducts();

@@ -1,32 +1,27 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
 import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { SummaryTransaction } from "@data/operations/Transaction";
-import { getTransactions } from "@service/operations/transactionService";
+import useTransactionService from "@service/operations/useTransactionService";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Transactions() {
   const [transactions, setTransactions] = useState<SummaryTransaction[]>([]);
-  const handleApiError = useHandleApiError();
+  const { getTransactions } = useTransactionService();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchVoluntary = async () => {
       if (isUserLogged(user)) {
-        try {
-          const response = await getTransactions();
-          setTransactions(response.content);
-        } catch (error) {
-          handleApiError(error);
-        }
+        const response = await getTransactions();
+        if (response) setTransactions(response.content);
       } else if (isAdmin(user)) {
         navigate("/");
       }
     };
     fetchVoluntary();
-  }, [user, navigate, handleApiError]);
+  }, [user, navigate, getTransactions]);
 
   return (
     <div>
