@@ -18,19 +18,19 @@ function Volunteers() {
   const navigate = useNavigate();
 
   const fetchVolunteers = useCallback(async () => {
+    const response = await getVolunteers();
+    if (response) {
+      setVolunteers(response.content);
+    }
+  }, [getVolunteers]);
+
+  useEffect(() => {
     if (isUserLogged(user)) {
-      const response = await getVolunteers();
-      if (response) {
-        setVolunteers(response.content);
-      }
+      fetchVolunteers();
     } else if (isAdmin(user)) {
       navigate("/");
     }
-  }, [user, navigate, getVolunteers]);
-
-  useEffect(() => {
-    fetchVolunteers();
-  }, [fetchVolunteers]);
+  }, [user, navigate, fetchVolunteers]);
 
   const handleFormShow = () => {
     formDispach({ type: "SET_FALSE" });

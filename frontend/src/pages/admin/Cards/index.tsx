@@ -19,19 +19,19 @@ function Cards() {
   const navigate = useNavigate();
 
   const fetchCards = useCallback(async () => {
+    const response = await getCards();
+    if (response) {
+      setCards(response.content);
+    }
+  }, [getCards]);
+
+  useEffect(() => {
     if (isUserLogged(user)) {
-      const response = await getCards();
-      if (response) {
-        setCards(response.content);
-      }
+      fetchCards();
     } else if (isAdmin(user)) {
       navigate("/");
     }
-  }, [user, navigate, getCards]);
-
-  useEffect(() => {
-    fetchCards();
-  }, [fetchCards]);
+  }, [user, navigate, fetchCards]);
 
   const handleFormShow = () => {
     formDispach({ type: "SET_FALSE" });

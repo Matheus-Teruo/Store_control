@@ -19,19 +19,19 @@ function Stands() {
   const navigate = useNavigate();
 
   const fetchStands = useCallback(async () => {
+    const response = await getStands();
+    if (response) {
+      setStands(response.content);
+    }
+  }, [getStands]);
+
+  useEffect(() => {
     if (isUserLogged(user)) {
-      const response = await getStands();
-      if (response) {
-        setStands(response.content);
-      }
+      fetchStands();
     } else if (isAdmin(user)) {
       navigate("/");
     }
-  }, [user, navigate, getStands]);
-
-  useEffect(() => {
-    fetchStands();
-  }, [fetchStands]);
+  }, [user, navigate, fetchStands]);
 
   const handleFormShow = () => {
     formDispach({ type: "SET_FALSE" });

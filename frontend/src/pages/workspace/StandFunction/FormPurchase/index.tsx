@@ -1,11 +1,9 @@
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
-import { isSeller, isUserLogged } from "@/utils/checkAuthentication";
 import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
-import { useUserContext } from "@context/UserContext/useUserContext";
 import { CreatePurchase } from "@data/operations/Purchase";
 import { SummaryProduct } from "@data/stands/Product";
 import {
@@ -30,7 +28,6 @@ function FormPurchase({ reducer }: FormPurchaseProps) {
   const { addNotification } = useAlertsContext();
   const { getListProducts } = useProductService();
   const { createPurchase } = usePurchaseService();
-  const { user } = useUserContext();
   const [state, dispatch] = reducer;
 
   useEffect(() => {
@@ -53,16 +50,14 @@ function FormPurchase({ reducer }: FormPurchaseProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isUserLogged(user) && isSeller(user.summaryFunction)) {
-      const purchase = await createPurchase(createPurchasePayload(state));
-      if (purchase) {
-        addNotification({
-          title: "Create Purchase Success",
-          message: `Create purchase with ${purchase.items.length} itens diferent`,
-          type: MessageType.OK,
-        });
-        dispatch({ type: "RESET" });
-      }
+    const purchase = await createPurchase(createPurchasePayload(state));
+    if (purchase) {
+      addNotification({
+        title: "Create Purchase Success",
+        message: `Create purchase with ${purchase.items.length} itens diferent`,
+        type: MessageType.OK,
+      });
+      dispatch({ type: "RESET" });
     }
   };
 

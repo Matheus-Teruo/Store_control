@@ -1,10 +1,8 @@
 import Button from "@/components/utils/Button";
-import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
 import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
-import { useUserContext } from "@context/UserContext/useUserContext";
 import {
   createStandPayload,
   initialStandState,
@@ -27,11 +25,10 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
   const { getStand, createStand, updateStand, deleteStand } = useStandService();
-  const { user } = useUserContext();
 
   useEffect(() => {
     const fetchAssociation = async () => {
-      if (type === "update" && uuid && isUserLogged(user) && isAdmin(user)) {
+      if (type === "update" && uuid) {
         const stand = await getStand(uuid);
         if (stand) {
           dispatch({ type: "SET_STAND", payload: stand });
@@ -42,27 +39,25 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
     };
 
     fetchAssociation();
-  }, [uuid, type, user, getStand]);
+  }, [uuid, type, getStand]);
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isUserLogged(user) && isAdmin(user)) {
-      const stand = await createStand(createStandPayload(state));
-      if (stand) {
-        addNotification({
-          title: "Create Stand Success",
-          message: `Create stand: ${stand.standName}, with president: ${stand.association.associationName}`,
-          type: MessageType.OK,
-        });
-        dispatch({ type: "RESET" });
-        hide();
-      }
+    const stand = await createStand(createStandPayload(state));
+    if (stand) {
+      addNotification({
+        title: "Create Stand Success",
+        message: `Create stand: ${stand.standName}, with president: ${stand.association.associationName}`,
+        type: MessageType.OK,
+      });
+      dispatch({ type: "RESET" });
+      hide();
     }
   };
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (uuid && isUserLogged(user) && isAdmin(user)) {
+    if (uuid) {
       const stand = await updateStand(updateStandPayload(state));
       if (stand) {
         addNotification({
@@ -77,7 +72,7 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   };
 
   const handleDeleteSubmit = async () => {
-    if (uuid && isUserLogged(user) && isAdmin(user)) {
+    if (uuid) {
       await deleteStand(state.uuid);
       addNotification({
         title: "Delete Stand Success",

@@ -31,23 +31,25 @@ function Products() {
     ) {
       const response = await getProducts(
         undefined,
-        modeAdmin ? user.summaryFunction.uuid : undefined,
+        modeAdmin ? undefined : user.summaryFunction.uuid,
         page.number,
       );
       if (response) {
         setProducts(response.content);
       }
-    } else if (
+    }
+  }, [user, page.number, modeAdmin, getProducts]);
+
+  useEffect(() => {
+    if (isAdmin(user) && user.summaryFunction === undefined) setModeAdmin(true);
+    fetchProducts();
+    if (
       isUserUnlogged(user) ||
       (user && !isSeller(user.summaryFunction, user.voluntaryRole))
     ) {
       navigate("/login");
     }
-  }, [user, page.number, modeAdmin, navigate, getProducts]);
-
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+  }, [user, navigate, fetchProducts]);
 
   const handleAdmin = () => {
     setModeAdmin((prev) => !prev.valueOf);

@@ -27,14 +27,6 @@ function Menu() {
     fetchStand();
   }, [filter, selectedStands, getProducts]);
 
-  const handleFilterStand = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedStands(event.target.value);
-  };
-
-  const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilter(event.target.value);
-  };
-
   const handleToggleView = () => {
     if (toggleView === "List") {
       setToggleView("Items");
@@ -49,9 +41,12 @@ function Menu() {
         <div className={styles.header}>
           <StandOptionsFilter
             value={selectedStands}
-            onChange={handleFilterStand}
+            onChange={(event) => setSelectedStands(event.target.value)}
           />
-          <SearchFilter value={filter} onChange={handleFilter} />
+          <SearchFilter
+            value={filter}
+            onChange={(event) => setFilter(event.target.value)}
+          />
         </div>
       </div>
       <div className={styles.main}>

@@ -41,12 +41,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      if (
-        type === "update" &&
-        uuid &&
-        isUserLogged(user) &&
-        isSeller(user.summaryFunction, user.voluntaryRole)
-      ) {
+      if (type === "update" && uuid) {
         const product = await getProduct(uuid);
         if (product) {
           dispatch({ type: "SET_PRODUCT", payload: product });
@@ -57,63 +52,46 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
     };
 
     fetchProduct();
-  }, [uuid, type, user, getProduct]);
+  }, [uuid, type, getProduct]);
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      isUserLogged(user) &&
-      isSeller(user.summaryFunction, user.voluntaryRole)
-    ) {
-      const product = await createProduct(createProductPayload(state));
-      if (product) {
-        addNotification({
-          title: "Create Product Success",
-          message: `Create product ${product.productName}${product.description && ", description:"}${product.description}, price: ${product.price}, stock: ${product.stock}`,
-          type: MessageType.OK,
-        });
-        dispatch({ type: "RESET" });
-        hide();
-      }
+    const product = await createProduct(createProductPayload(state));
+    if (product) {
+      addNotification({
+        title: "Create Product Success",
+        message: `Create product ${product.productName}${product.description && ", description:"}${product.description}, price: ${product.price}, stock: ${product.stock}`,
+        type: MessageType.OK,
+      });
+      dispatch({ type: "RESET" });
+      hide();
     }
   };
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      uuid &&
-      isUserLogged(user) &&
-      isSeller(user.summaryFunction, user.voluntaryRole)
-    ) {
-      const product = await updateProduct(updateProductPayload(state));
-      if (product) {
-        addNotification({
-          title: "Update Product Success",
-          message: `Update product ${product.productName}${product.description && ", description:"}${product.description}, price: ${product.price}, stock: ${product.stock}`,
-          type: MessageType.OK,
-        });
-        dispatch({ type: "RESET" });
-        hide();
-      }
+    const product = await updateProduct(updateProductPayload(state));
+    if (product) {
+      addNotification({
+        title: "Update Product Success",
+        message: `Update product ${product.productName}${product.description && ", description:"}${product.description}, price: ${product.price}, stock: ${product.stock}`,
+        type: MessageType.OK,
+      });
+      dispatch({ type: "RESET" });
+      hide();
     }
   };
 
   const handleDeleteSubmit = async () => {
-    if (
-      uuid &&
-      isUserLogged(user) &&
-      isSeller(user.summaryFunction, user.voluntaryRole)
-    ) {
-      await deleteProduct(state.uuid);
-      addNotification({
-        title: "Delete Product Success",
-        message: `Delete product ${state.productName}`,
-        type: MessageType.OK,
-      });
-      dispatch({ type: "RESET" });
-      setConfirmDelete(false);
-      hide();
-    }
+    await deleteProduct(state.uuid);
+    addNotification({
+      title: "Delete Product Success",
+      message: `Delete product ${state.productName}`,
+      type: MessageType.OK,
+    });
+    dispatch({ type: "RESET" });
+    setConfirmDelete(false);
+    hide();
   };
 
   return (

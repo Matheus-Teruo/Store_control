@@ -10,7 +10,11 @@ import {
 } from "@context/AlertsContext/useAlertsContext";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import { initialUserState, userReducer } from "@reducer/voluntary/userReducer";
+import {
+  initialUserState,
+  signupPayload,
+  userReducer,
+} from "@reducer/voluntary/userReducer";
 
 function Signup() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
@@ -21,17 +25,12 @@ function Signup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { username, fullname, password } = state;
 
-    const voluntary = await signupVoluntary({
-      username,
-      fullname,
-      password,
-    });
+    const voluntary = await signupVoluntary(signupPayload(state));
     if (voluntary) {
       addNotification({
         title: "Signup Success",
-        message: `Create user ${username} and logged`,
+        message: `Create user ${voluntary.username} and logged`,
         type: MessageType.OK,
       });
       login({

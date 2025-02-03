@@ -1,6 +1,5 @@
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
-import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
 import {
   MessageType,
   useAlertsContext,
@@ -38,7 +37,7 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
 
   useEffect(() => {
     const fetchAssociation = async () => {
-      if (type === "update" && uuid && isUserLogged(user) && isAdmin(user)) {
+      if (type === "update" && uuid) {
         const association = await getAssociation(uuid);
         if (association) {
           dispatch({ type: "SET_ASSOCIATION", payload: association });
@@ -53,25 +52,23 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isUserLogged(user) && isAdmin(user)) {
-      const association = await createAssociation(
-        createAssociationPayload(state),
-      );
-      if (association) {
-        addNotification({
-          title: "Create Association Success",
-          message: `Create associatione: ${association.associationName}, with president: ${association.principalName}`,
-          type: MessageType.OK,
-        });
-        dispatch({ type: "RESET" });
-        hide();
-      }
+    const association = await createAssociation(
+      createAssociationPayload(state),
+    );
+    if (association) {
+      addNotification({
+        title: "Create Association Success",
+        message: `Create associatione: ${association.associationName}, with president: ${association.principalName}`,
+        type: MessageType.OK,
+      });
+      dispatch({ type: "RESET" });
+      hide();
     }
   };
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (uuid && isUserLogged(user) && isAdmin(user)) {
+    if (uuid) {
       const association = await updateAssociation(
         updateAssociationPayload(state),
       );
@@ -88,7 +85,7 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
   };
 
   const handleDeleteSubmit = async () => {
-    if (uuid && isUserLogged(user) && isAdmin(user)) {
+    if (uuid) {
       await deleteAssociation(state.uuid);
       addNotification({
         title: "Delete Association Success",

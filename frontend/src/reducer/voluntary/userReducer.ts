@@ -3,13 +3,7 @@ import {
   regexLeterSpace,
   regexPassword,
 } from "@/utils/regex";
-
-interface SignupFormState {
-  username: string;
-  fullname: string;
-  password: string;
-  confirmPassword: string;
-}
+import { LoginVoluntary, SignupVoluntary } from "@data/volunteers/User";
 
 type SignupAction =
   | { type: "SET_USERNAME"; payload: string }
@@ -18,7 +12,7 @@ type SignupAction =
   | { type: "SET_CONFIRM_PASSWORD"; payload: string }
   | { type: "RESET" };
 
-export const initialUserState: SignupFormState = {
+export const initialUserState: SignupVoluntary & { confirmPassword: string } = {
   username: "",
   fullname: "",
   password: "",
@@ -26,9 +20,9 @@ export const initialUserState: SignupFormState = {
 };
 
 export function userReducer(
-  state: SignupFormState,
+  state: SignupVoluntary & { confirmPassword: string },
   action: SignupAction,
-): SignupFormState {
+): SignupVoluntary & { confirmPassword: string } {
   switch (action.type) {
     case "SET_USERNAME": {
       if (!regexLeterNumber.test(action.payload)) {
@@ -61,42 +55,20 @@ export function userReducer(
   }
 }
 
-export function checkSignupUser(
-  state: SignupFormState,
-): "username" | "fullname" | "password" | "confirmPassword" | null {
-  if (state.username.length < 3 && !regexLeterNumber.test(state.username))
-    return "username";
-  if (state.fullname.length < 3 && !regexLeterSpace.test(state.fullname))
-    return "fullname";
-  if (state.password.length < 8 && !regexPassword.test(state.password))
-    return "password";
-  if (state.password === state.confirmPassword) return "password";
-  return null;
-}
+export const signupPayload = (
+  state: SignupVoluntary & { confirmPassword: string },
+): SignupVoluntary => {
+  const { confirmPassword: _confirmPassword, ...signupPayload } = state;
+  return signupPayload as SignupVoluntary;
+};
 
-export function checkUpdateUser(
-  state: SignupFormState,
-  update: "username" | "fullname" | "password" | "",
-): "username" | "fullname" | "password" | "confirmPassword" | null {
-  if (
-    update === "username" &&
-    state.username.length < 3 &&
-    !regexLeterNumber.test(state.username)
-  )
-    return "username";
-  if (
-    update === "fullname" &&
-    state.fullname.length < 3 &&
-    !regexLeterSpace.test(state.fullname)
-  )
-    return "fullname";
-  if (
-    update === "password" &&
-    state.password.length < 8 &&
-    !regexPassword.test(state.password)
-  )
-    return "password";
-  if (update === "password" && state.password === state.confirmPassword)
-    return "confirmPassword";
-  return null;
-}
+export const loginPayload = (
+  state: SignupVoluntary & { confirmPassword: string },
+): LoginVoluntary => {
+  const {
+    fullname: _fullname,
+    confirmPassword: _confirmPassword,
+    ...signupPayload
+  } = state;
+  return signupPayload as LoginVoluntary;
+};

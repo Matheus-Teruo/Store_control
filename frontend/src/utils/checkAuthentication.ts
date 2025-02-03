@@ -27,9 +27,7 @@ export function isSeller(
   admin?: VoluntaryRole,
 ): userFunction is SummaryFunction {
   return (
-    (userFunction !== null &&
-      userFunction !== undefined &&
-      userFunction.typeOfFunction === "Stand") ||
+    (userFunction && userFunction.typeOfFunction === "Stand") ||
     admin === VoluntaryRole.ADMIN
   );
 }
@@ -39,9 +37,7 @@ export function isCashier(
   admin?: VoluntaryRole,
 ): userFunction is SummaryFunction {
   return (
-    (userFunction !== null &&
-      userFunction !== undefined &&
-      userFunction.typeOfFunction === "Register") ||
+    (userFunction && userFunction.typeOfFunction === "Register") ||
     admin === VoluntaryRole.ADMIN
   );
 }

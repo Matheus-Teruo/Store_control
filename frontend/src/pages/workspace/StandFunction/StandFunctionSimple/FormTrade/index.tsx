@@ -1,12 +1,10 @@
 import PaymentSelect from "@/components/PaymentSelect";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
-import { isSeller, isUserLogged } from "@/utils/checkAuthentication";
 import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
-import { useUserContext } from "@context/UserContext/useUserContext";
 import { PaymentType } from "@data/operations/Recharge";
 import { CreateTrade } from "@data/operations/Trade";
 import { SummaryProduct } from "@data/stands/Product";
@@ -32,7 +30,6 @@ function FormTrade({ reducer }: FormPurchaseProps) {
   const { addNotification } = useAlertsContext();
   const { createTrade } = useTradeService();
   const { getListProducts } = useProductService();
-  const { user } = useUserContext();
   const [state, dispatch] = reducer;
 
   useEffect(() => {
@@ -56,16 +53,14 @@ function FormTrade({ reducer }: FormPurchaseProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isUserLogged(user) && isSeller(user.summaryFunction)) {
-      const purchase = await createTrade(createTradePayload(state));
-      if (purchase) {
-        addNotification({
-          title: "Create Purchase Success",
-          message: `Create purchase with ${purchase.items.length} itens diferent`,
-          type: MessageType.OK,
-        });
-        dispatch({ type: "RESET" });
-      }
+    const purchase = await createTrade(createTradePayload(state));
+    if (purchase) {
+      addNotification({
+        title: "Create Purchase Success",
+        message: `Create purchase with ${purchase.items.length} itens diferent`,
+        type: MessageType.OK,
+      });
+      dispatch({ type: "RESET" });
     }
   };
 

@@ -3,17 +3,21 @@ import { Link, useNavigate } from "react-router-dom";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import Input from "@/components/utils/Input";
-import { useState } from "react";
+import { useReducer } from "react";
 import useUserService from "@service/voluntary/useUserService";
 import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
+import {
+  initialUserState,
+  loginPayload,
+  userReducer,
+} from "@reducer/voluntary/userReducer";
 
 function Login() {
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [state, dispatch] = useReducer(userReducer, initialUserState);
   const { addNotification } = useAlertsContext();
   const { login } = useUserContext();
   const { loginVoluntary } = useUserService();
@@ -21,42 +25,37 @@ function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const user = await loginVoluntary({ username, password });
+    const user = await loginVoluntary(loginPayload(state));
     if (user) {
       addNotification({
         title: "Login Success",
-        message: `User ${username} logged`,
+        message: `User ${state.username} logged`,
         type: MessageType.OK,
       });
       login(user);
-      setUsername("");
-      setPassword("");
+      dispatch({ type: "RESET" });
       navigate("/workspace", { replace: true });
     }
   };
-
-  function handleUsername(event: React.ChangeEvent<HTMLInputElement>) {
-    setUsername(event.target.value);
-  }
-
-  function handlePassword(event: React.ChangeEvent<HTMLInputElement>) {
-    setPassword(event.target.value);
-  }
 
   return (
     <>
       <h1 className={styles.title}>Entrar</h1>
       <form className={styles.form} onSubmit={handleSubmit}>
         <Input
-          value={username}
-          onChange={handleUsername}
+          value={state.username}
+          onChange={(e) =>
+            dispatch({ type: "SET_USERNAME", payload: e.target.value })
+          }
           id="username"
           placeholder="Usuário"
           isRequired
         />
         <Input
-          value={password}
-          onChange={handlePassword}
+          value={state.password}
+          onChange={(e) =>
+            dispatch({ type: "SET_PASSWORD", payload: e.target.value })
+          }
           id="password"
           placeholder="Senha"
           isSecret

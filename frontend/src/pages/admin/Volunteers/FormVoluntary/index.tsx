@@ -1,11 +1,9 @@
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
-import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
 import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
-import { useUserContext } from "@context/UserContext/useUserContext";
 import {
   initialVoluntaryState,
   updateVoluntaryFunctionPayload,
@@ -28,11 +26,10 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
   const { addNotification } = useAlertsContext();
   const { getVoluntary, updateVoluntaryFunction, updateVoluntaryRole } =
     useVoluntaryService();
-  const { user } = useUserContext();
 
   useEffect(() => {
     const fetchAssociation = async () => {
-      if (uuid && isUserLogged(user) && isAdmin(user)) {
+      if (uuid) {
         const voluntary = await getVoluntary(uuid);
         if (voluntary) {
           dispatch({ type: "SET_VOLUNTARY", payload: voluntary });
@@ -43,29 +40,27 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
     };
 
     fetchAssociation();
-  }, [uuid, user, getVoluntary]);
+  }, [uuid, getVoluntary]);
 
   const handleUpdateFunctionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isUserLogged(user) && isAdmin(user)) {
-      const voluntary = await updateVoluntaryFunction(
-        updateVoluntaryFunctionPayload(state),
-      );
-      if (voluntary) {
-        addNotification({
-          title: "Update Voluntary Function Success",
-          message: `Update voluntary ${voluntary.fullname} to function: ${voluntary.summaryFunction}`,
-          type: MessageType.OK,
-        });
-        dispatch({ type: "RESET" });
-        hide();
-      }
+    const voluntary = await updateVoluntaryFunction(
+      updateVoluntaryFunctionPayload(state),
+    );
+    if (voluntary) {
+      addNotification({
+        title: "Update Voluntary Function Success",
+        message: `Update voluntary ${voluntary.fullname} to function: ${voluntary.summaryFunction}`,
+        type: MessageType.OK,
+      });
+      dispatch({ type: "RESET" });
+      hide();
     }
   };
 
   const handleUpdateRoleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (uuid && isUserLogged(user) && isAdmin(user)) {
+    if (uuid) {
       const voluntary = await updateVoluntaryRole(
         updateVoluntaryRolePayload(state),
       );

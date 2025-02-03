@@ -19,17 +19,17 @@ function Associations() {
   const navigate = useNavigate();
 
   const fetchAssociations = useCallback(async () => {
+    const response = await getAssociations(page.number);
+    if (response) setAssociations(response.content);
+  }, [page.number, getAssociations]);
+
+  useEffect(() => {
     if (isUserLogged(user)) {
-      const response = await getAssociations(page.number);
-      if (response) setAssociations(response.content);
+      fetchAssociations();
     } else if (isAdmin(user)) {
       navigate("/");
     }
-  }, [user, page.number, navigate, getAssociations]);
-
-  useEffect(() => {
-    fetchAssociations();
-  }, [fetchAssociations]);
+  }, [user, navigate, fetchAssociations]);
 
   const handleFormShow = () => {
     formDispach({ type: "SET_FALSE" });

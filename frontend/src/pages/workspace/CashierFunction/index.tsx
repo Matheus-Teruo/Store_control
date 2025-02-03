@@ -37,31 +37,28 @@ function Cashier() {
 
   useEffect(() => {
     const fetchVoluntary = async () => {
-      if (
-        isUserLogged(user) &&
-        isCashier(user.summaryFunction, user.voluntaryRole)
-      ) {
-        const response = await getProducts();
-        if (response) {
-          setProducts(response.content);
-        }
-      } else if (
-        isUserUnlogged(user) ||
-        (user && !isCashier(user.summaryFunction, user.voluntaryRole))
-      ) {
-        navigate("/");
+      const response = await getProducts();
+      if (response) {
+        setProducts(response.content);
       }
     };
+
     fetchVoluntary();
-  }, [user, navigate, getProducts]);
+  }, [getProducts]);
 
   useEffect(() => {
-    if (isUserLogged(user) && hasFunction(user.summaryFunction))
+    if (isUserLogged(user) && hasFunction(user.summaryFunction)) {
       dispatch({
         type: "SET_CASH_REGISTER_UUID",
         payload: user.summaryFunction.uuid,
       });
-  }, [user]);
+    } else if (
+      isUserUnlogged(user) ||
+      (user && !isCashier(user.summaryFunction, user.voluntaryRole))
+    ) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
