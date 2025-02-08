@@ -15,6 +15,7 @@ import {
 } from "@reducer/stand/productReducer";
 import useProductService from "@service/stand/useProductService";
 import { useEffect, useReducer, useState } from "react";
+import ImageUpload from "./ImageUpload";
 
 type FormPurchaseProps = {
   type: "create" | "update";
@@ -24,6 +25,7 @@ type FormPurchaseProps = {
 
 function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
   const [state, dispatch] = useReducer(productReducer, initialProductState);
+  const [image, setImage] = useState<string>("");
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
   const { getProduct, createProduct, updateProduct, deleteProduct } =
@@ -60,7 +62,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
     if (product) {
       addNotification({
         title: "Create Product Success",
-        message: `Create product ${product.productName}${product.description && ", description:"}${product.description}, price: ${product.price}, stock: ${product.stock}`,
+        message: `Create product ${product.productName}, price: ${product.price}, stock: ${product.stock}`,
         type: MessageType.OK,
       });
       dispatch({ type: "RESET" });
@@ -99,6 +101,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
       <form
         onSubmit={type === "create" ? handleCreateSubmit : handleUpdateSubmit}
       >
+        {image && <img src={image} alt="Preview" style={{ width: "200px" }} />}
         <label>Nome do produto</label>
         <input
           value={state.productName}
@@ -151,8 +154,12 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             dispatch({ type: "SET_STOCK", payload: parseInt(e.target.value) })
           }
         />
-        <label>Imagem</label>
-        <input type="file" />
+        <ImageUpload
+          onChangeImage={setImage}
+          onChange={(value) =>
+            dispatch({ type: "SET_PRODUCT_IMG", payload: value })
+          }
+        />
         {isUserLogged(user) && isAdmin(user) && (
           <StandSelect
             value={state.standUuid}

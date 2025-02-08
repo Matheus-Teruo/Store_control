@@ -12,6 +12,10 @@ export default interface Product {
   stand: Stand;
 }
 
+export interface ResponseImage {
+  url: string;
+}
+
 export interface SummaryProduct {
   uuid: string;
   productName: string;

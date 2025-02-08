@@ -24,25 +24,29 @@ function Products() {
   const { user } = useUserContext();
   const navigate = useNavigate();
 
-  const fetchProducts = useCallback(async () => {
-    if (
-      isUserLogged(user) &&
-      isSeller(user.summaryFunction, user.voluntaryRole)
-    ) {
-      const response = await getProducts(
-        undefined,
-        modeAdmin ? undefined : user.summaryFunction.uuid,
-        page.number,
-      );
-      if (response) {
-        setProducts(response.content);
+  const fetchProducts = useCallback(
+    async (requestMode: boolean) => {
+      if (
+        isUserLogged(user) &&
+        isSeller(user.summaryFunction, user.voluntaryRole)
+      ) {
+        const response = await getProducts(
+          undefined,
+          requestMode ? undefined : user.summaryFunction.uuid,
+          page.number,
+        );
+        if (response) {
+          setProducts(response.content);
+        }
       }
-    }
-  }, [user, page.number, modeAdmin, getProducts]);
+    },
+    [user, page.number, getProducts],
+  );
 
   useEffect(() => {
-    if (isAdmin(user) && user.summaryFunction === undefined) setModeAdmin(true);
-    fetchProducts();
+    const admin = isAdmin(user) && user.summaryFunction === null;
+    setModeAdmin(admin);
+    fetchProducts(admin);
     if (
       isUserUnlogged(user) ||
       (user && !isSeller(user.summaryFunction, user.voluntaryRole))
@@ -57,7 +61,7 @@ function Products() {
 
   const handleFormShow = () => {
     formDispach({ type: "SET_FALSE" });
-    fetchProducts();
+    fetchProducts(modeAdmin);
   };
 
   return (
@@ -67,11 +71,13 @@ function Products() {
         Criar Produto
       </Button>
       {isAdmin(user) && (
-        <div onClick={handleAdmin}>{modeAdmin ? "Normal" : "Admin"}</div>
+        <div onClick={handleAdmin}>
+          {modeAdmin ? "mudar para Normal" : "mudar para Admin"}
+        </div>
       )}
-      <div>
+      <ul>
         {products.map((product) => (
-          <>
+          <li key={product.uuid}>
             <div>
               {
                 product.productImg ? <img src={product.productImg} /> : <></>
@@ -91,9 +97,9 @@ function Products() {
             >
               Editar
             </div>
-          </>
+          </li>
         ))}
-      </div>
+      </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
       {formState.show && (
         <>

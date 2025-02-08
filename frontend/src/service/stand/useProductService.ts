@@ -1,7 +1,9 @@
 import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
+import { resizeImage } from "@/utils/cropImage";
 import Product, {
   CreateProduct,
+  ResponseImage,
   SummaryProduct,
   UpdateProduct,
 } from "@data/stands/Product";
@@ -81,6 +83,22 @@ const useProductService = () => {
     [api, safeRequest],
   );
 
+  const uploadImage = useCallback(
+    async (imageData: File): Promise<ResponseImage | null> => {
+      const resizedFile = await resizeImage(imageData, 800);
+      const formData = new FormData();
+      formData.append("image", resizedFile, "cropped-image.png");
+      return safeRequest(() =>
+        api
+          .post<ResponseImage>("products/upload-image", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          })
+          .then((res) => res.data),
+      );
+    },
+    [api, safeRequest],
+  );
+
   return {
     createProduct,
     getProduct,
@@ -88,6 +106,7 @@ const useProductService = () => {
     getListProducts,
     updateProduct,
     deleteProduct,
+    uploadImage,
   };
 };
 
