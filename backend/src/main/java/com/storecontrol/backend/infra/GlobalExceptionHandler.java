@@ -38,8 +38,10 @@ public class GlobalExceptionHandler {
         MessageResolver.getInstance().getMessage(
         "exception.global.methodNotValid.errorType")
     );
-    response.put("message", "Request contains invalid fields");  // TODO: regularize according to front
-    response.put("details", errors);
+    response.put("invalidFields", errors);
+    response.put("error", MessageResolver.getInstance().getMessage("exception.global.methodNotValid.error"));
+    response.put("message", MessageResolver.getInstance().getMessage("exception.global.methodNotValid.message"));
+
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
@@ -97,6 +99,7 @@ public class GlobalExceptionHandler {
     error.put("entity", ex.getEntityName());
     error.put("invalidValue", ex.getInvalidValue());
     error.put("error", ex.getMessage());
+    error.put("message", ex.getMessage());
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
   }

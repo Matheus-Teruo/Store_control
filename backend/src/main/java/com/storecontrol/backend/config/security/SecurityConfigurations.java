@@ -140,7 +140,7 @@ public class SecurityConfigurations {
 
   private static final String[] AUTHORIZED_POST_ENDPOINTS_MANAGEMENT = {
       "/products",
-      "/products/upload-image/{uuid}",
+      "/products/upload-image",
       "/transactions"
   };
 

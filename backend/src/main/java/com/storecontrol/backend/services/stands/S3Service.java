@@ -31,7 +31,7 @@ public class S3Service {
   @Autowired
   S3Client s3Client;
 
-  public File adjustNameFile(UUID uuid, @RequestParam("file") MultipartFile file) throws IOException {
+  public File adjustNameFile(MultipartFile file) throws IOException {
     String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss"));
     String fileExtension = ".tmp";
     if (file.getOriginalFilename() != null && file.getOriginalFilename().contains(".")) {
@@ -39,7 +39,7 @@ public class S3Service {
       fileExtension = "." + parts[1];
     }
 
-    return File.createTempFile("product-" + uuid + "-" + date + "-", fileExtension);
+    return File.createTempFile("product-" + date + "-", fileExtension);
   }
 
   public String uploadFile(File file, String key) {

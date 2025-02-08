@@ -83,10 +83,9 @@ public class ProductController {
     return ResponseEntity.noContent().build();
   }
 
-  @PostMapping("/upload-image/{uuid}")
-  public ResponseEntity<Map<String, String>> uploadImage(
-      @PathVariable UUID uuid, @RequestParam("image") MultipartFile image) throws IOException {
-    var tempFile = s3Service.adjustNameFile(uuid, image);
+  @PostMapping("/upload-images")
+  public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("image") MultipartFile image) throws IOException {
+    var tempFile = s3Service.adjustNameFile(image);
     image.transferTo(tempFile);
 
     String url = s3Service.uploadFile(tempFile, tempFile.getName());
