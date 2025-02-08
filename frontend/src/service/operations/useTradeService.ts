@@ -1,4 +1,4 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
+import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
 import Customer from "@data/customers/Customer";
 import Trade, { CreateTrade } from "@data/operations/Trade";
@@ -6,7 +6,7 @@ import { useCallback } from "react";
 
 const useTradeService = () => {
   const api = useAxios();
-  const handleApiError = useHandleApiError();
+  const handleApiError = useApiError();
 
   const safeRequest = useCallback(
     async <T>(fn: () => Promise<T>): Promise<T | null> => {

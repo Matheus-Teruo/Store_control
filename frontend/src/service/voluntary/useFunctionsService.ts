@@ -1,11 +1,11 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
+import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
 import SummaryFunction from "@data/volunteers/Function";
 import { useCallback } from "react";
 
 const useFunctionService = () => {
   const api = useAxios();
-  const handleApiError = useHandleApiError();
+  const handleApiError = useApiError();
 
   const safeRequest = useCallback(
     async <T>(fn: () => Promise<T>): Promise<T | null> => {

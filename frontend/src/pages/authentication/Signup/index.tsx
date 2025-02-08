@@ -25,22 +25,29 @@ function Signup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const voluntary = await signupVoluntary(signupPayload(state));
-    if (voluntary) {
+    if (state.password == state.confirmPassword) {
+      const voluntary = await signupVoluntary(signupPayload(state));
+      if (voluntary) {
+        addNotification({
+          title: "Signup Success",
+          message: `Create user ${voluntary.username} and logged`,
+          type: MessageType.OK,
+        });
+        login({
+          uuid: voluntary.uuid,
+          firstName: voluntary.fullname.split(" ")[0],
+          summaryFunction: voluntary.summaryFunction,
+          voluntaryRole: voluntary.voluntaryRole,
+        });
+        dispatch({ type: "RESET" });
+        navigate("/workspace", { replace: true });
+      }
+    } else {
       addNotification({
-        title: "Signup Success",
-        message: `Create user ${voluntary.username} and logged`,
-        type: MessageType.OK,
+        title: "Error to Submit",
+        message: `password and password confirmation are not iqual`,
+        type: MessageType.WARNING,
       });
-      login({
-        uuid: voluntary.uuid,
-        firstName: voluntary.fullname.split(" ")[0],
-        summaryFunction: voluntary.summaryFunction,
-        voluntaryRole: voluntary.voluntaryRole,
-      });
-      dispatch({ type: "RESET" });
-      navigate("/workspace", { replace: true });
     }
   };
 

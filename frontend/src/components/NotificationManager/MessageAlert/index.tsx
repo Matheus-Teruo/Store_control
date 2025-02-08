@@ -8,12 +8,12 @@ type MessageAlertProps = {
   id: number;
   title: string;
   message: string;
+  fields?: Record<string, string>;
   type: MessageType;
 };
 
-function MessageAlert({ id, title, message, type }: MessageAlertProps) {
+function MessageAlert({ id, title, message, fields, type }: MessageAlertProps) {
   const { removeNotification } = useAlertsContext();
-
   return (
     <div className={`${styles.frame} ${styles[type]}`}>
       <div className={styles.header}>
@@ -22,7 +22,18 @@ function MessageAlert({ id, title, message, type }: MessageAlertProps) {
           x
         </div>
       </div>
-      <div className={styles.body}>{message}</div>
+      <div className={styles.body}>
+        <p>{message}</p>
+        {fields && (
+          <ul>
+            {Object.entries(fields).map(([field, message]) => (
+              <li key={field}>
+                <p>{message}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }

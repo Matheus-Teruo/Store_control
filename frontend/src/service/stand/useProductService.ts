@@ -1,4 +1,4 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
+import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
 import Product, {
   CreateProduct,
@@ -10,7 +10,7 @@ import { useCallback } from "react";
 
 const useProductService = () => {
   const api = useAxios();
-  const handleApiError = useHandleApiError();
+  const handleApiError = useApiError();
 
   const safeRequest = useCallback(
     async <T>(fn: () => Promise<T>): Promise<T | null> => {

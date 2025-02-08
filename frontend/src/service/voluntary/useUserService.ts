@@ -1,4 +1,4 @@
-import { useHandleApiError } from "@/axios/handlerApiError";
+import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
 import User, { LoginVoluntary, SignupVoluntary } from "@data/volunteers/User";
 import Voluntary from "@data/volunteers/Voluntary";
@@ -6,7 +6,7 @@ import { useCallback } from "react";
 
 const useUserService = () => {
   const api = useAxios();
-  const handleApiError = useHandleApiError();
+  const handleApiError = useApiError();
 
   const safeRequest = useCallback(
     async <T>(fn: () => Promise<T>): Promise<T | null> => {

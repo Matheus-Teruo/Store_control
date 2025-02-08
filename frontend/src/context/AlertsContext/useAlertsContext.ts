@@ -2,6 +2,7 @@ import { useContext, createContext } from "react";
 
 export enum MessageType {
   OK = "ok",
+  INFO = "information",
   WARNING = "warning",
   ERROR = "error",
 }
@@ -9,6 +10,7 @@ export enum MessageType {
 export interface Message {
   title: string;
   message: string;
+  fields?: Record<string, string>;
   type: MessageType;
 }
 
