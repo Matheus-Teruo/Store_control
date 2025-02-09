@@ -7,6 +7,7 @@ import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.stands.response.ResponseProduct;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.services.stands.ProductService;
 import com.storecontrol.backend.services.stands.S3Service;
 import org.junit.jupiter.api.Test;
@@ -37,16 +38,18 @@ class ProductTest extends BaseTest {
   @Test
   void testCreateProductSuccess() throws Exception {
     // Given
+    UUID voluntaryUuid = UUID.randomUUID();
     Product mockProduct = createProductEntity(UUID.randomUUID());
     RequestCreateProduct requestProduct = createRequestCreateProduct(mockProduct);
     ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
 
-    when(service.createProduct(requestProduct)).thenReturn(mockProduct);
+    when(service.createProduct(requestProduct, voluntaryUuid)).thenReturn(mockProduct);
 
     // When & Then
     mockMvc.perform(post("/products")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(requestProduct)))
+            .content(toJson(requestProduct))
+            .requestAttr("UserUuid", voluntaryUuid))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location",
             containsString("/products/" + mockProduct.getUuid().toString())))
@@ -54,7 +57,7 @@ class ProductTest extends BaseTest {
 
 
     // Verify interactions
-    verify(service, times(1)).createProduct(requestProduct);
+    verify(service, times(1)).createProduct(requestProduct, voluntaryUuid);
     verifyNoMoreInteractions(service);
   }
 
@@ -133,7 +136,7 @@ class ProductTest extends BaseTest {
   void testUpdateProductSuccess() throws Exception {
     // Given
     Product mockProduct = createProductEntity(UUID.randomUUID());
-
+    UUID voluntaryUuid = UUID.randomUUID();
     Stand updatedMockStand = createStandEntity(UUID.randomUUID());
     RequestUpdateProduct updateRequest = createRequestUpdateProduct(mockProduct.getUuid(), updatedMockStand.getUuid());
 
@@ -141,17 +144,18 @@ class ProductTest extends BaseTest {
     mockProduct.updateProduct(updatedMockStand);
     ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
 
-    when(service.updateProduct(updateRequest)).thenReturn(mockProduct);
+    when(service.updateProduct(updateRequest, voluntaryUuid)).thenReturn(mockProduct);
 
     // When & Then
     mockMvc.perform(put("/products")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(updateRequest)))
+            .content(toJson(updateRequest))
+            .requestAttr("UserUuid", voluntaryUuid))
         .andExpect(status().isOk())
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).updateProduct(updateRequest);
+    verify(service, times(1)).updateProduct(updateRequest, voluntaryUuid);
     verifyNoMoreInteractions(service);
   }
 

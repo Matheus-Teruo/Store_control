@@ -32,8 +32,9 @@ public class ProductService {
   StandService standService;
 
   @Transactional
-  public Product createProduct(RequestCreateProduct request) {
+  public Product createProduct(RequestCreateProduct request, UUID userUuid) {
     validation.checkNameDuplication(request.productName());
+    validation.checkProductBelongsManagerStand(request.standUuid() ,userUuid);
     var stand = standService.safeTakeStandByUuid(request.standUuid());
     var product = new Product(request, stand);
     repository.save(product);
@@ -70,8 +71,9 @@ public class ProductService {
   }
 
   @Transactional
-  public Product updateProduct(RequestUpdateProduct request) {
+  public Product updateProduct(RequestUpdateProduct request, UUID userUuid) {
     validation.checkNameDuplication(request.productName());
+    validation.checkProductBelongsManagerStand(request.standUuid() ,userUuid);
     var product = safeTakeProductByUuid(request.uuid());
 
     product.updateProduct(request);

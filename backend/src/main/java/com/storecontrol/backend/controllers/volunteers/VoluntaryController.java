@@ -22,7 +22,6 @@ public class VoluntaryController {
   @Autowired
   VoluntaryService service;
 
-
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseVoluntary> readVoluntary(
       @PathVariable @Valid UUID uuid,

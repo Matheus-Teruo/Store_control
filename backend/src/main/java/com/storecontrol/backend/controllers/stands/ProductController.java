@@ -32,8 +32,10 @@ public class ProductController {
   S3Service s3Service;
 
   @PostMapping
-  public ResponseEntity<ResponseProduct> createProduct(@RequestBody @Valid RequestCreateProduct request) {
-    var product = service.createProduct(request);
+  public ResponseEntity<ResponseProduct> createProduct(
+      @RequestBody @Valid RequestCreateProduct request,
+      @RequestAttribute("UserUuid") UUID userUuid) {
+    var product = service.createProduct(request, userUuid);
 
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
@@ -70,8 +72,10 @@ public class ProductController {
   }
 
   @PutMapping
-  public ResponseEntity<ResponseProduct> updateProduct(@RequestBody @Valid RequestUpdateProduct request) {
-    var response = new ResponseProduct(service.updateProduct(request));
+  public ResponseEntity<ResponseProduct> updateProduct(
+      @RequestBody @Valid RequestUpdateProduct request,
+      @RequestAttribute("UserUuid") UUID userUuid) {
+    var response = new ResponseProduct(service.updateProduct(request, userUuid));
 
     return ResponseEntity.ok(response);
   }
