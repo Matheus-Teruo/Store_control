@@ -51,7 +51,7 @@ function Products() {
       isUserUnlogged(user) ||
       (user && !isSeller(user.summaryFunction, user.voluntaryRole))
     ) {
-      navigate("/login");
+      navigate("/");
     }
   }, [user, navigate, fetchProducts]);
 

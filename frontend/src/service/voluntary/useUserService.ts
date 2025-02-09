@@ -38,8 +38,8 @@ const useUserService = () => {
 
   const getUser = useCallback(
     async (): Promise<User | null> =>
-      safeRequest(() => api.get<User>("/user/check").then((res) => res.data)),
-    [api, safeRequest],
+      api.get<User>("/user/check").then((res) => res.data),
+    [api],
   );
 
   const logoutVoluntary = useCallback(async (): Promise<void> => {

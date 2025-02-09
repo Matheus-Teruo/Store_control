@@ -53,6 +53,8 @@ services:
       - 9001:9001
     volumes:
       - minio-data:/data
+      - ./minio/init_minio.sh:/init_minio.sh
+    entrypoint: ["/bin/sh", "/init_minio.sh"]
   frontend:
     build:
       context: frontend
