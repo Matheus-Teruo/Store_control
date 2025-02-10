@@ -57,20 +57,11 @@ services:
     entrypoint: ["/bin/sh", "/init_minio.sh"]
   frontend:
     build:
-      context: frontend
-      target: development
+      context: ./frontend
     ports:
-      - 3000:3000
-    volumes:
-      - frontend-node:/code/node_modules
-      - ./frontend/src:/code/src
-      - ./frontend/package.json:/code/package.json
-      - ./frontend/package-lock.json:/code/package-lock.json
+      - "80:80"
     networks:
       - public
-    environment:
-      # TODO env do front
-      - WATCHPACK_POLLING=true
     depends_on:
       - backend
   table_service:

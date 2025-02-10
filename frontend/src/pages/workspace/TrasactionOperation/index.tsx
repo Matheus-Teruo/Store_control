@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Transaction() {
-  const [registers, setRegisters] = useState<SummaryCashRegister[]>([]);
+  const [_registers, setRegisters] = useState<SummaryCashRegister[]>([]);
   const { getListRegisters } = useCashRegisterService();
   const { user } = useUserContext();
   const navigate = useNavigate();
