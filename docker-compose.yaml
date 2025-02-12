@@ -2,7 +2,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
     env_file:
       - .env # double check to confirm the existence of a .env
     ports:
@@ -58,28 +58,27 @@ services:
   frontend:
     build:
       context: ./frontend
+      dockerfile: dockerfile
     ports:
       - "80:80"
     networks:
       - public
     depends_on:
       - backend
-  table_service:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: table-service-container
-    networks:
-      - private
-    restart: unless-stopped
-    volumes:
-      - ./app:/app
-    command: python main.py
+  # table_service:
+  #   build:
+  #     context: ./table_service
+  #     dockerfile: dockerfile
+  #   container_name: table-service-container
+  #   networks:
+  #     - private
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./app:/app
+  #   command: python main.py
 networks:
   public:
   private:
 volumes:
-  backend-target:
   db-data:
   minio-data:
-  frontend-node:
