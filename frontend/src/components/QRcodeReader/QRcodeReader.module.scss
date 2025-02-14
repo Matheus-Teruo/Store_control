@@ -1,0 +1,33 @@
+.main {
+  x: 0;
+  y: 0;
+  z-index: 100;
+  position: fixed;
+  background-color: #ffffff;
+  padding: 10px;
+
+  h2 {
+    text-align: center;
+    padding: 10px;
+  }
+
+  .frame {
+    width: 90vw;
+    background-color: #525252;
+  }
+
+  p {
+    text-align: center;
+    padding: 5px;
+  }
+}
+
+.background {
+  x: 0;
+  y: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 50;
+  position: fixed;
+  background-color: #aaaaaa80;
+}

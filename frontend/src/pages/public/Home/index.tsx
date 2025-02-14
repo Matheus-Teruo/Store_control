@@ -1,15 +1,35 @@
 import styles from "./Home.module.scss";
 import Logo from "@/assets/image/LogoStoreControl.png";
 import LanguageSelect from "@/components/LanguageSelect";
-import Button from "@/components/utils/Button";
+import QRcodeReader from "@/components/QRcodeReader";
 import { isUserLogged } from "@/utils/checkAuthentication";
+import {
+  MessageType,
+  useAlertsContext,
+} from "@context/AlertsContext/useAlertsContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 function Home() {
   const [showScanner, setShowScanner] = useState<boolean>(false);
+  const [QRcode, setQRcode] = useState<string | null>(null);
+  const { addNotification } = useAlertsContext();
   const { user } = useUserContext();
+
+  const handleQRcode = (value: string) => {
+    const cardId = value.split("/").at(-1);
+    if (cardId && cardId.length === 15) {
+      setQRcode(cardId);
+    } else {
+      console.log(cardId);
+      addNotification({
+        title: "Erro no código do QRcode",
+        message: "QRcode não é de um cartão",
+        type: MessageType.WARNING,
+      });
+    }
+  };
 
   return (
     <div className={styles.background}>
@@ -25,17 +45,14 @@ function Home() {
           <Link className={`${styles.link} ${styles.linkMenu}`} to="/menu">
             <span>Cardápio</span>
           </Link>
-          {/* MOCKED */}
-          <Link
+          <button
+            type="button"
             className={`${styles.link} ${styles.linkMenu}`}
-            to="/order/ordercard000002"
+            onClick={() => setShowScanner(true)}
           >
-            <span>MOCKED order</span>
-          </Link>
-          {/*  */}
-          <Button onClick={() => setShowScanner(true)}>
             <span>Scanner</span>
-          </Button>
+          </button>
+          {QRcode && <div>{QRcode}</div>}
           {isUserLogged(user) ? (
             <>
               <Link
@@ -66,7 +83,12 @@ function Home() {
             <LanguageSelect />
           </div>
         </div>
-        {showScanner && <div>scanner</div>}
+        {showScanner && (
+          <QRcodeReader
+            onChange={handleQRcode}
+            setClose={() => setShowScanner(false)}
+          />
+        )}
       </div>
     </div>
   );
