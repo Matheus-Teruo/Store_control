@@ -1,4 +1,4 @@
-import PageSelect from "@/components/PageSelect";
+import PageSelect from "@/components/selects/PageSelect";
 import {
   isAdmin,
   isSeller,
@@ -14,12 +14,14 @@ import FormProduct from "./FormProduct";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import Button from "@/components/utils/Button";
 import { formReducer, initialFormState } from "@reducer/formReducer";
+import StandSelect from "@/components/selects/StandSelect";
 
 function Products() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [formState, formDispach] = useReducer(formReducer, initialFormState);
   const [modeAdmin, setModeAdmin] = useState<boolean>(false);
+  const [selectedStand, setSelectedStand] = useState<string | undefined>();
   const { getProducts } = useProductService();
   const { user } = useUserContext();
   const navigate = useNavigate();
@@ -32,7 +34,7 @@ function Products() {
       ) {
         const response = await getProducts(
           undefined,
-          requestMode ? undefined : user.summaryFunction.uuid,
+          requestMode ? selectedStand : user.summaryFunction.uuid,
           page.number,
         );
         if (response) {
@@ -40,11 +42,12 @@ function Products() {
         }
       }
     },
-    [user, page.number, getProducts],
+    [user, page.number, selectedStand, getProducts],
   );
 
   useEffect(() => {
     const admin = isAdmin(user) && user.summaryFunction === null;
+    if (isAdmin(user)) if (!admin) setSelectedStand(user.summaryFunction!.uuid);
     setModeAdmin(admin);
     fetchProducts(admin);
     if (
@@ -54,10 +57,6 @@ function Products() {
       navigate("/");
     }
   }, [user, navigate, fetchProducts]);
-
-  const handleAdmin = () => {
-    setModeAdmin((prev) => !prev.valueOf);
-  };
 
   const handleFormShow = () => {
     formDispach({ type: "SET_FALSE" });
@@ -71,8 +70,11 @@ function Products() {
         Criar Produto
       </Button>
       {isAdmin(user) && (
-        <div onClick={handleAdmin}>
-          {modeAdmin ? "mudar para Normal" : "mudar para Admin"}
+        <div>
+          <StandSelect
+            value={selectedStand}
+            onChange={(e) => setSelectedStand(e.target.value)}
+          />
         </div>
       )}
       <ul>

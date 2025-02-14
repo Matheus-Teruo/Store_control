@@ -1,6 +1,6 @@
 import styles from "./Home.module.scss";
 import Logo from "@/assets/image/LogoStoreControl.png";
-import LanguageSelect from "@/components/LanguageSelect";
+import LanguageSelect from "@/components/selects/LanguageSelect";
 import QRcodeReader from "@/components/QRcodeReader";
 import { isUserLogged } from "@/utils/checkAuthentication";
 import {

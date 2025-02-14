@@ -1,4 +1,4 @@
-import StandSelect from "@/components/StandSelect";
+import StandSelect from "@/components/selects/StandSelect";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import { isAdmin, isSeller, isUserLogged } from "@/utils/checkAuthentication";

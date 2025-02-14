@@ -1,4 +1,4 @@
-import PaymentSelect from "@/components/PaymentSelect";
+import PaymentSelect from "@/components/selects/PaymentSelect";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import {

@@ -1,7 +1,7 @@
 import {
   isAdmin,
   isCashier,
-  isManegement,
+  isManeger,
   isSeller,
   isUserLogged,
   isUserUnlogged,
@@ -42,7 +42,7 @@ function Hub() {
         <li>
           <Link to="/workspace/transaction">Transação</Link>
         </li>
-        {isManegement(user) && (
+        {isManeger(user) && (
           <>
             <li>
               <Link to="/admin/volunteers">Volunteers</Link>

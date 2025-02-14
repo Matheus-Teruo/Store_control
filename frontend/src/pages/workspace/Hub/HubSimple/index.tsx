@@ -1,6 +1,6 @@
 import {
   isAdmin,
-  isManegement,
+  isManeger,
   isSeller,
   isUserLogged,
   isUserUnlogged,
@@ -32,7 +32,7 @@ function HubSimple() {
         <li>
           <Link to="/workspace/products">Produtos</Link>
         </li>
-        {isManegement(user) && (
+        {isManeger(user) && (
           <>
             <li>
               <Link to="/admin/volunteers">Volunteers</Link>

@@ -1,4 +1,4 @@
-import PageSelect from "@/components/PageSelect";
+import PageSelect from "@/components/selects/PageSelect";
 import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { SummaryVoluntary } from "@data/volunteers/Voluntary";

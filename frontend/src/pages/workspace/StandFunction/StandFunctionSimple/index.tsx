@@ -1,4 +1,4 @@
-import PageSelect from "@/components/PageSelect";
+import PageSelect from "@/components/selects/PageSelect";
 import {
   isSeller,
   isUserLogged,

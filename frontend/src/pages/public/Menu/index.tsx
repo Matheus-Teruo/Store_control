@@ -1,6 +1,6 @@
 import styles from "./Menu.module.scss";
 import { useEffect, useState } from "react";
-import StandOptionsFilter from "@/components/StandSelect";
+import StandOptionsFilter from "@/components/selects/StandSelect";
 import SearchFilter from "./SearchFilter";
 import { SummaryProduct } from "@data/stands/Product";
 import Button from "@/components/utils/Button";

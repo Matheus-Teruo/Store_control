@@ -42,7 +42,7 @@ export function isCashier(
   );
 }
 
-export function isManegement(user: User | null | "unlogged"): user is User {
+export function isManeger(user: User | null | "unlogged"): user is User {
   return isUserLogged(user) && user.voluntaryRole !== VoluntaryRole.VOLUNTARY;
 }
 
