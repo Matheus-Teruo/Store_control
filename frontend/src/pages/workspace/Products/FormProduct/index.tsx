@@ -163,8 +163,8 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
         {isUserLogged(user) && isAdmin(user) && (
           <StandSelect
             value={state.standUuid}
-            onChange={(e) =>
-              dispatch({ type: "SET_STAND_UUID", payload: e.target.value })
+            onChange={(value) =>
+              dispatch({ type: "SET_STAND_UUID", payload: value })
             }
           />
         )}

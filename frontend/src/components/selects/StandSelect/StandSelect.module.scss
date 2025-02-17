@@ -3,7 +3,7 @@
 .background {
   display: flex;
   align-items: center;
-  padding: 6px 10px;
+  padding: 6px;
 
   select {
     border: none;
@@ -12,5 +12,48 @@
     border-radius: 4px;
     padding: 6px;
     background-color: $color-gray-100;
+  }
+}
+
+.checkBackground {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  width: 100%;
+  padding: 6px 3px;
+  box-sizing: border-box;
+  box-shadow: $color-shadow-2 0 1px 4px inset;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  .container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .selected {
+    background-color: $color-secundary-2;
+    box-shadow: none;
+    box-shadow: $color-shadow-1 0 2px 4px inset;
+  }
+
+  label {
+    display: flex;
+    padding: 3px 12px;
+    margin: 0 3px;
+    border-radius: 6px;
+    box-shadow: $color-shadow-1 0 2px 4px;
+
+    span {
+      font-weight: 500;
+      user-select: none;
+      white-space: nowrap;
+      color: $color-font-2;
+    }
+  }
+
+  input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
   }
 }

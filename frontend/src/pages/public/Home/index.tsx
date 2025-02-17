@@ -1,7 +1,7 @@
 import styles from "./Home.module.scss";
 import Logo from "@/assets/image/LogoStoreControl.png";
-import LanguageSelect from "@/components/selects/LanguageSelect";
 import QRcodeReader from "@/components/QRcodeReader";
+import activeConfig from "@/config/activeConfig";
 import { isUserLogged } from "@/utils/checkAuthentication";
 import {
   MessageType,
@@ -35,23 +35,25 @@ function Home() {
     <div className={styles.background}>
       <div className={styles.body}>
         <div className={styles.section}>
+          <h1 className={styles.title}>Store Control</h1>
           <img
             src={Logo}
             alt="Logo: imagem circular com um rosto de raposa no meio"
           />
-          <h1 className={styles.title}>Store Control</h1>
         </div>
         <div className={styles.section}>
           <Link className={`${styles.link} ${styles.linkMenu}`} to="/menu">
             <span>Cardápio</span>
           </Link>
-          <button
-            type="button"
-            className={`${styles.link} ${styles.linkMenu}`}
-            onClick={() => setShowScanner(true)}
-          >
-            <span>Scanner</span>
-          </button>
+          {activeConfig.enableCard && (
+            <button
+              type="button"
+              className={`${styles.link} ${styles.linkMenu}`}
+              onClick={() => setShowScanner(true)}
+            >
+              <span>Scanner</span>
+            </button>
+          )}
           {QRcode && <div>{QRcode}</div>}
           {isUserLogged(user) ? (
             <>
@@ -79,9 +81,9 @@ function Home() {
               </Link>
             </div>
           )}
-          <div>
+          {/* <div>
             <LanguageSelect />
-          </div>
+          </div> */}
         </div>
         {showScanner && (
           <QRcodeReader

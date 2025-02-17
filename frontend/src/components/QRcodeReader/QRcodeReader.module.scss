@@ -1,9 +1,11 @@
+@use "@styles/variables" as *;
+
 .main {
   x: 0;
   y: 0;
   z-index: 100;
   position: fixed;
-  background-color: #ffffff;
+  background-color: $body-bg-color;
   padding: 10px;
 
   h2 {
@@ -13,7 +15,7 @@
 
   .frame {
     width: 90vw;
-    background-color: #525252;
+    background-color: $color-gray-600;
   }
 
   p {

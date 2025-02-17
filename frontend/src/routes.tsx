@@ -23,6 +23,7 @@ import AdminHeader from "./components/AdminHeader";
 import Transactions from "./pages/analytics/Statistics/Transactions";
 import Transaction from "./pages/workspace/TrasactionOperation";
 import activeConfig from "./config/activeConfig";
+import PublicHeader from "./components/PublicHeader";
 
 function AppRouter() {
   let workspaceHub;
@@ -40,8 +41,10 @@ function AppRouter() {
       <NotificationManager />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/order/:cardID" element={<Order />} />
+        <Route path="/" element={<PublicHeader />}>
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/order/:cardID" element={<Order />} />
+        </Route>
         <Route path="/auth" element={<AuthPage />}>
           <Route path="signup" element={<Signup />} />
           <Route path="login" element={<Login />} />

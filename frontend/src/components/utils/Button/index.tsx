@@ -14,7 +14,7 @@ function Button({
 }: ButtonProps) {
   return (
     <button className={styles.button} type={type} onClick={onClick}>
-      <p>{children}</p>
+      {children}
     </button>
   );
 }

@@ -73,7 +73,7 @@ function Products() {
         <div>
           <StandSelect
             value={selectedStand}
-            onChange={(e) => setSelectedStand(e.target.value)}
+            onChange={(value) => setSelectedStand(value)}
           />
         </div>
       )}

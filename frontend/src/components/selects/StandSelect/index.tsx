@@ -5,10 +5,11 @@ import useStandService from "@service/stand/useStandService";
 
 interface StandSelectProps {
   value: string | undefined;
-  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  onChange: (event: string | undefined) => void;
+  mode?: "select" | "radio";
 }
 
-function StandSelect({ value, onChange }: StandSelectProps) {
+function StandSelect({ value, onChange, mode = "select" }: StandSelectProps) {
   const [listStands, setListStands] = useState<SummaryStand[]>([]);
   const { getListStands } = useStandService();
 
@@ -20,18 +21,48 @@ function StandSelect({ value, onChange }: StandSelectProps) {
     fetchStand();
   }, [getListStands]);
 
+  const handleChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    onChange(event.target.value);
+  };
+
+  const handleChangeCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(value === event.target.value ? undefined : event.target.value);
+  };
+
   return (
-    <div className={styles.background}>
-      {/* <label htmlFor="stands"></label> TODO: trocar para svg */}
-      <select id="stands" value={value} onChange={onChange}>
-        <option value={undefined}></option>
-        {listStands.map((stand) => (
-          <option key={stand.uuid} value={stand.uuid}>
-            {stand.standName}
-          </option>
-        ))}
-      </select>
-    </div>
+    <>
+      {mode === "select" ? (
+        <div className={styles.background}>
+          {/* <label htmlFor="stands"></label> TODO: trocar para svg */}
+          <select id="stands" value={value} onChange={handleChangeSelect}>
+            <option value={undefined}></option>
+            {listStands.map((stand) => (
+              <option key={stand.uuid} value={stand.uuid}>
+                {stand.standName}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : (
+        <ul className={styles.checkBackground}>
+          {listStands.map((stand) => (
+            <label
+              key={stand.uuid}
+              className={`${stand.uuid === value && styles.selected}`}
+            >
+              <input
+                type="checkbox"
+                name="stands"
+                value={stand.uuid}
+                checked={value === stand.uuid}
+                onChange={handleChangeCheck}
+              />
+              <span>{stand.standName}</span>
+            </label>
+          ))}
+        </ul>
+      )}
+    </>
   );
 }
 
