@@ -10,6 +10,14 @@
     bottom: 0;
     margin: 6px 8px;
     position: absolute;
+
+    .menuSVG {
+      stroke: $color-font-2;
+    }
+
+    .active {
+      stroke: $color-secundary-4;
+    }
   }
 
   ul {
@@ -39,15 +47,30 @@
         appearance: none;
       }
 
+      span {
+        display: flex;
+        align-items: center;
+      }
+
       .selected {
-        color: $color-secundary-4;
+        svg {
+          stroke: $color-secundary-4;
+        }
       }
     }
 
     li {
-      margin: 3px 0;
+      position: relative;
+      width: 100%;
+      margin: 5px 0;
       display: flex;
       align-items: center;
+      justify-content: center;
+
+      .auxIcon {
+        position: absolute;
+        left: 6px;
+      }
 
       p {
         color: $color-gray-900;
@@ -65,8 +88,7 @@
 
   .background {
     position: fixed;
-    x: 0;
-    y: 0;
+    left: 0;
     width: 100vw;
     height: 100vh;
     z-index: 100;

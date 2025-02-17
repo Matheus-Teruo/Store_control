@@ -8,18 +8,18 @@ function PublicHeader() {
       <ul className={styles.header}>
         {activeConfig.version === "simple" ? (
           <li>
-            <div className={styles.title}>Cardápio</div>
+            <h2 className={styles.title}>Cardápio</h2>
           </li>
         ) : (
           <>
             <li>
-              <Link to="/menu" className={styles.title}>
-                Cardápio
+              <Link to="/menu">
+                <h2 className={styles.title}>Cardápio</h2>
               </Link>
             </li>
             <li>
-              <Link to="/order" className={styles.title}>
-                Cartão
+              <Link to="/order">
+                <h2 className={styles.title}>Cartão</h2>
               </Link>
             </li>
           </>

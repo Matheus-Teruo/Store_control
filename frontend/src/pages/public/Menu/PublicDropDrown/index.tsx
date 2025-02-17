@@ -2,6 +2,13 @@ import { useState } from "react";
 import styles from "./PublicDropDown.module.scss";
 import activeConfig from "@/config/activeConfig";
 import Button from "@/components/utils/Button";
+import {
+  MenuSVG,
+  ListSVG,
+  GridSVG,
+  SearchSVG,
+  ShoppingCartSVG,
+} from "@/assets/svg";
 
 type ViewType = "List" | "Items";
 
@@ -22,7 +29,9 @@ function PublicDropDrown({
 
   return (
     <div className={styles.tougle}>
-      <Button onClick={() => setShow((value) => !value)}>MENU</Button>
+      <Button onClick={() => setShow((value) => !value)}>
+        <MenuSVG className={`${styles.menuSVG} ${show && styles.active}`} />
+      </Button>
       {show && (
         <>
           <ul>
@@ -36,7 +45,7 @@ function PublicDropDrown({
                   onChange={(e) => setTouggleView(e.target.value as ViewType)}
                 />
                 <span className={`${menuView === "Items" && styles.selected}`}>
-                  ITEMS
+                  <GridSVG />
                 </span>
               </label>
               <div className={styles.divisor} />
@@ -49,15 +58,17 @@ function PublicDropDrown({
                   onChange={(e) => setTouggleView(e.target.value as ViewType)}
                 />
                 <span className={`${menuView === "List" && styles.selected}`}>
-                  LISTA
+                  <ListSVG />
                 </span>
               </label>
             </li>
             <li onClick={setShowSearch}>
+              <SearchSVG size={16} className={styles.auxIcon} />
               <p>{showSearch ? "Esconder" : "Pesquisar"}</p>
             </li>
             {activeConfig.version !== "tokens" && (
               <li>
+                <ShoppingCartSVG size={16} className={styles.auxIcon} />
                 <p>Carrinho</p>
               </li>
             )}

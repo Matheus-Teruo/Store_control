@@ -15,6 +15,14 @@ import {
   loginPayload,
   userReducer,
 } from "@reducer/voluntary/userReducer";
+import {
+  ArrowRightSVG,
+  LockPadCloseSVG,
+  LockPadOpenSVG,
+  UserCheckSVG,
+  UserSVG,
+  UserXSVG,
+} from "@/assets/svg";
 
 function Login() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
@@ -49,6 +57,9 @@ function Login() {
           }
           id="username"
           placeholder="Usuário"
+          ComponentUntouched={UserSVG}
+          ComponentAccepted={UserCheckSVG}
+          ComponentRejected={UserXSVG}
           isRequired
         />
         <Input
@@ -58,16 +69,24 @@ function Login() {
           }
           id="password"
           placeholder="Senha"
+          ComponentUntouched={LockPadOpenSVG}
+          ComponentAccepted={LockPadCloseSVG}
+          ComponentRejected={LockPadOpenSVG}
           isSecret
           isRequired
         />
         <div className={styles.button}>
-          <Button type={ButtonHTMLType.Submit}>Login</Button>
+          <Button type={ButtonHTMLType.Submit}>
+            <p>Entrar</p>
+            <ArrowRightSVG />
+          </Button>
         </div>
       </form>
       <div className={styles.footer}>
         <p>Não esta cadastrado?</p>
-        <Link to="/auth/signup">Cadastre-se</Link>
+        <Link to="/auth/signup">
+          <span>Cadastre-se</span>
+        </Link>
       </div>
     </>
   );

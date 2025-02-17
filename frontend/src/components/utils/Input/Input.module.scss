@@ -1,36 +1,38 @@
+@use "@styles/variables" as *;
+
 .inputGroup {
   height: 30px;
   display: flex;
   align-items: center;
   margin: 30px 10px;
   border-bottom: solid 1px;
-  border-color: var(--color-gray-600);
-  background: white;
+  border-color: $color-gray-600;
+  background: $color-gray-000;
 
   &:focus-within {
-    border-color: var(--color-secundary-1);
+    border-color: $color-gray-600;
 
     label {
-      color: var(--color-secundary-1);
+      color: $color-gray-900;
     }
   }
 
   &.unfocOK {
-    border-color: var(--color-correct-1);
+    border-color: $color-font-2;
     transition: border-color 0.2s;
 
     label {
-      color: var(--color-correct-1);
+      color: $color-font-2;
       transition: color 0.2s;
     }
   }
 
   &.unfocNO {
-    border-color: var(--color-incorrect-1);
+    border-color: $color-font-1;
     transition: border-color 0.2s;
 
     label {
-      color: var(--color-incorrect-1);
+      color: $color-font-1;
       transition: color 0.2s;
     }
   }
@@ -40,22 +42,23 @@
     width: 100%;
     border: none;
     border-radius: 0;
+    background-color: transparent;
 
     &:focus {
-      color: var(--color-secundary-1);
+      color: $color-gray-900;
     }
 
     &.unfocOK {
-      color: var(--color-correct-1);
+      color: $color-font-2;
     }
 
     &.unfocNO {
-      color: var(--color-incorrect-1);
+      color: $color-font-1;
     }
   }
 
   label {
-    color: var(--color-gray-600);
+    color: $color-gray-600;
     padding: 0 6px;
   }
 

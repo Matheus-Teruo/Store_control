@@ -15,6 +15,17 @@ import {
   signupPayload,
   userReducer,
 } from "@reducer/voluntary/userReducer";
+import {
+  CheckSVG,
+  FaceFrownSVG,
+  FaceMehSVG,
+  FaceSmileSVG,
+  LockPadCloseSVG,
+  LockPadOpenSVG,
+  UserCheckSVG,
+  UserSVG,
+  UserXSVG,
+} from "@/assets/svg";
 
 function Signup() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
@@ -60,6 +71,9 @@ function Signup() {
           onChange={(e) =>
             dispatch({ type: "SET_USERNAME", payload: e.target.value })
           }
+          ComponentUntouched={UserSVG}
+          ComponentAccepted={UserCheckSVG}
+          ComponentRejected={UserXSVG}
           id="username"
           placeholder="Usuário"
           isRequired
@@ -69,6 +83,9 @@ function Signup() {
           onChange={(e) =>
             dispatch({ type: "SET_FULLNAME", payload: e.target.value })
           }
+          ComponentUntouched={FaceMehSVG}
+          ComponentAccepted={FaceSmileSVG}
+          ComponentRejected={FaceFrownSVG}
           id="fullname"
           placeholder="Nome Completo"
           isRequired
@@ -78,6 +95,9 @@ function Signup() {
           onChange={(e) =>
             dispatch({ type: "SET_PASSWORD", payload: e.target.value })
           }
+          ComponentUntouched={LockPadOpenSVG}
+          ComponentAccepted={LockPadCloseSVG}
+          ComponentRejected={LockPadOpenSVG}
           id="password"
           placeholder="Senha"
           isSecret
@@ -88,13 +108,19 @@ function Signup() {
           onChange={(e) =>
             dispatch({ type: "SET_CONFIRM_PASSWORD", payload: e.target.value })
           }
+          ComponentUntouched={LockPadOpenSVG}
+          ComponentAccepted={LockPadCloseSVG}
+          ComponentRejected={LockPadOpenSVG}
           id="confirmPassword"
           placeholder="Confirmar Senha"
           isSecret
           isRequired
         />
         <div className={styles.button}>
-          <Button type={ButtonHTMLType.Submit}>Cadastrar</Button>
+          <Button type={ButtonHTMLType.Submit}>
+            <p>Cadastrar</p>
+            <CheckSVG />
+          </Button>
         </div>
       </form>
     </>

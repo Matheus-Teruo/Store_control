@@ -10,6 +10,9 @@ interface InputProps {
   placeholder?: string;
   isSecret?: boolean;
   isRequired?: boolean;
+  ComponentUntouched?: React.ComponentType;
+  ComponentAccepted?: React.ComponentType;
+  ComponentRejected?: React.ComponentType;
   messages?: Array<string>;
 }
 
@@ -21,6 +24,9 @@ function Input({
   placeholder = "",
   isSecret = false,
   isRequired = false,
+  ComponentUntouched,
+  ComponentAccepted,
+  ComponentRejected,
   messages = [],
 }: InputProps) {
   const [status, setStatus] = useState<InputStatus>(InputStatus.Untouched);
@@ -39,15 +45,24 @@ function Input({
   return (
     <div className={styles.inputGroup}>
       <label htmlFor={id}>
-        {status === InputStatus.Untouched ? (
-          <div className={styles.iconInput} />
-        ) : status === InputStatus.Accepted ? (
-          <div className={styles.iconInput} />
-        ) : (
-          status === InputStatus.Rejected && (
-            <div className={styles.iconInput} />
-          )
-        )}
+        {status === InputStatus.Untouched
+          ? ComponentUntouched && (
+              <div className={styles.iconInput}>
+                <ComponentUntouched />
+              </div>
+            )
+          : status === InputStatus.Accepted
+            ? ComponentAccepted && (
+                <div className={styles.iconInput}>
+                  <ComponentAccepted />
+                </div>
+              )
+            : status === InputStatus.Rejected &&
+              ComponentRejected && (
+                <div className={styles.iconInput}>
+                  <ComponentRejected />
+                </div>
+              )}
       </label>
       <input
         value={value}
