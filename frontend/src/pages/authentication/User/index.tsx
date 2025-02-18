@@ -1,3 +1,4 @@
+import styles from "./User.module.scss";
 import { useEffect, useReducer, useState } from "react";
 import Button from "@/components/utils/Button";
 import Input from "@/components/utils/Input";
@@ -11,6 +12,22 @@ import {
 } from "@context/AlertsContext/useAlertsContext";
 import { isUserLogged, isUserUnlogged } from "@/utils/checkAuthentication";
 import { initialUserState, userReducer } from "@reducer/voluntary/userReducer";
+import {
+  AwardSVG,
+  BadgeSVG,
+  CheckSVG,
+  FaceFrownSVG,
+  FaceMehSVG,
+  FaceSmileSVG,
+  LockPadCloseSVG,
+  LockPadOpenSVG,
+  UserCheckSVG,
+  UserSVG,
+  UserXSVG,
+  XSVG,
+} from "@/assets/svg";
+import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
+import useUserService from "@service/voluntary/useUserService";
 
 const voluntaryInitialValue: Voluntary = {
   uuid: "",
@@ -18,6 +35,12 @@ const voluntaryInitialValue: Voluntary = {
   fullname: "fullname",
   summaryFunction: undefined,
   voluntaryRole: VoluntaryRole.VOLUNTARY,
+};
+
+const VoluntaryRoleMetadata: Record<VoluntaryRole, { label: string }> = {
+  [VoluntaryRole.VOLUNTARY]: { label: "Voluntario" },
+  [VoluntaryRole.MANAGEMENT]: { label: "Gerente" },
+  [VoluntaryRole.ADMIN]: { label: "Administrador" },
 };
 
 function User() {
@@ -29,8 +52,9 @@ function User() {
     "username" | "fullname" | "password" | ""
   >("");
   const { addNotification } = useAlertsContext();
-  const { user } = useUserContext();
+  const { user, logout } = useUserContext();
   const { getVoluntary, updateVoluntary } = useVoluntaryService();
+  const { logoutVoluntary } = useUserService();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,82 +91,134 @@ function User() {
     }
   };
 
+  const handleLogout = async () => {
+    await logoutVoluntary();
+    logout();
+    navigate("/");
+  };
+
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <p>Usuário</p>
-          {update !== "username" ? (
-            <p onClick={() => setUpdate("fullname")}>
-              {userProperties.username}
-            </p>
-          ) : (
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <div className={styles.field}>
+        <p className={styles.title}>Usuário</p>
+        {update !== "username" ? (
+          <div className={styles.value} onClick={() => setUpdate("username")}>
+            <UserSVG />
+            <p>{userProperties.username}</p>
+          </div>
+        ) : (
+          <div className={styles.update}>
             <Input
               value={state.username}
               onChange={(e) =>
                 dispatch({ type: "SET_USERNAME", payload: e.target.value })
               }
+              ComponentUntouched={UserSVG}
+              ComponentAccepted={UserCheckSVG}
+              ComponentRejected={UserXSVG}
               id="username"
               placeholder="Alterar Usuário"
               isRequired
             />
-          )}
-        </div>
-        <div>
-          <p>Nome Completo</p>
-          {update !== "fullname" ? (
-            <p onClick={() => setUpdate("fullname")}>
-              {userProperties.fullname}
-            </p>
-          ) : (
+            <Button
+              className={styles.buttonCancel}
+              onClick={() => setUpdate("")}
+            >
+              <XSVG />
+            </Button>
+            <Button type={ButtonHTMLType.Submit}>
+              <CheckSVG />
+            </Button>
+          </div>
+        )}
+      </div>
+      <div className={styles.field}>
+        <p className={styles.title}>Nome Completo</p>
+        {update !== "fullname" ? (
+          <div className={styles.value} onClick={() => setUpdate("fullname")}>
+            <FaceSmileSVG />
+            <p>{userProperties.fullname}</p>
+          </div>
+        ) : (
+          <div className={styles.update}>
             <Input
               value={state.fullname}
               onChange={(e) =>
                 dispatch({ type: "SET_FULLNAME", payload: e.target.value })
               }
+              ComponentUntouched={FaceMehSVG}
+              ComponentAccepted={FaceSmileSVG}
+              ComponentRejected={FaceFrownSVG}
               id="fullname"
               placeholder="Alterar Nome Completo"
               isRequired
             />
-          )}
+            <Button
+              className={styles.buttonCancel}
+              onClick={() => setUpdate("")}
+            >
+              <XSVG />
+            </Button>
+            <Button type={ButtonHTMLType.Submit}>
+              <CheckSVG />
+            </Button>
+          </div>
+        )}
+      </div>
+      <div className={styles.field}>
+        <p className={styles.title}>Função</p>
+        {userProperties.summaryFunction ? (
+          <div className={styles.value}>
+            <BadgeSVG />
+            <p>{userProperties.summaryFunction.typeOfFunction}</p>
+            <p>{userProperties.summaryFunction.functionName}</p>
+          </div>
+        ) : (
+          <div className={styles.value}>
+            <BadgeSVG />
+            <p className={styles.functionNone}>Sem função</p>
+          </div>
+        )}
+      </div>
+      <div className={styles.field}>
+        <p className={styles.title}>Permissão</p>
+        <div className={styles.value}>
+          <AwardSVG />
+          <p>{VoluntaryRoleMetadata[userProperties.voluntaryRole].label}</p>
         </div>
-        <div>
-          <p>Função</p>
-          {userProperties.summaryFunction ? (
-            <>
-              <p>{userProperties.summaryFunction.typeOfFunction}</p>
-              <p>{userProperties.summaryFunction.functionName}</p>
-            </>
-          ) : (
-            <p></p>
-          )}
-        </div>
-        <div>
-          <p>Permissão</p>
-          {/* TODO: otimizar forma de visualizar enum */}
-          {userProperties.voluntaryRole === VoluntaryRole.VOLUNTARY ? (
-            <p>Usuário Voluntário</p>
-          ) : userProperties.voluntaryRole === VoluntaryRole.MANAGEMENT ? (
-            <p>Gestor</p>
-          ) : (
-            <p>Administrador</p>
-          )}
-        </div>
-        <div>
-          {update !== "password" ? (
-            <Button onClick={() => setUpdate("password")}>Alterar Senha</Button>
-          ) : (
-            <>
-              <p>Editar Senha</p>
+      </div>
+      <div className={styles.field}>
+        {update !== "password" ? (
+          <div className={styles.footer}>
+            <Button
+              className={styles.buttonFooter}
+              onClick={() => setUpdate("password")}
+            >
+              Alterar Senha
+            </Button>
+            <Button className={styles.buttonFooter} onClick={handleLogout}>
+              Sair
+            </Button>
+          </div>
+        ) : (
+          <>
+            <p>Editar Senha</p>
+            <div className={styles.valuePassword}>
               <Input
                 value={state.password}
                 onChange={(e) =>
                   dispatch({ type: "SET_PASSWORD", payload: e.target.value })
                 }
+                ComponentUntouched={LockPadOpenSVG}
+                ComponentAccepted={LockPadCloseSVG}
+                ComponentRejected={LockPadOpenSVG}
                 id="password"
                 placeholder="Nova Senha"
+                isSecret
                 isRequired
               />
+            </div>
+            <div className={styles.valuePassword}>
               <Input
                 value={state.confirmPassword}
                 onChange={(e) =>
@@ -151,15 +227,33 @@ function User() {
                     payload: e.target.value,
                   })
                 }
+                ComponentUntouched={LockPadOpenSVG}
+                ComponentAccepted={LockPadCloseSVG}
+                ComponentRejected={LockPadOpenSVG}
                 id="confirmPassword"
                 placeholder="Confirmar Nova Senha"
+                isSecret
                 isRequired
               />
-            </>
-          )}
-        </div>
-      </form>
-    </div>
+            </div>
+            <div className={styles.updateFooter}>
+              <Button
+                className={styles.buttonCancel}
+                onClick={() => setUpdate("")}
+              >
+                <XSVG />
+              </Button>
+              <Button type={ButtonHTMLType.Submit}>
+                <CheckSVG />
+              </Button>
+            </div>
+            <Button className={styles.buttonFooter} onClick={handleLogout}>
+              Sair
+            </Button>
+          </>
+        )}
+      </div>
+    </form>
   );
 }
 

@@ -50,31 +50,35 @@ function Login() {
     <>
       <h1 className={styles.title}>Entrar</h1>
       <form className={styles.form} onSubmit={handleSubmit}>
-        <Input
-          value={state.username}
-          onChange={(e) =>
-            dispatch({ type: "SET_USERNAME", payload: e.target.value })
-          }
-          id="username"
-          placeholder="Usuário"
-          ComponentUntouched={UserSVG}
-          ComponentAccepted={UserCheckSVG}
-          ComponentRejected={UserXSVG}
-          isRequired
-        />
-        <Input
-          value={state.password}
-          onChange={(e) =>
-            dispatch({ type: "SET_PASSWORD", payload: e.target.value })
-          }
-          id="password"
-          placeholder="Senha"
-          ComponentUntouched={LockPadOpenSVG}
-          ComponentAccepted={LockPadCloseSVG}
-          ComponentRejected={LockPadOpenSVG}
-          isSecret
-          isRequired
-        />
+        <div className={styles.field}>
+          <Input
+            value={state.username}
+            onChange={(e) =>
+              dispatch({ type: "SET_USERNAME", payload: e.target.value })
+            }
+            id="username"
+            placeholder="Usuário"
+            ComponentUntouched={UserSVG}
+            ComponentAccepted={UserCheckSVG}
+            ComponentRejected={UserXSVG}
+            isRequired
+          />
+        </div>
+        <div className={styles.field}>
+          <Input
+            value={state.password}
+            onChange={(e) =>
+              dispatch({ type: "SET_PASSWORD", payload: e.target.value })
+            }
+            id="password"
+            placeholder="Senha"
+            ComponentUntouched={LockPadOpenSVG}
+            ComponentAccepted={LockPadCloseSVG}
+            ComponentRejected={LockPadOpenSVG}
+            isSecret
+            isRequired
+          />
+        </div>
         <div className={styles.button}>
           <Button type={ButtonHTMLType.Submit}>
             <p>Entrar</p>

@@ -43,27 +43,32 @@ function Input({
   };
 
   return (
-    <div className={styles.inputGroup}>
-      <label htmlFor={id}>
-        {status === InputStatus.Untouched
-          ? ComponentUntouched && (
-              <div className={styles.iconInput}>
-                <ComponentUntouched />
-              </div>
+    <div
+      className={`${styles.inputGroup}
+      ${
+        status === InputStatus.Accepted
+          ? styles.unfocOK
+          : status === InputStatus.Rejected && styles.unfocNO
+      }`}
+    >
+      {status === InputStatus.Untouched
+        ? ComponentUntouched && (
+            <label htmlFor={id} className={styles.iconInput}>
+              <ComponentUntouched />
+            </label>
+          )
+        : status === InputStatus.Accepted
+          ? ComponentAccepted && (
+              <label htmlFor={id} className={styles.iconInput}>
+                <ComponentAccepted />
+              </label>
             )
-          : status === InputStatus.Accepted
-            ? ComponentAccepted && (
-                <div className={styles.iconInput}>
-                  <ComponentAccepted />
-                </div>
-              )
-            : status === InputStatus.Rejected &&
-              ComponentRejected && (
-                <div className={styles.iconInput}>
-                  <ComponentRejected />
-                </div>
-              )}
-      </label>
+          : status === InputStatus.Rejected &&
+            ComponentRejected && (
+              <label htmlFor={id} className={styles.iconInput}>
+                <ComponentRejected />
+              </label>
+            )}
       <input
         value={value}
         onChange={handleChange}
@@ -73,12 +78,10 @@ function Input({
         name={id}
         required={isRequired}
       />
-      <div>
-        <ul>
-          {status === InputStatus.Rejected &&
-            messages.map((message) => <li>{message}</li>)}
-        </ul>
-      </div>
+      <ul>
+        {status === InputStatus.Rejected &&
+          messages.map((message) => <li>{message}</li>)}
+      </ul>
     </div>
   );
 }

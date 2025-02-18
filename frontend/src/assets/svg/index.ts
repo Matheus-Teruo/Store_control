@@ -1,6 +1,8 @@
 import AlertCircleSVG from "./components/AlertCircleSVG";
 import AlertTriangleSVG from "./components/AlertTriangleSVG";
 import ArrowRightSVG from "./components/ArrowRightSVG.tsx";
+import AwardSVG from "./components/AwardSVG.tsx";
+import BadgeSVG from "./components/BadgeSVG.tsx";
 import CameraSVG from "./components/CameraSVG";
 import CheckCircleSVG from "./components/CheckCircleSVG";
 import CheckSVG from "./components/CheckSVG.tsx";
@@ -20,11 +22,14 @@ import UserCheckSVG from "./components/UserCheckSVG";
 import UserSVG from "./components/UserSVG";
 import UserXSVG from "./components/UserXSVG";
 import XCircleSVG from "./components/XCircleSVG";
+import XSVG from "./components/XSVG.tsx";
 
 export {
   AlertCircleSVG,
   AlertTriangleSVG,
   ArrowRightSVG,
+  AwardSVG,
+  BadgeSVG,
   CameraSVG,
   CheckCircleSVG,
   CheckSVG,
@@ -44,4 +49,5 @@ export {
   UserSVG,
   UserXSVG,
   XCircleSVG,
+  XSVG,
 };

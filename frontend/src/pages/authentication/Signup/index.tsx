@@ -66,56 +66,67 @@ function Signup() {
     <>
       <h1 className={styles.title}>Cadastrar</h1>
       <form className={styles.form} onSubmit={handleSubmit}>
-        <Input
-          value={state.username}
-          onChange={(e) =>
-            dispatch({ type: "SET_USERNAME", payload: e.target.value })
-          }
-          ComponentUntouched={UserSVG}
-          ComponentAccepted={UserCheckSVG}
-          ComponentRejected={UserXSVG}
-          id="username"
-          placeholder="Usuário"
-          isRequired
-        />
-        <Input
-          value={state.fullname}
-          onChange={(e) =>
-            dispatch({ type: "SET_FULLNAME", payload: e.target.value })
-          }
-          ComponentUntouched={FaceMehSVG}
-          ComponentAccepted={FaceSmileSVG}
-          ComponentRejected={FaceFrownSVG}
-          id="fullname"
-          placeholder="Nome Completo"
-          isRequired
-        />
-        <Input
-          value={state.password}
-          onChange={(e) =>
-            dispatch({ type: "SET_PASSWORD", payload: e.target.value })
-          }
-          ComponentUntouched={LockPadOpenSVG}
-          ComponentAccepted={LockPadCloseSVG}
-          ComponentRejected={LockPadOpenSVG}
-          id="password"
-          placeholder="Senha"
-          isSecret
-          isRequired
-        />
-        <Input
-          value={state.confirmPassword}
-          onChange={(e) =>
-            dispatch({ type: "SET_CONFIRM_PASSWORD", payload: e.target.value })
-          }
-          ComponentUntouched={LockPadOpenSVG}
-          ComponentAccepted={LockPadCloseSVG}
-          ComponentRejected={LockPadOpenSVG}
-          id="confirmPassword"
-          placeholder="Confirmar Senha"
-          isSecret
-          isRequired
-        />
+        <div className={styles.field}>
+          <Input
+            value={state.username}
+            onChange={(e) =>
+              dispatch({ type: "SET_USERNAME", payload: e.target.value })
+            }
+            ComponentUntouched={UserSVG}
+            ComponentAccepted={UserCheckSVG}
+            ComponentRejected={UserXSVG}
+            id="username"
+            placeholder="Usuário"
+            isRequired
+          />
+        </div>
+        <div className={styles.field}>
+          <Input
+            value={state.fullname}
+            onChange={(e) =>
+              dispatch({ type: "SET_FULLNAME", payload: e.target.value })
+            }
+            ComponentUntouched={FaceMehSVG}
+            ComponentAccepted={FaceSmileSVG}
+            ComponentRejected={FaceFrownSVG}
+            id="fullname"
+            placeholder="Nome Completo"
+            isRequired
+          />
+        </div>
+        <div className={styles.field}>
+          <Input
+            value={state.password}
+            onChange={(e) =>
+              dispatch({ type: "SET_PASSWORD", payload: e.target.value })
+            }
+            ComponentUntouched={LockPadOpenSVG}
+            ComponentAccepted={LockPadCloseSVG}
+            ComponentRejected={LockPadOpenSVG}
+            id="password"
+            placeholder="Senha"
+            isSecret
+            isRequired
+          />
+        </div>
+        <div className={styles.field}>
+          <Input
+            value={state.confirmPassword}
+            onChange={(e) =>
+              dispatch({
+                type: "SET_CONFIRM_PASSWORD",
+                payload: e.target.value,
+              })
+            }
+            ComponentUntouched={LockPadOpenSVG}
+            ComponentAccepted={LockPadCloseSVG}
+            ComponentRejected={LockPadOpenSVG}
+            id="confirmPassword"
+            placeholder="Confirmar Senha"
+            isSecret
+            isRequired
+          />
+        </div>
         <div className={styles.button}>
           <Button type={ButtonHTMLType.Submit}>
             <p>Cadastrar</p>
