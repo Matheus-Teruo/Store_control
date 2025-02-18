@@ -70,7 +70,7 @@ public class VoluntaryService {
     validation.checkNameDuplication(request.username(), request.fullname());
     var voluntary = safeTakeVoluntaryByUuid(request.uuid());
 
-    voluntary.updateVoluntary(request);
+    voluntary.updateVoluntary(request,  passwordEncoder.encode(request.password()));
 
     return voluntary;
   }
