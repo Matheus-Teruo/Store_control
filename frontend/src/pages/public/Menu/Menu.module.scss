@@ -4,7 +4,7 @@
 .background {
   background-color: $color-primary-1;
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - $public-header-height);
   display: flex;
   flex-direction: column;
   justify-items: center;

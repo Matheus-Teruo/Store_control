@@ -28,7 +28,7 @@ function PublicDropDrown({
   const [show, setShow] = useState<boolean>(false);
 
   return (
-    <div className={styles.tougle}>
+    <div className={styles.toggle}>
       <Button onClick={() => setShow((value) => !value)}>
         <MenuSVG className={`${styles.menuSVG} ${show && styles.active}`} />
       </Button>

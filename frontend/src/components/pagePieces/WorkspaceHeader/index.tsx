@@ -1,7 +1,7 @@
 import styles from "./WorkspaceHeader.module.scss";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import Logo from "@/assets/image/LogoStoreControl.png";
-import HubDropDown from "@/pages/workspace/Hub/HubDropDown";
+import HubDropDown from "./HubDropDown";
 
 const PagesData: Record<string, { label: string }> = {
   ["/workspace"]: { label: "Workspace" },
