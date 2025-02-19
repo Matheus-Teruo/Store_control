@@ -17,13 +17,13 @@ import Stands from "./pages/admin/Stands";
 import Volunteers from "./pages/admin/Volunteers";
 import Purchases from "./pages/analytics/Purchases";
 import Statistics from "./pages/analytics/Statistics";
-import AuthPage from "./components/AuthBackground";
+import AuthPage from "./components/pagePieces/AuthBackground";
 import NotificationManager from "./components/NotificationManager";
-import AdminHeader from "./components/AdminHeader";
+import AdminHeader from "./components/pagePieces/AdminHeader";
 import Transactions from "./pages/analytics/Statistics/Transactions";
 import Transaction from "./pages/workspace/TrasactionOperation";
 import activeConfig from "./config/activeConfig";
-import PublicHeader from "./components/PublicHeader";
+import PublicHeader from "./components/pagePieces/PublicHeader";
 
 function AppRouter() {
   let workspaceHub;
