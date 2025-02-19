@@ -1,0 +1,66 @@
+@use "@styles/variables" as *;
+
+.tougle {
+  position: relative;
+
+  button {
+    box-shadow: none;
+    background-color: transparent;
+    margin: 6px 8px;
+
+    .menuSVG {
+      stroke: $color-font-2;
+    }
+
+    .active {
+      stroke: $color-secundary-4;
+    }
+  }
+
+  ul {
+    right: 0;
+    top: 30px;
+    z-index: 150;
+    min-width: 150px;
+    border-radius: $border-radius;
+    margin: 0 8px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: $color-gray-000;
+
+    li {
+      width: 100%;
+      display: flex;
+
+      .link {
+        position: relative;
+        padding: 6px 4px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          position: absolute;
+          left: 6px;
+        }
+
+        p {
+          user-select: none;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  .background {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+  }
+}

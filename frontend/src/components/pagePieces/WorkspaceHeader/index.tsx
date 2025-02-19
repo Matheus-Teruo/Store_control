@@ -1,6 +1,7 @@
 import styles from "./WorkspaceHeader.module.scss";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import Logo from "@/assets/image/LogoStoreControl.png";
+import HubDropDown from "@/pages/workspace/Hub/HubDropDown";
 
 const PagesData: Record<string, { label: string }> = {
   ["/workspace"]: { label: "Workspace" },
@@ -19,17 +20,21 @@ function WorkspaceHeader() {
       <div className={styles.background}>
         <div className={styles.header}>
           {location.pathname !== "/workspace" ? (
-            <Link to="/workspace">
+            <Link to="/workspace" className={styles.linkLogo}>
               <img
                 src={Logo}
                 alt="Logo: imagem circular com um rosto de raposa no meio"
               />
             </Link>
           ) : (
-            <div />
+            <div className={styles.spaceHolder} />
           )}
           <h3>{PagesData[location.pathname].label}</h3>
-          <div />
+          {location.pathname === "/workspace" ? (
+            <HubDropDown />
+          ) : (
+            <div className={styles.spaceHolder} />
+          )}
         </div>
       </div>
       <Outlet />

@@ -11,14 +11,25 @@
     align-items: center;
     width: 100%;
     max-width: 1024px;
-    height: 36px;
+    height: $hub-header-height;
 
-    img {
-      width: 34px;
+    .linkLogo {
+      display: flex;
+      align-items: center;
+      margin: 2px 6px;
+
+      img {
+        width: 32px;
+      }
     }
 
     h3 {
       color: $color-font-2;
+    }
+
+    .spaceHolder {
+      width: 32px;
+      margin: 6px;
     }
   }
 }
