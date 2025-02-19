@@ -1,5 +1,4 @@
 @use "@styles/variables" as *;
-@use "@styles/breakpoint" as *;
 
 .header {
   display: flex;
@@ -21,4 +20,5 @@
   font-size: 1.5rem;
   font-weight: 500;
   color: $color-font-2;
+  margin: 0 20px;
 }

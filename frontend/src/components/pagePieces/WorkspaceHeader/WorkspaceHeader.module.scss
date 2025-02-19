@@ -1,0 +1,24 @@
+@use "@styles/variables" as *;
+
+.background {
+  width: 100%;
+  justify-items: center;
+  background-color: $color-secundary-3;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1024px;
+    height: 36px;
+
+    img {
+      width: 34px;
+    }
+
+    h3 {
+      color: $color-font-2;
+    }
+  }
+}
