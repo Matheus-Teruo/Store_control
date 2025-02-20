@@ -9,6 +9,7 @@ import {
   purchaseReducer,
 } from "@reducer/operation/purchaseReducer";
 import PublicDropDrown from "./PublicDropDrown";
+import { ImageSVG } from "@/assets/svg";
 
 type ViewType = "List" | "Items";
 
@@ -76,10 +77,11 @@ function Menu() {
               <div
                 className={`${styles.frame} ${product.stock === 0 && styles.frameEmpty}`}
               >
-                {
-                  product.productImg ? <img src={product.productImg} /> : <></>
-                  // futuramente usar SVG padrão
-                }
+                {product.productImg ? (
+                  <img src={product.productImg} />
+                ) : (
+                  <ImageSVG />
+                )}
               </div>
               <div className={styles.tag}>
                 <p

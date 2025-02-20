@@ -1,24 +1,52 @@
 @use "@styles/variables" as *;
 
-.header {
+.headerBackground {
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
   width: 100%;
-  height: $public-header-height;
   background-color: $color-secundary-1;
-  align-content: center;
 
-  li {
+  .linkLogo {
     display: flex;
     align-items: center;
-  }
-}
+    margin: 2px 6px;
 
-.title {
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: $color-font-2;
-  margin: 0 20px;
+    img {
+      width: 32px;
+    }
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1024px;
+    height: $public-header-height;
+
+    .navigate {
+      display: flex;
+
+      li {
+        display: flex;
+        align-items: center;
+
+        .selected {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  .title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: $color-font-2;
+    margin: 0 20px;
+  }
+
+  .spaceHolder {
+    width: 32px;
+    margin: 6px;
+  }
 }

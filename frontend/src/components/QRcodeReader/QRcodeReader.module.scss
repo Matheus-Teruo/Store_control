@@ -1,8 +1,6 @@
 @use "@styles/variables" as *;
 
 .main {
-  x: 0;
-  y: 0;
   z-index: 100;
   position: fixed;
   background-color: $color-gray-000;

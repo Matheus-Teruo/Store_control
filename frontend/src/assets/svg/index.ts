@@ -10,7 +10,8 @@ import FaceMehSVG from "./components/FaceMeh";
 import FaceSmileSVG from "./components/FaceSmile";
 import GlobeSVG from "./components/GlobeSVG";
 import GridSVG from "./components/GridSVG";
-import InfoSVG from "./components/InfoSVG.tsx";
+import ImageSVG from "./components/ImageSVG";
+import InfoSVG from "./components/InfoSVG";
 import ListSVG from "./components/ListSVG";
 import LockPadOpenSVG from "./components/LockPadOpenSVG.tsx";
 import LockPadCloseSVG from "./components/LockPadCloseSVG";
@@ -37,6 +38,7 @@ export {
   FaceSmileSVG,
   GlobeSVG,
   GridSVG,
+ImageSVG,
   InfoSVG,
   ListSVG,
   LockPadOpenSVG,
