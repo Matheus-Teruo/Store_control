@@ -1,6 +1,6 @@
 import styles from "./Signup.module.scss";
 import Button from "@/components/utils/Button";
-import Input from "@/components/utils/Input";
+import Input from "@/components/utils/AuthInput";
 import { useReducer } from "react";
 import useUserService from "@service/voluntary/useUserService";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";

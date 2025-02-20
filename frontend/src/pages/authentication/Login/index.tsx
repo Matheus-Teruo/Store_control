@@ -2,7 +2,7 @@ import styles from "./Login.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
-import Input from "@/components/utils/Input";
+import Input from "@/components/utils/AuthInput";
 import { useReducer } from "react";
 import useUserService from "@service/voluntary/useUserService";
 import {

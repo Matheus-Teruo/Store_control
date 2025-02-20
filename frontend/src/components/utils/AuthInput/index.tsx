@@ -1,8 +1,8 @@
-import styles from "./Input.module.scss";
+import styles from "./AuthInput.module.scss";
 import { useState, useEffect } from "react";
 import { InputStatus } from "./InputStatus";
 
-interface InputProps {
+interface AuthInputProps {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   exposeSetStatus?: (setStatus: (status: InputStatus) => void) => void;
@@ -16,7 +16,7 @@ interface InputProps {
   messages?: Array<string>;
 }
 
-function Input({
+function AuthInput({
   value,
   onChange,
   id,
@@ -28,7 +28,7 @@ function Input({
   ComponentAccepted,
   ComponentRejected,
   messages = [],
-}: InputProps) {
+}: AuthInputProps) {
   const [status, setStatus] = useState<InputStatus>(InputStatus.Untouched);
 
   useEffect(() => {
@@ -86,4 +86,4 @@ function Input({
   );
 }
 
-export default Input;
+export default AuthInput;

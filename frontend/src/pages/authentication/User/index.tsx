@@ -1,7 +1,7 @@
 import styles from "./User.module.scss";
 import { useEffect, useReducer, useState } from "react";
 import Button from "@/components/utils/Button";
-import Input from "@/components/utils/Input";
+import Input from "@/components/utils/AuthInput";
 import useVoluntaryService from "@service/voluntary/useVoluntaryService";
 import Voluntary, { VoluntaryRole } from "@/data/volunteers/Voluntary";
 import { useUserContext } from "@context/UserContext/useUserContext";
