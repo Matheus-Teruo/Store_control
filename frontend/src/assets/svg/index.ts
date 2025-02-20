@@ -1,5 +1,4 @@
 import AlertCircleSVG from "./components/AlertCircleSVG";
-import AlertTriangleSVG from "./components/AlertTriangleSVG";
 import ArrowRightSVG from "./components/ArrowRightSVG.tsx";
 import AwardSVG from "./components/AwardSVG.tsx";
 import BadgeSVG from "./components/BadgeSVG.tsx";
@@ -11,6 +10,7 @@ import FaceMehSVG from "./components/FaceMeh";
 import FaceSmileSVG from "./components/FaceSmile";
 import GlobeSVG from "./components/GlobeSVG";
 import GridSVG from "./components/GridSVG";
+import InfoSVG from "./components/InfoSVG.tsx";
 import ListSVG from "./components/ListSVG";
 import LockPadOpenSVG from "./components/LockPadOpenSVG.tsx";
 import LockPadCloseSVG from "./components/LockPadCloseSVG";
@@ -26,7 +26,6 @@ import XSVG from "./components/XSVG.tsx";
 
 export {
   AlertCircleSVG,
-  AlertTriangleSVG,
   ArrowRightSVG,
   AwardSVG,
   BadgeSVG,
@@ -38,6 +37,7 @@ export {
   FaceSmileSVG,
   GlobeSVG,
   GridSVG,
+  InfoSVG,
   ListSVG,
   LockPadOpenSVG,
   LockPadCloseSVG,
