@@ -1,6 +1,6 @@
 import { SVGProps } from "../SVGprops";
 
-const ShoppingCartSVG = ({
+const UploadSVG = ({
   size = 24,
   color = "currentColor",
   className,
@@ -12,9 +12,9 @@ const ShoppingCartSVG = ({
     viewBox="0 0 24 24"
     fill="none"
     stroke={color}
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
     className={className}
   >
     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -23,4 +23,4 @@ const ShoppingCartSVG = ({
   </svg>
 );
 
-export default ShoppingCartSVG;
+export default UploadSVG;

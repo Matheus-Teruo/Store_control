@@ -5,6 +5,8 @@ import BadgeSVG from "./components/BadgeSVG";
 import CameraSVG from "./components/CameraSVG";
 import CheckCircleSVG from "./components/CheckCircleSVG";
 import CheckSVG from "./components/CheckSVG";
+import ChevronLeftSVG from "./components/ChevronLeftSVG";
+import ChevronRightSVG from "./components/ChevronRightSVG";
 import CropSVG from "./components/CropSVG";
 import EditSVG from "./components/EditSVG";
 import FaceFrownSVG from "./components/FaceFrown";
@@ -37,6 +39,8 @@ export {
   CameraSVG,
   CheckCircleSVG,
   CheckSVG,
+  ChevronLeftSVG,
+  ChevronRightSVG,
   CropSVG,
   EditSVG,
   FaceFrownSVG,

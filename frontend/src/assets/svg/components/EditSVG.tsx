@@ -1,6 +1,6 @@
 import { SVGProps } from "../SVGprops";
 
-const CheckSVG = ({
+const EditSVG = ({
   size = 24,
   color = "currentColor",
   className,
@@ -12,9 +12,9 @@ const CheckSVG = ({
     viewBox="0 0 24 24"
     fill="none"
     stroke={color}
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
     className={className}
   >
     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -22,4 +22,4 @@ const CheckSVG = ({
   </svg>
 );
 
-export default CheckSVG;
+export default EditSVG;
