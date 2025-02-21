@@ -7,9 +7,15 @@ interface StandSelectProps {
   value: string | undefined;
   onChange: (event: string | undefined) => void;
   mode?: "select" | "radio";
+  disabled?: boolean;
 }
 
-function StandSelect({ value, onChange, mode = "select" }: StandSelectProps) {
+function StandSelect({
+  value,
+  onChange,
+  mode = "select",
+  disabled = false,
+}: StandSelectProps) {
   const [listStands, setListStands] = useState<SummaryStand[]>([]);
   const { getListStands } = useStandService();
 
@@ -32,17 +38,21 @@ function StandSelect({ value, onChange, mode = "select" }: StandSelectProps) {
   return (
     <>
       {mode === "select" ? (
-        <div className={styles.background}>
-          {/* <label htmlFor="stands"></label> TODO: trocar para svg */}
-          <select id="stands" value={value} onChange={handleChangeSelect}>
-            <option value={undefined}></option>
-            {listStands.map((stand) => (
-              <option key={stand.uuid} value={stand.uuid}>
-                {stand.standName}
-              </option>
-            ))}
-          </select>
-        </div>
+        <select
+          className={styles.select}
+          id="stands"
+          value={value}
+          onChange={handleChangeSelect}
+        >
+          <option value="" disabled={disabled} style={{ color: "#656360" }}>
+            -- estande --
+          </option>
+          {listStands.map((stand) => (
+            <option key={stand.uuid} value={stand.uuid}>
+              {stand.standName}
+            </option>
+          ))}
+        </select>
       ) : (
         <ul className={styles.checkBackground}>
           {listStands.map((stand) => (

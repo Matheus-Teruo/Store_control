@@ -1,3 +1,4 @@
+import styles from "./Products.module.scss";
 import PageSelect from "@/components/selects/PageSelect";
 import {
   isAdmin,
@@ -15,6 +16,7 @@ import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import Button from "@/components/utils/Button";
 import { formReducer, initialFormState } from "@reducer/formReducer";
 import StandSelect from "@/components/selects/StandSelect";
+import { EditSVG, FilterSVG, ImageSVG } from "@/assets/svg";
 
 function Products() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
@@ -64,40 +66,82 @@ function Products() {
   };
 
   return (
-    <div>
-      <div>page</div>
-      <Button onClick={() => formDispach({ type: "SET_CREATE" })}>
-        Criar Produto
-      </Button>
-      {isAdmin(user) && (
-        <div>
-          <StandSelect
-            value={selectedStand}
-            onChange={(value) => setSelectedStand(value)}
-          />
+    <div className={styles.body}>
+      <div className={styles.headerBackground}>
+        <div className={styles.header}>
+          {isAdmin(user) ? (
+            <div className={styles.filter}>
+              <FilterSVG size={16} />
+              <StandSelect
+                value={selectedStand}
+                onChange={(value) => setSelectedStand(value)}
+              />
+            </div>
+          ) : (
+            <div />
+          )}
+          <Button onClick={() => formDispach({ type: "SET_CREATE" })}>
+            <p>Criar Produto</p>
+          </Button>
         </div>
-      )}
-      <ul>
+      </div>
+      <ul className={styles.main}>
+        <li key={"header"} className={styles.listHeader}>
+          <p className={styles.productFrame}>Img</p>
+          <p className={styles.productName}>Nome do produto</p>
+          <p className={styles.productsSummary}>Resumo</p>
+          <p className={styles.productDescription}>Descrição</p>
+          <p className={styles.productPrice}>Preço</p>
+          <p className={styles.productDiscount}>Desconto</p>
+          <p className={styles.productStock}>Estoque</p>
+          <p className={styles.editProduct}>Editar</p>
+        </li>
         {products.map((product) => (
-          <li key={product.uuid}>
-            <div>
-              {
-                product.productImg ? <img src={product.productImg} /> : <></>
-                // futuramente usar SVG padrão
-              }
-            </div>
-            <div>
-              <p>{product.productName}</p>
-              <p>Preço R${product.price.toFixed(2)}</p>
-              <p>Desconto R${product.discount.toFixed(2)}</p>
-              <p>Estoque: {product.stock}</p>
-            </div>
-            <div
-              onClick={() =>
-                formDispach({ type: "SET_UPDATE", payload: product.uuid })
-              }
+          <li
+            key={product.uuid}
+            className={`${product.stock === 0 && styles.itemNull}`}
+          >
+            {product.productImg ? (
+              <img className={styles.productImage} src={product.productImg} />
+            ) : (
+              <div className={styles.productFrame}>
+                <ImageSVG
+                  size={16}
+                  className={`${styles.productImage} ${styles.propNull}`}
+                />
+              </div>
+            )}
+            <p className={styles.productName}>{product.productName}</p>
+            <p
+              className={`${styles.productsSummary} ${product.summary === null && styles.propNull}`}
             >
-              Editar
+              Res
+            </p>
+            <p
+              className={`${styles.productDescription} ${product.description && styles.propNull}`}
+            >
+              Des
+            </p>
+            <p className={styles.productPrice}>R${product.price.toFixed(2)}</p>
+            <p
+              className={`${styles.productDiscount} ${product.discount === 0 && styles.propNull}`}
+            >
+              R${product.discount.toFixed(2)}
+            </p>
+            <p
+              className={`${styles.productStock} ${product.stock === 0 && styles.propNull}`}
+            >
+              {product.stock}
+            </p>
+            <div className={styles.productFrame}>
+              <Button
+                className={styles.editProduct}
+                onClick={() =>
+                  formDispach({ type: "SET_UPDATE", payload: product.uuid })
+                }
+              >
+                <EditSVG size={16} />
+              </Button>
             </div>
           </li>
         ))}
@@ -110,7 +154,10 @@ function Products() {
             hide={handleFormShow}
             uuid={formState.uuid}
           />
-          <div onClick={() => formDispach({ type: "SET_FALSE" })} />
+          <div
+            className={styles.popupBackground}
+            onClick={() => formDispach({ type: "SET_FALSE" })}
+          />
         </>
       )}
     </div>

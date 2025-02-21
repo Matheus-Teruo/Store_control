@@ -1,0 +1,45 @@
+@use "@styles/variables" as *;
+
+.inputGroup {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  background: $color-gray-000;
+  border-radius: $border-radius;
+
+  input {
+    width: 100%;
+    border: none;
+    padding: 0 8px;
+    border-radius: 0;
+    background-color: transparent;
+    font-size: 0.875rem;
+  }
+
+  &.unfocOK {
+    border-color: $color-font-2;
+    transition: border-color 0.2s;
+
+    input {
+      color: $color-font-2;
+    }
+  }
+
+  &.unfocNO {
+    border-color: $color-font-1;
+    transition: border-color 0.2s;
+
+    input {
+      color: $color-font-1;
+    }
+  }
+
+  &:focus-within {
+    border-color: $color-gray-900;
+
+    input {
+      color: $color-gray-900;
+    }
+  }
+}

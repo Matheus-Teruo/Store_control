@@ -2,6 +2,8 @@ import styles from "./ImageUpload.module.scss";
 import { useRef, useState } from "react";
 import ImageCropper from "./ImageCropper";
 import useProductService from "@service/stand/useProductService";
+import Button from "@/components/utils/Button";
+import { CropSVG, ImageSVG, UploadSVG } from "@/assets/svg";
 
 interface StandSelectProps {
   onChangeImage: (url: string) => void;
@@ -40,10 +42,11 @@ function ImageUpload({ onChangeImage, onChange }: StandSelectProps) {
   }
 
   return (
-    <div>
-      <button onClick={handleClick} type="button">
-        svg imagem
-      </button>
+    <div className={styles.main}>
+      <Button onClick={handleClick}>
+        <ImageSVG size={16} />
+        <p>Carregar</p>
+      </Button>
       <input
         type="file"
         name="image"
@@ -51,22 +54,23 @@ function ImageUpload({ onChangeImage, onChange }: StandSelectProps) {
         ref={hiddenFileInput}
         style={{ display: "none" }}
       />
-      <button
+      <Button
         onClick={() => {
           setShowCrop(true);
         }}
         disabled={imageSrc ? false : true}
-        type="button"
       >
-        svg crop
-      </button>
-      <button onClick={uploadCroppedImage} type="button">
-        Upload
-      </button>
+        <CropSVG size={16} />
+        <p>Cortar</p>
+      </Button>
+      <Button onClick={uploadCroppedImage} disabled={imageSrc ? false : true}>
+        <UploadSVG size={16} />
+        <p>Upload</p>
+      </Button>
       {showCrop && (
         <>
-          <div className={styles.background} />
-          <div className={styles.imageCropper}>
+          <div id="portal-root" className={styles.background} />
+          <div id="portal-root" className={styles.imageCropper}>
             <ImageCropper
               imageSrc={imageSrc}
               setImageSrc={onChangeImage}

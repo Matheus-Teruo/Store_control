@@ -6,6 +6,7 @@ interface ButtonProps {
   onClick?: () => void;
   type?: ButtonHTMLType;
   className?: string;
+  disabled?: boolean;
 }
 
 function Button({
@@ -13,12 +14,14 @@ function Button({
   onClick,
   type = ButtonHTMLType.Button,
   className,
+  disabled = false,
 }: ButtonProps) {
   return (
     <button
       className={`${styles.button} ${className}`}
       type={type}
       onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </button>

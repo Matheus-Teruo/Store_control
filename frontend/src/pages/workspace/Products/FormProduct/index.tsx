@@ -1,3 +1,4 @@
+import styles from "./FormProduct.module.scss";
 import StandSelect from "@/components/selects/StandSelect";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
@@ -16,6 +17,9 @@ import {
 import useProductService from "@service/stand/useProductService";
 import { useEffect, useReducer, useState } from "react";
 import ImageUpload from "./ImageUpload";
+import Product from "@data/stands/Product";
+import Input from "@/components/utils/ProductInput";
+import { CheckSVG, XSVG } from "@/assets/svg";
 
 type FormPurchaseProps = {
   type: "create" | "update";
@@ -25,6 +29,7 @@ type FormPurchaseProps = {
 
 function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
   const [state, dispatch] = useReducer(productReducer, initialProductState);
+  const [initial, setInitial] = useState<Product>();
   const [image, setImage] = useState<string>("");
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
@@ -47,6 +52,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
         const product = await getProduct(uuid);
         if (product) {
           dispatch({ type: "SET_PRODUCT", payload: product });
+          setInitial(product);
         }
       } else if (uuid === undefined) {
         console.error("uuid need to be defined when type is update");
@@ -72,15 +78,17 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const product = await updateProduct(updateProductPayload(state));
-    if (product) {
-      addNotification({
-        title: "Update Product Success",
-        message: `Update product ${product.productName}${product.description && ", description:"}${product.description}, price: ${product.price}, stock: ${product.stock}`,
-        type: MessageType.OK,
-      });
-      dispatch({ type: "RESET" });
-      hide();
+    if (initial) {
+      const product = await updateProduct(updateProductPayload(state, initial));
+      if (product) {
+        addNotification({
+          title: "Update Product Success",
+          message: `Update product ${product.productName}${product.description && ", description:"}${product.description}, price: ${product.price}, stock: ${product.stock}`,
+          type: MessageType.OK,
+        });
+        dispatch({ type: "RESET" });
+        hide();
+      }
     }
   };
 
@@ -97,35 +105,47 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
   };
 
   return (
-    <div>
+    <div className={styles.main}>
+      <h3>{type === "create" ? "Criar Produto" : "Editar Produto"}</h3>
+      {image && <img src={image} alt="Preview" style={{ width: "200px" }} />}
       <form
         onSubmit={type === "create" ? handleCreateSubmit : handleUpdateSubmit}
       >
-        {image && <img src={image} alt="Preview" style={{ width: "200px" }} />}
         <label>Nome do produto</label>
-        <input
+        <Input
+          type="text"
+          id="productName"
+          isRequired
           value={state.productName}
           onChange={(e) =>
             dispatch({ type: "SET_PRODUCT_NAME", payload: e.target.value })
           }
         />
         <label>Resumo</label>
-        <input
+        <Input
+          type="text"
+          id="productSummary"
+          maxLength={255}
+          placeholder="Máximo de 255 caracteres"
           value={state.summary}
           onChange={(e) =>
             dispatch({ type: "SET_SUMMARY", payload: e.target.value })
           }
         />
         <label>Descrição</label>
-        <input
+        <textarea
           value={state.description}
           onChange={(e) =>
             dispatch({ type: "SET_DESCRIPTION", payload: e.target.value })
           }
+          rows={3}
+          placeholder="Descreva, contando caracteristicas, história, ou curiosidades do prato"
         />
         <label>Preço</label>
-        <input
+        <Input
           type="number"
+          id="productPrice"
+          isRequired
           value={state.price.toFixed(2)}
           onChange={(e) =>
             dispatch({ type: "SET_PRICE", payload: parseFloat(e.target.value) })
@@ -134,8 +154,10 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
         {type === "update" && state.discount && (
           <>
             <label>Desconto</label>
-            <input
+            <Input
               type="number"
+              id="productDescount"
+              isRequired
               value={state.discount.toFixed(2)}
               onChange={(e) =>
                 dispatch({
@@ -147,40 +169,64 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
           </>
         )}
         <label>Estoque</label>
-        <input
+        <Input
           type="number"
+          id="productStock"
+          isRequired
           value={state.stock}
           onChange={(e) =>
             dispatch({ type: "SET_STOCK", payload: parseInt(e.target.value) })
           }
         />
-        <ImageUpload
-          onChangeImage={setImage}
-          onChange={(value) =>
-            dispatch({ type: "SET_PRODUCT_IMG", payload: value })
-          }
-        />
-        {isUserLogged(user) && isAdmin(user) && (
-          <StandSelect
-            value={state.standUuid}
+        <div className={styles.imageUpload}>
+          <label>Upload de Imagem</label>
+          <ImageUpload
+            onChangeImage={setImage}
             onChange={(value) =>
-              dispatch({ type: "SET_STAND_UUID", payload: value })
+              dispatch({ type: "SET_PRODUCT_IMG", payload: value })
             }
           />
-        )}
-        <Button type={ButtonHTMLType.Submit}>
-          {type === "create" ? "Criar" : "Editar"}
-        </Button>
-      </form>
-      {type === "update" && !confirmDelete && (
-        <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
-      )}
-      {confirmDelete && (
-        <div>
-          <p>Quer deletar esse item?</p>
-          <Button onClick={handleDeleteSubmit}>Excluir</Button>
         </div>
-      )}
+        {isUserLogged(user) && isAdmin(user) && (
+          <div className={styles.adminSection}>
+            <p>Seleção de administrador</p>
+            <label>Escolha</label>
+            <StandSelect
+              value={state.standUuid}
+              onChange={(value) =>
+                dispatch({ type: "SET_STAND_UUID", payload: value })
+              }
+              disabled
+            />
+          </div>
+        )}
+        <div className={styles.footerButtons}>
+          {type === "update" && !confirmDelete && (
+            <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
+          )}
+          {confirmDelete && (
+            <div className={styles.deleteBody}>
+              <span>Excluir?</span>
+              <Button
+                className={styles.buttonCancelDelete}
+                onClick={() => setConfirmDelete(false)}
+              >
+                <XSVG size={16} />
+              </Button>
+              <Button
+                className={styles.buttonConfirmDelete}
+                onClick={handleDeleteSubmit}
+              >
+                <CheckSVG size={16} />
+              </Button>
+            </div>
+          )}
+          <div />
+          <Button type={ButtonHTMLType.Submit}>
+            {type === "create" ? "Criar" : "Editar"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

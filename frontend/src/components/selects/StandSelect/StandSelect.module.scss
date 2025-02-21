@@ -1,17 +1,17 @@
 @use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
 
-.background {
-  display: flex;
-  align-items: center;
-  padding: 6px;
+.select {
+  border: none;
+  width: 150px;
+  font-size: 1rem;
+  border-radius: $border-radius;
+  padding: 4px 6px;
+  background-color: $color-gray-100;
 
-  select {
-    border: none;
-    width: 200px;
-    font-size: 16px;
-    border-radius: $border-radius;
-    padding: 6px;
-    background-color: $color-gray-100;
+  @media (max-width: $mobile) {
+    font-size: 0.875rem;
+    padding: 3px 6px;
   }
 }
 

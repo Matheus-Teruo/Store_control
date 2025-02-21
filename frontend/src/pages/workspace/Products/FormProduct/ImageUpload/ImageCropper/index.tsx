@@ -1,7 +1,9 @@
+import { CropSVG } from "@/assets/svg";
 import styles from "./ImageCropper.module.scss";
 import { getCroppedImg } from "@/utils/cropImage";
 import { useCallback, useState } from "react";
 import Cropper, { Area, Point } from "react-easy-crop";
+import Button from "@/components/utils/Button";
 
 type SelectPaymentProps = {
   imageSrc: string;
@@ -58,9 +60,9 @@ function ImageCropper({
           onCropComplete={onCropComplete}
         />
       </div>
-      <button onClick={handleCropImage} type="button">
-        SVG CORTAR Cortar
-      </button>
+      <Button onClick={handleCropImage} className={styles.cropButton}>
+        <CropSVG /> Cortar
+      </Button>
     </>
   );
 }

@@ -10,7 +10,7 @@ type ProductAction =
   | { type: "SET_DISCOUNT"; payload: number }
   | { type: "SET_STOCK"; payload: number }
   | { type: "SET_PRODUCT_IMG"; payload: string }
-  | { type: "SET_STAND_UUID"; payload: string }
+  | { type: "SET_STAND_UUID"; payload: string | undefined }
   | { type: "RESET" };
 
 export const initialProductState: CreateProduct & UpdateProduct = {
@@ -90,10 +90,13 @@ export function productReducer(
     case "SET_PRODUCT_IMG":
       return { ...state, productImg: action.payload };
     case "SET_STAND_UUID":
-      if (!regexUuid.test(action.payload)) {
-        return state;
+      if (action.payload) {
+        if (!regexUuid.test(action.payload)) {
+          return state;
+        }
+        return { ...state, standUuid: action.payload };
       }
-      return { ...state, standUuid: action.payload };
+      return state;
     case "RESET":
       return initialProductState;
     default:
@@ -110,9 +113,15 @@ export const createProductPayload = (
 
 export const updateProductPayload = (
   state: CreateProduct & UpdateProduct,
+  initial: Product,
 ): UpdateProduct => {
-  const { uuid, ...rest } = state;
+  const { uuid, productName, ...rest } = state;
   if (!uuid || !regexUuid.test(uuid))
     throw new Error("UUID é obrigatório para atualizar o produto");
-  return { ...rest, uuid };
+
+  if (productName === initial.productName) {
+    return { ...rest, uuid };
+  }
+
+  return { ...rest, uuid, productName };
 };
