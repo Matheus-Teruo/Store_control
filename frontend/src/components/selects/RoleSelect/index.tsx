@@ -1,3 +1,4 @@
+import styles from "./RoleSelect.module.scss";
 import { VoluntaryRole } from "@data/volunteers/Voluntary";
 
 interface RoleSelectProps {
@@ -13,17 +14,19 @@ const VoluntaryRoleMetadata: Record<VoluntaryRole, { label: string }> = {
 
 function RoleSelect({ value, onChange }: RoleSelectProps) {
   return (
-    <div>
-      {/* <label htmlFor="roles"></label> TODO: trocar para svg */}
-      <select id="roles" value={value} onChange={onChange}>
-        <option value={undefined}></option>
-        {Object.entries(VoluntaryRoleMetadata).map(([key, { label }]) => (
-          <option key={key} value={key}>
-            {label}
-          </option>
-        ))}
-      </select>
-    </div>
+    <select
+      className={styles.select}
+      id="roles"
+      value={value}
+      onChange={onChange}
+    >
+      <option value={undefined}></option>
+      {Object.entries(VoluntaryRoleMetadata).map(([key, { label }]) => (
+        <option key={key} value={key}>
+          {label}
+        </option>
+      ))}
+    </select>
   );
 }
 

@@ -1,5 +1,5 @@
 import styles from "./User.module.scss";
-import { useEffect, useReducer, useState } from "react";
+import { ReactElement, useEffect, useReducer, useState } from "react";
 import Button from "@/components/utils/Button";
 import Input from "@/components/utils/AuthInput";
 import useVoluntaryService from "@service/voluntary/useVoluntaryService";
@@ -16,11 +16,13 @@ import {
   AwardSVG,
   BadgeSVG,
   CheckSVG,
+  CircleSVG,
   FaceFrownSVG,
   FaceMehSVG,
   FaceSmileSVG,
   LockPadCloseSVG,
   LockPadOpenSVG,
+  ToolSVG,
   UserCheckSVG,
   UserSVG,
   UserXSVG,
@@ -37,10 +39,22 @@ const voluntaryInitialValue: Voluntary = {
   voluntaryRole: VoluntaryRole.VOLUNTARY,
 };
 
-const VoluntaryRoleMetadata: Record<VoluntaryRole, { label: string }> = {
-  [VoluntaryRole.VOLUNTARY]: { label: "Voluntario" },
-  [VoluntaryRole.MANAGEMENT]: { label: "Gerente" },
-  [VoluntaryRole.ADMIN]: { label: "Administrador" },
+const VoluntaryRoleMetadata: Record<
+  VoluntaryRole,
+  { label: string; icon: ReactElement }
+> = {
+  [VoluntaryRole.VOLUNTARY]: {
+    label: "Voluntario",
+    icon: <CircleSVG />,
+  },
+  [VoluntaryRole.MANAGEMENT]: {
+    label: "Gerente",
+    icon: <AwardSVG />,
+  },
+  [VoluntaryRole.ADMIN]: {
+    label: "Administrador",
+    icon: <ToolSVG />,
+  },
 };
 
 function User() {
@@ -183,7 +197,7 @@ function User() {
       <div className={styles.field}>
         <p className={styles.title}>Permissão</p>
         <div className={styles.value}>
-          <AwardSVG />
+          {VoluntaryRoleMetadata[userProperties.voluntaryRole].icon}
           <p>{VoluntaryRoleMetadata[userProperties.voluntaryRole].label}</p>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import styles from "./AssociationSelect.module.scss";
 import { SummaryAssociation } from "@data/stands/Association";
 import useAssociationService from "@service/stand/useAssociationService";
 import { useEffect, useState } from "react";
@@ -24,17 +25,22 @@ function AssociationSelect({ value, onChange }: AssociationSelectProps) {
   }, [getListAssociations]);
 
   return (
-    <div>
-      {/* <label htmlFor="associations"></label> TODO: trocar para svg */}
-      <select id="associations" value={value} onChange={onChange}>
-        <option value={undefined}></option>
-        {listAssociations.map((association) => (
-          <option key={association.uuid} value={association.uuid}>
-            {association.associationName}
-          </option>
-        ))}
-      </select>
-    </div>
+    <select
+      className={styles.select}
+      id="associations"
+      value={value}
+      onChange={onChange}
+    >
+      <option value="" disabled style={{ color: "#656360" }}>
+        {" "}
+        -- association --
+      </option>
+      {listAssociations.map((association) => (
+        <option key={association.uuid} value={association.uuid}>
+          {association.associationName}
+        </option>
+      ))}
+    </select>
   );
 }
 

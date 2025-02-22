@@ -16,11 +16,7 @@ function PublicHeader() {
             />
           </Link>
           <ul className={styles.navigate}>
-            {activeConfig.version === "simple" ? (
-              <li>
-                <h2 className={styles.title}>Cardápio</h2>
-              </li>
-            ) : (
+            {activeConfig.enableCard ? (
               <>
                 <li>
                   <Link to="/menu">
@@ -32,15 +28,19 @@ function PublicHeader() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/order">
+                  <Link to="/card">
                     <h2
-                      className={`${styles.title} ${location.pathname === "/order" && styles.selected}`}
+                      className={`${styles.title} ${location.pathname === "/card" && styles.selected}`}
                     >
                       Cartão
                     </h2>
                   </Link>
                 </li>
               </>
+            ) : (
+              <li>
+                <h2 className={styles.title}>Cardápio</h2>
+              </li>
             )}
           </ul>
           <div className={styles.spaceHolder} />

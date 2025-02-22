@@ -7,6 +7,7 @@ import CheckCircleSVG from "./components/CheckCircleSVG";
 import CheckSVG from "./components/CheckSVG";
 import ChevronLeftSVG from "./components/ChevronLeftSVG";
 import ChevronRightSVG from "./components/ChevronRightSVG";
+import CircleSVG from "./components/CircleSVG";
 import CropSVG from "./components/CropSVG";
 import EditSVG from "./components/EditSVG";
 import FaceFrownSVG from "./components/FaceFrown";
@@ -15,15 +16,19 @@ import FaceSmileSVG from "./components/FaceSmile";
 import FilterSVG from "./components/FilterSVG";
 import GlobeSVG from "./components/GlobeSVG";
 import GridSVG from "./components/GridSVG";
+import HistorySVG from "./components/HistorySVG";
 import ImageSVG from "./components/ImageSVG";
 import InfoSVG from "./components/InfoSVG";
 import ListSVG from "./components/ListSVG";
 import LockPadOpenSVG from "./components/LockPadOpenSVG";
 import LockPadCloseSVG from "./components/LockPadCloseSVG";
 import MenuSVG from "./components/MenuSVG";
+import MinusSVG from "./components/MinusSVG";
+import PlusSVG from "./components/PlusSVG";
 import QRcodeScanSVG from "./components/QRcodeScanSVG";
 import SearchSVG from "./components/SearchSVG";
 import ShoppingCartSVG from "./components/ShoppingCartSVG";
+import ToolSVG from "./components/ToolSVG";
 import UploadSVG from "./components/UploadSVG";
 import UserCheckSVG from "./components/UserCheckSVG";
 import UserSVG from "./components/UserSVG";
@@ -41,6 +46,7 @@ export {
   CheckSVG,
   ChevronLeftSVG,
   ChevronRightSVG,
+  CircleSVG,
   CropSVG,
   EditSVG,
   FaceFrownSVG,
@@ -49,15 +55,19 @@ export {
   FilterSVG,
   GlobeSVG,
   GridSVG,
+  HistorySVG,
   ImageSVG,
   InfoSVG,
   ListSVG,
   LockPadOpenSVG,
   LockPadCloseSVG,
   MenuSVG,
+  MinusSVG,
+  PlusSVG,
   QRcodeScanSVG,
   SearchSVG,
   ShoppingCartSVG,
+  ToolSVG,
   UploadSVG,
   UserCheckSVG,
   UserSVG,

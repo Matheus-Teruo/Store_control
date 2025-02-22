@@ -1,3 +1,4 @@
+import styles from "./FormVoluntary.module.scss";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import {
@@ -12,8 +13,8 @@ import {
 } from "@reducer/voluntary/voluntaryReducer";
 import useVoluntaryService from "@service/voluntary/useVoluntaryService";
 import { useEffect, useReducer } from "react";
-import FunctionSelect from "../FunctionSelect";
-import RoleSelect from "../RoleSelect";
+import FunctionSelect from "../../../../components/selects/FunctionSelect";
+import RoleSelect from "../../../../components/selects/RoleSelect";
 import { VoluntaryRole } from "@data/volunteers/Voluntary";
 
 type FormVoluntaryProps = {
@@ -77,30 +78,34 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
   };
 
   return (
-    <div>
-      <label>Nome do Voluntario</label>
+    <div className={styles.main}>
+      <label>Nome completo</label>
       <p>{state.fullname}</p>
       <form onSubmit={handleUpdateFunctionSubmit}>
-        <label>Função:</label>
-        <FunctionSelect
-          value={state.functionUuid}
-          onChange={(e) =>
-            dispatch({ type: "SET_FUNCTION", payload: e.target.value })
-          }
-        />
+        <div className={styles.field}>
+          <label>Função</label>
+          <FunctionSelect
+            value={state.functionUuid}
+            onChange={(e) =>
+              dispatch({ type: "SET_FUNCTION", payload: e.target.value })
+            }
+          />
+        </div>
         <Button type={ButtonHTMLType.Submit}>Editar</Button>
       </form>
       <form onSubmit={handleUpdateRoleSubmit}>
-        <label>Permissão:</label>
-        <RoleSelect
-          value={state.voluntaryRole}
-          onChange={(e) =>
-            dispatch({
-              type: "SET_ROLE",
-              payload: e.target.value as VoluntaryRole,
-            })
-          }
-        />
+        <div className={styles.field}>
+          <label>Permissão</label>
+          <RoleSelect
+            value={state.voluntaryRole}
+            onChange={(e) =>
+              dispatch({
+                type: "SET_ROLE",
+                payload: e.target.value as VoluntaryRole,
+              })
+            }
+          />
+        </div>
         <Button type={ButtonHTMLType.Submit}>Editar</Button>
       </form>
     </div>

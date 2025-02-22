@@ -1,3 +1,6 @@
+import styles from "./PageSelect.module.scss";
+import { ChevronLeftSVG, ChevronRightSVG } from "@/assets/svg";
+import Button from "@/components/utils/Button";
 import { PageAction } from "@reducer/pageReducer";
 
 interface PageSelectProps {
@@ -18,15 +21,15 @@ function PageSelect({ value, max, dispatch, className }: PageSelectProps) {
     }
   };
   return (
-    <div className={className}>
-      <button
+    <div className={`${styles.body} ${className}`}>
+      <Button
         onClick={() =>
           dispatch({ type: "SET_PAGE_NUMBER", payload: value - 1 })
         }
         disabled={value <= 0}
       >
-        {"<"}
-      </button>
+        <ChevronLeftSVG size={16} />
+      </Button>
       <input
         name="page"
         type="number"
@@ -35,14 +38,14 @@ function PageSelect({ value, max, dispatch, className }: PageSelectProps) {
         min={1}
         max={max}
       />
-      <button
+      <Button
         onClick={() =>
           dispatch({ type: "SET_PAGE_NUMBER", payload: value + 1 })
         }
         disabled={value + 1 >= max}
       >
-        {">"}
-      </button>
+        <ChevronRightSVG size={16} />
+      </Button>
     </div>
   );
 }

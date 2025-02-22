@@ -1,3 +1,4 @@
+import styles from "./FormAssociation.module.scss";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import {
@@ -11,8 +12,10 @@ import {
   initialAssociationState,
   updateAssociationPayload,
 } from "@reducer/stand/associationReducer";
+import Input from "@/components/utils/ProductInput";
 import useAssociationService from "@service/stand/useAssociationService";
 import { useEffect, useReducer, useState } from "react";
+import { CheckSVG, XSVG } from "@/assets/svg";
 
 type FormAssociationProps = {
   type: "create" | "update";
@@ -99,37 +102,56 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
   };
 
   return (
-    <div>
+    <div className={styles.main}>
+      <h3>{type === "create" ? "Criar Associação" : "Editar Associação"}</h3>
       <form
         onSubmit={type === "create" ? handleCreateSubmit : handleUpdateSubmit}
       >
         <label>Nome da Associação</label>
-        <input
+        <Input
+          type="text"
+          id="associationName"
           value={state.associationName}
           onChange={(e) =>
             dispatch({ type: "SET_ASSOCIATION_NAME", payload: e.target.value })
           }
         />
         <label>{"Nome do(a) presente"}</label>
-        <input
+        <Input
+          type="text"
+          id="principalName"
           value={state.principalName}
           onChange={(e) =>
             dispatch({ type: "SET_PRINCIPAL_NAME", payload: e.target.value })
           }
         />
-        <Button type={ButtonHTMLType.Submit}>
-          {type === "create" ? "Criar" : "Editar"}
-        </Button>
-      </form>
-      {type === "update" && !confirmDelete && (
-        <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
-      )}
-      {confirmDelete && (
-        <div>
-          <p>Quer deletar essa associação?</p>
-          <Button onClick={handleDeleteSubmit}>Excluir</Button>
+        <div className={styles.footerButtons}>
+          {type === "update" && !confirmDelete && (
+            <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
+          )}
+          {confirmDelete && (
+            <div className={styles.deleteBody}>
+              <span>Excluir?</span>
+              <Button
+                className={styles.buttonCancelDelete}
+                onClick={() => setConfirmDelete(false)}
+              >
+                <XSVG size={16} />
+              </Button>
+              <Button
+                className={styles.buttonConfirmDelete}
+                onClick={handleDeleteSubmit}
+              >
+                <CheckSVG size={16} />
+              </Button>
+            </div>
+          )}
+          <div />
+          <Button type={ButtonHTMLType.Submit}>
+            {type === "create" ? "Criar" : "Editar"}
+          </Button>
         </div>
-      )}
+      </form>
     </div>
   );
 }

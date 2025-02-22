@@ -1,0 +1,106 @@
+@use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
+
+.body {
+  background-color: $color-gray-000;
+  width: 100vw;
+  height: calc(100vh - $admin-header-height);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .main {
+    padding: 6px 0;
+    max-width: calc(1280px);
+    width: 100%;
+    box-sizing: border-box;
+
+    @media (max-width: $desktop_md) {
+      padding: 6px;
+    }
+
+    .listHeader {
+      background-color: $color-primary-2;
+
+      p {
+        font-size: 1rem;
+        font-weight: 500;
+
+        @media (max-width: $mobile) {
+          font-size: 0.875rem;
+        }
+      }
+    }
+
+    .itemOdd {
+      background-color: $color-primary-1;
+    }
+
+    .itemPair {
+      background-color: $color-tertiary-1;
+    }
+
+    li {
+      display: grid;
+      grid-template-columns: 4fr 50px;
+      grid-auto-flow: row;
+      gap: 2px;
+
+      margin-bottom: 4px;
+      padding: 2px 4px;
+      border-radius: $border-radius;
+
+      p {
+        display: flex;
+        align-items: center;
+        font-size: 0.875rem;
+
+        @media (max-width: $mobile) {
+          font-size: 0.75rem;
+        }
+      }
+
+      .propAligned {
+        justify-content: center;
+      }
+
+      .associationEdit {
+        display: flex;
+        justify-content: center;
+        padding: 2px;
+        background-color: $color-secundary-1;
+      }
+    }
+
+    .newAssociation {
+      padding: 3px;
+      grid-column: span 2;
+      background-color: $color-secundary-1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $color-font-2;
+
+      p {
+        margin-left: 2px;
+        font-size: 1rem;
+        font-weight: 500;
+
+        @media (max-width: $mobile) {
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+
+  .popupBackground {
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 50;
+    position: fixed;
+    background-color: #aaaaaa80;
+    backdrop-filter: blur(5px);
+  }
+}

@@ -3,11 +3,12 @@
 
 .select {
   border: none;
-  width: 150px;
+  width: 200px;
+  height: 32px;
   font-size: 1rem;
   border-radius: $border-radius;
-  padding: 4px 6px;
-  background-color: $color-gray-100;
+  padding: 0 6px;
+  background-color: $color-gray-000;
 
   @media (max-width: $mobile) {
     font-size: 0.875rem;

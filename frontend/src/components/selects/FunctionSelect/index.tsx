@@ -1,3 +1,4 @@
+import styles from "./FunctionSelect.module.scss";
 import SummaryFunction from "@data/volunteers/Function";
 import useFunctionService from "@service/voluntary/useFunctionsService";
 import { useEffect, useState } from "react";
@@ -23,17 +24,19 @@ function FunctionSelect({ value, onChange }: FunctionSelectProps) {
   }, [getListFunctions]);
 
   return (
-    <div>
-      {/* <label htmlFor="functions"></label> TODO: trocar para svg */}
-      <select id="functions" value={value} onChange={onChange}>
-        <option value={undefined}></option>
-        {listFunctions.map((voluntaryFunction) => (
-          <option key={voluntaryFunction.uuid} value={voluntaryFunction.uuid}>
-            {voluntaryFunction.functionName}
-          </option>
-        ))}
-      </select>
-    </div>
+    <select
+      className={styles.select}
+      id="functions"
+      value={value}
+      onChange={onChange}
+    >
+      <option value={undefined}></option>
+      {listFunctions.map((voluntaryFunction) => (
+        <option key={voluntaryFunction.uuid} value={voluntaryFunction.uuid}>
+          {voluntaryFunction.functionName}
+        </option>
+      ))}
+    </select>
   );
 }
 

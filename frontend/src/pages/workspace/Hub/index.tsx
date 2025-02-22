@@ -66,7 +66,7 @@ function Hub() {
         {isManeger(user) && (
           <li className={styles.liVolunteers}>
             <Link className={styles.links} to="/admin/volunteers">
-              Volunteers
+              Voluntários
             </Link>
           </li>
         )}
@@ -74,18 +74,18 @@ function Hub() {
           <>
             <li className={styles.liAssociations}>
               <Link className={styles.links} to="/admin/associations">
-                Associations
+                Associações
               </Link>
             </li>
             <li className={styles.liStands}>
               <Link className={styles.links} to="/admin/stands">
-                Stands
+                Estandes
               </Link>
             </li>
             {activeConfig.enableCard && (
               <li className={styles.liCards}>
                 <Link className={styles.links} to="/admin/cards">
-                  Cards
+                  Cartões
                 </Link>
               </li>
             )}

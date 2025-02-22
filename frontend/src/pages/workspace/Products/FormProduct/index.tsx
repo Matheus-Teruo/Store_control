@@ -151,14 +151,14 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             dispatch({ type: "SET_PRICE", payload: parseFloat(e.target.value) })
           }
         />
-        {type === "update" && state.discount && (
+        {type === "update" && (
           <>
             <label>Desconto</label>
             <Input
               type="number"
               id="productDescount"
               isRequired
-              value={state.discount.toFixed(2)}
+              value={state.discount!.toFixed(2)}
               onChange={(e) =>
                 dispatch({
                   type: "SET_DISCOUNT",

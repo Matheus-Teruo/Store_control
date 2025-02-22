@@ -1,6 +1,11 @@
+import styles from "./Associations.module.scss";
 import PageSelect from "@/components/selects/PageSelect";
 import Button from "@/components/utils/Button";
-import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
+import {
+  isManeger,
+  isUserLogged,
+  isUserUnlogged,
+} from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { SummaryAssociation } from "@data/stands/Association";
 import { formReducer, initialFormState } from "@reducer/formReducer";
@@ -9,6 +14,7 @@ import useAssociationService from "@service/stand/useAssociationService";
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FormAssociation from "./FormAssociation";
+import { EditSVG, PlusSVG } from "@/assets/svg";
 
 function Associations() {
   const [associations, setAssociations] = useState<SummaryAssociation[]>([]);
@@ -20,13 +26,19 @@ function Associations() {
 
   const fetchAssociations = useCallback(async () => {
     const response = await getAssociations(page.number);
-    if (response) setAssociations(response.content);
+    if (response) {
+      setAssociations(response.content);
+      pageDispatch({
+        type: "SET_PAGE_MAX",
+        payload: response.page.totalPages,
+      });
+    }
   }, [page.number, getAssociations]);
 
   useEffect(() => {
-    if (isUserLogged(user)) {
+    if (isUserLogged(user) && isManeger(user)) {
       fetchAssociations();
-    } else if (isAdmin(user)) {
+    } else if (isUserUnlogged(user)) {
       navigate("/");
     }
   }, [user, navigate, fetchAssociations]);
@@ -37,23 +49,37 @@ function Associations() {
   };
 
   return (
-    <div>
-      <Button onClick={() => formDispach({ type: "SET_CREATE" })}>
-        Criar Associação
-      </Button>
-      <ul>
-        {associations.map((association) => (
-          <li key={association.uuid}>
+    <div className={styles.body}>
+      <ul className={styles.main}>
+        <li key={"header"} className={styles.listHeader}>
+          <p>Nome da associação</p>
+          <p className={styles.propAligned}>Editar</p>
+        </li>
+        {associations.map((association, index) => (
+          <li
+            key={association.uuid}
+            className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
+          >
             <p>{association.associationName}</p>
-            <div
+            <Button
+              className={styles.associationEdit}
               onClick={() =>
                 formDispach({ type: "SET_UPDATE", payload: association.uuid })
               }
             >
-              Editar
-            </div>
+              <EditSVG size={16} />
+            </Button>
           </li>
         ))}
+        <li key={"add"}>
+          <Button
+            className={styles.newAssociation}
+            onClick={() => formDispach({ type: "SET_CREATE" })}
+          >
+            <PlusSVG size={18} />
+            <p>Associação</p>
+          </Button>
+        </li>
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
       {formState.show && (
@@ -63,7 +89,10 @@ function Associations() {
             hide={handleFormShow}
             uuid={formState.uuid}
           />
-          <div onClick={() => formDispach({ type: "SET_FALSE" })}>Editar</div>
+          <div
+            className={styles.popupBackground}
+            onClick={() => formDispach({ type: "SET_FALSE" })}
+          />
         </>
       )}
     </div>

@@ -1,13 +1,44 @@
+import styles from "./Volunteers.module.scss";
 import PageSelect from "@/components/selects/PageSelect";
-import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
+import {
+  isAdmin,
+  isUserLogged,
+  isUserUnlogged,
+} from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import { SummaryVoluntary } from "@data/volunteers/Voluntary";
+import { SummaryVoluntary, VoluntaryRole } from "@data/volunteers/Voluntary";
 import { formReducer, initialFormState } from "@reducer/formReducer";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import useVoluntaryService from "@service/voluntary/useVoluntaryService";
-import { useCallback, useEffect, useReducer, useState } from "react";
+import {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import FormVoluntary from "./FormVoluntary";
+import { AwardSVG, CircleSVG, EditSVG, ToolSVG } from "@/assets/svg";
+import Button from "@/components/utils/Button";
+
+const VoluntaryRoleMetadata: Record<
+  VoluntaryRole,
+  { label: string; icon: ReactElement }
+> = {
+  [VoluntaryRole.VOLUNTARY]: {
+    label: "Voluntario",
+    icon: <CircleSVG size={18} />,
+  },
+  [VoluntaryRole.MANAGEMENT]: {
+    label: "Gerente",
+    icon: <AwardSVG size={18} />,
+  },
+  [VoluntaryRole.ADMIN]: {
+    label: "Administrador",
+    icon: <ToolSVG size={18} />,
+  },
+};
 
 function Volunteers() {
   const [volunteers, setVolunteers] = useState<SummaryVoluntary[]>([]);
@@ -21,13 +52,17 @@ function Volunteers() {
     const response = await getVolunteers();
     if (response) {
       setVolunteers(response.content);
+      pageDispatch({
+        type: "SET_PAGE_MAX",
+        payload: response.page.totalPages,
+      });
     }
   }, [getVolunteers]);
 
   useEffect(() => {
-    if (isUserLogged(user)) {
+    if (isUserLogged(user) && isAdmin(user)) {
       fetchVolunteers();
-    } else if (isAdmin(user)) {
+    } else if (isUserUnlogged(user)) {
       navigate("/");
     }
   }, [user, navigate, fetchVolunteers]);
@@ -38,24 +73,41 @@ function Volunteers() {
   };
 
   return (
-    <div>
-      <ul>
-        {volunteers.map((voluntary) => (
-          <li key={voluntary.uuid}>
+    <div className={styles.body}>
+      <ul className={styles.main}>
+        <li key={"header"} className={styles.listHeader}>
+          <p>Nome completo</p>
+          <p>Função</p>
+          <p className={styles.propAligned}>Permissão</p>
+          <p className={styles.propAligned}>Editar</p>
+        </li>
+        {volunteers.map((voluntary, index) => (
+          <li
+            key={voluntary.uuid}
+            className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
+          >
             <p>{voluntary.fullname}</p>
-            <p>
+            <p
+              className={`${!voluntary.summaryFunction && styles.nullFunction}`}
+            >
               {voluntary.summaryFunction
                 ? voluntary.summaryFunction.functionName
-                : ""}
+                : "não definida"}
             </p>
-            <p>{voluntary.voluntaryRole}</p>
-            <div
+            <p
+              className={styles.propAligned}
+              title={`${VoluntaryRoleMetadata[voluntary.voluntaryRole].label}`}
+            >
+              {VoluntaryRoleMetadata[voluntary.voluntaryRole].icon}
+            </p>
+            <Button
+              className={styles.voluntaryEdit}
               onClick={() =>
                 formDispach({ type: "SET_UPDATE", payload: voluntary.uuid })
               }
             >
-              Editar
-            </div>
+              <EditSVG size={16} />
+            </Button>
           </li>
         ))}
       </ul>
@@ -63,7 +115,10 @@ function Volunteers() {
       {formState.show && (
         <>
           <FormVoluntary hide={handleFormShow} uuid={formState.uuid} />
-          <div onClick={() => formDispach({ type: "SET_FALSE" })}>Editar</div>
+          <div
+            className={styles.popupBackground}
+            onClick={() => formDispach({ type: "SET_FALSE" })}
+          />
         </>
       )}
     </div>
