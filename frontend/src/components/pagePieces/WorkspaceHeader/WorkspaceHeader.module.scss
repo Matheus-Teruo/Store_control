@@ -1,7 +1,8 @@
 @use "@styles/variables" as *;
 
 .background {
-  width: 100%;
+  width: 100vw;
+  height: $hub-header-height;
   justify-items: center;
   background-color: $color-secundary-3;
 
@@ -11,7 +12,7 @@
     align-items: center;
     width: 100%;
     max-width: 1024px;
-    height: $hub-header-height;
+    height: 100%;
 
     .linkLogo {
       display: flex;

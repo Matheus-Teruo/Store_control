@@ -16,6 +16,7 @@ import Input from "@/components/utils/ProductInput";
 import useAssociationService from "@service/stand/useAssociationService";
 import { useEffect, useReducer, useState } from "react";
 import { CheckSVG, XSVG } from "@/assets/svg";
+import GlassBackground from "@/components/GlassBackground";
 
 type FormAssociationProps = {
   type: "create" | "update";
@@ -102,57 +103,63 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
   };
 
   return (
-    <div className={styles.main}>
-      <h3>{type === "create" ? "Criar Associação" : "Editar Associação"}</h3>
-      <form
-        onSubmit={type === "create" ? handleCreateSubmit : handleUpdateSubmit}
-      >
-        <label>Nome da Associação</label>
-        <Input
-          type="text"
-          id="associationName"
-          value={state.associationName}
-          onChange={(e) =>
-            dispatch({ type: "SET_ASSOCIATION_NAME", payload: e.target.value })
-          }
-        />
-        <label>{"Nome do(a) presente"}</label>
-        <Input
-          type="text"
-          id="principalName"
-          value={state.principalName}
-          onChange={(e) =>
-            dispatch({ type: "SET_PRINCIPAL_NAME", payload: e.target.value })
-          }
-        />
-        <div className={styles.footerButtons}>
-          {type === "update" && !confirmDelete && (
-            <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
-          )}
-          {confirmDelete && (
-            <div className={styles.deleteBody}>
-              <span>Excluir?</span>
-              <Button
-                className={styles.buttonCancelDelete}
-                onClick={() => setConfirmDelete(false)}
-              >
-                <XSVG size={16} />
-              </Button>
-              <Button
-                className={styles.buttonConfirmDelete}
-                onClick={handleDeleteSubmit}
-              >
-                <CheckSVG size={16} />
-              </Button>
-            </div>
-          )}
-          <div />
-          <Button type={ButtonHTMLType.Submit}>
-            {type === "create" ? "Criar" : "Editar"}
-          </Button>
-        </div>
-      </form>
-    </div>
+    <>
+      <div className={styles.main}>
+        <h3>{type === "create" ? "Criar Associação" : "Editar Associação"}</h3>
+        <form
+          onSubmit={type === "create" ? handleCreateSubmit : handleUpdateSubmit}
+        >
+          <label>Nome da Associação</label>
+          <Input
+            type="text"
+            id="associationName"
+            value={state.associationName}
+            onChange={(e) =>
+              dispatch({
+                type: "SET_ASSOCIATION_NAME",
+                payload: e.target.value,
+              })
+            }
+          />
+          <label>{"Nome do(a) presente"}</label>
+          <Input
+            type="text"
+            id="principalName"
+            value={state.principalName}
+            onChange={(e) =>
+              dispatch({ type: "SET_PRINCIPAL_NAME", payload: e.target.value })
+            }
+          />
+          <div className={styles.footerButtons}>
+            {type === "update" && !confirmDelete && (
+              <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
+            )}
+            {confirmDelete && (
+              <div className={styles.deleteBody}>
+                <span>Excluir?</span>
+                <Button
+                  className={styles.buttonCancelDelete}
+                  onClick={() => setConfirmDelete(false)}
+                >
+                  <XSVG size={16} />
+                </Button>
+                <Button
+                  className={styles.buttonConfirmDelete}
+                  onClick={handleDeleteSubmit}
+                >
+                  <CheckSVG size={16} />
+                </Button>
+              </div>
+            )}
+            <div />
+            <Button type={ButtonHTMLType.Submit}>
+              {type === "create" ? "Criar" : "Editar"}
+            </Button>
+          </div>
+        </form>
+      </div>
+      <GlassBackground onClick={hide} />
+    </>
   );
 }
 

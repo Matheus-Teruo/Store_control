@@ -74,12 +74,12 @@ function Stands() {
 
   return (
     <div className={styles.body}>
+      <li key={"header"} className={styles.listHeader}>
+        <p>Nome do estande</p>
+        <p>Associação</p>
+        <p className={styles.propAligned}>Editar</p>
+      </li>
       <ul className={styles.main}>
-        <li key={"header"} className={styles.listHeader}>
-          <p>Nome do estande</p>
-          <p>Associação</p>
-          <p className={styles.propAligned}>Editar</p>
-        </li>
         {stands.map((stand, index) => (
           <li
             key={stand.uuid}
@@ -113,17 +113,11 @@ function Stands() {
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
       {formState.show && (
-        <>
-          <FormStand
-            type={formState.type}
-            hide={handleFormShow}
-            uuid={formState.uuid}
-          />
-          <div
-            className={styles.popupBackground}
-            onClick={() => formDispach({ type: "SET_FALSE" })}
-          />
-        </>
+        <FormStand
+          type={formState.type}
+          hide={handleFormShow}
+          uuid={formState.uuid}
+        />
       )}
     </div>
   );

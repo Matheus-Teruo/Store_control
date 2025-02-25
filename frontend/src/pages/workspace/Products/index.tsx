@@ -90,17 +90,17 @@ function Products() {
           </Button>
         </div>
       </div>
+      <li key={"header"} className={styles.listHeader}>
+        <p className={styles.productFrame}>Img</p>
+        <p className={styles.productName}>Produto</p>
+        <p className={styles.productsSummary}>Resumo</p>
+        <p className={styles.productDescription}>Descrição</p>
+        <p className={styles.productPrice}>Preço</p>
+        <p className={styles.productDiscount}>Desconto</p>
+        <p className={styles.productStock}>Estoque</p>
+        <p className={styles.productEdit}>Editar</p>
+      </li>
       <ul className={styles.main}>
-        <li key={"header"} className={styles.listHeader}>
-          <p className={styles.productFrame}>Img</p>
-          <p className={styles.productName}>Produto</p>
-          <p className={styles.productsSummary}>Resumo</p>
-          <p className={styles.productDescription}>Descrição</p>
-          <p className={styles.productPrice}>Preço</p>
-          <p className={styles.productDiscount}>Desconto</p>
-          <p className={styles.productStock}>Estoque</p>
-          <p className={styles.productEdit}>Editar</p>
-        </li>
         {products.map((product, index) => (
           <li
             key={product.uuid}
@@ -159,17 +159,11 @@ function Products() {
         dispatch={pageDispatch}
       />
       {formState.show && (
-        <>
-          <FormProduct
-            type={formState.type}
-            hide={handleFormShow}
-            uuid={formState.uuid}
-          />
-          <div
-            className={styles.popupBackground}
-            onClick={() => formDispach({ type: "SET_FALSE" })}
-          />
-        </>
+        <FormProduct
+          type={formState.type}
+          hide={handleFormShow}
+          uuid={formState.uuid}
+        />
       )}
     </div>
   );

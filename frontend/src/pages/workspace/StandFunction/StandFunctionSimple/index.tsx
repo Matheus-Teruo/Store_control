@@ -70,15 +70,6 @@ function StandFunctionSimple() {
             <p>{state.totalQuantity}</p>
             <p>R${state.rechargeValue}</p>
           </div>
-          {showLast && (
-            <>
-              <div
-                className={styles.lastPurchaseBackground}
-                onClick={() => setShowLast(false)}
-              />
-              <LastPurchaseList />
-            </>
-          )}
         </div>
       </div>
       <ul className={styles.main}>
@@ -125,6 +116,13 @@ function StandFunctionSimple() {
         showCart={showCart}
         setShowCart={setShowCart}
       />
+      {showLast && (
+        <LastPurchaseList
+          setShow={() => {
+            setShowLast(false);
+          }}
+        />
+      )}
     </div>
   );
 }

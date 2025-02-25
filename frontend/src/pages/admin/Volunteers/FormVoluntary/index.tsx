@@ -16,6 +16,7 @@ import { useEffect, useReducer } from "react";
 import FunctionSelect from "../../../../components/selects/FunctionSelect";
 import RoleSelect from "../../../../components/selects/RoleSelect";
 import { VoluntaryRole } from "@data/volunteers/Voluntary";
+import GlassBackground from "@/components/GlassBackground";
 
 type FormVoluntaryProps = {
   hide: () => void;
@@ -78,37 +79,40 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
   };
 
   return (
-    <div className={styles.main}>
-      <label>Nome completo</label>
-      <p>{state.fullname}</p>
-      <form onSubmit={handleUpdateFunctionSubmit}>
-        <div className={styles.field}>
-          <label>Função</label>
-          <FunctionSelect
-            value={state.functionUuid}
-            onChange={(e) =>
-              dispatch({ type: "SET_FUNCTION", payload: e.target.value })
-            }
-          />
-        </div>
-        <Button type={ButtonHTMLType.Submit}>Editar</Button>
-      </form>
-      <form onSubmit={handleUpdateRoleSubmit}>
-        <div className={styles.field}>
-          <label>Permissão</label>
-          <RoleSelect
-            value={state.voluntaryRole}
-            onChange={(e) =>
-              dispatch({
-                type: "SET_ROLE",
-                payload: e.target.value as VoluntaryRole,
-              })
-            }
-          />
-        </div>
-        <Button type={ButtonHTMLType.Submit}>Editar</Button>
-      </form>
-    </div>
+    <>
+      <div className={styles.main}>
+        <label>Nome completo</label>
+        <p>{state.fullname}</p>
+        <form onSubmit={handleUpdateFunctionSubmit}>
+          <div className={styles.field}>
+            <label>Função</label>
+            <FunctionSelect
+              value={state.functionUuid}
+              onChange={(e) =>
+                dispatch({ type: "SET_FUNCTION", payload: e.target.value })
+              }
+            />
+          </div>
+          <Button type={ButtonHTMLType.Submit}>Editar</Button>
+        </form>
+        <form onSubmit={handleUpdateRoleSubmit}>
+          <div className={styles.field}>
+            <label>Permissão</label>
+            <RoleSelect
+              value={state.voluntaryRole}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_ROLE",
+                  payload: e.target.value as VoluntaryRole,
+                })
+              }
+            />
+          </div>
+          <Button type={ButtonHTMLType.Submit}>Editar</Button>
+        </form>
+      </div>
+      <GlassBackground onClick={hide} />
+    </>
   );
 }
 

@@ -74,13 +74,13 @@ function Volunteers() {
 
   return (
     <div className={styles.body}>
+      <li key={"header"} className={styles.listHeader}>
+        <p>Nome completo</p>
+        <p>Função</p>
+        <p className={styles.propAligned}>Permissão</p>
+        <p className={styles.propAligned}>Editar</p>
+      </li>
       <ul className={styles.main}>
-        <li key={"header"} className={styles.listHeader}>
-          <p>Nome completo</p>
-          <p>Função</p>
-          <p className={styles.propAligned}>Permissão</p>
-          <p className={styles.propAligned}>Editar</p>
-        </li>
         {volunteers.map((voluntary, index) => (
           <li
             key={voluntary.uuid}
@@ -113,13 +113,7 @@ function Volunteers() {
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
       {formState.show && (
-        <>
-          <FormVoluntary hide={handleFormShow} uuid={formState.uuid} />
-          <div
-            className={styles.popupBackground}
-            onClick={() => formDispach({ type: "SET_FALSE" })}
-          />
-        </>
+        <FormVoluntary hide={handleFormShow} uuid={formState.uuid} />
       )}
     </div>
   );

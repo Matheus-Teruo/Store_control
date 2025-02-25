@@ -16,6 +16,7 @@ import AssociationSelect from "@/components/selects/AssociationSelect";
 import Input from "@/components/utils/ProductInput";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import { CheckSVG, XSVG } from "@/assets/svg";
+import GlassBackground from "@/components/GlassBackground";
 
 type FormStandProps = {
   type: "create" | "update";
@@ -89,55 +90,61 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   };
 
   return (
-    <div className={styles.main}>
-      <h3>{type === "create" ? "Criar Estande" : "Editar Estande"}</h3>
-      <form
-        onSubmit={type === "create" ? handleCreateSubmit : handleUpdateSubmit}
-      >
-        <label>Nome do estande</label>
-        <Input
-          type="text"
-          id="standName"
-          value={state.standName}
-          onChange={(e) =>
-            dispatch({ type: "SET_STAND_NAME", payload: e.target.value })
-          }
-        />
-        <label>Associação</label>
-        <AssociationSelect
-          value={state.associationUuid}
-          onChange={(e) =>
-            dispatch({ type: "SET_ASSOCIATION_UUID", payload: e.target.value })
-          }
-        />
-        <div className={styles.footerButtons}>
-          {type === "update" && !confirmDelete && (
-            <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
-          )}
-          {confirmDelete && (
-            <div className={styles.deleteBody}>
-              <span>Excluir?</span>
-              <Button
-                className={styles.buttonCancelDelete}
-                onClick={() => setConfirmDelete(false)}
-              >
-                <XSVG size={16} />
-              </Button>
-              <Button
-                className={styles.buttonConfirmDelete}
-                onClick={handleDeleteSubmit}
-              >
-                <CheckSVG size={16} />
-              </Button>
-            </div>
-          )}
-          <div />
-          <Button type={ButtonHTMLType.Submit}>
-            {type === "create" ? "Criar" : "Editar"}
-          </Button>
-        </div>
-      </form>
-    </div>
+    <>
+      <div className={styles.main}>
+        <h3>{type === "create" ? "Criar Estande" : "Editar Estande"}</h3>
+        <form
+          onSubmit={type === "create" ? handleCreateSubmit : handleUpdateSubmit}
+        >
+          <label>Nome do estande</label>
+          <Input
+            type="text"
+            id="standName"
+            value={state.standName}
+            onChange={(e) =>
+              dispatch({ type: "SET_STAND_NAME", payload: e.target.value })
+            }
+          />
+          <label>Associação</label>
+          <AssociationSelect
+            value={state.associationUuid}
+            onChange={(e) =>
+              dispatch({
+                type: "SET_ASSOCIATION_UUID",
+                payload: e.target.value,
+              })
+            }
+          />
+          <div className={styles.footerButtons}>
+            {type === "update" && !confirmDelete && (
+              <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
+            )}
+            {confirmDelete && (
+              <div className={styles.deleteBody}>
+                <span>Excluir?</span>
+                <Button
+                  className={styles.buttonCancelDelete}
+                  onClick={() => setConfirmDelete(false)}
+                >
+                  <XSVG size={16} />
+                </Button>
+                <Button
+                  className={styles.buttonConfirmDelete}
+                  onClick={handleDeleteSubmit}
+                >
+                  <CheckSVG size={16} />
+                </Button>
+              </div>
+            )}
+            <div />
+            <Button type={ButtonHTMLType.Submit}>
+              {type === "create" ? "Criar" : "Editar"}
+            </Button>
+          </div>
+        </form>
+      </div>
+      <GlassBackground onClick={hide} />
+    </>
   );
 }
 

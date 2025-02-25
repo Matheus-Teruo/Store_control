@@ -68,43 +68,39 @@ function Menu() {
           />
         </div>
       </div>
-      <div className={styles.main}>
-        <ul
-          className={`${toggleView === "Items" ? styles.items : styles.list}`}
-        >
-          {products.map((product) => (
-            <li key={product.uuid}>
-              <div
-                className={`${styles.frame} ${product.stock === 0 && styles.frameEmpty}`}
+      <ul className={`${toggleView === "Items" ? styles.items : styles.list}`}>
+        {products.map((product) => (
+          <li key={product.uuid}>
+            <div
+              className={`${styles.frame} ${product.stock === 0 && styles.frameEmpty}`}
+            >
+              {product.productImg ? (
+                <img src={product.productImg} />
+              ) : (
+                <ImageSVG />
+              )}
+            </div>
+            <div className={styles.tag}>
+              <p
+                className={`${styles.name} ${product.stock === 0 && styles.empty}`}
               >
-                {product.productImg ? (
-                  <img src={product.productImg} />
-                ) : (
-                  <ImageSVG />
-                )}
-              </div>
-              <div className={styles.tag}>
-                <p
-                  className={`${styles.name} ${product.stock === 0 && styles.empty}`}
-                >
-                  {product.productName}
+                {product.productName}
+              </p>
+              <p className={styles.summary}>{product.summary}</p>
+              <div className={styles.priceing}>
+                <p className={`${product.stock === 0 && styles.empty}`}>
+                  R${(product.price - product.discount).toFixed(2)}
                 </p>
-                <p className={styles.summary}>{product.summary}</p>
-                <div className={styles.priceing}>
-                  <p className={`${product.stock === 0 && styles.empty}`}>
-                    R${(product.price - product.discount).toFixed(2)}
-                  </p>
-                  <p>
-                    {product.discount !== 0 && (
-                      <s>R${product.price.toFixed(2)}</s>
-                    )}
-                  </p>
-                </div>
+                <p>
+                  {product.discount !== 0 && (
+                    <s>R${product.price.toFixed(2)}</s>
+                  )}
+                </p>
               </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

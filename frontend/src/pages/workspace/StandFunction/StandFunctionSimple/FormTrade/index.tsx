@@ -18,6 +18,7 @@ import {
 import useTradeService from "@service/operations/useTradeService";
 import useProductService from "@service/stand/useProductService";
 import { useEffect, useState } from "react";
+import GlassBackground from "@/components/GlassBackground";
 
 type FormPurchaseProps = {
   reducer: [
@@ -207,10 +208,7 @@ function FormTrade({
               )}
             </form>
           </div>
-          <div
-            className={styles.popupBackground}
-            onClick={() => handleShow(false)}
-          />
+          <GlassBackground onClick={() => handleShow(false)} />
         </>
       )}
     </>
