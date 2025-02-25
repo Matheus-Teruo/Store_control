@@ -1,3 +1,4 @@
+import styles from "./PaymentSelect.module.scss";
 import { PaymentType } from "@data/operations/Recharge";
 
 type SelectPaymentProps = {
@@ -13,9 +14,9 @@ const PaymentRoleMetadata: Record<PaymentType, { label: string }> = {
 
 function PaymentSelect({ payment, onChange }: SelectPaymentProps) {
   return (
-    <ul>
+    <ul className={styles.radio}>
       {Object.entries(PaymentRoleMetadata).map(([key, { label }]) => (
-        <label key={key}>
+        <label key={key} className={`${key === payment && styles.selected}`}>
           <input
             type="radio"
             name="paymentOption"

@@ -1,0 +1,121 @@
+@use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
+
+.body {
+  background-color: $color-gray-000;
+  width: 100vw;
+  height: calc(100vh - $public-header-height);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .headerBackground {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    background-color: $color-secundary-3;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1280px;
+    width: 100%;
+    padding: 4px;
+    background-color: $color-secundary-2;
+    box-shadow: $color-shadow-1 0 2px 4px inset;
+
+    .resumeCart {
+      display: flex;
+      align-items: center;
+      width: 62%;
+      padding: 4px 6px;
+      justify-content: space-between;
+      background-color: $color-secundary-1;
+      border-radius: $border-radius;
+
+      button {
+        background-color: $color-secundary-2;
+      }
+
+      p {
+        padding: 2px 4px;
+        min-width: 25px;
+        text-align: end;
+        background-color: $color-gray-000;
+        border-radius: $border-radius;
+      }
+    }
+
+    button {
+      margin: 0 2px;
+      padding: 2px;
+      background-color: $color-secundary-1;
+
+      svg {
+        stroke: $color-font-2;
+      }
+    }
+
+    .lastPurchaseBackground {
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 50;
+      position: fixed;
+      background-color: #aaaaaa80;
+      backdrop-filter: blur(5px);
+    }
+  }
+
+  .main {
+    padding: 6px 0;
+    max-width: calc(1280px - 12px);
+    width: 100%;
+    box-sizing: border-box;
+
+    @media (max-width: $desktop_md) {
+      padding: 6px;
+    }
+
+    .itemOdd {
+      background-color: $color-primary-1;
+    }
+
+    .itemPair {
+      background-color: $color-tertiary-1;
+    }
+
+    li {
+      display: grid;
+      grid-template-columns: 1fr 1fr 3fr 1.5fr 2fr 1fr;
+      grid-auto-flow: row;
+      gap: 2px;
+
+      margin-bottom: 4px;
+      padding: 2px 4px;
+      border-radius: $border-radius;
+
+      p,
+      .productFrame,
+      .modifierProduct {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        color: $color-font-1;
+      }
+
+      button {
+        background-color: $color-primary-2;
+      }
+
+      .itemNull {
+        background-color: $color-gray-300;
+      }
+    }
+  }
+}

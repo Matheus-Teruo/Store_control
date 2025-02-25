@@ -22,7 +22,7 @@ function AdminHeader() {
               />
             </Link>
           </div>
-          <div>
+          <div className={styles.baseNavigate}>
             <ul className={styles.navigate}>
               <li>
                 <Link to="/admin/volunteers">

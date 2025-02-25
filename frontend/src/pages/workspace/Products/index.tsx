@@ -16,7 +16,7 @@ import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import Button from "@/components/utils/Button";
 import { formReducer, initialFormState } from "@reducer/formReducer";
 import StandSelect from "@/components/selects/StandSelect";
-import { EditSVG, FilterSVG, ImageSVG } from "@/assets/svg";
+import { EditSVG, FilterSVG, ImageSVG, PlusSVG } from "@/assets/svg";
 
 function Products() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
@@ -41,6 +41,10 @@ function Products() {
         );
         if (response) {
           setProducts(response.content);
+          pageDispatch({
+            type: "SET_PAGE_MAX",
+            payload: response.page.totalPages,
+          });
         }
       }
     },
@@ -81,25 +85,27 @@ function Products() {
             <div />
           )}
           <Button onClick={() => formDispach({ type: "SET_CREATE" })}>
-            <p>Criar Produto</p>
+            <PlusSVG size={16} />
+            <p>Produto</p>
           </Button>
         </div>
       </div>
       <ul className={styles.main}>
         <li key={"header"} className={styles.listHeader}>
           <p className={styles.productFrame}>Img</p>
-          <p className={styles.productName}>Nome do produto</p>
+          <p className={styles.productName}>Produto</p>
           <p className={styles.productsSummary}>Resumo</p>
           <p className={styles.productDescription}>Descrição</p>
           <p className={styles.productPrice}>Preço</p>
           <p className={styles.productDiscount}>Desconto</p>
           <p className={styles.productStock}>Estoque</p>
-          <p className={styles.editProduct}>Editar</p>
+          <p className={styles.productEdit}>Editar</p>
         </li>
-        {products.map((product) => (
+        {products.map((product, index) => (
           <li
             key={product.uuid}
-            className={`${product.stock === 0 && styles.itemNull}`}
+            className={`${styles.listProducts} ${index % 2 === 0 ? styles.itemPair : styles.itemOdd}
+            ${product.stock === 0 && styles.itemNull}`}
           >
             {product.productImg ? (
               <img className={styles.productImage} src={product.productImg} />
@@ -129,13 +135,13 @@ function Products() {
               R${product.discount.toFixed(2)}
             </p>
             <p
-              className={`${styles.productStock} ${product.stock === 0 && styles.propNull}`}
+              className={`${styles.productStock} ${product.stock === 0 && styles.stockNull}`}
             >
               {product.stock}
             </p>
             <div className={styles.productFrame}>
               <Button
-                className={styles.editProduct}
+                className={styles.productEdit}
                 onClick={() =>
                   formDispach({ type: "SET_UPDATE", payload: product.uuid })
                 }
@@ -146,7 +152,12 @@ function Products() {
           </li>
         ))}
       </ul>
-      <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
+      <PageSelect
+        className={styles.pageComponent}
+        value={page.number}
+        max={page.max}
+        dispatch={pageDispatch}
+      />
       {formState.show && (
         <>
           <FormProduct

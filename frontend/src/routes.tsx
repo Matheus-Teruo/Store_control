@@ -40,7 +40,7 @@ function AppRouter() {
         <Route path="/" element={<Home />} />
         <Route path="/" element={<PublicHeader />}>
           <Route path="/menu" element={<Menu />} />
-          <Route path="/order/:cardID" element={<Order />} />
+          <Route path="/card/:cardID" element={<Order />} />
         </Route>
         <Route path="/auth" element={<AuthPage />}>
           <Route path="signup" element={<Signup />} />

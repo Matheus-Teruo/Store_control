@@ -1,3 +1,4 @@
+import styles from "./StandFunctionSimple.module.scss";
 import PageSelect from "@/components/selects/PageSelect";
 import {
   isSeller,
@@ -17,11 +18,19 @@ import {
 } from "@reducer/operation/tradeReducer";
 import LastPurchaseList from "../LastPurchaseList";
 import FormTrade from "./FormTrade";
+import {
+  HistorySVG,
+  ImageSVG,
+  MinusSVG,
+  PlusSVG,
+  ShoppingCartSVG,
+} from "@/assets/svg";
 
 function StandFunctionSimple() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
   const [state, dispatch] = useReducer(tradeReducer, initialTradeState);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
+  const [showCart, setShowCart] = useState<boolean>(false);
   const [showLast, setShowLast] = useState<boolean>(false);
   const { getProducts } = useProductService();
   const { user } = useUserContext();
@@ -50,20 +59,36 @@ function StandFunctionSimple() {
   }, [user, page, navigate, getProducts]);
 
   return (
-    <div>
-      <div>
-        <Button onClick={() => setShowLast(true)}>Ultima Troca</Button>
-        {showLast && (
-          <>
-            <div />
-            <LastPurchaseList />
-          </>
-        )}
+    <div className={styles.body}>
+      <div className={styles.headerBackground}>
+        <div className={styles.header}>
+          <Button onClick={() => setShowLast(true)}>
+            <HistorySVG />
+          </Button>
+          <div className={styles.resumeCart} onClick={() => setShowCart(true)}>
+            <ShoppingCartSVG />
+            <p>{state.totalQuantity}</p>
+            <p>R${state.rechargeValue}</p>
+          </div>
+          {showLast && (
+            <>
+              <div
+                className={styles.lastPurchaseBackground}
+                onClick={() => setShowLast(false)}
+              />
+              <LastPurchaseList />
+            </>
+          )}
+        </div>
       </div>
-      <ul>
-        {products.map((product) => (
-          <li key={product.uuid}>
-            <div
+      <ul className={styles.main}>
+        {products.map((product, index) => (
+          <li
+            key={product.uuid}
+            className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
+          >
+            <Button
+              className={`${styles.modifierProduct} ${product.stock === 0 && styles.itemNull}`}
               onClick={() =>
                 dispatch({
                   type: "DECREASE_ITEM",
@@ -71,31 +96,35 @@ function StandFunctionSimple() {
                 })
               }
             >
-              -
+              <MinusSVG />
+            </Button>
+            <div className={styles.productFrame}>
+              {product.productImg ? (
+                <img src={product.productImg} />
+              ) : (
+                <ImageSVG />
+              )}
             </div>
-            <div>
-              {
-                product.productImg ? <img src={product.productImg} /> : <></>
-                // futuramente usar SVG padrão
-              }
-            </div>
-            <div>
-              <p>{product.productName}</p>
-              <p>R${(product.price - product.discount).toFixed(2)}</p>
-              <p>Estoque: {product.stock}</p>
-            </div>
-            <div
+            <p>{product.productName}</p>
+            <p>R${(product.price - product.discount).toFixed(2)}</p>
+            <p>Estoque: {product.stock}</p>
+            <Button
+              className={`${styles.modifierProduct} ${product.stock === 0 && styles.itemNull}`}
               onClick={() =>
                 dispatch({ type: "ADD_ITEM", payload: { ...product } })
               }
             >
-              +
-            </div>
+              <PlusSVG />
+            </Button>
           </li>
         ))}
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
-      <FormTrade reducer={[state, dispatch]} />
+      <FormTrade
+        reducer={[state, dispatch]}
+        showCart={showCart}
+        setShowCart={setShowCart}
+      />
     </div>
   );
 }

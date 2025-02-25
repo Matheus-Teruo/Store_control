@@ -42,6 +42,7 @@
       background-color: $color-secundary-1;
 
       p {
+        margin-left: 2px;
         font-weight: 600;
         color: $color-font-2;
       }
@@ -60,10 +61,52 @@
 
     .listHeader {
       background-color: $color-primary-2;
+
+      p {
+        font-size: 1rem;
+        font-weight: 500;
+
+        @media (max-width: $mobile) {
+          font-size: 0.875rem;
+        }
+      }
+    }
+
+    .itemOdd {
+      background-color: $color-primary-1;
+    }
+
+    .itemPair {
+      background-color: $color-tertiary-1;
     }
 
     .itemNull {
-      background-color: $color-gray-200;
+      p {
+        color: $color-gray-300;
+      }
+    }
+
+    .listProducts {
+      p {
+        font-size: 0.875rem;
+
+        @media (max-width: $mobile) {
+          font-size: 0.75rem;
+        }
+      }
+
+      .productEdit {
+        background-color: transparent;
+        box-shadow: none;
+      }
+
+      .propNull {
+        color: $color-gray-300;
+      }
+
+      .stockNull {
+        color: $color-primary-4;
+      }
     }
 
     li {
@@ -71,30 +114,9 @@
       grid-template-columns: 1fr 3fr 1fr 1fr 1fr 1fr 1fr 1fr;
       grid-auto-flow: row;
       gap: 2px;
-      background-color: $color-primary-1;
       margin-bottom: 4px;
       padding: 2px 4px;
       border-radius: $border-radius;
-
-      p,
-      .productFrame,
-      .editProduct {
-        display: flex;
-        align-items: center;
-        text-align: center;
-        justify-content: center;
-        font-size: 0.75rem;
-        color: $color-font-1;
-      }
-
-      .editProduct {
-        background-color: transparent;
-        box-shadow: none;
-      }
-
-      .propNull {
-        color: $color-primary-4;
-      }
 
       @media (max-width: $mobile) {
         grid-template-columns: 0.5fr 3fr 1fr 2fr 2fr 0.5fr;
@@ -129,17 +151,27 @@
         .productStock {
           grid-row: span 2;
         }
-        .editProduct {
+        .productEdit {
           grid-row: span 2;
           padding: 4px;
         }
+      }
+
+      p,
+      .productFrame,
+      .productEdit {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        color: $color-font-1;
       }
     }
   }
 
   .popupBackground {
-    x: 0;
-    y: 0;
+    left: 0;
+    top: 0;
     width: 100vw;
     height: 100vh;
     z-index: 50;

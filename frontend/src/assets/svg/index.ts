@@ -29,6 +29,7 @@ import QRcodeScanSVG from "./components/QRcodeScanSVG";
 import SearchSVG from "./components/SearchSVG";
 import ShoppingCartSVG from "./components/ShoppingCartSVG";
 import ToolSVG from "./components/ToolSVG";
+import TrashSVG from "./components/TrashSVG";
 import UploadSVG from "./components/UploadSVG";
 import UserCheckSVG from "./components/UserCheckSVG";
 import UserSVG from "./components/UserSVG";
@@ -68,6 +69,7 @@ export {
   SearchSVG,
   ShoppingCartSVG,
   ToolSVG,
+  TrashSVG,
   UploadSVG,
   UserCheckSVG,
   UserSVG,
