@@ -99,6 +99,7 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
               onChange={(e) =>
                 dispatch({ type: "SET_FUNCTION", payload: e.target.value })
               }
+              message={messageError["functionUuid"]}
             />
           </div>
           <Button type={ButtonHTMLType.Submit}>Editar</Button>
@@ -114,6 +115,7 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
                   payload: e.target.value as VoluntaryRole,
                 })
               }
+              message={messageError["voluntaryRole"]}
             />
           </div>
           <Button type={ButtonHTMLType.Submit}>Editar</Button>

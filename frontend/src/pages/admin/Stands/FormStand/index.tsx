@@ -124,6 +124,7 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
                 payload: e.target.value,
               })
             }
+            message={messageError["associationUuid"]}
           />
           <div className={styles.footerButtons}>
             {type === "update" && !confirmDelete && (
