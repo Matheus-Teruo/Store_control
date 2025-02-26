@@ -4,6 +4,7 @@ import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import { isAdmin, isSeller, isUserLogged } from "@/utils/checkAuthentication";
 import {
+  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
@@ -33,6 +34,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
   const [initial, setInitial] = useState<Product>();
   const [image, setImage] = useState<string>("");
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+  const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const { getProduct, createProduct, updateProduct, deleteProduct } =
     useProductService();
@@ -66,7 +68,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const product = await createProduct(createProductPayload(state));
-    if (product) {
+    if (product && !isMessage(product)) {
       addNotification({
         title: "Create Product Success",
         message: `Create product ${product.productName}, price: ${product.price}, stock: ${product.stock}`,
@@ -74,6 +76,9 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
       });
       dispatch({ type: "RESET" });
       hide();
+    } else if (isMessage(product)) {
+      const message = product;
+      if (message.invalidFields) setMessageError(message.invalidFields);
     }
   };
 
@@ -81,7 +86,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
     e.preventDefault();
     if (initial) {
       const product = await updateProduct(updateProductPayload(state, initial));
-      if (product) {
+      if (product && !isMessage(product)) {
         addNotification({
           title: "Update Product Success",
           message: `Update product ${product.productName}${product.description && ", description:"}${product.description}, price: ${product.price}, stock: ${product.stock}`,
@@ -89,6 +94,9 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
         });
         dispatch({ type: "RESET" });
         hide();
+      } else if (isMessage(product)) {
+        const message = product;
+        if (message.invalidFields) setMessageError(message.invalidFields);
       }
     }
   };
@@ -122,6 +130,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             onChange={(e) =>
               dispatch({ type: "SET_PRODUCT_NAME", payload: e.target.value })
             }
+            message={messageError["productName"]}
           />
           <label>Resumo</label>
           <Input
@@ -133,6 +142,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             onChange={(e) =>
               dispatch({ type: "SET_SUMMARY", payload: e.target.value })
             }
+            message={messageError["summary"]}
           />
           <label>Descrição</label>
           <textarea
@@ -155,6 +165,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
                 payload: parseFloat(e.target.value),
               })
             }
+            message={messageError["price"]}
           />
           {type === "update" && (
             <>
@@ -170,6 +181,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
                     payload: parseFloat(e.target.value),
                   })
                 }
+                message={messageError["descount"]}
               />
             </>
           )}
@@ -182,6 +194,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             onChange={(e) =>
               dispatch({ type: "SET_STOCK", payload: parseInt(e.target.value) })
             }
+            message={messageError["stock"]}
           />
           <div className={styles.imageUpload}>
             <label>Upload de Imagem</label>

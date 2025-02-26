@@ -27,7 +27,6 @@ import {
   UserSVG,
   UserXSVG,
 } from "@/assets/svg";
-import Voluntary from "@data/volunteers/Voluntary";
 
 function Signup() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
