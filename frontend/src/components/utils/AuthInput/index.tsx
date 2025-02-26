@@ -13,7 +13,7 @@ interface AuthInputProps {
   ComponentUntouched?: React.ComponentType;
   ComponentAccepted?: React.ComponentType;
   ComponentRejected?: React.ComponentType;
-  messages?: Array<string>;
+  message?: string;
 }
 
 function AuthInput({
@@ -27,7 +27,7 @@ function AuthInput({
   ComponentUntouched,
   ComponentAccepted,
   ComponentRejected,
-  messages = [],
+  message = "",
 }: AuthInputProps) {
   const [status, setStatus] = useState<InputStatus>(InputStatus.Untouched);
 
@@ -78,10 +78,11 @@ function AuthInput({
         name={id}
         required={isRequired}
       />
-      <ul>
+      {message && <span className={styles.messageError}>{message}</span>}
+      {/* <ul>
         {status === InputStatus.Rejected &&
           messages.map((message) => <li>{message}</li>)}
-      </ul>
+      </ul> */}
     </div>
   );
 }

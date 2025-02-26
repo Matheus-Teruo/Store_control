@@ -2,6 +2,7 @@ import styles from "./FormAssociation.module.scss";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import {
+  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
@@ -30,6 +31,7 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
     initialAssociationState,
   );
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+  const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const {
     getAssociation,
@@ -59,7 +61,7 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
     const association = await createAssociation(
       createAssociationPayload(state),
     );
-    if (association) {
+    if (association && !isMessage(association)) {
       addNotification({
         title: "Create Association Success",
         message: `Create associatione: ${association.associationName}, with president: ${association.principalName}`,
@@ -67,6 +69,9 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
       });
       dispatch({ type: "RESET" });
       hide();
+    } else if (isMessage(association)) {
+      const message = association;
+      if (message.invalidFields) setMessageError(message.invalidFields);
     }
   };
 
@@ -76,7 +81,7 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
       const association = await updateAssociation(
         updateAssociationPayload(state),
       );
-      if (association) {
+      if (association && !isMessage(association)) {
         addNotification({
           title: "Update Association Success",
           message: `Update association: ${association.associationName}, with president: ${association.principalName}`,
@@ -84,6 +89,9 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
         });
         dispatch({ type: "RESET" });
         hide();
+      } else if (isMessage(association)) {
+        const message = association;
+        if (message.invalidFields) setMessageError(message.invalidFields);
       }
     }
   };
@@ -120,6 +128,8 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
                 payload: e.target.value,
               })
             }
+            isRequired
+            message={messageError["associationName"]}
           />
           <label>{"Nome do(a) presente"}</label>
           <Input
@@ -129,6 +139,8 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
             onChange={(e) =>
               dispatch({ type: "SET_PRINCIPAL_NAME", payload: e.target.value })
             }
+            isRequired
+            message={messageError["principalName"]}
           />
           <div className={styles.footerButtons}>
             {type === "update" && !confirmDelete && (

@@ -44,13 +44,16 @@ function MessageAlert({ id, title, message, fields, type }: MessageAlertProps) {
       <div className={styles.body}>
         <p>{message}</p>
         {fields && (
-          <ul>
-            {Object.entries(fields).map(([field, message]) => (
-              <li key={field}>
-                <p>{message}</p>
-              </li>
-            ))}
-          </ul>
+          <>
+            <p>Espefíficações:</p>
+            <ul>
+              {Object.entries(fields).map(([field, message]) => (
+                <li key={field}>
+                  <p>{message}</p>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
       </div>
     </div>

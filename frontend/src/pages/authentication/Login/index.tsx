@@ -3,13 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import Input from "@/components/utils/AuthInput";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import useUserService from "@service/voluntary/useUserService";
 import {
+  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
+import User from "@data/volunteers/User";
 import {
   initialUserState,
   loginPayload,
@@ -26,6 +28,7 @@ import {
 
 function Login() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
+  const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const { login } = useUserContext();
   const { loginVoluntary } = useUserService();
@@ -34,7 +37,7 @@ function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const user = await loginVoluntary(loginPayload(state));
-    if (user) {
+    if (user && !isMessage<User>(user)) {
       addNotification({
         title: "Login Success",
         message: `User ${state.username} logged`,
@@ -43,6 +46,9 @@ function Login() {
       login(user);
       dispatch({ type: "RESET" });
       navigate("/workspace", { replace: true });
+    } else if (user) {
+      const message = user;
+      if (message.invalidFields) setMessageError(message.invalidFields);
     }
   };
 
@@ -62,6 +68,7 @@ function Login() {
             ComponentAccepted={UserCheckSVG}
             ComponentRejected={UserXSVG}
             isRequired
+            message={messageError["username"]}
           />
         </div>
         <div className={styles.field}>
@@ -77,6 +84,7 @@ function Login() {
             ComponentRejected={LockPadOpenSVG}
             isSecret
             isRequired
+            message={messageError["password"]}
           />
         </div>
         <div className={styles.button}>

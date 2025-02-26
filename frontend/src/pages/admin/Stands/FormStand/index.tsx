@@ -1,6 +1,7 @@
 import styles from "./FormStand.module.scss";
 import Button from "@/components/utils/Button";
 import {
+  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
@@ -27,6 +28,7 @@ type FormStandProps = {
 function FormStand({ type, hide, uuid }: FormStandProps) {
   const [state, dispatch] = useReducer(standReducer, initialStandState);
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+  const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const { getStand, createStand, updateStand, deleteStand } = useStandService();
 
@@ -48,7 +50,7 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const stand = await createStand(createStandPayload(state));
-    if (stand) {
+    if (stand && !isMessage(stand)) {
       addNotification({
         title: "Create Stand Success",
         message: `Create stand: ${stand.standName}, with president: ${stand.association.associationName}`,
@@ -56,6 +58,9 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
       });
       dispatch({ type: "RESET" });
       hide();
+    } else if (isMessage(stand)) {
+      const message = stand;
+      if (message.invalidFields) setMessageError(message.invalidFields);
     }
   };
 
@@ -63,7 +68,7 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
     e.preventDefault();
     if (uuid) {
       const stand = await updateStand(updateStandPayload(state));
-      if (stand) {
+      if (stand && !isMessage(stand)) {
         addNotification({
           title: "Update Stand Success",
           message: `Update stand: ${stand.standName}, with president: ${stand.association.associationName}`,
@@ -71,6 +76,9 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
         });
         dispatch({ type: "RESET" });
         hide();
+      } else if (isMessage(stand)) {
+        const message = stand;
+        if (message.invalidFields) setMessageError(message.invalidFields);
       }
     }
   };
@@ -104,6 +112,8 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
             onChange={(e) =>
               dispatch({ type: "SET_STAND_NAME", payload: e.target.value })
             }
+            isRequired
+            message={messageError["standName"]}
           />
           <label>Associação</label>
           <AssociationSelect

@@ -7,6 +7,7 @@ import Voluntary, { VoluntaryRole } from "@/data/volunteers/Voluntary";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { useNavigate } from "react-router-dom";
 import {
+  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
@@ -65,6 +66,7 @@ function User() {
   const [update, setUpdate] = useState<
     "username" | "fullname" | "password" | ""
   >("");
+  const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const { user, logout } = useUserContext();
   const { getVoluntary, updateVoluntary } = useVoluntaryService();
@@ -93,7 +95,7 @@ function User() {
       password: update === "password" ? state.password : undefined,
       fullname: update === "fullname" ? state.fullname : undefined,
     });
-    if (voluntary) {
+    if (voluntary && !isMessage<Voluntary>(voluntary)) {
       addNotification({
         title: "Update Success",
         message: `Update ${update}: ${update === "username" ? state.username : update === "password" ? "successful" : update === "fullname" ? state.fullname : ""}`,
@@ -102,6 +104,9 @@ function User() {
       dispatch({ type: "RESET" });
       setUpdate("");
       setUserProperties(voluntary);
+    } else if (voluntary) {
+      const message = voluntary;
+      if (message.invalidFields) setMessageError(message.invalidFields);
     }
   };
 
@@ -133,6 +138,7 @@ function User() {
               id="username"
               placeholder="Alterar Usuário"
               isRequired
+              message={messageError["username"]}
             />
             <Button
               className={styles.buttonCancel}
@@ -166,6 +172,7 @@ function User() {
               id="fullname"
               placeholder="Alterar Nome Completo"
               isRequired
+              message={messageError["fullname"]}
             />
             <Button
               className={styles.buttonCancel}
@@ -230,6 +237,7 @@ function User() {
                 placeholder="Nova Senha"
                 isSecret
                 isRequired
+                message={messageError["password"]}
               />
             </div>
             <div className={styles.valuePassword}>

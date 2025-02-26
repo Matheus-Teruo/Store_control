@@ -1,10 +1,11 @@
 import styles from "./Signup.module.scss";
 import Button from "@/components/utils/Button";
 import Input from "@/components/utils/AuthInput";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import useUserService from "@service/voluntary/useUserService";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import {
+  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
@@ -26,9 +27,11 @@ import {
   UserSVG,
   UserXSVG,
 } from "@/assets/svg";
+import Voluntary from "@data/volunteers/Voluntary";
 
 function Signup() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
+  const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const { login } = useUserContext();
   const { signupVoluntary } = useUserService();
@@ -38,7 +41,7 @@ function Signup() {
     e.preventDefault();
     if (state.password == state.confirmPassword) {
       const voluntary = await signupVoluntary(signupPayload(state));
-      if (voluntary) {
+      if (voluntary && !isMessage(voluntary)) {
         addNotification({
           title: "Signup Success",
           message: `Create user ${voluntary.username} and logged`,
@@ -52,6 +55,9 @@ function Signup() {
         });
         dispatch({ type: "RESET" });
         navigate("/workspace", { replace: true });
+      } else if (isMessage(voluntary)) {
+        const message = voluntary;
+        if (message.invalidFields) setMessageError(message.invalidFields);
       }
     } else {
       addNotification({
@@ -78,6 +84,7 @@ function Signup() {
             id="username"
             placeholder="Usuário"
             isRequired
+            message={messageError["username"]}
           />
         </div>
         <div className={styles.field}>
@@ -92,6 +99,7 @@ function Signup() {
             id="fullname"
             placeholder="Nome Completo"
             isRequired
+            message={messageError["fullname"]}
           />
         </div>
         <div className={styles.field}>
@@ -107,6 +115,7 @@ function Signup() {
             placeholder="Senha"
             isSecret
             isRequired
+            message={messageError["password"]}
           />
         </div>
         <div className={styles.field}>

@@ -1,16 +1,33 @@
 import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
+import { Message } from "@context/AlertsContext/useAlertsContext";
 import Stand, {
   CreateStand,
   SummaryStand,
   UpdateStand,
 } from "@data/stands/Stand";
 import { PaginatedResponse } from "@service/PagesType";
+import { AxiosError } from "axios";
 import { useCallback } from "react";
 
 const useStandService = () => {
   const api = useAxios();
   const handleApiError = useApiError();
+
+  const safeRequestWithFeedback = useCallback(
+    async <T>(fn: () => Promise<T>): Promise<T | Message | null> => {
+      try {
+        return await fn();
+      } catch (error) {
+        handleApiError(error);
+        if (error instanceof AxiosError) {
+          return error.response!.data as Message;
+        }
+        return null;
+      }
+    },
+    [handleApiError],
+  );
 
   const safeRequest = useCallback(
     async <T>(fn: () => Promise<T>): Promise<T | null> => {
@@ -25,11 +42,11 @@ const useStandService = () => {
   );
 
   const createStand = useCallback(
-    async (stand: CreateStand): Promise<Stand | null> =>
-      safeRequest(() =>
+    async (stand: CreateStand): Promise<Stand | Message | null> =>
+      safeRequestWithFeedback(() =>
         api.post<Stand>("stands", stand).then((res) => res.data),
       ),
-    [api, safeRequest],
+    [api, safeRequestWithFeedback],
   );
 
   const getStand = useCallback(
@@ -65,11 +82,11 @@ const useStandService = () => {
   );
 
   const updateStand = useCallback(
-    async (stand: UpdateStand): Promise<Stand | null> =>
-      safeRequest(() =>
+    async (stand: UpdateStand): Promise<Stand | Message | null> =>
+      safeRequestWithFeedback(() =>
         api.put<Stand>("stands", stand).then((res) => res.data),
       ),
-    [api, safeRequest],
+    [api, safeRequestWithFeedback],
   );
 
   const deleteStand = useCallback(

@@ -11,7 +11,7 @@ interface ProductInputProps {
   placeholder?: string;
   maxLength?: number;
   isRequired?: boolean;
-  messages?: Array<string>;
+  message?: string;
 }
 
 function ProductInput({
@@ -23,7 +23,7 @@ function ProductInput({
   placeholder = "",
   maxLength,
   isRequired = false,
-  messages = [],
+  message = "",
 }: ProductInputProps) {
   const [status, setStatus] = useState<InputStatus>(InputStatus.Untouched);
 
@@ -57,10 +57,11 @@ function ProductInput({
         required={isRequired}
         maxLength={maxLength}
       />
-      <ul>
+      {message && <span className={styles.messageError}>{message}</span>}
+      {/* <ul>
         {status === InputStatus.Rejected &&
           messages.map((message) => <li>{message}</li>)}
-      </ul>
+      </ul> */}
     </div>
   );
 }

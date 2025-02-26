@@ -6,9 +6,14 @@ import { useEffect, useState } from "react";
 interface FunctionSelectProps {
   value: string | undefined;
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  message?: string;
 }
 
-function FunctionSelect({ value, onChange }: FunctionSelectProps) {
+function FunctionSelect({
+  value,
+  onChange,
+  message = "",
+}: FunctionSelectProps) {
   const [listFunctions, setListFunctions] = useState<SummaryFunction[]>([]);
   const { getListFunctions } = useFunctionService();
 
@@ -24,19 +29,22 @@ function FunctionSelect({ value, onChange }: FunctionSelectProps) {
   }, [getListFunctions]);
 
   return (
-    <select
-      className={styles.select}
-      id="functions"
-      value={value}
-      onChange={onChange}
-    >
-      <option value={undefined}></option>
-      {listFunctions.map((voluntaryFunction) => (
-        <option key={voluntaryFunction.uuid} value={voluntaryFunction.uuid}>
-          {voluntaryFunction.functionName}
-        </option>
-      ))}
-    </select>
+    <div className={styles.base}>
+      <select
+        className={styles.select}
+        id="functions"
+        value={value}
+        onChange={onChange}
+      >
+        <option value={undefined}></option>
+        {listFunctions.map((voluntaryFunction) => (
+          <option key={voluntaryFunction.uuid} value={voluntaryFunction.uuid}>
+            {voluntaryFunction.functionName}
+          </option>
+        ))}
+      </select>
+      {message && <span className={styles.messageError}>{message}</span>}
+    </div>
   );
 }
 
