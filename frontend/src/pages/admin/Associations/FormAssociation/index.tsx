@@ -128,7 +128,6 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
                 payload: e.target.value,
               })
             }
-            isRequired
             message={messageError["associationName"]}
           />
           <label>{"Nome do(a) presente"}</label>
@@ -139,7 +138,6 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
             onChange={(e) =>
               dispatch({ type: "SET_PRINCIPAL_NAME", payload: e.target.value })
             }
-            isRequired
             message={messageError["principalName"]}
           />
           <div className={styles.footerButtons}>

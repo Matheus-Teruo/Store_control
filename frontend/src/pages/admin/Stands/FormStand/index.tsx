@@ -112,7 +112,6 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
             onChange={(e) =>
               dispatch({ type: "SET_STAND_NAME", payload: e.target.value })
             }
-            isRequired
             message={messageError["standName"]}
           />
           <label>Associação</label>
