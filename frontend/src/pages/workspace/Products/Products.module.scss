@@ -133,10 +133,15 @@
 
       .productImage {
         grid-row: span 2;
-        size: 16px;
+        width: 32px;
       }
       .productFrame {
         grid-row: span 2;
+        width: 32px;
+
+        .productIcon {
+          size: 16px;
+        }
       }
       .productName {
         grid-row: span 2;

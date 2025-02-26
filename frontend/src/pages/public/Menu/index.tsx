@@ -77,7 +77,7 @@ function Menu() {
               {product.productImg ? (
                 <img src={product.productImg} />
               ) : (
-                <ImageSVG />
+                <ImageSVG className={styles.imageFrame} />
               )}
             </div>
             <div className={styles.tag}>

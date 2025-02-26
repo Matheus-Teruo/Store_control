@@ -73,6 +73,11 @@
         height: 170px;
       }
 
+      .imageFrame {
+        width: 170px;
+        height: 170px;
+      }
+
       .tag {
         display: flex;
         padding: 2px;
@@ -125,6 +130,11 @@
       background-color: $color-gray-000;
 
       .frame {
+        height: 110px;
+      }
+
+      .imageFrame {
+        width: 110px;
         height: 110px;
       }
 
