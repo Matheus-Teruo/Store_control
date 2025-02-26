@@ -75,7 +75,7 @@ function Menu() {
               className={`${styles.frame} ${product.stock === 0 && styles.frameEmpty}`}
             >
               {product.productImg ? (
-                <img src={product.productImg} />
+                <img src={product.productImg} className={styles.imageFrame} />
               ) : (
                 <ImageSVG className={styles.imageFrame} />
               )}
