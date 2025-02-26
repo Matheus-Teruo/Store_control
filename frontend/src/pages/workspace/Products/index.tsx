@@ -113,7 +113,7 @@ function Products() {
               <div className={styles.productFrame}>
                 <ImageSVG
                   size={16}
-                  className={`${styles.productImage} ${styles.propNull}`}
+                  className={`${styles.productIcon} ${styles.propNull}`}
                 />
               </div>
             )}
