@@ -1,5 +1,9 @@
-import PageSelect from "@/components/PageSelect";
-import { isAdmin, isUserLogged } from "@/utils/checkAuthentication";
+import PageSelect from "@/components/selects/PageSelect";
+import {
+  isAdmin,
+  isUserLogged,
+  isUserUnlogged,
+} from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import OrderCard from "@data/customers/OrderCard";
 import { formReducer, initialFormState } from "@reducer/formReducer";
@@ -26,9 +30,9 @@ function Cards() {
   }, [getCards]);
 
   useEffect(() => {
-    if (isUserLogged(user)) {
+    if (isUserLogged(user) && isAdmin(user)) {
       fetchCards();
-    } else if (isAdmin(user)) {
+    } else if (isUserUnlogged(user)) {
       navigate("/");
     }
   }, [user, navigate, fetchCards]);

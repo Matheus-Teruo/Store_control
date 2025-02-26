@@ -1,5 +1,4 @@
-$body-bg-color: white;
-
+$color-gray-000: #fcfbfa;
 $color-gray-100: #f4f3f1;
 $color-gray-200: #dddbd8;
 $color-gray-300: #ccc9c6;
@@ -10,27 +9,30 @@ $color-gray-700: #4b4a47;
 $color-gray-800: #31302e;
 $color-gray-900: #1f1d1b;
 
-$color-primary-1: #fef8f3;
-$color-primary-2: #e3d2c3;
-$color-primary-3: #ffb9b3;
-$color-primary-4: #ff8a78;
-$color-secundary-1: #aac8f0;
-$color-secundary-2: #80a6d9;
-$color-secundary-3: #425670;
-$color-card: #fa6b54;
-$color-cardInv: #d19a94;
+$color-primary-1: #ffeeed;
+$color-primary-2: #ffafab;
+$color-primary-3: #ff7f78;
+$color-primary-4: #ff4e45;
+$color-primary-5: #994c48;
 
-$color-font-1: #045071;
-$color-font-2: #43140d;
-$color-font-2-5: #491f19A0;
-$color-font-3: #041c2c;
-$color-font-4: #384252;
+$color-secundary-1: #dcdcfc;
+$color-secundary-2: #babaff;
+$color-secundary-3: #8787ff;
+$color-secundary-4: #5454ff;
+$color-secundary-5: #505096;
 
-$color-shadow-1: #041c2c60;
-$color-shadow-2: #42241F60;
+$color-tertiary-1: #fdf2e2;
 
-$border-radius: 8px;
-$header-height: var(--height-header, 60px);
+$color-shadow-1: #9123ff51;
+$color-shadow-2: #9123ff19;
+
+$color-font-1: #331b1a;
+$color-font-2: #1a1a33;
+
+$border-radius: 6px;
+$public-header-height: 36px;
+$hub-header-height: 36px;
+$admin-header-height: 68px;
 
 $padding-horizontal-mobile: 10px;
 $padding-horizontal-sm: 50px;

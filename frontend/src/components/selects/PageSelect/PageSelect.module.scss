@@ -1,0 +1,14 @@
+@use "@styles/variables" as *;
+
+.body {
+  display: flex;
+  align-items: center;
+
+  input {
+    margin: 0 4px;
+    padding: 2px 4px;
+    box-sizing: border-box;
+    border-radius: $border-radius;
+    border: none;
+  }
+}

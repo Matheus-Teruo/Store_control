@@ -1,6 +1,8 @@
+import styles from "./FormVoluntary.module.scss";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import {
+  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
@@ -11,10 +13,11 @@ import {
   voluntaryReducer,
 } from "@reducer/voluntary/voluntaryReducer";
 import useVoluntaryService from "@service/voluntary/useVoluntaryService";
-import { useEffect, useReducer } from "react";
-import FunctionSelect from "../FunctionSelect";
-import RoleSelect from "../RoleSelect";
+import { useEffect, useReducer, useState } from "react";
+import FunctionSelect from "../../../../components/selects/FunctionSelect";
+import RoleSelect from "../../../../components/selects/RoleSelect";
 import { VoluntaryRole } from "@data/volunteers/Voluntary";
+import GlassBackground from "@/components/GlassBackground";
 
 type FormVoluntaryProps = {
   hide: () => void;
@@ -23,6 +26,7 @@ type FormVoluntaryProps = {
 
 function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
   const [state, dispatch] = useReducer(voluntaryReducer, initialVoluntaryState);
+  const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const { getVoluntary, updateVoluntaryFunction, updateVoluntaryRole } =
     useVoluntaryService();
@@ -47,7 +51,7 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
     const voluntary = await updateVoluntaryFunction(
       updateVoluntaryFunctionPayload(state),
     );
-    if (voluntary) {
+    if (voluntary && !isMessage(voluntary)) {
       addNotification({
         title: "Update Voluntary Function Success",
         message: `Update voluntary ${voluntary.fullname} to function: ${voluntary.summaryFunction}`,
@@ -55,6 +59,9 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
       });
       dispatch({ type: "RESET" });
       hide();
+    } else if (voluntary) {
+      const message = voluntary;
+      if (message.invalidFields) setMessageError(message.invalidFields);
     }
   };
 
@@ -64,7 +71,7 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
       const voluntary = await updateVoluntaryRole(
         updateVoluntaryRolePayload(state),
       );
-      if (voluntary) {
+      if (voluntary && !isMessage(voluntary)) {
         addNotification({
           title: "Update Voluntary Role Success",
           message: `Update voluntary ${voluntary.fullname} to role: ${voluntary.voluntaryRole}`,
@@ -72,38 +79,50 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
         });
         dispatch({ type: "RESET" });
         hide();
+      } else if (voluntary) {
+        const message = voluntary;
+        if (message.invalidFields) setMessageError(message.invalidFields);
       }
     }
   };
 
   return (
-    <div>
-      <label>Nome do Voluntario</label>
-      <p>{state.fullname}</p>
-      <form onSubmit={handleUpdateFunctionSubmit}>
-        <label>Função:</label>
-        <FunctionSelect
-          value={state.functionUuid}
-          onChange={(e) =>
-            dispatch({ type: "SET_FUNCTION", payload: e.target.value })
-          }
-        />
-        <Button type={ButtonHTMLType.Submit}>Editar</Button>
-      </form>
-      <form onSubmit={handleUpdateRoleSubmit}>
-        <label>Permissão:</label>
-        <RoleSelect
-          value={state.voluntaryRole}
-          onChange={(e) =>
-            dispatch({
-              type: "SET_ROLE",
-              payload: e.target.value as VoluntaryRole,
-            })
-          }
-        />
-        <Button type={ButtonHTMLType.Submit}>Editar</Button>
-      </form>
-    </div>
+    <>
+      <div className={styles.main}>
+        <label>Nome completo</label>
+        <p>{state.fullname}</p>
+        <form onSubmit={handleUpdateFunctionSubmit}>
+          <div className={styles.field}>
+            <label>Função</label>
+            <FunctionSelect
+              value={state.functionUuid}
+              onChange={(e) =>
+                dispatch({ type: "SET_FUNCTION", payload: e.target.value })
+              }
+              message={messageError["functionUuid"]}
+            />
+          </div>
+          <Button type={ButtonHTMLType.Submit}>Editar</Button>
+        </form>
+        <form onSubmit={handleUpdateRoleSubmit}>
+          <div className={styles.field}>
+            <label>Permissão</label>
+            <RoleSelect
+              value={state.voluntaryRole}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_ROLE",
+                  payload: e.target.value as VoluntaryRole,
+                })
+              }
+              message={messageError["voluntaryRole"]}
+            />
+          </div>
+          <Button type={ButtonHTMLType.Submit}>Editar</Button>
+        </form>
+      </div>
+      <GlassBackground onClick={hide} />
+    </>
   );
 }
 

@@ -1,8 +1,24 @@
+import {
+  AlertCircleSVG,
+  CheckCircleSVG,
+  InfoSVG,
+  XCircleSVG,
+  XSVG,
+} from "@/assets/svg";
 import styles from "./MessageAlert.module.scss";
 import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
+import Button from "@/components/utils/Button";
+import { ReactElement } from "react";
+
+const AlertSVG: Record<MessageType, { component: ReactElement }> = {
+  [MessageType.OK]: { component: <CheckCircleSVG size={20} /> },
+  [MessageType.INFO]: { component: <InfoSVG size={20} /> },
+  [MessageType.WARNING]: { component: <AlertCircleSVG size={20} /> },
+  [MessageType.ERROR]: { component: <XCircleSVG size={20} /> },
+};
 
 type MessageAlertProps = {
   id: number;
@@ -17,21 +33,27 @@ function MessageAlert({ id, title, message, fields, type }: MessageAlertProps) {
   return (
     <div className={`${styles.frame} ${styles[type]}`}>
       <div className={styles.header}>
-        <div className={styles.title}>{title}</div>
-        <div className={styles.close} onClick={() => removeNotification(id)}>
-          x
-        </div>
+        <h3 className={styles.title}>
+          {AlertSVG[type].component}
+          {title}
+        </h3>
+        <Button className={styles.close} onClick={() => removeNotification(id)}>
+          <XSVG />
+        </Button>
       </div>
       <div className={styles.body}>
         <p>{message}</p>
         {fields && (
-          <ul>
-            {Object.entries(fields).map(([field, message]) => (
-              <li key={field}>
-                <p>{message}</p>
-              </li>
-            ))}
-          </ul>
+          <>
+            <p>Espefíficações:</p>
+            <ul>
+              {Object.entries(fields).map(([field, message]) => (
+                <li key={field}>
+                  <p>{message}</p>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
       </div>
     </div>

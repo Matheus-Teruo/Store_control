@@ -1,14 +1,18 @@
+import styles from "./Hub.module.scss";
 import {
   isAdmin,
   isCashier,
-  isManegement,
+  isManeger,
   isSeller,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
+import Logo from "@/assets/image/LogoStoreControl.png";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { VoluntaryRole } from "@data/volunteers/Voluntary";
+import activeConfig from "@/config/activeConfig";
 
 function Hub() {
   const { user } = useUserContext();
@@ -21,45 +25,70 @@ function Hub() {
   }, [navigate, user]);
 
   return (
-    <div>
-      <div>header</div>
-      <ul>
-        {isUserLogged(user) &&
-          isCashier(user.summaryFunction, user.voluntaryRole) && (
-            <li>
-              <Link to="/workspace/cashiers">Caixas</Link>
-            </li>
-          )}
+    <div className={styles.background}>
+      <Link to="/" className={styles.linkLogo}>
+        <img
+          src={Logo}
+          alt="Logo: imagem circular com um rosto de raposa no meio"
+        />
+      </Link>
+      <h2>Função</h2>
+      <ul className={styles.home}>
         {isUserLogged(user) &&
           isSeller(user.summaryFunction, user.voluntaryRole) && (
-            <li>
-              <Link to="/workspace/sales">Vendas</Link>
+            <li className={styles.liSales}>
+              <Link className={styles.links} to="/workspace/sales">
+                Vendas
+              </Link>
             </li>
           )}
-        <li>
-          <Link to="/workspace/products">Produtos</Link>
-        </li>
-        <li>
-          <Link to="/workspace/transaction">Transação</Link>
-        </li>
-        {isManegement(user) && (
-          <>
-            <li>
-              <Link to="/admin/volunteers">Volunteers</Link>
+        {activeConfig.enableCard &&
+          isUserLogged(user) &&
+          isCashier(user.summaryFunction, user.voluntaryRole) && (
+            <li className={styles.liCashier}>
+              <Link className={styles.links} to="/workspace/cashier">
+                Caixa
+              </Link>
             </li>
-          </>
+          )}
+        <li className={styles.liProducts}>
+          <Link className={styles.links} to="/workspace/products">
+            Produtos
+          </Link>
+        </li>
+      </ul>
+      {isUserLogged(user) && user.voluntaryRole === VoluntaryRole.MANAGEMENT ? (
+        <h2>Gerente</h2>
+      ) : (
+        <h2>Administrador</h2>
+      )}
+      <ul className={styles.manager}>
+        {isManeger(user) && (
+          <li className={styles.liVolunteers}>
+            <Link className={styles.links} to="/admin/volunteers">
+              Voluntários
+            </Link>
+          </li>
         )}
         {isAdmin(user) && (
           <>
-            <li>
-              <Link to="/admin/associations">Associations</Link>
+            <li className={styles.liAssociations}>
+              <Link className={styles.links} to="/admin/associations">
+                Associações
+              </Link>
             </li>
-            <li>
-              <Link to="/admin/cards">Cards</Link>
+            <li className={styles.liStands}>
+              <Link className={styles.links} to="/admin/stands">
+                Estandes
+              </Link>
             </li>
-            <li>
-              <Link to="/admin/stands">Stands</Link>
-            </li>
+            {activeConfig.enableCard && (
+              <li className={styles.liCards}>
+                <Link className={styles.links} to="/admin/cards">
+                  Cartões
+                </Link>
+              </li>
+            )}
           </>
         )}
       </ul>

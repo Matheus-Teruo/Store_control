@@ -1,12 +1,15 @@
+import styles from "./LastPurchaseList.module.scss";
 import { SummaryPurchase } from "@data/operations/Purchase";
 import usePurchaseService from "@service/operations/usePurchaseService";
 import { useEffect, useReducer, useState } from "react";
 import ShowLastPurchase from "./ShowLastPurchase";
 import { formReducer, initialFormState } from "@reducer/formReducer";
+import GlassBackground from "@/components/GlassBackground";
 
-function LastPurchaseList() {
+function LastPurchaseList({ setShow }: { setShow: () => void }) {
   const [purchases, setPurchases] = useState<SummaryPurchase[]>([]);
   const [state, dispatch] = useReducer(formReducer, initialFormState);
+  const [deletable, setDeletable] = useState<boolean>(false);
   const { getLast3Purchases } = usePurchaseService();
 
   useEffect(() => {
@@ -18,23 +21,35 @@ function LastPurchaseList() {
   }, [getLast3Purchases]);
 
   return (
-    <div>
-      <h2>ultimas vendas</h2>
-      <ul>
-        {purchases.map((purchase) => (
-          <li
-            key={purchase.uuid}
-            onClick={() =>
-              dispatch({ type: "SET_UPDATE", payload: purchase.uuid })
-            }
-          >
-            <p>{purchase.totalItems}</p>
-            <p>{purchase.totalPurchaseCost - purchase.totalPurchaseDiscount}</p>
+    <>
+      <div className={styles.body}>
+        <h3>Últimas vendas</h3>
+        <ul className={styles.mainList}>
+          <li key={"Header"} className={styles.header}>
+            <p>Quantidade</p>
+            <p>Total</p>
           </li>
-        ))}
-      </ul>
-      {state.show && <ShowLastPurchase uuid={state.uuid} />}
-    </div>
+          {purchases.map((purchase, index) => (
+            <li
+              key={purchase.uuid}
+              onClick={() => {
+                setDeletable(index === 0);
+                dispatch({ type: "SET_UPDATE", payload: purchase.uuid });
+              }}
+            >
+              <p>{purchase.totalItems}</p>
+              <p>
+                R${purchase.totalPurchaseCost - purchase.totalPurchaseDiscount}
+              </p>
+            </li>
+          ))}
+        </ul>
+        {state.show && (
+          <ShowLastPurchase uuid={state.uuid} deletable={deletable} />
+        )}
+      </div>
+      <GlassBackground onClick={setShow} />
+    </>
   );
 }
 

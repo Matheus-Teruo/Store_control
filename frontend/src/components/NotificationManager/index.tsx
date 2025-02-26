@@ -11,6 +11,7 @@ function NotificationManager() {
         <MessageAlert
           key={notification.id}
           id={notification.id}
+          fields={notification.message.invalidFields}
           {...notification.message}
         />
       ))}

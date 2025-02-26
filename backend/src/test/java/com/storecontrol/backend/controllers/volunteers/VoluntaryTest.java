@@ -81,7 +81,7 @@ class VoluntaryTest extends BaseTest {
     Voluntary mockVoluntary = createVoluntaryEntity(UUID.randomUUID());
     RequestUpdateVoluntary updateRequest = createRequestUpdateVoluntary(mockVoluntary.getUuid());
 
-    mockVoluntary.updateVoluntary(updateRequest);
+    mockVoluntary.updateVoluntary(updateRequest, updateRequest.password());
     ResponseVoluntary expectedResponse = new ResponseVoluntary(mockVoluntary);
 
     when(service.updateVoluntary(updateRequest, mockVoluntary.getUuid())).thenReturn(mockVoluntary);

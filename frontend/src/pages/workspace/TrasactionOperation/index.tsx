@@ -1,5 +1,6 @@
 import {
   isCashier,
+  isManeger,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
@@ -19,7 +20,8 @@ function Transaction() {
     const fetchVoluntary = async () => {
       if (
         isUserLogged(user) &&
-        isCashier(user.summaryFunction, user.voluntaryRole)
+        isCashier(user.summaryFunction, user.voluntaryRole) &&
+        isManeger(user)
       ) {
         const response = await getListRegisters();
         if (response) {
@@ -27,7 +29,8 @@ function Transaction() {
         }
       } else if (
         isUserUnlogged(user) ||
-        (user && !isCashier(user.summaryFunction, user.voluntaryRole))
+        (user && !isCashier(user.summaryFunction, user.voluntaryRole)) ||
+        isManeger(user)
       ) {
         navigate("/");
       }
@@ -35,7 +38,15 @@ function Transaction() {
     fetchVoluntary();
   }, [user, navigate, getListRegisters]);
 
-  return <div>Transaction</div>;
+  return (
+    <div>
+      <ul>
+        {registers.map((register) => (
+          <li key={register.uuid}>{register.cashRegister}</li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export default Transaction;

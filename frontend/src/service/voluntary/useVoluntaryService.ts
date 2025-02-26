@@ -6,12 +6,29 @@ import Voluntary, {
   UpdateVoluntaryFunction,
   UpdateVoluntaryRole,
 } from "@/data/volunteers/Voluntary";
+import { Message } from "@context/AlertsContext/useAlertsContext";
 import { PaginatedResponse } from "@service/PagesType";
+import { AxiosError } from "axios";
 import { useCallback } from "react";
 
 const useVoluntaryService = () => {
   const api = useAxios();
   const handleApiError = useApiError();
+
+  const safeRequestWithFeedback = useCallback(
+    async <T>(fn: () => Promise<T>): Promise<T | Message | null> => {
+      try {
+        return await fn();
+      } catch (error) {
+        handleApiError(error);
+        if (error instanceof AxiosError) {
+          return error.response!.data as Message;
+        }
+        return null;
+      }
+    },
+    [handleApiError],
+  );
 
   const safeRequest = useCallback(
     async <T>(fn: () => Promise<T>): Promise<T | null> => {
@@ -52,31 +69,35 @@ const useVoluntaryService = () => {
   );
 
   const updateVoluntary = useCallback(
-    async (voluntary: UpdateVoluntary): Promise<Voluntary | null> =>
-      safeRequest(() =>
+    async (voluntary: UpdateVoluntary): Promise<Voluntary | Message | null> =>
+      safeRequestWithFeedback(() =>
         api.put<Voluntary>("/volunteers", voluntary).then((res) => res.data),
       ),
-    [api, safeRequest],
+    [api, safeRequestWithFeedback],
   );
 
   const updateVoluntaryFunction = useCallback(
-    async (voluntary: UpdateVoluntaryFunction): Promise<Voluntary | null> =>
-      safeRequest(() =>
+    async (
+      voluntary: UpdateVoluntaryFunction,
+    ): Promise<Voluntary | Message | null> =>
+      safeRequestWithFeedback(() =>
         api
           .put<Voluntary>("/volunteers/function", voluntary)
           .then((res) => res.data),
       ),
-    [api, safeRequest],
+    [api, safeRequestWithFeedback],
   );
 
   const updateVoluntaryRole = useCallback(
-    async (voluntary: UpdateVoluntaryRole): Promise<Voluntary | null> =>
-      safeRequest(() =>
+    async (
+      voluntary: UpdateVoluntaryRole,
+    ): Promise<Voluntary | Message | null> =>
+      safeRequestWithFeedback(() =>
         api
           .put<Voluntary>("/volunteers/role", voluntary)
           .then((res) => res.data),
       ),
-    [api, safeRequest],
+    [api, safeRequestWithFeedback],
   );
 
   return {

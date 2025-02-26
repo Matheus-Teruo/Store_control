@@ -20,6 +20,7 @@ export interface SummaryProduct {
   uuid: string;
   productName: string;
   summary: string;
+  description?: boolean;
   price: number;
   discount: number;
   stock: number;

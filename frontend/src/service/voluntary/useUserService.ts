@@ -1,7 +1,9 @@
 import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
+import { Message } from "@context/AlertsContext/useAlertsContext";
 import User, { LoginVoluntary, SignupVoluntary } from "@data/volunteers/User";
 import Voluntary from "@data/volunteers/Voluntary";
+import { AxiosError } from "axios";
 import { useCallback } from "react";
 
 const useUserService = () => {
@@ -9,11 +11,14 @@ const useUserService = () => {
   const handleApiError = useApiError();
 
   const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | null> => {
+    async <T>(fn: () => Promise<T>): Promise<T | Message | null> => {
       try {
         return await fn();
       } catch (error) {
         handleApiError(error);
+        if (error instanceof AxiosError) {
+          return error.response!.data as Message;
+        }
         return null;
       }
     },
@@ -21,7 +26,7 @@ const useUserService = () => {
   );
 
   const signupVoluntary = useCallback(
-    async (user: SignupVoluntary): Promise<Voluntary | null> =>
+    async (user: SignupVoluntary): Promise<Voluntary | Message | null> =>
       safeRequest(() =>
         api.post<Voluntary>("user/signup", user).then((res) => res.data),
       ),
@@ -29,7 +34,7 @@ const useUserService = () => {
   );
 
   const loginVoluntary = useCallback(
-    async (user: LoginVoluntary): Promise<User | null> =>
+    async (user: LoginVoluntary): Promise<User | Message | null> =>
       safeRequest(() =>
         api.post<User>("user/login", user).then((res) => res.data),
       ),

@@ -1,0 +1,49 @@
+@use "@styles/variables" as *;
+
+.main {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  max-width: 1200px;
+  z-index: 100;
+  position: fixed;
+  background-color: $color-gray-100;
+  padding: 10px;
+  border-radius: $border-radius;
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-size: 0.75rem;
+    padding: 0 6px;
+    margin-bottom: -4px;
+    z-index: 155;
+  }
+
+  p {
+    height: 32px;
+    padding: 0 6px;
+    border-radius: $border-radius;
+    background-color: $color-gray-000;
+    align-content: center;
+  }
+
+  form {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    .field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    button {
+      margin-bottom: 4px;
+      padding: 4px 10px;
+      background-color: $color-secundary-1;
+    }
+  }
+}

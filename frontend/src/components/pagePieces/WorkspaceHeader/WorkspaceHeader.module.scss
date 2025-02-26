@@ -1,0 +1,36 @@
+@use "@styles/variables" as *;
+
+.background {
+  width: 100vw;
+  height: $hub-header-height;
+  justify-items: center;
+  background-color: $color-secundary-3;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1024px;
+    height: 100%;
+
+    .linkLogo {
+      display: flex;
+      align-items: center;
+      margin: 2px 6px;
+
+      img {
+        width: 32px;
+      }
+    }
+
+    h3 {
+      color: $color-font-2;
+    }
+
+    .spaceHolder {
+      width: 32px;
+      margin: 6px;
+    }
+  }
+}

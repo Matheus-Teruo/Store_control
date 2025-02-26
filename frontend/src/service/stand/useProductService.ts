@@ -1,6 +1,7 @@
 import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
 import { resizeImage } from "@/utils/cropImage";
+import { Message } from "@context/AlertsContext/useAlertsContext";
 import Product, {
   CreateProduct,
   ResponseImage,
@@ -8,11 +9,27 @@ import Product, {
   UpdateProduct,
 } from "@data/stands/Product";
 import { PaginatedResponse } from "@service/PagesType";
+import { AxiosError } from "axios";
 import { useCallback } from "react";
 
 const useProductService = () => {
   const api = useAxios();
   const handleApiError = useApiError();
+
+  const safeRequestWithFeedback = useCallback(
+    async <T>(fn: () => Promise<T>): Promise<T | Message | null> => {
+      try {
+        return await fn();
+      } catch (error) {
+        handleApiError(error);
+        if (error instanceof AxiosError) {
+          return error.response!.data as Message;
+        }
+        return null;
+      }
+    },
+    [handleApiError],
+  );
 
   const safeRequest = useCallback(
     async <T>(fn: () => Promise<T>): Promise<T | null> => {
@@ -27,11 +44,11 @@ const useProductService = () => {
   );
 
   const createProduct = useCallback(
-    async (product: CreateProduct): Promise<Product | null> =>
-      safeRequest(() =>
+    async (product: CreateProduct): Promise<Product | Message | null> =>
+      safeRequestWithFeedback(() =>
         api.post<Product>("products", product).then((res) => res.data),
       ),
-    [api, safeRequest],
+    [api, safeRequestWithFeedback],
   );
 
   const getProduct = useCallback(
@@ -69,18 +86,20 @@ const useProductService = () => {
   );
 
   const updateProduct = useCallback(
-    async (product: UpdateProduct): Promise<Product | null> =>
-      safeRequest(() =>
+    async (product: UpdateProduct): Promise<Product | Message | null> =>
+      safeRequestWithFeedback(() =>
         api.put<Product>("products", product).then((res) => res.data),
       ),
-    [api, safeRequest],
+    [api, safeRequestWithFeedback],
   );
 
   const deleteProduct = useCallback(
     async (productUuid: string): Promise<void> => {
-      await safeRequest(() => api.delete<void>(`products/${productUuid}`));
+      await safeRequestWithFeedback(() =>
+        api.delete<void>(`products/${productUuid}`),
+      );
     },
-    [api, safeRequest],
+    [api, safeRequestWithFeedback],
   );
 
   const uploadImage = useCallback(

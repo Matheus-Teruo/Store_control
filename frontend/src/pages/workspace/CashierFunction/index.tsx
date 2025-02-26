@@ -1,4 +1,4 @@
-import PaymentSelect from "@/components/PaymentSelect";
+import PaymentSelect from "@/components/selects/PaymentSelect";
 import {
   hasFunction,
   isCashier,
@@ -22,7 +22,7 @@ import { useNavigate } from "react-router-dom";
 import OrderCard from "./OrderCard";
 import { PaymentType } from "@data/operations/Recharge";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
-import PageSelect from "@/components/PageSelect";
+import PageSelect from "@/components/selects/PageSelect";
 
 function Cashier() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);

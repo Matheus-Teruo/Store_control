@@ -15,7 +15,7 @@ export function useApiError() {
           addNotification({
             title: error.response?.data.error || "Error",
             message: error.response?.data.message || "Something went wrong",
-            fields: error.response?.data.invalidFields,
+            invalidFields: error.response?.data.invalidFields,
             type: MessageType.WARNING,
           });
         } else {

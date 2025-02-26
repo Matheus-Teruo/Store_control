@@ -1,9 +1,14 @@
 .cropCamva {
   position: relative;
-  width: 85vw;
-  height: 75vh;
+  width: 100%;
+  height: 100%;
+  margin: 8px 8px 0;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: var(--color-gray-600);
+}
+
+.cropButton {
+  margin: 8px 0;
 }

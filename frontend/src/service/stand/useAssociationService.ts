@@ -1,16 +1,33 @@
 import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
+import { Message } from "@context/AlertsContext/useAlertsContext";
 import Association, {
   CreateAssociation,
   SummaryAssociation,
   UpdateAssociation,
 } from "@data/stands/Association";
 import { PaginatedResponse } from "@service/PagesType";
+import { AxiosError } from "axios";
 import { useCallback } from "react";
 
 const useAssociationService = () => {
   const api = useAxios();
   const handleApiError = useApiError();
+
+  const safeRequestWithFeedback = useCallback(
+    async <T>(fn: () => Promise<T>): Promise<T | Message | null> => {
+      try {
+        return await fn();
+      } catch (error) {
+        handleApiError(error);
+        if (error instanceof AxiosError) {
+          return error.response!.data as Message;
+        }
+        return null;
+      }
+    },
+    [handleApiError],
+  );
 
   const safeRequest = useCallback(
     async <T>(fn: () => Promise<T>): Promise<T | null> => {
@@ -25,13 +42,15 @@ const useAssociationService = () => {
   );
 
   const createAssociation = useCallback(
-    async (association: CreateAssociation): Promise<Association | null> =>
-      safeRequest(() =>
+    async (
+      association: CreateAssociation,
+    ): Promise<Association | Message | null> =>
+      safeRequestWithFeedback(() =>
         api
           .post<Association>("associations", association)
           .then((res) => res.data),
       ),
-    [api, safeRequest],
+    [api, safeRequestWithFeedback],
   );
 
   const getAssociation = useCallback(
@@ -71,13 +90,15 @@ const useAssociationService = () => {
   );
 
   const updateAssociation = useCallback(
-    async (association: UpdateAssociation): Promise<Association | null> =>
-      safeRequest(() =>
+    async (
+      association: UpdateAssociation,
+    ): Promise<Association | Message | null> =>
+      safeRequestWithFeedback(() =>
         api
           .put<Association>("associations", association)
           .then((res) => res.data),
       ),
-    [api, safeRequest],
+    [api, safeRequestWithFeedback],
   );
 
   const deleteAssociation = useCallback(

@@ -2,83 +2,159 @@
 @use "@styles/breakpoint" as *;
 
 .background {
-  background-color: $color-secundary-1;
+  background-color: $color-primary-1;
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - $public-header-height);
   display: flex;
   flex-direction: column;
   justify-items: center;
 
   .headerBackground {
     width: 100vw;
-    background-color: $color-secundary-2;
     justify-items: center;
+    background-color: $color-secundary-1;
 
     .header {
       width: 100%;
       max-width: 1024px;
-      padding: 4px 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
     }
   }
 
-  .main {
-    width: 100vw;
-    height: 100%;
-    margin: 5px 0;
+  .frame {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: $color-secundary-1;
+  }
 
-    .setting {
-      display: flex;
-      justify-content: flex-end;
-      margin: 10px 20px;
+  .frameEmpty {
+    background-color: $color-gray-300;
+    opacity: 75%;
+  }
+
+  .empty {
+    text-decoration: line-through;
+  }
+
+  p {
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .items {
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: scroll;
+    padding: 0 $padding-horizontal;
+    width: 100%;
+    box-sizing: border-box;
+
+    @media (max-width: $desktop_xsm) {
+      padding: 0 $padding-horizontal-mobile;
+      justify-content: space-between;
     }
-
-    ul {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 0 $padding-horizontal;
-
-      @media (max-width: $desktop_xsm) {
-        padding: 0 $padding-horizontal-mobile;
-        justify-content: space-between;
-      }
-      @media (min-width: $desktop_xsm) and (max-width: $desktop_sm) {
-        padding: 0 $padding-horizontal-sm;
-      }
-      @media (min-width: $desktop_sm) and (max-width: $desktop_md) {
-        padding: 0 $padding-horizontal-md;
-      }
+    @media (min-width: $desktop_xsm) and (max-width: $desktop_sm) {
+      padding: 0 $padding-horizontal-sm;
+    }
+    @media (min-width: $desktop_sm) and (max-width: $desktop_md) {
+      padding: 0 $padding-horizontal-md;
     }
 
     li {
-      background-color: $color-primary-2;
       margin: 10px;
-      height: 190px;
-      width: 150px;
+      height: 195px;
+      width: 170px;
       display: flex;
       flex-direction: column;
-      // align-items: center;
+      background-color: $color-gray-000;
 
       .frame {
-        height: 150px;
-        width: 150px;
-        align-items: center;
-        background-color: $color-gray-400;
+        height: 170px;
       }
 
       .tag {
+        display: flex;
         padding: 2px;
-
-        .priceing {
-          display: flex;
-          justify-content: space-between;
-        }
 
         p {
           padding: 1px 2px;
+        }
+
+        .name {
+          flex: 1;
+          text-align: center;
+        }
+
+        .summary {
+          display: none;
+        }
+
+        .priceing {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+
+          s {
+            bottom: 15px;
+            right: 5px;
+            font-size: 0.5rem;
+            position: absolute;
+          }
+        }
+      }
+    }
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: scroll;
+    padding: 0 $padding-horizontal-mobile;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1280px;
+
+    li {
+      margin: 10px;
+      height: 110px;
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      background-color: $color-gray-000;
+
+      .frame {
+        height: 110px;
+      }
+
+      .tag {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 0 3px;
+
+        .name {
+          font-size: 1rem;
+          text-align: center;
+          padding: 2px 4px;
+        }
+
+        .summary {
+          flex: 1;
+          font-weight: 400;
+          padding: 0 4px;
+        }
+
+        .priceing {
+          display: flex;
+          flex-direction: row-reverse;
+          justify-content: flex-start;
+
+          p {
+            font-size: 0.875rem;
+            padding: 4px;
+          }
         }
       }
     }
