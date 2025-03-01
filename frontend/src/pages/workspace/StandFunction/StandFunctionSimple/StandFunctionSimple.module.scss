@@ -99,6 +99,11 @@
         color: $color-font-1;
       }
 
+      .productImage {
+        max-width: 24px;
+        max-height: 24px;
+      }
+
       button {
         background-color: $color-primary-2;
       }

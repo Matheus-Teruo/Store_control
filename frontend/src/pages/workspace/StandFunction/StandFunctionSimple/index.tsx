@@ -91,7 +91,7 @@ function StandFunctionSimple() {
             </Button>
             <div className={styles.productFrame}>
               {product.productImg ? (
-                <img src={product.productImg} />
+                <img src={product.productImg} className={styles.productImage} />
               ) : (
                 <ImageSVG />
               )}
