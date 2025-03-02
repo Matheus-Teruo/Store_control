@@ -31,8 +31,8 @@ function UserProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     if (user) {
-      await logoutVoluntary();
       setUser("unlogged");
+      await logoutVoluntary();
     }
   };
 

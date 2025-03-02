@@ -30,7 +30,6 @@ import {
   XSVG,
 } from "@/assets/svg";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
-import useUserService from "@service/voluntary/useUserService";
 
 const voluntaryInitialValue: Voluntary = {
   uuid: "",
@@ -70,7 +69,6 @@ function User() {
   const { addNotification } = useAlertsContext();
   const { user, logout } = useUserContext();
   const { getVoluntary, updateVoluntary } = useVoluntaryService();
-  const { logoutVoluntary } = useUserService();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -111,7 +109,6 @@ function User() {
   };
 
   const handleLogout = async () => {
-    await logoutVoluntary();
     logout();
     navigate("/");
   };
