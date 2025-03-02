@@ -7,6 +7,6 @@ ADD COLUMN association_key VARCHAR(255) UNIQUE NOT NULL;
 
 -- Add relation on volunteers to associations
 ALTER TABLE volunteers
-ADD COLUMN related_association_uuid BINARY(16) NOT NULL,
+ADD COLUMN related_association_uuid BINARY(16),
 ADD CONSTRAINT fk_volunteers_association_uuid
 FOREIGN KEY (related_association_uuid) REFERENCES associations (uuid),

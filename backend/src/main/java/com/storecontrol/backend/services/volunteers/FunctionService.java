@@ -2,7 +2,6 @@ package com.storecontrol.backend.services.volunteers;
 
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
-import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.volunteers.Function;
 import com.storecontrol.backend.repositories.volunteers.FunctionRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,19 +1,16 @@
 package com.storecontrol.backend.models.registers;
 
-import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
-import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Refund;
 import com.storecontrol.backend.models.operations.Transaction;
-import com.storecontrol.backend.models.stands.Association;
-import com.storecontrol.backend.models.stands.Product;
+import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
+import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
 import com.storecontrol.backend.models.volunteers.Function;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

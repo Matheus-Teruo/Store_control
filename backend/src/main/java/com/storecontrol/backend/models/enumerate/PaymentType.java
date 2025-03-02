@@ -5,7 +5,7 @@ public enum PaymentType {
     DEBIT("debit"),
     CASH("cash");
 
-    private String paymentTypeLower;
+    private final String paymentTypeLower;
 
     PaymentType(String paymentTypeLower) {
         this.paymentTypeLower = paymentTypeLower;
