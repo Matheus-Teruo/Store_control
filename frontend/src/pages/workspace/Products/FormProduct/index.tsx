@@ -207,8 +207,8 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
           </div>
           {isUserLogged(user) && isAdmin(user) && (
             <div className={styles.adminSection}>
-              <p>Seleção de administrador</p>
-              <label>Escolha</label>
+              <p>Modo administrador</p>
+              <label>Selecione o estande para o produto</label>
               <StandSelect
                 value={state.standUuid}
                 onChange={(value) =>
