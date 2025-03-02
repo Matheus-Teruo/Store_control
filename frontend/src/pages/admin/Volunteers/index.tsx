@@ -21,6 +21,8 @@ import { useNavigate } from "react-router-dom";
 import FormVoluntary from "./FormVoluntary";
 import { AwardSVG, CircleSVG, EditSVG, ToolSVG } from "@/assets/svg";
 import Button from "@/components/utils/Button";
+import { SummaryAssociation } from "@data/stands/Association";
+import useAssociationService from "@service/stand/useAssociationService";
 
 const VoluntaryRoleMetadata: Record<
   VoluntaryRole,
@@ -42,9 +44,13 @@ const VoluntaryRoleMetadata: Record<
 
 function Volunteers() {
   const [volunteers, setVolunteers] = useState<SummaryVoluntary[]>([]);
+  const [AssociationsRecord, setAssociationsRecord] = useState<
+    Record<string, Omit<SummaryAssociation, "uuid">>
+  >({});
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [formState, formDispach] = useReducer(formReducer, initialFormState);
-  const [associationUuid, setAssociationUuid] = useState<string | undefined>();
+  const [association, setAssociation] = useState<string | undefined>();
+  const { getListAssociations } = useAssociationService();
   const { getVolunteers } = useVoluntaryService();
   const { user } = useUserContext();
   const navigate = useNavigate();
@@ -68,6 +74,25 @@ function Volunteers() {
     }
   }, [user, navigate, fetchVolunteers]);
 
+  useEffect(() => {
+    const fetchAssociations = async () => {
+      const associations = await getListAssociations();
+      if (associations) {
+        const productsObject = associations.reduce(
+          (acc, product) => {
+            const { uuid, ...rest } = product;
+            acc[uuid] = rest;
+            return acc;
+          },
+          {} as Record<string, Omit<SummaryAssociation, "uuid">>,
+        );
+        setAssociationsRecord(productsObject);
+      }
+    };
+
+    fetchAssociations();
+  }, [getListAssociations]);
+
   const handleFormShow = () => {
     formDispach({ type: "SET_FALSE" });
     fetchVolunteers();
@@ -78,47 +103,56 @@ function Volunteers() {
       <li key={"header"} className={styles.listHeader}>
         <p>Nome completo</p>
         <p>Função</p>
-        <p className={styles.propAligned}>Permissão</p>
+        <p>Associação</p>
         <p className={styles.propAligned}>Editar</p>
       </li>
       <ul className={styles.main}>
-        {volunteers.map((voluntary, index) => (
-          <li
-            key={voluntary.uuid}
-            className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
-          >
-            <p>{voluntary.fullname}</p>
-            <p
-              className={`${!voluntary.summaryFunction && styles.nullFunction}`}
+        {volunteers.map((voluntary, index) => {
+          const association = AssociationsRecord[voluntary.associationUuid];
+          return (
+            <li
+              key={voluntary.uuid}
+              className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
             >
-              {voluntary.summaryFunction
-                ? voluntary.summaryFunction.functionName
-                : "não definida"}
-            </p>
-            <p
-              className={styles.propAligned}
-              title={`${VoluntaryRoleMetadata[voluntary.voluntaryRole].label}`}
-            >
-              {VoluntaryRoleMetadata[voluntary.voluntaryRole].icon}
-            </p>
-            <Button
-              className={styles.voluntaryEdit}
-              onClick={() => {
-                setAssociationUuid(voluntary.associationUuid);
-                formDispach({ type: "SET_UPDATE", payload: voluntary.uuid });
-              }}
-            >
-              <EditSVG size={16} />
-            </Button>
-          </li>
-        ))}
+              <p>
+                <span
+                  title={`${VoluntaryRoleMetadata[voluntary.voluntaryRole].label}`}
+                >
+                  {VoluntaryRoleMetadata[voluntary.voluntaryRole].icon}
+                </span>
+                {voluntary.fullname}
+              </p>
+              <p
+                className={`${!voluntary.summaryFunction && styles.nullFunction}`}
+              >
+                {voluntary.summaryFunction
+                  ? voluntary.summaryFunction.functionName
+                  : "não definida"}
+              </p>
+              <p className={`${!association && styles.nullFunction}`}>
+                {association ? association.associationName : "Não possui"}
+              </p>
+              <Button
+                className={styles.voluntaryEdit}
+                onClick={() => {
+                  setAssociation(
+                    association ? association.associationName : undefined,
+                  );
+                  formDispach({ type: "SET_UPDATE", payload: voluntary.uuid });
+                }}
+              >
+                <EditSVG size={16} />
+              </Button>
+            </li>
+          );
+        })}
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
       {formState.show && (
         <FormVoluntary
           hide={handleFormShow}
           uuid={formState.uuid}
-          associationUuid={associationUuid}
+          association={association}
         />
       )}
     </div>

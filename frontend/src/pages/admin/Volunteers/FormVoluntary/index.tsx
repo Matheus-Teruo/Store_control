@@ -18,20 +18,16 @@ import FunctionSelect from "../../../../components/selects/FunctionSelect";
 import RoleSelect from "../../../../components/selects/RoleSelect";
 import { VoluntaryRole } from "@data/volunteers/Voluntary";
 import GlassBackground from "@/components/GlassBackground";
-import useAssociationService from "@service/stand/useAssociationService";
-import Association from "@data/stands/Association";
 
 type FormVoluntaryProps = {
   hide: () => void;
   uuid?: string;
-  associationUuid?: string;
+  association?: string;
 };
 
-function FormVoluntary({ hide, uuid, associationUuid }: FormVoluntaryProps) {
+function FormVoluntary({ hide, uuid, association }: FormVoluntaryProps) {
   const [state, dispatch] = useReducer(voluntaryReducer, initialVoluntaryState);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
-  const [association, setAssociation] = useState<Association | undefined>();
-  const { getAssociation } = useAssociationService();
   const { addNotification } = useAlertsContext();
   const { getVoluntary, updateVoluntaryFunction, updateVoluntaryRole } =
     useVoluntaryService();
@@ -50,19 +46,6 @@ function FormVoluntary({ hide, uuid, associationUuid }: FormVoluntaryProps) {
 
     fetchVoluntary();
   }, [uuid, getVoluntary]);
-
-  useEffect(() => {
-    const fetchAssociation = async () => {
-      if (associationUuid) {
-        const association = await getAssociation(associationUuid);
-        if (association) {
-          setAssociation(association);
-        }
-      }
-    };
-
-    fetchAssociation();
-  }, [associationUuid, getAssociation]);
 
   const handleUpdateFunctionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,8 +93,8 @@ function FormVoluntary({ hide, uuid, associationUuid }: FormVoluntaryProps) {
         <label>Nome completo</label>
         <p>{state.fullname}</p>
         <label>Associação</label>
-        <p>
-          {association ? association.associationName : "Não possui associação"}
+        <p className={`${!association && styles.nullAssociation}`}>
+          {association ? association : "Não possui associação"}
         </p>
         <form onSubmit={handleUpdateFunctionSubmit}>
           <div className={styles.field}>
