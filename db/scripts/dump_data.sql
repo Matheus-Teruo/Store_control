@@ -38,9 +38,9 @@ SET @DONATION_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @REFUND_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 
 -- Inserir Associações
-INSERT INTO associations (uuid, association_name, principal_name, valid) VALUES
-(@ASSOCIATION1_UUID, 'Associação 1', 'Principal 1', 1),
-(@ASSOCIATION2_UUID, 'Associação 2', 'Principal 2', 1);
+INSERT INTO associations (uuid, association_name, principal_name, association_key, valid) VALUES
+(@ASSOCIATION1_UUID, 'Associação 1', 'Principal 1', 'key1', 1),
+(@ASSOCIATION2_UUID, 'Associação 2', 'Principal 2', 'key2', 1);
 
 -- Inserir Funções
 INSERT INTO functions (uuid, function_name, valid) VALUES
@@ -78,11 +78,11 @@ INSERT INTO order_cards (card_id, debit, active) VALUES
 (@ORDER_CARD4_ID, 0.00, 0);
 
 -- Inserir Voluntários
-INSERT INTO volunteers (uuid, username, password, fullname, function_uuid, voluntary_role, valid) VALUES
-(@VOLUNTARY_MANAGER1_UUID, 'manager1', 'password_hash', 'Manager 1 Name', @STAND1_UUID, 'ROLE_MANAGEMENT', 1),
-(@VOLUNTARY_MANAGER2_UUID, 'manager2', 'password_hash', 'Manager 2 Name', @CASH_REGISTER2_UUID, 'ROLE_MANAGEMENT', 1),
-(@VOLUNTARY_USER1_UUID, 'user1', 'password_hash', 'User 1 Name', @STAND2_UUID, 'ROLE_USER', 1),
-(@VOLUNTARY_USER2_UUID, 'user2', 'password_hash', 'User 2 Name', @CASH_REGISTER1_UUID, 'ROLE_USER', 1);
+INSERT INTO volunteers (uuid, username, password, fullname, related_association_uuid, function_uuid, voluntary_role, valid) VALUES
+(@VOLUNTARY_MANAGER1_UUID, 'manager1', 'password_hash', 'Manager 1 Name', 'key1', @STAND1_UUID, 'ROLE_MANAGEMENT', 1),
+(@VOLUNTARY_MANAGER2_UUID, 'manager2', 'password_hash', 'Manager 2 Name', 'key1', @CASH_REGISTER2_UUID, 'ROLE_MANAGEMENT', 1),
+(@VOLUNTARY_USER1_UUID, 'user1', 'password_hash', 'User 1 Name', 'key2', @STAND2_UUID, 'ROLE_USER', 1),
+(@VOLUNTARY_USER2_UUID, 'user2', 'password_hash', 'User 2 Name', 'key1', @CASH_REGISTER1_UUID, 'ROLE_USER', 1);
 
 -- Inserir Clientes
 INSERT INTO customers (uuid, order_card_id, customer_start, customer_end, in_use) VALUES

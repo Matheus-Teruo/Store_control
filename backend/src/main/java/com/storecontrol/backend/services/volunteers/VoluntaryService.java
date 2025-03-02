@@ -43,9 +43,9 @@ public class VoluntaryService {
   public Voluntary createVoluntary(RequestSignupVoluntary request) {
     validation.checkNameDuplication(request.username(), request.fullname());
     validation.checkAssociationKey(request.associationKey());
-    var association = associationService.safeTakeAssociationByKey(request.associationKey());
+    var associationUuid = associationService.safeTakeAssociationByKey(request.associationKey());
     var user = new User(request.username(), passwordEncoder.encode(request.password()));
-    var voluntary = new Voluntary(request, user, association);
+    var voluntary = new Voluntary(request, user, associationUuid);
     repository.save(voluntary);
 
     return voluntary;

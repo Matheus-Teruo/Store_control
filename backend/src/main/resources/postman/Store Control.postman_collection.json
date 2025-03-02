@@ -35,7 +35,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"associationName\": \"Associationexample\",\r\n    \"principalName\": \"principalexample\"\r\n}",
+							"raw": "{\r\n    \"associationName\": \"Associationexample\",\r\n    \"principalName\": \"principalexample\",\r\n    \"associationKey\": \"exampleKey\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -120,7 +120,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{association_id}}\",\r\n    \"associationName\": \"AssociationExampleaw\",\r\n    \"principalName\": \"PrincipalNameExamplea\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{association_id}}\",\r\n    \"associationName\": \"AssociationExampleaw\",\r\n    \"principalName\": \"PrincipalNameExamplea\",\r\n    \"associationKey\": \"exampleKeyA\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1051,18 +1051,17 @@
 								{
 									"key": "image",
 									"type": "file",
-									"src": []
+									"src": "/C:/Users/matak/Pictures/Projeto/Store_control/57376_shutterstock-209569699.webp"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{hostPath}}products/upload-image/{{product_id}}",
+							"raw": "{{hostPath}}products/upload-image",
 							"host": [
 								"{{hostPath}}products"
 							],
 							"path": [
-								"upload-image",
-								"{{product_id}}"
+								"upload-image"
 							]
 						}
 					},
@@ -1911,7 +1910,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"UsernameCashier\",\r\n    \"password\": \"PasswordExample\",\r\n    \"fullname\": \"Full Name Cashier\"\r\n}",
+							"raw": "{\r\n    \"username\": \"UsernameCashier\",\r\n    \"password\": \"PasswordExample\",\r\n    \"fullname\": \"Full Name Cashier\",\r\n    \"associationKey\": \"exampleKey\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

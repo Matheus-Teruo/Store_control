@@ -6,12 +6,14 @@ import java.util.UUID;
 
 public record ResponseSummaryAssociation(
     UUID uuid,
-    String associationName
+    String associationName,
+    String associationKey
 ) {
 
   public ResponseSummaryAssociation(Association association) {
     this(association.getUuid(),
-        association.getAssociationName()
+        association.getAssociationName(),
+        association.getAssociationKey()
     );
   }
 }

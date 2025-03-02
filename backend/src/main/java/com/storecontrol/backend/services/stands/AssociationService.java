@@ -51,7 +51,7 @@ public class AssociationService {
         );
   }
 
-  public Association safeTakeAssociationByKey(String key) {
+  public UUID safeTakeAssociationByKey(String key) {
     return repository.findByKeyValidTrue(key)
         .orElseThrow(() -> new InvalidDatabaseQueryException(
             MessageResolver.getInstance().getMessage("service.exception.association.getByKey.validation.error"),

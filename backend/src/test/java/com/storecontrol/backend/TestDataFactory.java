@@ -383,7 +383,7 @@ public class TestDataFactory {
         new User(nameOnlyLettersAndNumbers(), nameOnlyLettersAndNumbers()),
         nameOnlyLettersAndSpace(),
         null,
-        createAssociationEntity(UUID.randomUUID()),
+        UUID.randomUUID(),
         null,
         null,
         null,
@@ -398,7 +398,7 @@ public class TestDataFactory {
         voluntary.getUser().getUsername(),
         voluntary.getUser().getPassword(),
         voluntary.getFullname(),
-        voluntary.getRelatedAssociation().getAssociationKey()
+        nameOnlyLettersAndNumbers()
     );
   }
 

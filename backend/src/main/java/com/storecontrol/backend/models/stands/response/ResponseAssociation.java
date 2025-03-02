@@ -7,13 +7,15 @@ import java.util.UUID;
 public record ResponseAssociation(
     UUID uuid,
     String associationName,
-    String principalName
+    String principalName,
+    String associationKey
 ) {
 
   public ResponseAssociation(Association association) {
     this(association.getUuid(),
         association.getAssociationName(),
-        association.getPrincipalName()
+        association.getPrincipalName(),
+        association.getAssociationKey()
     );
   }
 }
