@@ -12,6 +12,7 @@ export interface SignupVoluntary {
   username: string;
   password: string;
   fullname: string;
+  associationKey: string;
 }
 
 export interface LoginVoluntary {

@@ -18,21 +18,26 @@ import FunctionSelect from "../../../../components/selects/FunctionSelect";
 import RoleSelect from "../../../../components/selects/RoleSelect";
 import { VoluntaryRole } from "@data/volunteers/Voluntary";
 import GlassBackground from "@/components/GlassBackground";
+import useAssociationService from "@service/stand/useAssociationService";
+import Association from "@data/stands/Association";
 
 type FormVoluntaryProps = {
   hide: () => void;
   uuid?: string;
+  associationUuid?: string;
 };
 
-function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
+function FormVoluntary({ hide, uuid, associationUuid }: FormVoluntaryProps) {
   const [state, dispatch] = useReducer(voluntaryReducer, initialVoluntaryState);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
+  const [association, setAssociation] = useState<Association | undefined>();
+  const { getAssociation } = useAssociationService();
   const { addNotification } = useAlertsContext();
   const { getVoluntary, updateVoluntaryFunction, updateVoluntaryRole } =
     useVoluntaryService();
 
   useEffect(() => {
-    const fetchAssociation = async () => {
+    const fetchVoluntary = async () => {
       if (uuid) {
         const voluntary = await getVoluntary(uuid);
         if (voluntary) {
@@ -43,8 +48,21 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
       }
     };
 
-    fetchAssociation();
+    fetchVoluntary();
   }, [uuid, getVoluntary]);
+
+  useEffect(() => {
+    const fetchAssociation = async () => {
+      if (associationUuid) {
+        const association = await getAssociation(associationUuid);
+        if (association) {
+          setAssociation(association);
+        }
+      }
+    };
+
+    fetchAssociation();
+  }, [associationUuid, getAssociation]);
 
   const handleUpdateFunctionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,6 +109,10 @@ function FormVoluntary({ hide, uuid }: FormVoluntaryProps) {
       <div className={styles.main}>
         <label>Nome completo</label>
         <p>{state.fullname}</p>
+        <label>Associação</label>
+        <p>
+          {association ? association.associationName : "Não possui associação"}
+        </p>
         <form onSubmit={handleUpdateFunctionSubmit}>
           <div className={styles.field}>
             <label>Função</label>

@@ -21,6 +21,7 @@ import {
   FaceFrownSVG,
   FaceMehSVG,
   FaceSmileSVG,
+  KeySVG,
   LockPadCloseSVG,
   LockPadOpenSVG,
   UserCheckSVG,
@@ -132,6 +133,23 @@ function Signup() {
             id="confirmPassword"
             placeholder="Confirmar Senha"
             isSecret
+            isRequired
+          />
+        </div>
+        <div className={styles.field}>
+          <Input
+            value={state.associationKey}
+            onChange={(e) =>
+              dispatch({
+                type: "SET_ASSOCIATION_KEY",
+                payload: e.target.value,
+              })
+            }
+            ComponentUntouched={KeySVG}
+            ComponentAccepted={KeySVG}
+            ComponentRejected={KeySVG}
+            id="associationKey"
+            placeholder="Chave da Associação"
             isRequired
           />
         </div>

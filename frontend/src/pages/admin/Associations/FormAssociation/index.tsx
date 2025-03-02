@@ -140,6 +140,16 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
             }
             message={messageError["principalName"]}
           />
+          <label>{"Chave da associação"}</label>
+          <Input
+            type="text"
+            id="associationKey"
+            value={state.associationKey}
+            onChange={(e) =>
+              dispatch({ type: "SET_ASSOCIATION_KEY", payload: e.target.value })
+            }
+            message={messageError["associationKey"]}
+          />
           <div className={styles.footerButtons}>
             {type === "update" && !confirmDelete && (
               <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>

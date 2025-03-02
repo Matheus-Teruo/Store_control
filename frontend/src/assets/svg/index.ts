@@ -19,6 +19,7 @@ import GridSVG from "./components/GridSVG";
 import HistorySVG from "./components/HistorySVG";
 import ImageSVG from "./components/ImageSVG";
 import InfoSVG from "./components/InfoSVG";
+import KeySVG from "./components/KeySVG";
 import ListSVG from "./components/ListSVG";
 import LockPadOpenSVG from "./components/LockPadOpenSVG";
 import LockPadCloseSVG from "./components/LockPadCloseSVG";
@@ -59,6 +60,7 @@ export {
   HistorySVG,
   ImageSVG,
   InfoSVG,
+  KeySVG,
   ListSVG,
   LockPadOpenSVG,
   LockPadCloseSVG,

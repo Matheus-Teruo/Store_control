@@ -10,6 +10,7 @@ type SignupAction =
   | { type: "SET_FULLNAME"; payload: string }
   | { type: "SET_PASSWORD"; payload: string }
   | { type: "SET_CONFIRM_PASSWORD"; payload: string }
+  | { type: "SET_ASSOCIATION_KEY"; payload: string }
   | { type: "RESET" };
 
 export const initialUserState: SignupVoluntary & { confirmPassword: string } = {
@@ -17,6 +18,7 @@ export const initialUserState: SignupVoluntary & { confirmPassword: string } = {
   fullname: "",
   password: "",
   confirmPassword: "",
+  associationKey: "",
 };
 
 export function userReducer(
@@ -48,6 +50,12 @@ export function userReducer(
       }
       return { ...state, confirmPassword: action.payload };
     }
+    case "SET_ASSOCIATION_KEY": {
+      if (!regexLeterNumber.test(action.payload)) {
+        return state;
+      }
+      return { ...state, associationKey: action.payload };
+    }
     case "RESET":
       return initialUserState;
     default:
@@ -68,6 +76,7 @@ export const loginPayload = (
   const {
     fullname: _fullname,
     confirmPassword: _confirmPassword,
+    associationKey: _associationKey,
     ...signupPayload
   } = state;
   return signupPayload as LoginVoluntary;

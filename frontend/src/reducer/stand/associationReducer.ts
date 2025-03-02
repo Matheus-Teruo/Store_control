@@ -1,4 +1,4 @@
-import { regexLeterSpace, regexUuid } from "@/utils/regex";
+import { regexLeterNumber, regexLeterSpace, regexUuid } from "@/utils/regex";
 import Association, {
   CreateAssociation,
   UpdateAssociation,
@@ -8,12 +8,14 @@ type AssociationAction =
   | { type: "SET_ASSOCIATION"; payload: Association }
   | { type: "SET_ASSOCIATION_NAME"; payload: string }
   | { type: "SET_PRINCIPAL_NAME"; payload: string }
+  | { type: "SET_ASSOCIATION_KEY"; payload: string }
   | { type: "RESET" };
 
 export const initialAssociationState: CreateAssociation & UpdateAssociation = {
   uuid: "",
   associationName: "",
   principalName: "",
+  associationKey: "",
 };
 
 export function associationReducer(
@@ -26,6 +28,7 @@ export function associationReducer(
         uuid: action.payload.uuid,
         associationName: action.payload.associationName,
         principalName: action.payload.principalName,
+        associationKey: action.payload.associationKey,
       };
     }
     case "SET_ASSOCIATION_NAME": {
@@ -39,6 +42,12 @@ export function associationReducer(
         return state;
       }
       return { ...state, principalName: action.payload };
+    }
+    case "SET_ASSOCIATION_KEY": {
+      if (!regexLeterNumber.test(action.payload)) {
+        return state;
+      }
+      return { ...state, associationKey: action.payload };
     }
     case "RESET": {
       return initialAssociationState;

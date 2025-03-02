@@ -44,6 +44,7 @@ function Volunteers() {
   const [volunteers, setVolunteers] = useState<SummaryVoluntary[]>([]);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [formState, formDispach] = useReducer(formReducer, initialFormState);
+  const [associationUuid, setAssociationUuid] = useState<string | undefined>();
   const { getVolunteers } = useVoluntaryService();
   const { user } = useUserContext();
   const navigate = useNavigate();
@@ -102,9 +103,10 @@ function Volunteers() {
             </p>
             <Button
               className={styles.voluntaryEdit}
-              onClick={() =>
-                formDispach({ type: "SET_UPDATE", payload: voluntary.uuid })
-              }
+              onClick={() => {
+                setAssociationUuid(voluntary.associationUuid);
+                formDispach({ type: "SET_UPDATE", payload: voluntary.uuid });
+              }}
             >
               <EditSVG size={16} />
             </Button>
@@ -113,7 +115,11 @@ function Volunteers() {
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
       {formState.show && (
-        <FormVoluntary hide={handleFormShow} uuid={formState.uuid} />
+        <FormVoluntary
+          hide={handleFormShow}
+          uuid={formState.uuid}
+          associationUuid={associationUuid}
+        />
       )}
     </div>
   );

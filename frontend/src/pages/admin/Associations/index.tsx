@@ -52,6 +52,7 @@ function Associations() {
     <div className={styles.body}>
       <li key={"header"} className={styles.listHeader}>
         <p>Nome da associação</p>
+        <p>Chave</p>
         <p className={styles.propAligned}>Editar</p>
       </li>
       <ul className={styles.main}>
@@ -61,6 +62,7 @@ function Associations() {
             className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
           >
             <p>{association.associationName}</p>
+            <p>{association.associationKey}</p>
             <Button
               className={styles.associationEdit}
               onClick={() =>

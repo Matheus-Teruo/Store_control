@@ -11,6 +11,7 @@ export default interface Voluntary {
 export interface SummaryVoluntary {
   uuid: string;
   fullname: string;
+  associationUuid: string;
   summaryFunction?: SummaryFunction;
   voluntaryRole: VoluntaryRole;
 }
