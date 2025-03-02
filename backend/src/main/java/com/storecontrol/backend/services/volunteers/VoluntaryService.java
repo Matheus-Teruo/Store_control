@@ -9,6 +9,7 @@ import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
 import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
+import com.storecontrol.backend.services.stands.AssociationService;
 import com.storecontrol.backend.services.volunteers.validation.VoluntaryValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -30,6 +31,9 @@ public class VoluntaryService {
   VoluntaryRepository repository;
 
   @Autowired
+  AssociationService associationService;
+
+  @Autowired
   FunctionService functionService;
 
   @Autowired
@@ -38,8 +42,10 @@ public class VoluntaryService {
   @Transactional
   public Voluntary createVoluntary(RequestSignupVoluntary request) {
     validation.checkNameDuplication(request.username(), request.fullname());
+    validation.checkAssociationKey(request.associationKey());
+    var association = associationService.safeTakeAssociationByKey(request.associationKey());
     var user = new User(request.username(), passwordEncoder.encode(request.password()));
-    var voluntary = new Voluntary(request, user);
+    var voluntary = new Voluntary(request, user, association);
     repository.save(voluntary);
 
     return voluntary;

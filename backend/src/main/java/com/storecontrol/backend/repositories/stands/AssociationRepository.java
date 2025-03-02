@@ -14,6 +14,9 @@ public interface AssociationRepository extends JpaRepository<Association, UUID> 
   @Query("select a from Association a where a.valid = true and a.uuid = :uuid")
   Optional<Association> findByUuidValidTrue(UUID uuid);
 
+  @Query("select a from Association a where a.valid = true and a.associationKey = :associationKey")
+  Optional<Association> findByKeyValidTrue(String associationKey);
+
   @Query("select a from Association a where a.valid = true")
   Page<Association> findAllValidTruePage(Pageable pageable);
 
@@ -21,4 +24,6 @@ public interface AssociationRepository extends JpaRepository<Association, UUID> 
   List<Association> findAllValidTrue();
 
   boolean existsByAssociationName(String associationName);
+
+  boolean existsByAssociationKey(String associationKey);
 }

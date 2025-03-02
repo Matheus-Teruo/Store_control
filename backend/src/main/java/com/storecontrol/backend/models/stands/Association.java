@@ -27,6 +27,9 @@ public class Association {
     @Column(name = "principal_name", nullable = false)
     private String principalName;
 
+    @Column(name = "association_key", nullable = false)
+    private String associationKey;
+
     @OneToMany(mappedBy = "association")
     private List<Stand> stands;
 
@@ -37,6 +40,7 @@ public class Association {
     public Association(@Valid RequestCreateAssociation request) {
         this.associationName = request.associationName();
         this.principalName = request.principalName();
+        this.associationKey = request.associationKey();
         this.valid = true;
     }
 
@@ -46,6 +50,9 @@ public class Association {
         }
         if (request.principalName() != null) {
             this.principalName = request.principalName();
+        }
+        if (request.principalName() != null) {
+            this.associationKey = request.associationKey();
         }
     }
 

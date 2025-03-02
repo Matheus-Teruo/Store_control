@@ -18,6 +18,11 @@ public record RequestSignupVoluntary(
     @NotBlank(message = "{request.validation.signupVoluntary.fullname.notBlank}")
     @Size(min = 3, message = "{request.validation.signupVoluntary.fullname.size}")
     @Pattern(regexp = "^[\\p{L} ]*$", message = "{request.validation.signupVoluntary.fullname.pattern}")
-    String fullname
+    String fullname,
+
+    @NotBlank(message = "{request.validation.signupVoluntary.associationKey.notBlank}")
+    @Size(min = 3, message = "{request.validation.signupVoluntary.associationKey.size}")
+    @Pattern(regexp = "^[\\p{L}\\p{N}]*$", message = "{request.validation.signupVoluntary.associationKey.pattern}")
+    String associationKey
 ) {
 }

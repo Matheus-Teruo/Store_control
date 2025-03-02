@@ -38,6 +38,7 @@ class AssociationServiceTest extends BaseTest {
     RequestCreateAssociation requestAssociation = createRequestCreateAssociation(mockAssociation);
 
     doNothing().when(validation).checkNameDuplication(requestAssociation.associationName());
+    doNothing().when(validation).checkKeyDuplication(requestAssociation.associationKey());
     when(repository.save(any(Association.class))).thenReturn(mockAssociation);
 
     // When
@@ -46,6 +47,8 @@ class AssociationServiceTest extends BaseTest {
     // Then
     assertEquals(mockAssociation.getAssociationName(), result.getAssociationName());
     verify(validation).checkNameDuplication(mockAssociation.getAssociationName());
+    assertEquals(mockAssociation.getAssociationKey(), result.getAssociationKey());
+    verify(validation).checkKeyDuplication(mockAssociation.getAssociationKey());
     then(repository).should().save(any(Association.class));
     verifyNoMoreInteractions(validation, repository);
   }
@@ -111,6 +114,7 @@ class AssociationServiceTest extends BaseTest {
     RequestUpdateAssociation request = createRequestUpdateAssociation(associationUuid);
 
     doNothing().when(validation).checkNameDuplication(request.associationName());
+    doNothing().when(validation).checkKeyDuplication(request.associationKey());
     when(repository.findByUuidValidTrue(associationUuid)).thenReturn(Optional.of(mockAssociation));
 
     // When
@@ -119,6 +123,8 @@ class AssociationServiceTest extends BaseTest {
     // Then
     assertEquals(request.associationName(), result.getAssociationName());
     verify(validation).checkNameDuplication(request.associationName());
+    assertEquals(mockAssociation.getAssociationKey(), result.getAssociationKey());
+    verify(validation).checkKeyDuplication(request.associationKey());
     then(repository).should().findByUuidValidTrue(associationUuid);
     verifyNoMoreInteractions(validation, repository);
   }

@@ -13,6 +13,11 @@ public record RequestCreateAssociation(
     @NotBlank(message = "{request.validation.createAssociation.principalName.notBlank}")
     @Size(min = 3, message = "{request.validation.createAssociation.principalName.size}")
     @Pattern(regexp = "^[\\p{L} ]*$", message = "{request.validation.createAssociation.principalName.pattern}")
-    String principalName
+    String principalName,
+
+    @NotBlank(message = "{request.validation.createAssociation.associationKey.notBlank}")
+    @Size(min = 3, message = "{request.validation.createAssociation.associationKey.size}")
+    @Pattern(regexp = "^[\\p{L}\\p{N}]*$", message = "{request.validation.createAssociation.associationKey.pattern}")
+    String associationKey
 ) {
 }

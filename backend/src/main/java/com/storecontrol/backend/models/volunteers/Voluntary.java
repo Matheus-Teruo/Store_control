@@ -5,6 +5,7 @@ import com.storecontrol.backend.models.operations.Donation;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Refund;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
+import com.storecontrol.backend.models.stands.Association;
 import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
 import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
@@ -38,6 +39,9 @@ public class Voluntary implements UserDetails {
   @ManyToOne @JoinColumn(name = "function_uuid")
   private Function function;
 
+  @ManyToOne @JoinColumn(name = "related_association_uuid")
+  private Association relatedAssociation;
+
   @OneToMany(mappedBy = "voluntary")
   private List<Purchase> purchases;
 
@@ -57,9 +61,10 @@ public class Voluntary implements UserDetails {
   @Column(nullable = false)
   private boolean valid;
 
-  public Voluntary(RequestSignupVoluntary request, User user) {
+  public Voluntary(RequestSignupVoluntary request, User user, Association associationUuid) {
     this.user = user;
     this.fullname = request.fullname();
+    this.relatedAssociation = associationUuid;
     this.voluntaryRole = VoluntaryRole.ROLE_USER;
     this.valid = true;
   }

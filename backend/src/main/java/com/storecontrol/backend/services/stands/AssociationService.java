@@ -29,6 +29,7 @@ public class AssociationService {
   @Transactional
   public Association createAssociation(RequestCreateAssociation request) {
     validation.checkNameDuplication(request.associationName());
+    validation.checkKeyDuplication(request.associationKey());
 
     var association = new Association(request);
     repository.save(association);
@@ -50,6 +51,15 @@ public class AssociationService {
         );
   }
 
+  public Association safeTakeAssociationByKey(String key) {
+    return repository.findByKeyValidTrue(key)
+        .orElseThrow(() -> new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("service.exception.association.getByKey.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.association.getByKey.validation.message"),
+            key)
+        );
+  }
+
   public Page<Association> pageAssociations(Pageable pageable) {
     return repository.findAllValidTruePage(pageable);
   }
@@ -61,6 +71,7 @@ public class AssociationService {
   @Transactional
   public Association updateAssociation(RequestUpdateAssociation request) {
     validation.checkNameDuplication(request.associationName());
+    validation.checkKeyDuplication(request.associationKey());
     var association = safeTakeAssociationByUuid(request.uuid());
 
     association.updateAssociation(request);

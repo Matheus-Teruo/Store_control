@@ -16,6 +16,10 @@ public record RequestUpdateAssociation(
 
     @Size(min = 3, message = "{request.validation.updateAssociation.principalName.size}")
     @Pattern(regexp = "^[\\p{L} ]*$", message = "{request.validation.updateAssociation.principalName.pattern}")
-    String principalName
+    String principalName,
+
+    @Size(min = 3, message = "{request.validation.updateAssociation.associationKey.size}")
+    @Pattern(regexp = "^[\\p{L}\\p{N}]*$", message = "{request.validation.updateAssociation.associationKey.pattern}")
+    String associationKey
 ) {
 }

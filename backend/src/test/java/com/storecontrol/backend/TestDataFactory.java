@@ -274,6 +274,7 @@ public class TestDataFactory {
         uuid,
         nameOnlyLetters(),
         nameOnlyLettersAndSpace(),
+        nameOnlyLettersAndNumbers(),
         new ArrayList<>(),
         true
     );
@@ -282,7 +283,8 @@ public class TestDataFactory {
   public static RequestCreateAssociation createRequestCreateAssociation(Association association) {
     return new RequestCreateAssociation(
         association.getAssociationName(),
-        association.getPrincipalName()
+        association.getPrincipalName(),
+        association.getAssociationKey()
     );
   }
 
@@ -290,7 +292,8 @@ public class TestDataFactory {
     return new RequestUpdateAssociation(
         uuid,
         nameOnlyLetters(),
-        nameOnlyLettersAndSpace()
+        nameOnlyLettersAndSpace(),
+        nameOnlyLettersAndNumbers()
     );
   }
 
@@ -380,6 +383,7 @@ public class TestDataFactory {
         new User(nameOnlyLettersAndNumbers(), nameOnlyLettersAndNumbers()),
         nameOnlyLettersAndSpace(),
         null,
+        createAssociationEntity(UUID.randomUUID()),
         null,
         null,
         null,
@@ -393,7 +397,8 @@ public class TestDataFactory {
     return new RequestSignupVoluntary(
         voluntary.getUser().getUsername(),
         voluntary.getUser().getPassword(),
-        voluntary.getFullname()
+        voluntary.getFullname(),
+        voluntary.getRelatedAssociation().getAssociationKey()
     );
   }
 

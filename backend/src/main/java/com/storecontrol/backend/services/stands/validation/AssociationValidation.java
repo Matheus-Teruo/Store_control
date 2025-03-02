@@ -25,5 +25,18 @@ public class AssociationValidation {
           )
       );
     }
+
+  }
+  public void checkKeyDuplication(String associationKey) {
+    if (repository.existsByAssociationName(associationKey)) {
+      throw new InvalidDatabaseInsertionException(
+          MessageResolver.getInstance().getMessage("validation.association.associationKey.nameDuplication.error"),
+          MessageResolver.getInstance().getMessage("validation.association.associationKey.nameDuplication.message"),
+          Map.of(
+              MessageResolver.getInstance().getMessage("validation.association.associationKey.nameDuplication.field"),
+              associationKey
+          )
+      );
+    }
   }
 }

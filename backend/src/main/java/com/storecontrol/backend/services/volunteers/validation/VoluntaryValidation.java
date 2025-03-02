@@ -5,6 +5,7 @@ import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionExcepti
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
+import com.storecontrol.backend.repositories.stands.AssociationRepository;
 import com.storecontrol.backend.repositories.volunteers.FunctionRepository;
 import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class VoluntaryValidation {
 
   @Autowired
   FunctionRepository functionRepository;
+
+  @Autowired
+  AssociationRepository associationRepository;
 
   public void checkVoluntaryAuthentication(UUID requestUuid, UUID loggedUuid){
     if (!requestUuid.equals(loggedUuid)) {
@@ -56,6 +60,19 @@ public class VoluntaryValidation {
           Map.of(
               MessageResolver.getInstance().getMessage("validation.voluntary.checkFullname.nameDuplication.field"),
               fullname
+          )
+      );
+    }
+  }
+
+  public void checkAssociationKey(String key) {
+    if (key != null && !associationRepository.existsByAssociationKey(key)) {
+      throw new InvalidDatabaseInsertionException(
+          MessageResolver.getInstance().getMessage("validation.voluntary.checkAssociationKey.invalidKey.error"),
+          MessageResolver.getInstance().getMessage("validation.voluntary.checkAssociationKey.invalidKey.message"),
+          Map.of(
+              MessageResolver.getInstance().getMessage("validation.voluntary.checkAssociationKey.invalidKey.field"),
+              key
           )
       );
     }
