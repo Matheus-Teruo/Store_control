@@ -1,8 +1,10 @@
-FROM openjdk:21-jdk-slim as build
+FROM openjdk:21-jdk-slim AS build
 
 WORKDIR /app
 
 COPY mvnw ./
+RUN chmod +x mvnw
+
 COPY .mvn .mvn
 COPY pom.xml ./
 

@@ -69,6 +69,13 @@ public class Voluntary implements UserDetails {
     this.valid = true;
   }
 
+  public Voluntary(User user, String fullname) {
+    this.user = user;
+    this.fullname = fullname;
+    this.voluntaryRole = VoluntaryRole.ROLE_ADMIN;
+    this.valid = true;
+  }
+
   public void updateVoluntary(RequestUpdateVoluntary request, String password) {
     if (request.username() != null || request.password() != null) {
       this.user.updateUser(request.username(), password);

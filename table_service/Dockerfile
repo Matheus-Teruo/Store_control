@@ -1,25 +1,20 @@
 FROM python:3.13.1-alpine3.20
 
-# Atualizar pacotes e instalar dependências necessárias
-RUN apt-get update && apt-get install -y \
-    build-essential \
+# Atualizar pacotes e instalar dependências necessárias no Alpine
+RUN apk add --no-cache \
+    build-base \
     cmake \
-    libjpeg-dev \
+    jpeg-dev \
     libpng-dev \
-    libtiff-dev \
-    libavcodec-dev \
-    libavformat-dev \
-    libswscale-dev \
-    libv4l-dev \
-    libxvidcore-dev \
-    libx264-dev \
-    libgtk2.0-dev \
-    libgtk-3-dev \
-    libatlas-base-dev \
+    tiff-dev \
+    ffmpeg \
+    libv4l \
+    x264-dev \
+    gtk+3.0-dev \
+    lapack-dev \
     gfortran \
-    pkg-config \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    musl-dev \
+    pkgconf
 
 # Instalar pip e OpenCV
 RUN pip install --no-cache-dir opencv-python-headless numpy

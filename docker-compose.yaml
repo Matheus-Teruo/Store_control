@@ -2,16 +2,13 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
     env_file:
-      - .env # double check to confirm the existence of a .env
+      - .env
     ports:
       - 8080:8080
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://${DATABASE_HOST}:3306/${DATABASE_DB}
-      - DATABASE_USER=${DATABASE_USER}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     networks:
       - public
       - private
@@ -25,7 +22,7 @@ services:
       - --collation-server=utf8mb4_unicode_ci
     restart: always
     env_file:
-      - .env # double check to confirm the existence of a .env
+      - .env
     volumes:
       - db-data:/var/lib/mysql
       - ./db/export:/var/lib/mysql-files
@@ -72,17 +69,17 @@ services:
       - public
     depends_on:
       - backend
-  table_service:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: table-service-container
-    networks:
-      - private
-    restart: unless-stopped
-    volumes:
-      - ./app:/app
-    command: python main.py
+  # table_service:
+  #   build:
+  #     context: ./table_service
+  #     dockerfile: dockerfile
+  #   container_name: table-service-container
+  #   networks:
+  #     - private
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./app:/app
+  #   command: python main.py
 networks:
   public:
   private:
