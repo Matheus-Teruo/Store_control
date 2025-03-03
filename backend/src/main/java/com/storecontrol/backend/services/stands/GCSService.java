@@ -1,20 +1,17 @@
 package com.storecontrol.backend.services.stands;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service
-public class S3Service {
+public class GCSService {
 
   @Value("${aws.s3.bucket}")
   private String bucket;
@@ -24,9 +21,6 @@ public class S3Service {
 
   @Value("${aws.s3.url.suffix}")
   private String suffix;
-
-  @Autowired
-  S3Client s3Client;
 
   public File adjustNameFile(MultipartFile file) throws IOException {
     String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss"));
@@ -44,8 +38,6 @@ public class S3Service {
         .bucket(bucket)
         .key(key)
         .build();
-
-    s3Client.putObject(request, Paths.get(file.getAbsolutePath()));
 
     return prefix + bucket + suffix + key;
   }

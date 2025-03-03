@@ -7,9 +7,8 @@ import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.stands.response.ResponseProduct;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
-import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.services.stands.ProductService;
-import com.storecontrol.backend.services.stands.S3Service;
+import com.storecontrol.backend.services.stands.GCSService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -33,7 +32,7 @@ class ProductTest extends BaseTest {
   private ProductService service;
 
   @MockBean
-  private S3Service s3Service;
+  private GCSService GCSService;
 
   @Test
   void testCreateProductSuccess() throws Exception {
@@ -178,6 +177,6 @@ class ProductTest extends BaseTest {
 
   @Test
   void contextLoads() {
-    assertNotNull(s3Service, "S3Service should be mocked and not null.");
+    assertNotNull(GCSService, "GCSService should be mocked and not null.");
   }
 }
