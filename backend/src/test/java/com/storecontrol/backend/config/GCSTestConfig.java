@@ -1,17 +1,17 @@
 package com.storecontrol.backend.config;
 
+import com.google.cloud.storage.Storage;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import software.amazon.awssdk.services.s3.S3Client;
 
 @TestConfiguration
-public class S3TestConfig {
+public class GCSTestConfig {
 
   @Bean
   @Primary
-  public S3Client mockS3Client() {
-    return Mockito.mock(S3Client.class);
+  public Storage mockStorage() {
+    return Mockito.mock(Storage.class);
   }
 }

@@ -1,7 +1,7 @@
 package com.storecontrol.backend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.storecontrol.backend.config.S3TestConfig;
+import com.storecontrol.backend.config.GCSTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Import(S3TestConfig.class)
+@Import(GCSTestConfig.class)
 public abstract class BaseTest {
 
 	@Autowired
