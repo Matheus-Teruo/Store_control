@@ -18,7 +18,7 @@ import OrderCard from "../CashierFunction/OrderCard";
 import { VoluntaryRole } from "@data/volunteers/Voluntary";
 import FormPurchase from "./FormPurchase";
 import Button from "@/components/utils/Button";
-import LastPurchaseList from "./LastPurchaseList";
+// import LastPurchaseList from "./LastPurchaseList";
 
 function StandFunction() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
@@ -60,7 +60,7 @@ function StandFunction() {
         {showLast && (
           <>
             <div />
-            <LastPurchaseList />
+            {/* <LastPurchaseList /> */}
           </>
         )}
       </div>
