@@ -1,0 +1,23 @@
+name: Build and Deploy Backend
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy-backend:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Autenticar no GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: backend/
+          push: true
+          tags: gcr.io/${{ secrets.GCP_PROJECT_ID }}/backend-spring-boot:${{ github.sha }}
