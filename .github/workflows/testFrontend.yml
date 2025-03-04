@@ -30,10 +30,11 @@ jobs:
         with:
           node-version: "22.x"
           cache: "yarn"
-          cache-dependency-path: "frontend/yarn.lock"
 
       - name: Executa Lint
-        uses: yarn lint
+        run: yarn lint
+        working-directory: frontend
 
       # - name: Test
-      #   uses: yarn test
+      #   run: yarn test
+      #   working-directory: frontend
