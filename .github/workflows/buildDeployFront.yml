@@ -9,11 +9,6 @@ on:
 jobs:
   build-and-deploy-frontend:
     runs-on: "ubuntu-latest"
-    env:
-      VITE_BACKEND_BASE_URL: ${{ vars.VITE_BACKEND_BASE_URL }}
-      VITE_SYSTEM_VERSION: ${{ vars.VITE_SYSTEM_VERSION }}
-      VITE_ORDER_CARD_ID_FIXED: "OrderCardSimple"
-      VITE_CASH_REGISTER_UUID_FIXED: "12345678-abcd-4efa-bcde-f1234567890a"
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
@@ -32,3 +27,8 @@ jobs:
           context: frontend/
           push: true
           tags: ${{ vars.GCP_REPOSITORY_LOCATION }}/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCP_REPOSITORY_NAME }}/frontend-react:${{ github.sha }}
+          build-args: |
+            VITE_BACKEND_BASE_URL=${{ vars.VITE_BACKEND_BASE_URL }}
+            VITE_SYSTEM_VERSION=${{ vars.VITE_SYSTEM_VERSION }}
+            VITE_ORDER_CARD_ID_FIXED="OrderCardSimple"
+            VITE_CASH_REGISTER_UUID_FIXED="12345678-abcd-4efa-bcde-f1234567890a"
