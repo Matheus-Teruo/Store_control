@@ -14,7 +14,6 @@ services:
       - private
     depends_on:
       - db
-      # - storage
   db:
     image: mysql
     command:
@@ -36,14 +35,6 @@ services:
       - MYSQL_USER=${DATABASE_USER}
       - MYSQL_PASSWORD=${DATABASE_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD_ROOT}
-  # storage:
-  #   build:
-  #     context: ./storage
-  #     dockerfile: dockerfile
-  #   ports:
-  #     - "9023:9023"
-  #   volumes:
-  #     - storage-data:/home
   frontend:
     build:
       context: ./frontend
@@ -77,4 +68,3 @@ networks:
   private:
 volumes:
   db-data:
-  # storage-data:
