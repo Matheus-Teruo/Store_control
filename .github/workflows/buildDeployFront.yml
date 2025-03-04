@@ -28,4 +28,4 @@ jobs:
         with:
           context: frontend/
           push: true
-          tags: gcr.io/${{ secrets.GCP_PROJECT_ID }}/frontend-react:${{ github.sha }}
+          tags: ${{ vars.GCP_REPOSITORY_LOCATION }}/${{ secrets.GCP_PROJECT_ID }}/${{ vars.GCP_REPOSITORY_NAME }}/frontend-react:${{ github.sha }}
