@@ -18,6 +18,9 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
+      - name: Configurar repo
+        run: gcloud auth configure-docker ${{ vars.GCP_REPOSITORY_LOCATION }}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
