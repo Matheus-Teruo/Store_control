@@ -20,6 +20,14 @@ WORKDIR /app
 
 COPY --from=build /app/target/*.jar ./app.jar
 
+# Baixa o Cloud SQL Proxy
+ADD https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.11.1/cloud-sql-proxy.linux.amd64 /cloud_sql_proxy
+RUN chmod +x /cloud_sql_proxy
+
+# Defina o argumento de construção
+ARG CLOUD_SQL_INSTANCE
+
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "./app.jar"]
+# Comando para rodar o proxy e a aplicação juntos
+CMD [ "sh", "-c", "/cloud_sql_proxy --address=0.0.0.0 --port=3306 $CLOUD_SQL_INSTANCE & java -jar ./app.jar" ]
