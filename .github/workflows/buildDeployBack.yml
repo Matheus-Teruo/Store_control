@@ -33,3 +33,14 @@ jobs:
           tags: ${{ vars.GCP_REPOSITORY_LOCATION }}/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCP_REPOSITORY_NAME }}/backend-spring-boot:${{ github.sha }}
           build-args: |
             CLOUD_SQL_INSTANCE=${{ vars.CLOUD_SQL_INSTANCE }}
+
+      - name: Aguardar a disponibilidade da imagem
+        run: sleep 10
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy backend-spring-boot \
+            --image=${{ vars.GCP_REPOSITORY_LOCATION }}/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCP_REPOSITORY_NAME }}/backend-spring-boot:${{ github.sha }} \
+            --region=${{ vars.GCP_REGION }} \
+            --platform=managed \
+            --allow-unauthenticated
