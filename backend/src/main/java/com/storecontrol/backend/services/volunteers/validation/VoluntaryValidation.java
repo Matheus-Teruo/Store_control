@@ -83,8 +83,12 @@ public class VoluntaryValidation {
         MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.error"),
         MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.message"),
         managerUuid.toString()));
+    var voluntary = repository.findByUuidValidTrue(request.uuid()).orElseThrow(() -> new InvalidDatabaseQueryException(
+        MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.error"),
+        MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.message"),
+        request.uuid().toString()));
     if (manager.getVoluntaryRole().isNotAdmin()){
-      if (manager.getFunction().getUuid() != request.functionUuid()) {
+      if (request.functionUuid() != null && !manager.getFunction().getUuid().equals(request.functionUuid())) {
         // Stand validation
         if (manager.getFunction() instanceof Stand) {
           throw new InvalidDatabaseInsertionException(
@@ -111,6 +115,32 @@ public class VoluntaryValidation {
                 Map.of(
                     MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidCashRegister.field"),
                     request.functionUuid().toString()
+                )
+            );
+          }
+        }
+      }
+      else if (request.functionUuid() == null && !voluntary.getFunction().getUuid().equals(managerUuid)) {
+        // Stand validation
+        if (voluntary.getFunction() instanceof Stand) {
+          throw new InvalidDatabaseInsertionException(
+              MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidStand.error"),
+              MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidStand.message"),
+              Map.of(
+                  MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidStand.field"),
+                  "null"
+              )
+          );
+        }
+        // CashRegister validation
+        else {
+          if (manager.getFunction() instanceof Stand) {
+            throw new InvalidDatabaseInsertionException(
+                MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidCashRegister.error"),
+                MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidCashRegister.message"),
+                Map.of(
+                    MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidCashRegister.field"),
+                    "null"
                 )
             );
           }

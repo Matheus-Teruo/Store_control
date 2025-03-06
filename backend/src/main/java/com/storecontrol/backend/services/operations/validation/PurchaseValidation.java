@@ -177,7 +177,7 @@ public class PurchaseValidation {
   }
 
   public void checkPurchaseBelongsToVoluntary(Purchase purchase, UUID userUuid) {
-    if (purchase.getVoluntary().getVoluntaryRole().isNotAdmin() && purchase.getVoluntary().getUuid() != userUuid) {
+    if (purchase.getVoluntary().getVoluntaryRole().isNotAdmin() && !purchase.getVoluntary().getUuid().equals(userUuid)) {
       throw new InvalidOperationException(
           MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.notOwner.error"),
           MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.notOwner.message")
@@ -190,7 +190,7 @@ public class PurchaseValidation {
       Optional<Purchase> optionalPurchase = repository.findLastFromVoluntary(voluntary.getUuid());
 
       if (optionalPurchase.isPresent()) {
-        if (optionalPurchase.get().getUuid() != purchase.getUuid()) {
+        if (!optionalPurchase.get().getUuid().equals(purchase.getUuid())) {
           throw new InvalidOperationException(
               MessageResolver.getInstance().getMessage("validation.purchase.checkLastPurchase.notLast.error"),
               MessageResolver.getInstance().getMessage("validation.purchase.checkLastPurchase.notLast.message")
