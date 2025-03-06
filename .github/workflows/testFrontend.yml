@@ -32,6 +32,10 @@ jobs:
           cache: yarn
           cache-dependency-path: frontend/yarn.lock
 
+      - name: Instala dependências yarn
+        run: yarn install
+        working-directory: frontend
+
       - name: Executa Lint
         run: yarn lint
         working-directory: frontend
