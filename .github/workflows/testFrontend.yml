@@ -28,8 +28,9 @@ jobs:
       - name: Configura Node
         uses: actions/setup-node@v4
         with:
-          node-version: "22.x"
-          cache: "yarn"
+          node-version: 22.x
+          cache: yarn
+          cache-dependency-path: frontend/yarn.lock
 
       - name: Executa Lint
         run: yarn lint
