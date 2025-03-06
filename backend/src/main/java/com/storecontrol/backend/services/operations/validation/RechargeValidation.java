@@ -26,7 +26,7 @@ public class RechargeValidation {
             MessageResolver.getInstance().getMessage("validation.recharge.checkVoluntary.functionNull.message")
         );
       } else {
-        if (!(voluntary.getFunction().getUuid() == function.getUuid())) {
+        if (!(voluntary.getFunction().getUuid().equals(function.getUuid()))) {
           throw new InvalidOperationException(
               MessageResolver.getInstance().getMessage("validation.recharge.checkVoluntary.functionDifferent.error"),
               MessageResolver.getInstance().getMessage("validation.recharge.checkVoluntary.functionDifferent.message")
@@ -49,7 +49,7 @@ public class RechargeValidation {
   }
 
   public void checkRechargeBelongsToVoluntary(Recharge recharge, UUID userUuid) {
-    if (recharge.getVoluntary().getVoluntaryRole().isNotAdmin() && recharge.getVoluntary().getUuid() != userUuid) {
+    if (recharge.getVoluntary().getVoluntaryRole().isNotAdmin() && !recharge.getVoluntary().getUuid().equals(userUuid)) {
       throw new InvalidOperationException(
           MessageResolver.getInstance().getMessage("validation.recharge.checkVoluntary.notOwner.error"),
           MessageResolver.getInstance().getMessage("validation.recharge.checkVoluntary.notOwner.message")
@@ -62,7 +62,7 @@ public class RechargeValidation {
       Optional<Recharge> optionalRecharge = repository.findLastFromVoluntary(voluntary.getUuid());
 
       if (optionalRecharge.isPresent()) {
-        if (optionalRecharge.get().getUuid() != recharge.getUuid()) {
+        if (!optionalRecharge.get().getUuid().equals(recharge.getUuid())) {
           throw new InvalidOperationException(
               MessageResolver.getInstance().getMessage("validation.recharge.checkLastPurchase.notLast.error"),
               MessageResolver.getInstance().getMessage("validation.recharge.checkLastPurchase.notLast.message")

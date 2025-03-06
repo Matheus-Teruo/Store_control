@@ -24,7 +24,7 @@ public class CustomerFinalizationValidation {
             MessageResolver.getInstance().getMessage("validation.customerFinalization.checkVoluntary.functionNull.message")
         );
       } else {
-        if (!(voluntary.getFunction().getUuid() == function.getUuid())) {
+        if (!(voluntary.getFunction().getUuid().equals(function.getUuid()))) {
           throw new InvalidOperationException(
               MessageResolver.getInstance().getMessage("validation.customerFinalization.checkVoluntary.functionDifferent.error"),
               MessageResolver.getInstance().getMessage("validation.customerFinalization.checkVoluntary.functionDifferent.message")

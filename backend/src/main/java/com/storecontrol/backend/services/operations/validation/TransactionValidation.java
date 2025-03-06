@@ -55,7 +55,7 @@ public class TransactionValidation {
   }
 
   public void checkTransactionBelongsToVoluntary(Transaction transaction, UUID userUuid) {
-    if (transaction.getVoluntary().getVoluntaryRole().isNotAdmin() && transaction.getVoluntary().getUuid() != userUuid) {
+    if (transaction.getVoluntary().getVoluntaryRole().isNotAdmin() && !transaction.getVoluntary().getUuid().equals(userUuid)) {
       throw new InvalidOperationException(
           MessageResolver.getInstance().getMessage("validation.transaction.checkVoluntary.notOwner.error"),
           MessageResolver.getInstance().getMessage("validation.transaction.checkVoluntary.notOwner.message")
@@ -68,7 +68,7 @@ public class TransactionValidation {
       Optional<Transaction> optionalTransaction = repository.findLastFromVoluntary(voluntary.getUuid());
 
       if (optionalTransaction.isPresent()) {
-        if (optionalTransaction.get().getUuid() != transaction.getUuid()) {
+        if (!optionalTransaction.get().getUuid().equals(transaction.getUuid())) {
           throw new InvalidOperationException(
               MessageResolver.getInstance().getMessage("validation.transaction.checkLastTransaction.notLast.error"),
               MessageResolver.getInstance().getMessage("validation.transaction.checkLastPurchase.notLast.message")
