@@ -5,6 +5,10 @@ on:
   push:
     branches:
       - dev
+    paths-ignore:
+      - "frontend/**"
+      - "db/**"
+      - "table_service/**"
 
 jobs:
   build-and-deploy-backend:

@@ -41,7 +41,7 @@ public class ProductValidation {
         userUuid.toString())
     );
     if (manager.getVoluntaryRole().isNotAdmin()) {
-      if (manager.getFunction().getUuid() != standUuid) {
+      if (!manager.getFunction().getUuid().equals(standUuid)) {
         throw new InvalidDatabaseInsertionException(
             MessageResolver.getInstance().getMessage("validation.product.checkManageFunction.invalidStand.error"),
             MessageResolver.getInstance().getMessage("validation.product.checkManageFunction.invalidStand.message"),
