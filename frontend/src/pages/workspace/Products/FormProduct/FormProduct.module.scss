@@ -19,6 +19,20 @@
     color: $color-gray-900;
   }
 
+  .imageFrame {
+    border: 4px solid transparent;
+    display: flex;
+    align-items: center;
+  }
+
+  .imageUploaded {
+    border-color: #48a6db;
+  }
+
+  .imageUpdated {
+    border-color: #a5d6a7;
+  }
+
   form {
     width: 100%;
     display: flex;
