@@ -32,6 +32,7 @@ import {
 function Signup() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
+  const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
   const { login } = useUserContext();
   const { signupVoluntary } = useUserService();
@@ -39,6 +40,7 @@ function Signup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setWaitingFetch(true);
     if (state.password == state.confirmPassword) {
       const voluntary = await signupVoluntary(signupPayload(state));
       if (voluntary && !isMessage(voluntary)) {
@@ -66,6 +68,7 @@ function Signup() {
         type: MessageType.WARNING,
       });
     }
+    setWaitingFetch(false);
   };
 
   return (
@@ -154,7 +157,7 @@ function Signup() {
           />
         </div>
         <div className={styles.button}>
-          <Button type={ButtonHTMLType.Submit}>
+          <Button type={ButtonHTMLType.Submit} loading={waitingFetch}>
             <p>Cadastrar</p>
             <CheckSVG />
           </Button>

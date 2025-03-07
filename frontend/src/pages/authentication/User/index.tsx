@@ -65,6 +65,9 @@ function User() {
   const [update, setUpdate] = useState<
     "username" | "fullname" | "password" | ""
   >("");
+  const [waitingFetch, setWaitingFetch] = useState<
+    "username" | "fullname" | "password" | ""
+  >("");
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const { user, logout } = useUserContext();
@@ -87,6 +90,7 @@ function User() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setWaitingFetch(update);
     const voluntary = await updateVoluntary({
       uuid: userProperties.uuid,
       username: update === "username" ? state.username : undefined,
@@ -106,6 +110,7 @@ function User() {
       const message = voluntary;
       if (message.invalidFields) setMessageError(message.invalidFields);
     }
+    setWaitingFetch("");
   };
 
   const handleLogout = async () => {
@@ -143,7 +148,10 @@ function User() {
             >
               <XSVG />
             </Button>
-            <Button type={ButtonHTMLType.Submit}>
+            <Button
+              type={ButtonHTMLType.Submit}
+              loading={waitingFetch === "username"}
+            >
               <CheckSVG />
             </Button>
           </div>
@@ -177,7 +185,10 @@ function User() {
             >
               <XSVG />
             </Button>
-            <Button type={ButtonHTMLType.Submit}>
+            <Button
+              type={ButtonHTMLType.Submit}
+              loading={waitingFetch === "fullname"}
+            >
               <CheckSVG />
             </Button>
           </div>
@@ -262,7 +273,10 @@ function User() {
               >
                 <XSVG />
               </Button>
-              <Button type={ButtonHTMLType.Submit}>
+              <Button
+                type={ButtonHTMLType.Submit}
+                loading={waitingFetch === "password"}
+              >
                 <CheckSVG />
               </Button>
             </div>
