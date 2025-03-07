@@ -28,6 +28,9 @@ type FormStandProps = {
 function FormStand({ type, hide, uuid }: FormStandProps) {
   const [state, dispatch] = useReducer(standReducer, initialStandState);
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+  const [waitingFetch, setWaitingFetch] = useState<
+    "create/update" | "delete" | ""
+  >("");
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const { getStand, createStand, updateStand, deleteStand } = useStandService();
@@ -49,6 +52,7 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setWaitingFetch("create/update");
     const stand = await createStand(createStandPayload(state));
     if (stand && !isMessage(stand)) {
       addNotification({
@@ -62,11 +66,13 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
       const message = stand;
       if (message.invalidFields) setMessageError(message.invalidFields);
     }
+    setWaitingFetch("");
   };
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (uuid) {
+      setWaitingFetch("create/update");
       const stand = await updateStand(updateStandPayload(state));
       if (stand && !isMessage(stand)) {
         addNotification({
@@ -81,10 +87,12 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
         if (message.invalidFields) setMessageError(message.invalidFields);
       }
     }
+    setWaitingFetch("");
   };
 
   const handleDeleteSubmit = async () => {
     if (uuid) {
+      setWaitingFetch("delete");
       await deleteStand(state.uuid);
       addNotification({
         title: "Delete Stand Success",
@@ -95,6 +103,7 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
       setConfirmDelete(false);
       hide();
     }
+    setWaitingFetch("");
   };
 
   return (
@@ -141,13 +150,17 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
                 <Button
                   className={styles.buttonConfirmDelete}
                   onClick={handleDeleteSubmit}
+                  loading={waitingFetch === "delete"}
                 >
                   <CheckSVG size={16} />
                 </Button>
               </div>
             )}
             <div />
-            <Button type={ButtonHTMLType.Submit}>
+            <Button
+              type={ButtonHTMLType.Submit}
+              loading={waitingFetch === "create/update"}
+            >
               {type === "create" ? "Criar" : "Editar"}
             </Button>
           </div>

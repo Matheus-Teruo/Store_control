@@ -40,8 +40,8 @@ function Signup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch(true);
     if (state.password == state.confirmPassword) {
+      setWaitingFetch(true);
       const voluntary = await signupVoluntary(signupPayload(state));
       if (voluntary && !isMessage(voluntary)) {
         addNotification({

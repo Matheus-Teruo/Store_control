@@ -31,6 +31,9 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
     initialAssociationState,
   );
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+  const [waitingFetch, setWaitingFetch] = useState<
+    "create/update" | "delete" | ""
+  >("");
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const {
@@ -58,6 +61,7 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setWaitingFetch("create/update");
     const association = await createAssociation(
       createAssociationPayload(state),
     );
@@ -73,11 +77,13 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
       const message = association;
       if (message.invalidFields) setMessageError(message.invalidFields);
     }
+    setWaitingFetch("");
   };
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (uuid) {
+      setWaitingFetch("create/update");
       const association = await updateAssociation(
         updateAssociationPayload(state),
       );
@@ -94,10 +100,12 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
         if (message.invalidFields) setMessageError(message.invalidFields);
       }
     }
+    setWaitingFetch("");
   };
 
   const handleDeleteSubmit = async () => {
     if (uuid) {
+      setWaitingFetch("delete");
       await deleteAssociation(state.uuid);
       addNotification({
         title: "Delete Association Success",
@@ -108,6 +116,7 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
       setConfirmDelete(false);
       hide();
     }
+    setWaitingFetch("");
   };
 
   return (
@@ -166,13 +175,17 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
                 <Button
                   className={styles.buttonConfirmDelete}
                   onClick={handleDeleteSubmit}
+                  loading={waitingFetch === "delete"}
                 >
                   <CheckSVG size={16} />
                 </Button>
               </div>
             )}
             <div />
-            <Button type={ButtonHTMLType.Submit}>
+            <Button
+              type={ButtonHTMLType.Submit}
+              loading={waitingFetch === "create/update"}
+            >
               {type === "create" ? "Criar" : "Editar"}
             </Button>
           </div>

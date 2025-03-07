@@ -27,6 +27,9 @@ type FormVoluntaryProps = {
 
 function FormVoluntary({ hide, uuid, association }: FormVoluntaryProps) {
   const [state, dispatch] = useReducer(voluntaryReducer, initialVoluntaryState);
+  const [waitingFetch, setWaitingFetch] = useState<"function" | "role" | "">(
+    "",
+  );
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const { getVoluntary, updateVoluntaryFunction, updateVoluntaryRole } =
@@ -49,6 +52,7 @@ function FormVoluntary({ hide, uuid, association }: FormVoluntaryProps) {
 
   const handleUpdateFunctionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setWaitingFetch("function");
     const voluntary = await updateVoluntaryFunction(
       updateVoluntaryFunctionPayload(state),
     );
@@ -64,11 +68,13 @@ function FormVoluntary({ hide, uuid, association }: FormVoluntaryProps) {
       const message = voluntary;
       if (message.invalidFields) setMessageError(message.invalidFields);
     }
+    setWaitingFetch("");
   };
 
   const handleUpdateRoleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (uuid) {
+      setWaitingFetch("role");
       const voluntary = await updateVoluntaryRole(
         updateVoluntaryRolePayload(state),
       );
@@ -85,6 +91,7 @@ function FormVoluntary({ hide, uuid, association }: FormVoluntaryProps) {
         if (message.invalidFields) setMessageError(message.invalidFields);
       }
     }
+    setWaitingFetch("");
   };
 
   return (
@@ -107,7 +114,12 @@ function FormVoluntary({ hide, uuid, association }: FormVoluntaryProps) {
               message={messageError["functionUuid"]}
             />
           </div>
-          <Button type={ButtonHTMLType.Submit}>Editar</Button>
+          <Button
+            type={ButtonHTMLType.Submit}
+            loading={waitingFetch === "function"}
+          >
+            Editar
+          </Button>
         </form>
         <form onSubmit={handleUpdateRoleSubmit}>
           <div className={styles.field}>
@@ -123,7 +135,12 @@ function FormVoluntary({ hide, uuid, association }: FormVoluntaryProps) {
               message={messageError["voluntaryRole"]}
             />
           </div>
-          <Button type={ButtonHTMLType.Submit}>Editar</Button>
+          <Button
+            type={ButtonHTMLType.Submit}
+            loading={waitingFetch === "role"}
+          >
+            Editar
+          </Button>
         </form>
       </div>
       <GlassBackground onClick={hide} />
