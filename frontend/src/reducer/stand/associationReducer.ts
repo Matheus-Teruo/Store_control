@@ -66,10 +66,20 @@ export const createAssociationPayload = (
 
 export const updateAssociationPayload = (
   state: CreateAssociation & Partial<UpdateAssociation>,
+  initial: Association,
 ): UpdateAssociation => {
-  const { uuid, ...rest } = state;
+  const { uuid, associationName, associationKey, ...rest } = state;
   if (!uuid || !regexUuid.test(uuid)) {
     throw new Error("UUID is required to update the association");
   }
-  return { ...rest, uuid };
+
+  const updatedFields: Partial<UpdateAssociation> = { uuid };
+  if (associationName !== initial.associationName) {
+    updatedFields.associationName = associationName;
+  }
+  if (associationKey !== initial.associationKey) {
+    updatedFields.associationKey = associationKey;
+  }
+
+  return { ...rest, ...updatedFields } as UpdateAssociation;
 };

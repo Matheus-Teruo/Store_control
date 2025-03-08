@@ -55,10 +55,16 @@ export const createStandPayload = (
 
 export const updateStandPayload = (
   state: CreateStand & Partial<UpdateStand>,
+  initial: Stand,
 ): UpdateStand => {
-  const { uuid, ...rest } = state;
+  const { uuid, standName, ...rest } = state;
   if (!uuid || !regexUuid.test(uuid)) {
     throw new Error("UUID is required to update the stand");
   }
+
+  if (standName === initial.standName) {
+    return { ...rest, uuid };
+  }
+
   return { ...rest, uuid };
 };

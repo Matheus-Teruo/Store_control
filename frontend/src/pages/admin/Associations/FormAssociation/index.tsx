@@ -18,6 +18,7 @@ import useAssociationService from "@service/stand/useAssociationService";
 import { useEffect, useReducer, useState } from "react";
 import { CheckSVG, XSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
+import Association from "@data/stands/Association";
 
 type FormAssociationProps = {
   type: "create" | "update";
@@ -30,6 +31,7 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
     associationReducer,
     initialAssociationState,
   );
+  const [initial, setInitial] = useState<Association>();
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const [waitingFetch, setWaitingFetch] = useState<
     "create/update" | "delete" | ""
@@ -50,8 +52,9 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
         const association = await getAssociation(uuid);
         if (association) {
           dispatch({ type: "SET_ASSOCIATION", payload: association });
+          setInitial(association);
         }
-      } else if (uuid === undefined) {
+      } else if (type === "update" && uuid === undefined) {
         console.error("uuid need to be defined when type is update");
       }
     };
@@ -82,10 +85,10 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (uuid) {
+    if (initial) {
       setWaitingFetch("create/update");
       const association = await updateAssociation(
-        updateAssociationPayload(state),
+        updateAssociationPayload(state, initial),
       );
       if (association && !isMessage(association)) {
         addNotification({

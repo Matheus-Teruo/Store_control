@@ -18,6 +18,7 @@ import Input from "@/components/utils/ProductInput";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import { CheckSVG, XSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
+import Stand from "@data/stands/Stand";
 
 type FormStandProps = {
   type: "create" | "update";
@@ -27,6 +28,7 @@ type FormStandProps = {
 
 function FormStand({ type, hide, uuid }: FormStandProps) {
   const [state, dispatch] = useReducer(standReducer, initialStandState);
+  const [initial, setInitial] = useState<Stand>();
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const [waitingFetch, setWaitingFetch] = useState<
     "create/update" | "delete" | ""
@@ -41,8 +43,9 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
         const stand = await getStand(uuid);
         if (stand) {
           dispatch({ type: "SET_STAND", payload: stand });
+          setInitial(stand);
         }
-      } else if (uuid === undefined) {
+      } else if (type === "update" && uuid === undefined) {
         console.error("uuid need to be defined when type is update");
       }
     };
@@ -71,9 +74,9 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (uuid) {
+    if (initial) {
       setWaitingFetch("create/update");
-      const stand = await updateStand(updateStandPayload(state));
+      const stand = await updateStand(updateStandPayload(state, initial));
       if (stand && !isMessage(stand)) {
         addNotification({
           title: "Update Stand Success",
