@@ -67,7 +67,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
           });
           setInitial(product);
         }
-      } else if (uuid === undefined) {
+      } else if (type === "update" && uuid === undefined) {
         console.error("uuid need to be defined when type is update");
       }
     };
@@ -184,7 +184,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             onChange={(e) =>
               dispatch({
                 type: "SET_PRICE",
-                payload: parseFloat(e.target.value),
+                payload: e.target.value,
               })
             }
             message={messageError["price"]}
@@ -200,7 +200,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
                 onChange={(e) =>
                   dispatch({
                     type: "SET_DISCOUNT",
-                    payload: parseFloat(e.target.value),
+                    payload: e.target.value,
                   })
                 }
                 message={messageError["descount"]}
@@ -212,7 +212,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             type="number"
             id="productStock"
             isRequired
-            value={state.stock}
+            value={state.stock.toFixed(0)}
             onChange={(e) =>
               dispatch({ type: "SET_STOCK", payload: parseInt(e.target.value) })
             }

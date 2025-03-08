@@ -6,8 +6,8 @@ type ProductAction =
   | { type: "SET_PRODUCT_NAME"; payload: string }
   | { type: "SET_SUMMARY"; payload: string }
   | { type: "SET_DESCRIPTION"; payload: string }
-  | { type: "SET_PRICE"; payload: number }
-  | { type: "SET_DISCOUNT"; payload: number }
+  | { type: "SET_PRICE"; payload: string }
+  | { type: "SET_DISCOUNT"; payload: string }
   | { type: "SET_STOCK"; payload: number }
   | { type: "SET_PRODUCT_IMG"; payload: string }
   | { type: "SET_STAND_UUID"; payload: string | undefined }
@@ -35,9 +35,9 @@ export function productReducer(
         uuid: action.payload.uuid,
         productName: action.payload.productName,
         summary:
-          action.payload.summary !== "" ? action.payload.summary : undefined,
+          action.payload.summary !== null ? action.payload.summary : undefined,
         description:
-          action.payload.description !== ""
+          action.payload.description !== null
             ? action.payload.description
             : undefined,
         price: action.payload.price,
@@ -72,21 +72,23 @@ export function productReducer(
         return { ...state, description: undefined };
       }
       return { ...state, description: action.payload };
-    case "SET_PRICE":
-      if (action.payload < 0) {
-        return state;
-      }
-      return { ...state, price: action.payload };
-    case "SET_DISCOUNT":
-      if (action.payload < 0 && action.payload <= state.price) {
-        return state;
-      }
-      return { ...state, discount: action.payload };
+    case "SET_PRICE": {
+      const rawValue = action.payload.replace(/[^0-9]/g, "");
+      if (!rawValue) return { ...state, price: 0 };
+      const numericValue = parseFloat(rawValue) / 100;
+      return { ...state, price: numericValue };
+    }
+    case "SET_DISCOUNT": {
+      const rawValue = action.payload.replace(/[^0-9]/g, "");
+      if (!rawValue) return { ...state, discount: 0 };
+      const numericValue = parseFloat(rawValue) / 100;
+      return { ...state, discount: numericValue };
+    }
     case "SET_STOCK":
-      if (action.payload < 0) {
-        return state;
-      }
-      return { ...state, stock: action.payload };
+      return {
+        ...state,
+        stock: Number.isNaN(action.payload) ? 0 : action.payload,
+      };
     case "SET_PRODUCT_IMG":
       return { ...state, productImg: action.payload };
     case "SET_STAND_UUID":

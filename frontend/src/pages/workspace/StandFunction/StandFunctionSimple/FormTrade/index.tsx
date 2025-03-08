@@ -122,7 +122,8 @@ function FormTrade({
                       </Button>
                       <Input
                         id={`product-${item.productUuid}`}
-                        value={item.quantity}
+                        type="number"
+                        value={item.quantity.toFixed(0)}
                         onChange={(e) =>
                           dispatch({
                             type: "ON_CHANGE_ITEM",
