@@ -32,8 +32,14 @@ type FormPurchaseProps = {
 function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
   const [state, dispatch] = useReducer(productReducer, initialProductState);
   const [initial, setInitial] = useState<Product>();
-  const [image, setImage] = useState<string>("");
+  const [image, setImage] = useState<{ path: string; updated: boolean }>({
+    path: "",
+    updated: false,
+  });
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+  const [waitingFetch, setWaitingFetch] = useState<
+    "create/update" | "delete" | ""
+  >("");
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const { getProduct, createProduct, updateProduct, deleteProduct } =
@@ -55,9 +61,13 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
         const product = await getProduct(uuid);
         if (product) {
           dispatch({ type: "SET_PRODUCT", payload: product });
+          setImage({
+            path: product.productImg ? product.productImg : "",
+            updated: false,
+          });
           setInitial(product);
         }
-      } else if (uuid === undefined) {
+      } else if (type === "update" && uuid === undefined) {
         console.error("uuid need to be defined when type is update");
       }
     };
@@ -67,6 +77,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setWaitingFetch("create/update");
     const product = await createProduct(createProductPayload(state));
     if (product && !isMessage(product)) {
       addNotification({
@@ -80,11 +91,13 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
       const message = product;
       if (message.invalidFields) setMessageError(message.invalidFields);
     }
+    setWaitingFetch("");
   };
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (initial) {
+      setWaitingFetch("create/update");
       const product = await updateProduct(updateProductPayload(state, initial));
       if (product && !isMessage(product)) {
         addNotification({
@@ -99,9 +112,11 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
         if (message.invalidFields) setMessageError(message.invalidFields);
       }
     }
+    setWaitingFetch("");
   };
 
   const handleDeleteSubmit = async () => {
+    setWaitingFetch("create/update");
     await deleteProduct(state.uuid);
     addNotification({
       title: "Delete Product Success",
@@ -111,13 +126,20 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
     dispatch({ type: "RESET" });
     setConfirmDelete(false);
     hide();
+    setWaitingFetch("");
   };
 
   return (
     <>
       <div className={styles.main}>
         <h3>{type === "create" ? "Criar Produto" : "Editar Produto"}</h3>
-        {image && <img src={image} alt="Preview" style={{ width: "200px" }} />}
+        {image.path !== "" && (
+          <div
+            className={`${styles.imageFrame} ${image.updated && (initial?.productImg !== state.productImg ? styles.imageUpdated : styles.imageUploaded)}`}
+          >
+            <img src={image.path} alt="Preview" style={{ width: "200px" }} />
+          </div>
+        )}
         <form
           onSubmit={type === "create" ? handleCreateSubmit : handleUpdateSubmit}
         >
@@ -162,7 +184,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             onChange={(e) =>
               dispatch({
                 type: "SET_PRICE",
-                payload: parseFloat(e.target.value),
+                payload: e.target.value,
               })
             }
             message={messageError["price"]}
@@ -178,7 +200,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
                 onChange={(e) =>
                   dispatch({
                     type: "SET_DISCOUNT",
-                    payload: parseFloat(e.target.value),
+                    payload: e.target.value,
                   })
                 }
                 message={messageError["descount"]}
@@ -190,7 +212,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             type="number"
             id="productStock"
             isRequired
-            value={state.stock}
+            value={state.stock.toFixed(0)}
             onChange={(e) =>
               dispatch({ type: "SET_STOCK", payload: parseInt(e.target.value) })
             }
@@ -199,7 +221,12 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
           <div className={styles.imageUpload}>
             <label>Upload de Imagem</label>
             <ImageUpload
-              onChangeImage={setImage}
+              onChangeImage={(value) =>
+                setImage({
+                  path: value,
+                  updated: true,
+                })
+              }
               onChange={(value) =>
                 dispatch({ type: "SET_PRODUCT_IMG", payload: value })
               }
@@ -234,13 +261,17 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
                 <Button
                   className={styles.buttonConfirmDelete}
                   onClick={handleDeleteSubmit}
+                  loading={waitingFetch === "delete"}
                 >
                   <CheckSVG size={16} />
                 </Button>
               </div>
             )}
             <div />
-            <Button type={ButtonHTMLType.Submit}>
+            <Button
+              type={ButtonHTMLType.Submit}
+              loading={waitingFetch === "create/update"}
+            >
               {type === "create" ? "Criar" : "Editar"}
             </Button>
           </div>

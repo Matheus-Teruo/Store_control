@@ -54,6 +54,8 @@ function ProductInput({
         id={id}
         name={id}
         type={type}
+        inputMode={type === "number" ? "numeric" : undefined}
+        pattern={type === "number" ? "\\d*" : undefined}
         required={isRequired}
         maxLength={maxLength}
       />

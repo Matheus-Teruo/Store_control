@@ -41,6 +41,7 @@ function FormTrade({
   >({});
   const [confirmFinalization, setConfirmFinalization] =
     useState<boolean>(false);
+  const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
   const { createTrade } = useTradeService();
   const { getListProducts } = useProductService();
@@ -65,14 +66,13 @@ function FormTrade({
     fetchProducts();
   }, [getListProducts]);
 
-  useEffect(() => {}, [showCart]);
-
   const handleShow = (value: boolean) => {
     setShowCart(value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setWaitingFetch(true);
     const purchase = await createTrade(createTradePayload(state));
     if (purchase) {
       addNotification({
@@ -84,6 +84,7 @@ function FormTrade({
       setShowCart(false);
       dispatch({ type: "RESET" });
     }
+    setWaitingFetch(false);
   };
 
   return (
@@ -121,7 +122,8 @@ function FormTrade({
                       </Button>
                       <Input
                         id={`product-${item.productUuid}`}
-                        value={item.quantity}
+                        type="number"
+                        value={item.quantity.toFixed(0)}
                         onChange={(e) =>
                           dispatch({
                             type: "ON_CHANGE_ITEM",
@@ -192,6 +194,7 @@ function FormTrade({
                   <Button
                     className={styles.finalizationButton}
                     type={ButtonHTMLType.Submit}
+                    loading={waitingFetch}
                   >
                     <CheckSVG />
                   </Button>
