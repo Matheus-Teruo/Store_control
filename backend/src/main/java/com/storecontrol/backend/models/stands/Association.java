@@ -51,7 +51,7 @@ public class Association {
         if (request.principalName() != null) {
             this.principalName = request.principalName();
         }
-        if (request.principalName() != null) {
+        if (request.associationKey() != null) {
             this.associationKey = request.associationKey();
         }
     }

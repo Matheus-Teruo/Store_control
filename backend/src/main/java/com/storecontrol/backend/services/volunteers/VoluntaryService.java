@@ -76,7 +76,13 @@ public class VoluntaryService {
     validation.checkNameDuplication(request.username(), request.fullname());
     var voluntary = safeTakeVoluntaryByUuid(request.uuid());
 
-    voluntary.updateVoluntary(request,  passwordEncoder.encode(request.password()));
+    String newPassword = "";
+    boolean newPasswordFlag = false;
+    if (request.password() != null) {
+      newPassword = request.password();
+      newPasswordFlag = true;
+    }
+    voluntary.updateVoluntary(request,  passwordEncoder.encode(newPassword), newPasswordFlag);
 
     return voluntary;
   }
