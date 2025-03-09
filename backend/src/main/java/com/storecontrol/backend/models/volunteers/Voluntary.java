@@ -5,10 +5,9 @@ import com.storecontrol.backend.models.operations.Donation;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.Refund;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
-import com.storecontrol.backend.models.stands.Association;
-import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
 import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -76,9 +75,9 @@ public class Voluntary implements UserDetails {
     this.valid = true;
   }
 
-  public void updateVoluntary(RequestUpdateVoluntary request, String password) {
-    if (request.username() != null || request.password() != null) {
-      this.user.updateUser(request.username(), password);
+  public void updateVoluntary(RequestUpdateVoluntary request, String password, boolean passwordFlag) {
+    if (request.username() != null || passwordFlag) {
+      this.user.updateUser(request.username(), password, passwordFlag);
     }
     if (request.fullname() != null) {
       this.fullname = request.fullname();

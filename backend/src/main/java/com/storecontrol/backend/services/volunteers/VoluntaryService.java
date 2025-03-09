@@ -74,9 +74,16 @@ public class VoluntaryService {
   public Voluntary updateVoluntary(RequestUpdateVoluntary request, UUID voluntaryUuid) {
     validation.checkVoluntaryAuthentication(request.uuid(), voluntaryUuid);
     validation.checkNameDuplication(request.username(), request.fullname());
+    validation.checkRootFullname(request.uuid(), request.fullname());
     var voluntary = safeTakeVoluntaryByUuid(request.uuid());
 
-    voluntary.updateVoluntary(request,  passwordEncoder.encode(request.password()));
+    String newPassword = "";
+    boolean newPasswordFlag = false;
+    if (request.password() != null) {
+      newPassword = request.password();
+      newPasswordFlag = true;
+    }
+    voluntary.updateVoluntary(request,  passwordEncoder.encode(newPassword), newPasswordFlag);
 
     return voluntary;
   }

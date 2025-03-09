@@ -1166,7 +1166,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"username\": \"UsernameStand\",\r\n    \"password\": null ,\r\n    \"salt\": null,\r\n    \"fullname\": \"Full Name Stand\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"username\": null,\r\n    \"password\": null,\r\n    \"fullname\": \"Full Name Register\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
