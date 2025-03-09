@@ -107,16 +107,16 @@ function Products() {
             className={`${styles.listProducts} ${index % 2 === 0 ? styles.itemPair : styles.itemOdd}
             ${product.stock === 0 && styles.itemNull}`}
           >
-            {product.productImg ? (
-              <img className={styles.productImage} src={product.productImg} />
-            ) : (
-              <div className={styles.productFrame}>
+            <div className={styles.productFrame}>
+              {product.productImg ? (
+                <img className={styles.productImage} src={product.productImg} />
+              ) : (
                 <ImageSVG
                   size={16}
                   className={`${styles.productIcon} ${styles.propNull}`}
                 />
-              </div>
-            )}
+              )}
+            </div>
             <p className={styles.productName}>{product.productName}</p>
             <p
               className={`${styles.productsSummary} ${product.summary === null && styles.propNull}`}
@@ -139,7 +139,7 @@ function Products() {
             >
               {product.stock}
             </p>
-            <div className={styles.productFrame}>
+            <div className={styles.productEdit}>
               <Button
                 className={styles.productEdit}
                 onClick={() =>
