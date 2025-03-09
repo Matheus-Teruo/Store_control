@@ -4,6 +4,7 @@ import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.stands.Stand;
+import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
 import com.storecontrol.backend.repositories.stands.AssociationRepository;
 import com.storecontrol.backend.repositories.volunteers.FunctionRepository;
@@ -59,6 +60,19 @@ public class VoluntaryValidation {
           MessageResolver.getInstance().getMessage("validation.voluntary.checkFullname.nameDuplication.message"),
           Map.of(
               MessageResolver.getInstance().getMessage("validation.voluntary.checkFullname.nameDuplication.field"),
+              fullname
+          )
+      );
+    }
+  }
+
+  public void checkRootFullname(UUID uuid, String fullname) {
+    if (fullname != null && repository.existsByUuidAndFullname(uuid, "Root User")) {
+      throw new InvalidDatabaseInsertionException(
+          MessageResolver.getInstance().getMessage("validation.voluntary.checkFullname.RootCantChange.error"),
+          MessageResolver.getInstance().getMessage("validation.voluntary.checkFullname.RootCantChange.message"),
+          Map.of(
+              MessageResolver.getInstance().getMessage("validation.voluntary.checkFullname.RootCantChange.field"),
               fullname
           )
       );

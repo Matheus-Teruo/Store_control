@@ -74,6 +74,7 @@ public class VoluntaryService {
   public Voluntary updateVoluntary(RequestUpdateVoluntary request, UUID voluntaryUuid) {
     validation.checkVoluntaryAuthentication(request.uuid(), voluntaryUuid);
     validation.checkNameDuplication(request.username(), request.fullname());
+    validation.checkRootFullname(request.uuid(), request.fullname());
     var voluntary = safeTakeVoluntaryByUuid(request.uuid());
 
     String newPassword = "";

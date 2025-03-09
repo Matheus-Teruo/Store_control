@@ -19,6 +19,8 @@ public interface VoluntaryRepository extends JpaRepository<Voluntary, UUID> {
 
   boolean existsByUserUsername(String username);
 
+  boolean existsByUuidAndFullname(UUID uuid, String fullname);
+
   boolean existsByFullname(String fullname);
 
   UserDetails findByUserUsername(String username);
