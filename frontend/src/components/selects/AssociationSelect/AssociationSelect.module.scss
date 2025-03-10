@@ -4,6 +4,20 @@
 .base {
   position: relative;
 
+  &.unfocOK {
+    .select {
+      color: $color-accepted;
+      transition: color 0.4s;
+    }
+  }
+
+  &.unfocNO {
+    .select {
+      color: $color-unaccepted;
+      transition: color 0.4s;
+    }
+  }
+
   .select {
     border: none;
     width: 200px;

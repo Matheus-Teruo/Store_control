@@ -33,6 +33,7 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   const [waitingFetch, setWaitingFetch] = useState<
     "create/update" | "delete" | ""
   >("");
+  const [touched, setTouched] = useState<boolean>(false);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const { getStand, createStand, updateStand, deleteStand } = useStandService();
@@ -56,6 +57,7 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setWaitingFetch("create/update");
+    setTouched(false);
     const stand = await createStand(createStandPayload(state));
     if (stand && !isMessage(stand)) {
       addNotification({
@@ -69,6 +71,7 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
       const message = stand;
       if (message.invalidFields) setMessageError(message.invalidFields);
     }
+    setTouched(true);
     setWaitingFetch("");
   };
 
@@ -76,6 +79,7 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
     e.preventDefault();
     if (initial) {
       setWaitingFetch("create/update");
+      setTouched(false);
       const stand = await updateStand(updateStandPayload(state, initial));
       if (stand && !isMessage(stand)) {
         addNotification({
@@ -90,6 +94,7 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
         if (message.invalidFields) setMessageError(message.invalidFields);
       }
     }
+    setTouched(true);
     setWaitingFetch("");
   };
 
@@ -124,7 +129,9 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
             onChange={(e) =>
               dispatch({ type: "SET_STAND_NAME", payload: e.target.value })
             }
+            showStatus={touched}
             message={messageError["standName"]}
+            isRequired
           />
           <label>Associação</label>
           <AssociationSelect
@@ -135,6 +142,7 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
                 payload: e.target.value,
               })
             }
+            showStatus={touched}
             message={messageError["associationUuid"]}
           />
           <div className={styles.footerButtons}>

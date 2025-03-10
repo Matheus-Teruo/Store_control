@@ -33,6 +33,7 @@ function Signup() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
+  const [touched, setTouched] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
   const { login } = useUserContext();
   const { signupVoluntary } = useUserService();
@@ -42,6 +43,7 @@ function Signup() {
     e.preventDefault();
     if (state.password == state.confirmPassword) {
       setWaitingFetch(true);
+      setTouched(false);
       const voluntary = await signupVoluntary(signupPayload(state));
       if (voluntary && !isMessage(voluntary)) {
         addNotification({
@@ -68,6 +70,7 @@ function Signup() {
         type: MessageType.WARNING,
       });
     }
+    setTouched(true);
     setWaitingFetch(false);
   };
 
@@ -87,6 +90,7 @@ function Signup() {
             id="username"
             placeholder="Usuário"
             isRequired
+            showStatus={touched}
             message={messageError["username"]}
           />
         </div>
@@ -102,6 +106,7 @@ function Signup() {
             id="fullname"
             placeholder="Nome Completo"
             isRequired
+            showStatus={touched}
             message={messageError["fullname"]}
           />
         </div>
@@ -118,6 +123,7 @@ function Signup() {
             placeholder="Senha"
             isSecret
             isRequired
+            showStatus={touched}
             message={messageError["password"]}
           />
         </div>
@@ -137,6 +143,9 @@ function Signup() {
             placeholder="Confirmar Senha"
             isSecret
             isRequired
+            onlyStatus
+            showStatus={touched}
+            message={messageError["password"]}
           />
         </div>
         <div className={styles.field}>
@@ -154,6 +163,8 @@ function Signup() {
             id="associationKey"
             placeholder="Chave da Associação"
             isRequired
+            showStatus={touched}
+            message={messageError["associationKey"]}
           />
         </div>
         <div className={styles.button}>

@@ -40,6 +40,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
   const [waitingFetch, setWaitingFetch] = useState<
     "create/update" | "delete" | ""
   >("");
+  const [touched, setTouched] = useState<boolean>(false);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const { getProduct, createProduct, updateProduct, deleteProduct } =
@@ -78,6 +79,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setWaitingFetch("create/update");
+    setTouched(false);
     const product = await createProduct(createProductPayload(state));
     if (product && !isMessage(product)) {
       addNotification({
@@ -91,6 +93,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
       const message = product;
       if (message.invalidFields) setMessageError(message.invalidFields);
     }
+    setTouched(true);
     setWaitingFetch("");
   };
 
@@ -98,6 +101,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
     e.preventDefault();
     if (initial) {
       setWaitingFetch("create/update");
+      setTouched(false);
       const product = await updateProduct(updateProductPayload(state, initial));
       if (product && !isMessage(product)) {
         addNotification({
@@ -112,6 +116,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
         if (message.invalidFields) setMessageError(message.invalidFields);
       }
     }
+    setTouched(true);
     setWaitingFetch("");
   };
 
@@ -152,6 +157,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             onChange={(e) =>
               dispatch({ type: "SET_PRODUCT_NAME", payload: e.target.value })
             }
+            showStatus={touched}
             message={messageError["productName"]}
           />
           <label>Resumo</label>
@@ -164,6 +170,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             onChange={(e) =>
               dispatch({ type: "SET_SUMMARY", payload: e.target.value })
             }
+            showStatus={touched}
             message={messageError["summary"]}
           />
           <label>Descrição</label>
@@ -187,6 +194,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
                 payload: e.target.value,
               })
             }
+            showStatus={touched}
             message={messageError["price"]}
           />
           {type === "update" && (
@@ -203,6 +211,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
                     payload: e.target.value,
                   })
                 }
+                showStatus={touched}
                 message={messageError["descount"]}
               />
             </>
@@ -216,6 +225,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             onChange={(e) =>
               dispatch({ type: "SET_STOCK", payload: parseInt(e.target.value) })
             }
+            showStatus={touched}
             message={messageError["stock"]}
           />
           <div className={styles.imageUpload}>
@@ -241,7 +251,9 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
                 onChange={(value) =>
                   dispatch({ type: "SET_STAND_UUID", payload: value })
                 }
-                disabled
+                notNull
+                showStatus={touched}
+                message={messageError["standUuid"]}
               />
             </div>
           )}

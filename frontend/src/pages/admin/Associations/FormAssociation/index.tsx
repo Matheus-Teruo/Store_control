@@ -36,6 +36,7 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
   const [waitingFetch, setWaitingFetch] = useState<
     "create/update" | "delete" | ""
   >("");
+  const [touched, setTouched] = useState<boolean>(false);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const {
@@ -65,6 +66,7 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setWaitingFetch("create/update");
+    setTouched(false);
     const association = await createAssociation(
       createAssociationPayload(state),
     );
@@ -80,6 +82,7 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
       const message = association;
       if (message.invalidFields) setMessageError(message.invalidFields);
     }
+    setTouched(true);
     setWaitingFetch("");
   };
 
@@ -87,6 +90,7 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
     e.preventDefault();
     if (initial) {
       setWaitingFetch("create/update");
+      setTouched(false);
       const association = await updateAssociation(
         updateAssociationPayload(state, initial),
       );
@@ -103,6 +107,7 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
         if (message.invalidFields) setMessageError(message.invalidFields);
       }
     }
+    setTouched(true);
     setWaitingFetch("");
   };
 
@@ -140,7 +145,9 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
                 payload: e.target.value,
               })
             }
+            showStatus={touched}
             message={messageError["associationName"]}
+            isRequired
           />
           <label>{"Nome do(a) presente"}</label>
           <Input
@@ -150,7 +157,9 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
             onChange={(e) =>
               dispatch({ type: "SET_PRINCIPAL_NAME", payload: e.target.value })
             }
+            showStatus={touched}
             message={messageError["principalName"]}
+            isRequired
           />
           <label>{"Chave da associação"}</label>
           <Input
@@ -160,7 +169,9 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
             onChange={(e) =>
               dispatch({ type: "SET_ASSOCIATION_KEY", payload: e.target.value })
             }
+            showStatus={touched}
             message={messageError["associationKey"]}
+            isRequired
           />
           <div className={styles.footerButtons}>
             {type === "update" && !confirmDelete && (
