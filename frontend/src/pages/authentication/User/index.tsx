@@ -65,10 +65,11 @@ function User() {
   const [update, setUpdate] = useState<
     "username" | "fullname" | "password" | ""
   >("");
+  const [messageError, setMessageError] = useState<Record<string, string>>({});
   const [waitingFetch, setWaitingFetch] = useState<
     "username" | "fullname" | "password" | ""
   >("");
-  const [messageError, setMessageError] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
   const { user, logout } = useUserContext();
   const { getVoluntary, updateVoluntary } = useVoluntaryService();
@@ -91,6 +92,7 @@ function User() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setWaitingFetch(update);
+    setTouched(false);
     const voluntary = await updateVoluntary({
       uuid: userProperties.uuid,
       username: update === "username" ? state.username : undefined,
@@ -110,7 +112,13 @@ function User() {
       const message = voluntary;
       if (message.invalidFields) setMessageError(message.invalidFields);
     }
+    setTouched(true);
     setWaitingFetch("");
+  };
+
+  const handleUpdate = (value: "username" | "fullname" | "password" | "") => {
+    setTouched(false);
+    setUpdate(value);
   };
 
   const handleLogout = async () => {
@@ -123,7 +131,10 @@ function User() {
       <div className={styles.field}>
         <p className={styles.title}>Usuário</p>
         {update !== "username" ? (
-          <div className={styles.value} onClick={() => setUpdate("username")}>
+          <div
+            className={styles.value}
+            onClick={() => handleUpdate("username")}
+          >
             <UserSVG />
             <p>{userProperties.username}</p>
           </div>
@@ -140,11 +151,12 @@ function User() {
               id="username"
               placeholder="Alterar Usuário"
               isRequired
+              showStatus={touched}
               message={messageError["username"]}
             />
             <Button
               className={styles.buttonCancel}
-              onClick={() => setUpdate("")}
+              onClick={() => handleUpdate("")}
             >
               <XSVG />
             </Button>
@@ -160,7 +172,10 @@ function User() {
       <div className={styles.field}>
         <p className={styles.title}>Nome Completo</p>
         {update !== "fullname" ? (
-          <div className={styles.value} onClick={() => setUpdate("fullname")}>
+          <div
+            className={styles.value}
+            onClick={() => handleUpdate("fullname")}
+          >
             <FaceSmileSVG />
             <p>{userProperties.fullname}</p>
           </div>
@@ -177,11 +192,12 @@ function User() {
               id="fullname"
               placeholder="Alterar Nome Completo"
               isRequired
+              showStatus={touched}
               message={messageError["fullname"]}
             />
             <Button
               className={styles.buttonCancel}
-              onClick={() => setUpdate("")}
+              onClick={() => handleUpdate("")}
             >
               <XSVG />
             </Button>
@@ -221,7 +237,7 @@ function User() {
           <div className={styles.footer}>
             <Button
               className={styles.buttonFooter}
-              onClick={() => setUpdate("password")}
+              onClick={() => handleUpdate("password")}
             >
               Alterar Senha
             </Button>
@@ -245,6 +261,7 @@ function User() {
                 placeholder="Nova Senha"
                 isSecret
                 isRequired
+                showStatus={touched}
                 message={messageError["password"]}
               />
             </div>
@@ -264,12 +281,15 @@ function User() {
                 placeholder="Confirmar Nova Senha"
                 isSecret
                 isRequired
+                onlyStatus
+                showStatus={touched}
+                message={messageError["password"]}
               />
             </div>
             <div className={styles.updateFooter}>
               <Button
                 className={styles.buttonCancel}
-                onClick={() => setUpdate("")}
+                onClick={() => handleUpdate("")}
               >
                 <XSVG />
               </Button>

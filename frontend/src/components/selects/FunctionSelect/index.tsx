@@ -1,10 +1,11 @@
+import activeConfig from "@/config/activeConfig";
 import styles from "./FunctionSelect.module.scss";
 import SummaryFunction from "@data/volunteers/Function";
 import useFunctionService from "@service/voluntary/useFunctionsService";
 import { useEffect, useState } from "react";
 
 interface FunctionSelectProps {
-  value: string | undefined;
+  value: string;
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   message?: string;
 }
@@ -21,7 +22,14 @@ function FunctionSelect({
     const fetchAssociation = async () => {
       const voluntaryFunctions = await getListFunctions();
       if (voluntaryFunctions) {
-        setListFunctions(voluntaryFunctions);
+        if (activeConfig.version === "simple") {
+          const filteredFunctions = voluntaryFunctions.filter(
+            (item) => item.uuid !== "12345678-abcd-4efa-bcde-f1234567890a",
+          );
+          setListFunctions(filteredFunctions);
+        } else {
+          setListFunctions(voluntaryFunctions);
+        }
       }
     };
 
@@ -36,7 +44,6 @@ function FunctionSelect({
         value={value}
         onChange={onChange}
       >
-        <option value={undefined}></option>
         {listFunctions.map((voluntaryFunction) => (
           <option key={voluntaryFunction.uuid} value={voluntaryFunction.uuid}>
             {voluntaryFunction.functionName}

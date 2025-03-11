@@ -2,40 +2,31 @@
 
 .inputGroup {
   position: relative;
-  height: 32px;
   display: flex;
   align-items: center;
-  border-bottom: solid 1px;
   box-sizing: border-box;
-  border-color: $color-gray-600;
   background: $color-gray-000;
+  border-radius: $border-radius;
 
-  label {
-    color: $color-gray-600;
-    display: flex;
-    align-items: center;
-    padding: 0 6px;
-    margin-right: -3px;
-  }
-
-  input {
-    height: 24px;
+  textarea {
+    padding: 4px 8px;
     width: 100%;
+    box-sizing: border-box;
+    background-color: $color-gray-000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+      "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+      "Helvetica Neue", sans-serif;
+    border-radius: $border-radius;
     border: none;
-    border-radius: 0;
-    background-color: transparent;
+    resize: none;
+    outline: none;
   }
 
   &.unfocOK {
     border-color: $color-accepted;
     transition: border-color 0.4s;
 
-    label {
-      color: $color-accepted;
-      transition: color 0.4s;
-    }
-
-    input {
+    textarea {
       color: $color-accepted;
       transition: color 0.4s;
     }
@@ -45,26 +36,17 @@
     border-color: $color-unaccepted;
     transition: border-color 0.4s;
 
-    label {
-      color: $color-unaccepted;
-      transition: color 0.4s;
-    }
-
-    input {
+    textarea {
       color: $color-unaccepted;
       transition: color 0.4s;
     }
   }
 
   &:focus-within {
-    border-color: $color-secundary-3;
+    border-color: $color-gray-900;
 
-    label {
-      color: $color-secundary-3;
-    }
-
-    input {
-      color: $color-secundary-3;
+    textarea {
+      color: $color-gray-900;
     }
   }
 

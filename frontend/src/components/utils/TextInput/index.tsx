@@ -1,30 +1,28 @@
 import { useEffect, useState } from "react";
-import styles from "./ProductInput.module.scss";
+import styles from "./TextInput.module.scss";
 import { InputStatus } from "../InputStatus";
 
-interface ProductInputProps {
+interface TextInputProps {
   value: string | number | undefined;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   id: string;
-  type?: string;
   placeholder?: string;
-  maxLength?: number;
+  rows?: number;
   isRequired?: boolean;
   showStatus?: boolean;
   message?: string;
 }
 
-function ProductInput({
+function TextInput({
   value,
   onChange,
   id,
-  type = "text",
   placeholder = "",
-  maxLength,
+  rows = 3,
   isRequired = false,
   showStatus = false,
   message = "",
-}: ProductInputProps) {
+}: TextInputProps) {
   const [status, setStatus] = useState<InputStatus>(InputStatus.Untouched);
 
   useEffect(() => {
@@ -37,7 +35,7 @@ function ProductInput({
     }
   }, [showStatus, message]);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(event);
     setStatus(InputStatus.Untouched);
   };
@@ -51,17 +49,14 @@ function ProductInput({
           : status === InputStatus.Rejected && styles.unfocNO
       }`}
     >
-      <input
+      <textarea
         value={value}
         onChange={handleChange}
         placeholder={placeholder}
+        rows={rows}
         id={id}
         name={id}
-        type={type}
-        inputMode={type === "number" ? "numeric" : undefined}
-        pattern={type === "number" ? "\\d*" : undefined}
         required={isRequired}
-        maxLength={maxLength}
       />
       {status !== InputStatus.Untouched && message && (
         <span className={styles.messageError}>{message}</span>
@@ -74,4 +69,4 @@ function ProductInput({
   );
 }
 
-export default ProductInput;
+export default TextInput;

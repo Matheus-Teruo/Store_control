@@ -1,18 +1,19 @@
 import styles from "./AuthInput.module.scss";
 import { useState, useEffect } from "react";
-import { InputStatus } from "./InputStatus";
+import { InputStatus } from "../InputStatus";
 
 interface AuthInputProps {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  exposeSetStatus?: (setStatus: (status: InputStatus) => void) => void;
   id: string;
   placeholder?: string;
   isSecret?: boolean;
+  onlyStatus?: boolean;
   isRequired?: boolean;
   ComponentUntouched?: React.ComponentType;
   ComponentAccepted?: React.ComponentType;
   ComponentRejected?: React.ComponentType;
+  showStatus?: boolean;
   message?: string;
 }
 
@@ -20,22 +21,27 @@ function AuthInput({
   value,
   onChange,
   id,
-  exposeSetStatus,
   placeholder = "",
   isSecret = false,
+  onlyStatus = false,
   isRequired = false,
   ComponentUntouched,
   ComponentAccepted,
   ComponentRejected,
+  showStatus = false,
   message = "",
 }: AuthInputProps) {
   const [status, setStatus] = useState<InputStatus>(InputStatus.Untouched);
 
   useEffect(() => {
-    if (exposeSetStatus) {
-      exposeSetStatus(setStatus);
+    if (showStatus) {
+      if (message === "") {
+        setStatus(InputStatus.Accepted);
+      } else {
+        setStatus(InputStatus.Rejected);
+      }
     }
-  }, [exposeSetStatus]);
+  }, [showStatus, message]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event);
@@ -78,7 +84,9 @@ function AuthInput({
         name={id}
         required={isRequired}
       />
-      {message && <span className={styles.messageError}>{message}</span>}
+      {!onlyStatus && status !== InputStatus.Untouched && message && (
+        <span className={styles.messageError}>{message}</span>
+      )}
       {/* <ul>
         {status === InputStatus.Rejected &&
           messages.map((message) => <li>{message}</li>)}

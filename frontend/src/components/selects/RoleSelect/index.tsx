@@ -22,7 +22,6 @@ function RoleSelect({ value, onChange, message = "" }: RoleSelectProps) {
         value={value}
         onChange={onChange}
       >
-        <option value={undefined}></option>
         {Object.entries(VoluntaryRoleMetadata).map(([key, { label }]) => (
           <option key={key} value={key}>
             {label}

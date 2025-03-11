@@ -30,6 +30,7 @@ function Login() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
+  const [touched, setTouched] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
   const { login } = useUserContext();
   const { loginVoluntary } = useUserService();
@@ -38,6 +39,8 @@ function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setWaitingFetch(true);
+    setTouched(false);
+    setMessageError({});
     const user = await loginVoluntary(loginPayload(state));
     if (user && !isMessage<User>(user)) {
       addNotification({
@@ -52,6 +55,7 @@ function Login() {
       const message = user;
       if (message.invalidFields) setMessageError(message.invalidFields);
     }
+    setTouched(true);
     setWaitingFetch(false);
   };
 
@@ -71,6 +75,7 @@ function Login() {
             ComponentAccepted={UserCheckSVG}
             ComponentRejected={UserXSVG}
             isRequired
+            showStatus={touched}
             message={messageError["username"]}
           />
         </div>
@@ -87,7 +92,6 @@ function Login() {
             ComponentRejected={LockPadOpenSVG}
             isSecret
             isRequired
-            message={messageError["password"]}
           />
         </div>
         <div className={styles.buttonSpace}>

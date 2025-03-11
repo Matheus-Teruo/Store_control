@@ -9,6 +9,7 @@ import { CreateTrade } from "@data/operations/Trade";
 import { SummaryProduct } from "@data/stands/Product";
 
 export type TradeAction =
+  | { type: "SET_CART"; payload: string }
   | { type: "SET_ON_ORDER"; payload: boolean }
   | { type: "SET_RECHARGE_TYPE"; payload: PaymentType }
   | { type: "ADD_ITEM"; payload: SummaryProduct }
@@ -91,6 +92,20 @@ export function tradeReducer(
   action: TradeAction,
 ): CreateTrade & { totalQuantity: number } {
   switch (action.type) {
+    case "SET_CART": {
+      const object: CreateTrade & { totalQuantity: number } = JSON.parse(
+        action.payload,
+      );
+      return {
+        ...state,
+        paymentTypeEnum: object.paymentTypeEnum,
+        items: object.items,
+        orderCardId: object.orderCardId,
+        rechargeValue: object.rechargeValue,
+        totalQuantity: object.totalQuantity,
+      };
+    }
+
     case "SET_ON_ORDER":
       return { ...state, onOrder: action.payload };
 

@@ -2,12 +2,14 @@ import styles from "./StandSelect.module.scss";
 import { SummaryStand } from "@data/stands/Stand";
 import { useEffect, useState } from "react";
 import useStandService from "@service/stand/useStandService";
+import { InputStatus } from "@/components/utils/InputStatus";
 
 interface StandSelectProps {
   value: string | undefined;
   onChange: (event: string | undefined) => void;
   mode?: "select" | "radio";
-  disabled?: boolean;
+  notNull?: boolean;
+  showStatus?: boolean;
   message?: string;
 }
 
@@ -15,10 +17,12 @@ function StandSelect({
   value,
   onChange,
   mode = "select",
-  disabled = false,
+  notNull = false,
+  showStatus = false,
   message = "",
 }: StandSelectProps) {
   const [listStands, setListStands] = useState<SummaryStand[]>([]);
+  const [status, setStatus] = useState<InputStatus>(InputStatus.Untouched);
   const { getListStands } = useStandService();
 
   useEffect(() => {
@@ -29,8 +33,19 @@ function StandSelect({
     fetchStand();
   }, [getListStands]);
 
+  useEffect(() => {
+    if (showStatus) {
+      if (message === "") {
+        setStatus(InputStatus.Accepted);
+      } else {
+        setStatus(InputStatus.Rejected);
+      }
+    }
+  }, [showStatus, message]);
+
   const handleChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     onChange(event.target.value);
+    setStatus(InputStatus.Untouched);
   };
 
   const handleChangeCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,14 +55,21 @@ function StandSelect({
   return (
     <>
       {mode === "select" ? (
-        <div className={styles.base}>
+        <div
+          className={`${styles.base}
+          ${
+            status === InputStatus.Accepted
+              ? styles.unfocOK
+              : status === InputStatus.Rejected && styles.unfocNO
+          }`}
+        >
           <select
             className={styles.select}
             id="stands"
             value={value}
             onChange={handleChangeSelect}
           >
-            <option value="" disabled={disabled} style={{ color: "#656360" }}>
+            <option value="" disabled={notNull} style={{ color: "#656360" }}>
               -- estande --
             </option>
             {listStands.map((stand) => (
@@ -56,7 +78,9 @@ function StandSelect({
               </option>
             ))}
           </select>
-          {message && <span className={styles.messageError}>{message}</span>}
+          {status !== InputStatus.Untouched && message && (
+            <span className={styles.messageError}>{message}</span>
+          )}
         </div>
       ) : (
         <ul className={styles.checkBackground}>

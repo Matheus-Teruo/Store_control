@@ -67,6 +67,17 @@
           text-align: end;
         }
       }
+
+      .scanner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        button {
+          margin: 6px;
+          padding: 2px 10px;
+        }
+      }
     }
 
     .totalList {
@@ -89,9 +100,12 @@
 
     .communication {
       padding: 4px;
+      text-align: center;
     }
 
     .finalization {
+      padding: 7px;
+
       .finalizationButton {
         p {
           font-size: 1rem;

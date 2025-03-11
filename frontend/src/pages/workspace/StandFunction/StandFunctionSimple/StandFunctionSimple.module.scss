@@ -80,13 +80,16 @@
 
     li {
       display: grid;
-      grid-template-columns: 1fr 1fr 3fr 1.5fr 2fr 1fr;
+      grid-template-columns: 40px 40px 3fr 1.5fr 2fr 40px;
       grid-auto-flow: row;
       gap: 2px;
-
       margin-bottom: 4px;
       padding: 2px 4px;
       border-radius: $border-radius;
+
+      @media (max-width: $mobile) {
+        grid-template-columns: 1fr 28px 3fr 1.5fr 2fr 1fr;
+      }
 
       p,
       .productFrame,
@@ -100,8 +103,16 @@
       }
 
       .productImage {
-        max-width: 24px;
-        max-height: 24px;
+        height: 32px;
+        @media (max-width: $mobile) {
+          height: 24px;
+        }
+      }
+      .productFrame {
+        min-height: 32px;
+        @media (max-width: $mobile) {
+          min-height: 24px;
+        }
       }
 
       button {
