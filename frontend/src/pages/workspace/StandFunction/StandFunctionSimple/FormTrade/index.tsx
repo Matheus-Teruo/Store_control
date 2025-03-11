@@ -73,16 +73,20 @@ function FormTrade({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setWaitingFetch(true);
-    const purchase = await createTrade(createTradePayload(state));
-    if (purchase) {
-      addNotification({
-        title: "Create Purchase Success",
-        message: `Create purchase with ${purchase.items.length} itens diferent`,
-        type: MessageType.OK,
-      });
-      setConfirmFinalization(false);
-      setShowCart(false);
-      dispatch({ type: "RESET" });
+    if (type === "normal") {
+      const purchase = await createTrade(createTradePayload(state));
+      if (purchase) {
+        addNotification({
+          title: "Create Purchase Success",
+          message: `Create purchase with ${purchase.items.length} itens diferent`,
+          type: MessageType.OK,
+        });
+        setConfirmFinalization(false);
+        setShowCart(false);
+        dispatch({ type: "RESET" });
+      }
+    } else {
+      // GERAR QR CODE
     }
     setWaitingFetch(false);
   };

@@ -17,6 +17,7 @@ interface PublicDropDrownProps {
   showSearch: boolean;
   setTouggleView: (event: ViewType) => void;
   setShowSearch: () => void;
+  setShowCart?: () => void;
 }
 
 function PublicDropDrown({
@@ -24,8 +25,16 @@ function PublicDropDrown({
   showSearch,
   setTouggleView,
   setShowSearch,
+  setShowCart,
 }: PublicDropDrownProps) {
   const [show, setShow] = useState<boolean>(false);
+
+  const handleCart = () => {
+    if (setShowCart) {
+      setShowCart();
+    }
+    setShow(false);
+  };
 
   return (
     <div className={styles.toggle}>
@@ -67,7 +76,7 @@ function PublicDropDrown({
               <p>{showSearch ? "Esconder" : "Pesquisar"}</p>
             </li>
             {activeConfig.version !== "tokens" && (
-              <li>
+              <li onClick={() => handleCart()}>
                 <ShoppingCartSVG size={16} className={styles.auxIcon} />
                 <p>Carrinho</p>
               </li>

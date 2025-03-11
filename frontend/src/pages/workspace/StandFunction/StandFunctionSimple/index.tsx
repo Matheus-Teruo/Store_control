@@ -73,42 +73,50 @@ function StandFunctionSimple() {
         </div>
       </div>
       <ul className={styles.main}>
-        {products.map((product, index) => (
-          <li
-            key={product.uuid}
-            className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
-          >
-            <Button
-              className={`${styles.modifierProduct} ${product.stock === 0 && styles.itemNull}`}
-              onClick={() =>
-                dispatch({
-                  type: "DECREASE_ITEM",
-                  payload: product.uuid,
-                })
-              }
+        {products.map((product, index) => {
+          const quantity =
+            state.items.find((item) => item.productUuid === product.uuid)
+              ?.quantity ?? 0;
+          return (
+            <li
+              key={product.uuid}
+              className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
             >
-              <MinusSVG />
-            </Button>
-            <div className={styles.productFrame}>
-              {product.productImg ? (
-                <img src={product.productImg} className={styles.productImage} />
-              ) : (
-                <ImageSVG />
-              )}
-            </div>
-            <p>{product.productName}</p>
-            <p>R${(product.price - product.discount).toFixed(2)}</p>
-            <p>Estoque: {product.stock}</p>
-            <Button
-              className={`${styles.modifierProduct} ${product.stock === 0 && styles.itemNull}`}
-              onClick={() =>
-                dispatch({ type: "ADD_ITEM", payload: { ...product } })
-              }
-            >
-              <PlusSVG />
-            </Button>
-          </li>
-        ))}
+              <Button
+                className={`${styles.modifierProduct} ${product.stock === 0 && styles.itemNull}`}
+                onClick={() =>
+                  dispatch({
+                    type: "DECREASE_ITEM",
+                    payload: product.uuid,
+                  })
+                }
+              >
+                <MinusSVG />
+              </Button>
+              <div className={styles.productFrame}>
+                {product.productImg ? (
+                  <img
+                    src={product.productImg}
+                    className={styles.productImage}
+                  />
+                ) : (
+                  <ImageSVG />
+                )}
+              </div>
+              <p>{product.productName}</p>
+              <p>R${(product.price - product.discount).toFixed(2)}</p>
+              <p>Estoque: {product.stock - quantity}</p>
+              <Button
+                className={`${styles.modifierProduct} ${product.stock === 0 && styles.itemNull}`}
+                onClick={() =>
+                  dispatch({ type: "ADD_ITEM", payload: { ...product } })
+                }
+              >
+                <PlusSVG />
+              </Button>
+            </li>
+          );
+        })}
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
       <FormTrade

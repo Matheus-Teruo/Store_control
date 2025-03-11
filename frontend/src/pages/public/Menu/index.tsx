@@ -4,19 +4,21 @@ import StandOptionsFilter from "@/components/selects/StandSelect";
 import SearchFilter from "./SearchFilter";
 import { SummaryProduct } from "@data/stands/Product";
 import useProductService from "@service/stand/useProductService";
-import {
-  initialPurchaseState,
-  purchaseReducer,
-} from "@reducer/operation/purchaseReducer";
 import PublicDropDrown from "./PublicDropDrown";
 import { ImageSVG } from "@/assets/svg";
+import {
+  initialTradeState,
+  tradeReducer,
+} from "@reducer/operation/tradeReducer";
+import FormTrade from "@/pages/workspace/StandFunction/StandFunctionSimple/FormTrade";
 
 type ViewType = "List" | "Items";
 
 function Menu() {
   const [toggleView, setToggleView] = useState<ViewType>("Items");
+  const [state, dispatch] = useReducer(tradeReducer, initialTradeState);
+  const [showCart, setShowCart] = useState<boolean>(false);
   const [showSearch, setShowSearch] = useState<boolean>(false);
-  const [_cart, _dispatch] = useReducer(purchaseReducer, initialPurchaseState);
   const [selectedStands, setSelectedStands] = useState<string | undefined>(
     undefined,
   );
@@ -45,6 +47,10 @@ function Menu() {
     });
   };
 
+  const handleShowCart = () => {
+    setShowCart((value) => !value);
+  };
+
   return (
     <div className={styles.background}>
       <div className={styles.headerBackground}>
@@ -54,6 +60,7 @@ function Menu() {
             showSearch={showSearch}
             setTouggleView={handleToggleView}
             setShowSearch={handleShowSearch}
+            setShowCart={handleShowCart}
           />
           {showSearch && (
             <SearchFilter
@@ -69,38 +76,60 @@ function Menu() {
         </div>
       </div>
       <ul className={`${toggleView === "Items" ? styles.items : styles.list}`}>
-        {products.map((product) => (
-          <li key={product.uuid}>
-            <div
-              className={`${styles.frame} ${product.stock === 0 && styles.frameEmpty}`}
+        {products.map((product) => {
+          const quantity =
+            state.items.find((item) => item.productUuid === product.uuid)
+              ?.quantity ?? null;
+          return (
+            <li
+              key={product.uuid}
+              onClick={() =>
+                dispatch({ type: "ADD_ITEM", payload: { ...product } })
+              }
             >
-              {product.productImg ? (
-                <img src={product.productImg} className={styles.imageFrame} />
-              ) : (
-                <ImageSVG />
-              )}
-            </div>
-            <div className={styles.tag}>
-              <p
-                className={`${styles.name} ${product.stock === 0 && styles.empty}`}
+              <div
+                className={`${styles.cartQuantity} ${quantity === product.stock && styles.itemOver}`}
               >
-                {product.productName}
-              </p>
-              <p className={styles.summary}>{product.summary}</p>
-              <div className={styles.priceing}>
-                <p className={`${product.stock === 0 && styles.empty}`}>
-                  R${(product.price - product.discount).toFixed(2)}
-                </p>
-                <p>
-                  {product.discount !== 0 && (
-                    <s>R${product.price.toFixed(2)}</s>
-                  )}
-                </p>
+                {quantity && <span>{quantity}</span>}
+                {quantity === product.stock && <p>acabou '-'</p>}
               </div>
-            </div>
-          </li>
-        ))}
+              <div
+                className={`${styles.frame} ${product.stock === 0 && styles.frameEmpty}`}
+              >
+                {product.productImg ? (
+                  <img src={product.productImg} className={styles.imageFrame} />
+                ) : (
+                  <ImageSVG />
+                )}
+              </div>
+              <div className={styles.tag}>
+                <p
+                  className={`${styles.name} ${product.stock === 0 && styles.empty}`}
+                >
+                  {product.productName}
+                </p>
+                <p className={styles.summary}>{product.summary}</p>
+                <div className={styles.priceing}>
+                  <p className={`${product.stock === 0 && styles.empty}`}>
+                    R${(product.price - product.discount).toFixed(2)}
+                  </p>
+                  <p>
+                    {product.discount !== 0 && (
+                      <s>R${product.price.toFixed(2)}</s>
+                    )}
+                  </p>
+                </div>
+              </div>
+            </li>
+          );
+        })}
       </ul>
+      <FormTrade
+        reducer={[state, dispatch]}
+        showCart={showCart}
+        setShowCart={setShowCart}
+        type="pre"
+      />
     </div>
   );
 }
