@@ -20,6 +20,7 @@ import { useEffect, useReducer, useState } from "react";
 import ImageUpload from "./ImageUpload";
 import Product from "@data/stands/Product";
 import Input from "@/components/utils/ProductInput";
+import TextInput from "@/components/utils/TextInput";
 import { CheckSVG, XSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
 
@@ -160,12 +161,11 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             showStatus={touched}
             message={messageError["productName"]}
           />
-          <label>Resumo</label>
+          <label>Resumo (opcional)</label>
           <Input
             type="text"
             id="productSummary"
             maxLength={255}
-            placeholder="Máximo de 255 caracteres"
             value={state.summary}
             onChange={(e) =>
               dispatch({ type: "SET_SUMMARY", payload: e.target.value })
@@ -173,14 +173,17 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             showStatus={touched}
             message={messageError["summary"]}
           />
-          <label>Descrição</label>
-          <textarea
+          <label>Descrição (opcional)</label>
+          <TextInput
+            id="productDescription"
+            rows={3}
+            placeholder="Descreva, contando caracteristicas, história, ou curiosidades do prato"
             value={state.description}
             onChange={(e) =>
               dispatch({ type: "SET_DESCRIPTION", payload: e.target.value })
             }
-            rows={3}
-            placeholder="Descreva, contando caracteristicas, história, ou curiosidades do prato"
+            showStatus={touched}
+            message={messageError["description"]}
           />
           <label>Preço</label>
           <Input
@@ -229,7 +232,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             message={messageError["stock"]}
           />
           <div className={styles.imageUpload}>
-            <label>Upload de Imagem</label>
+            <label>Upload de Imagem (opcional)</label>
             <ImageUpload
               onChangeImage={(value) =>
                 setImage({

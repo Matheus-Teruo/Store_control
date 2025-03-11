@@ -45,20 +45,6 @@
       z-index: 155;
     }
 
-    textarea {
-      padding: 4px 8px;
-      width: 100%;
-      box-sizing: border-box;
-      background-color: $color-gray-000;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-        "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-        "Helvetica Neue", sans-serif;
-      border-radius: $border-radius;
-      border: none;
-      resize: none;
-      outline: none;
-    }
-
     .imageUpload {
       background-color: $color-secundary-1;
       border-radius: $border-radius;
