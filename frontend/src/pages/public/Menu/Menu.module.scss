@@ -98,32 +98,33 @@
     li {
       position: relative;
       margin: 10px;
-      height: 195px;
-      width: 170px;
+      width: calc((100vw - 40px) / 2);
+      height: calc(((100vw - 40px) / 2) + 23px);
+
       display: flex;
       flex-direction: column;
       background-color: $color-gray-000;
 
-      @media (max-width: $mobile_sm) {
-        width: calc((100vw - 40px) / 2);
-        height: calc(((100vw - 40px) / 2) + 23px);
+      @media (min-width: $mobile_sm) {
+        height: 195px;
+        width: 170px;
       }
 
       .frame {
-        height: 170px;
+        height: calc((100vw - 40px) / 2);
 
-        @media (max-width: $mobile_sm) {
-          height: calc((100vw - 40px) / 2);
+        @media (min-width: $mobile_sm) {
+          height: 170px;
         }
       }
 
       .imageFrame {
-        width: 170px;
-        height: 170px;
+        width: calc((100vw - 40px) / 2);
+        height: calc((100vw - 40px) / 2);
 
-        @media (max-width: $mobile_sm) {
-          width: calc((100vw - 40px) / 2);
-          height: calc((100vw - 40px) / 2);
+        @media (min-width: $mobile_sm) {
+          width: 170px;
+          height: 170px;
         }
       }
 

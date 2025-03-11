@@ -1,4 +1,11 @@
-import { CheckSVG, MinusSVG, PlusSVG, TrashSVG, XSVG } from "@/assets/svg";
+import {
+  CheckSVG,
+  MinusSVG,
+  PlusSVG,
+  QRcodeScanSVG,
+  TrashSVG,
+  XSVG,
+} from "@/assets/svg";
 import styles from "./FormTrade.module.scss";
 import PaymentSelect from "@/components/selects/PaymentSelect";
 import Button from "@/components/utils/Button";
@@ -21,6 +28,7 @@ import { useEffect, useState } from "react";
 import GlassBackground from "@/components/GlassBackground";
 import { createQRcodeImage } from "@/utils/createQRcode";
 import QRcodeView from "./QRcodeView";
+import QRcodeReader from "@/components/QRcodeReader";
 
 type FormPurchaseProps = {
   reducer: [
@@ -45,6 +53,7 @@ function FormTrade({
     useState<boolean>(false);
   const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
   const [qrcode, setqrcode] = useState<string>("");
+  const [qrcodeReader, setQrcodeReader] = useState<boolean>(false);
   const { addNotification } = useAlertsContext();
   const { createTrade } = useTradeService();
   const { getListProducts } = useProductService();
@@ -102,6 +111,10 @@ function FormTrade({
     }
   };
 
+  const handleCodeReader = (value: string) => {
+    dispatch({ type: "SET_CART", payload: value });
+  };
+
   return (
     <>
       {showCart && (
@@ -110,66 +123,75 @@ function FormTrade({
             <h3>Carrinho</h3>
             <form onSubmit={handleSubmit}>
               <ul className={styles.itemList}>
-                {state.items.map((item) => {
-                  const product = productsRecord[item.productUuid];
-                  return (
-                    <li key={item.productUuid}>
-                      <p>{product.productName}</p>
-                      <Button
-                        onClick={() =>
-                          dispatch({
-                            type: "REMOVE_ITEM",
-                            payload: item.productUuid,
-                          })
-                        }
-                      >
-                        <TrashSVG size={16} />
-                      </Button>
-                      <Button
-                        onClick={() =>
-                          dispatch({
-                            type: "DECREASE_ITEM",
-                            payload: item.productUuid,
-                          })
-                        }
-                      >
-                        <MinusSVG size={16} />
-                      </Button>
-                      <Input
-                        id={`product-${item.productUuid}`}
-                        type="number"
-                        value={item.quantity.toFixed(0)}
-                        onChange={(e) =>
-                          dispatch({
-                            type: "ON_CHANGE_ITEM",
-                            payload: {
-                              uuid: item.productUuid,
-                              quantity: parseInt(e.target.value),
-                              stock: product.stock,
-                            },
-                          })
-                        }
-                      />
-                      <Button
-                        onClick={() =>
-                          dispatch({
-                            type: "ADD_ITEM",
-                            payload: { uuid: item.productUuid, ...product },
-                          })
-                        }
-                      >
-                        <PlusSVG size={16} />
-                      </Button>
-                      <p className={styles.itemPrice}>
-                        R$
-                        {(
-                          (item.unitPrice - item.discount) *
-                          item.quantity
-                        ).toFixed(2)}
-                      </p>
-                    </li>
-                  );
-                })}
+                {state.items.length !== 0
+                  ? state.items.map((item) => {
+                      const product = productsRecord[item.productUuid];
+                      return (
+                        <li key={item.productUuid}>
+                          <p>{product.productName}</p>
+                          <Button
+                            onClick={() =>
+                              dispatch({
+                                type: "REMOVE_ITEM",
+                                payload: item.productUuid,
+                              })
+                            }
+                          >
+                            <TrashSVG size={16} />
+                          </Button>
+                          <Button
+                            onClick={() =>
+                              dispatch({
+                                type: "DECREASE_ITEM",
+                                payload: item.productUuid,
+                              })
+                            }
+                          >
+                            <MinusSVG size={16} />
+                          </Button>
+                          <Input
+                            id={`product-${item.productUuid}`}
+                            type="number"
+                            value={item.quantity.toFixed(0)}
+                            onChange={(e) =>
+                              dispatch({
+                                type: "ON_CHANGE_ITEM",
+                                payload: {
+                                  uuid: item.productUuid,
+                                  quantity: parseInt(e.target.value),
+                                  stock: product.stock,
+                                },
+                              })
+                            }
+                          />
+                          <Button
+                            onClick={() =>
+                              dispatch({
+                                type: "ADD_ITEM",
+                                payload: { uuid: item.productUuid, ...product },
+                              })
+                            }
+                          >
+                            <PlusSVG size={16} />
+                          </Button>
+                          <p className={styles.itemPrice}>
+                            R$
+                            {(
+                              (item.unitPrice - item.discount) *
+                              item.quantity
+                            ).toFixed(2)}
+                          </p>
+                        </li>
+                      );
+                    })
+                  : type === "normal" && (
+                      <div className={styles.scanner}>
+                        <Button onClick={() => setQrcodeReader(true)}>
+                          <p>Ler Qrcode</p>
+                          <QRcodeScanSVG />
+                        </Button>
+                      </div>
+                    )}
               </ul>
               <li key={"Total"} className={styles.totalList}>
                 <p>Total</p>
@@ -235,6 +257,12 @@ function FormTrade({
             />
           )}
         </>
+      )}
+      {qrcodeReader && (
+        <QRcodeReader
+          onChange={handleCodeReader}
+          setClose={() => setQrcodeReader(false)}
+        />
       )}
     </>
   );
