@@ -16,8 +16,8 @@ type ProductAction =
 export const initialProductState: CreateProduct & UpdateProduct = {
   uuid: "",
   productName: "",
-  summary: undefined,
-  description: undefined,
+  summary: "",
+  description: "",
   price: 0,
   discount: 0,
   stock: 0,
@@ -34,12 +34,9 @@ export function productReducer(
       return {
         uuid: action.payload.uuid,
         productName: action.payload.productName,
-        summary:
-          action.payload.summary !== null ? action.payload.summary : undefined,
+        summary: action.payload.summary !== null ? action.payload.summary : "",
         description:
-          action.payload.description !== null
-            ? action.payload.description
-            : undefined,
+          action.payload.description !== null ? action.payload.description : "",
         price: action.payload.price,
         discount: action.payload.discount,
         stock: action.payload.stock,
@@ -60,16 +57,10 @@ export function productReducer(
       if (!regexText.test(action.payload)) {
         return state;
       }
-      if (action.payload === "") {
-        return { ...state, summary: undefined };
-      }
       return { ...state, summary: action.payload };
     case "SET_DESCRIPTION":
       if (!regexText.test(action.payload)) {
         return state;
-      }
-      if (action.payload === "") {
-        return { ...state, description: undefined };
       }
       return { ...state, description: action.payload };
     case "SET_PRICE": {
@@ -109,21 +100,42 @@ export function productReducer(
 export const createProductPayload = (
   state: CreateProduct & UpdateProduct,
 ): CreateProduct => {
-  const { uuid: _uuid, discount: _discount, ...createPayload } = state;
-  return createPayload;
+  const {
+    uuid: _uuid,
+    summary,
+    description,
+    discount: _discount,
+    ...createPayload
+  } = state;
+  return {
+    summary: summary !== "" ? summary : undefined,
+    description: description !== "" ? description : undefined,
+    ...createPayload,
+  };
 };
 
 export const updateProductPayload = (
   state: CreateProduct & UpdateProduct,
   initial: Product,
 ): UpdateProduct => {
-  const { uuid, productName, ...rest } = state;
+  const { uuid, summary, description, productName, ...rest } = state;
   if (!uuid || !regexUuid.test(uuid))
     throw new Error("UUID é obrigatório para atualizar o produto");
 
   if (productName === initial.productName) {
-    return { ...rest, uuid };
+    return {
+      uuid,
+      summary: summary !== "" ? summary : undefined,
+      description: description !== "" ? description : undefined,
+      ...rest,
+    };
   }
 
-  return { ...rest, uuid, productName };
+  return {
+    uuid,
+    productName,
+    summary: summary !== "" ? summary : undefined,
+    description: description !== "" ? description : undefined,
+    ...rest,
+  };
 };
