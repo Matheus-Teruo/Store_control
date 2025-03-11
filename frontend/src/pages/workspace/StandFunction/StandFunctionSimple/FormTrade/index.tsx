@@ -19,6 +19,8 @@ import useTradeService from "@service/operations/useTradeService";
 import useProductService from "@service/stand/useProductService";
 import { useEffect, useState } from "react";
 import GlassBackground from "@/components/GlassBackground";
+import { createQRcodeImage } from "@/utils/createQRcode";
+import QRcodeView from "./QRcodeView";
 
 type FormPurchaseProps = {
   reducer: [
@@ -42,6 +44,7 @@ function FormTrade({
   const [confirmFinalization, setConfirmFinalization] =
     useState<boolean>(false);
   const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
+  const [qrcode, setqrcode] = useState<string>("");
   const { addNotification } = useAlertsContext();
   const { createTrade } = useTradeService();
   const { getListProducts } = useProductService();
@@ -86,9 +89,17 @@ function FormTrade({
         dispatch({ type: "RESET" });
       }
     } else {
-      // GERAR QR CODE
+      const jsonString = JSON.stringify(state);
+      const image = createQRcodeImage(jsonString);
+      setqrcode(image);
     }
     setWaitingFetch(false);
+  };
+
+  const handleCode = (value: boolean) => {
+    if (!value) {
+      setqrcode("");
+    }
   };
 
   return (
@@ -182,19 +193,19 @@ function FormTrade({
               />
               {type === "pre" && (
                 <p className={styles.communication}>
-                  Este carrinho é apenas uma pré orde, para fazer o pedido pode
+                  Este carrinho é apenas uma pré ordem, para fazer o pedido pode
                   gerar o QR code e apresentar para o caixa e fazer o pagamento
                 </p>
               )}
               {confirmFinalization ? (
                 <div className={styles.finalizationConfirmation}>
-                  <p>Finalizar?</p>
                   <Button
                     onClick={() => setConfirmFinalization(false)}
                     className={styles.finalizationButton}
                   >
                     <XSVG />
                   </Button>
+                  <p>{type === "normal" ? "Finalizar" : "Gerar"}</p>
                   <Button
                     className={styles.finalizationButton}
                     type={ButtonHTMLType.Submit}
@@ -209,13 +220,20 @@ function FormTrade({
                     onClick={() => setConfirmFinalization(true)}
                     className={styles.finalizationButton}
                   >
-                    <p>Finalizar</p>
+                    <p>{type === "normal" ? "Finalizar" : "Gerar QRcode"}</p>
                   </Button>
                 </div>
               )}
             </form>
           </div>
           <GlassBackground onClick={() => handleShow(false)} />
+          {qrcode && (
+            <QRcodeView
+              code={qrcode}
+              showCode={qrcode !== "" && qrcode !== "fail"}
+              setShowCode={handleCode}
+            />
+          )}
         </>
       )}
     </>

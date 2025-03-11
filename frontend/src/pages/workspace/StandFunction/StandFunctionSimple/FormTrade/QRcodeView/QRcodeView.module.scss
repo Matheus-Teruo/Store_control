@@ -1,0 +1,40 @@
+@use "@styles/variables" as *;
+
+.main {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  max-width: 1200px;
+  z-index: 200;
+  position: fixed;
+  background-color: $color-gray-100;
+  padding: 10px;
+  border-radius: $border-radius;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  h3 {
+    font-size: 1.5rem;
+    padding-bottom: 10px;
+    font-weight: 500;
+    color: $color-gray-900;
+  }
+
+  .frame {
+    width: 75vw;
+    aspect-ratio: 1;
+  }
+
+  p {
+    padding-top: 8px;
+    font-size: 0.875rem;
+    font-weight: 400;
+    text-align: center;
+  }
+}
+
+.background {
+  z-index: 150;
+}
