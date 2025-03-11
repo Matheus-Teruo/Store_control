@@ -48,6 +48,10 @@
         border-radius: $border-radius;
         background-color: $color-primary-1;
 
+        p {
+          align-items: center;
+        }
+
         input {
           text-align: center;
         }
@@ -99,6 +103,7 @@
     }
 
     .communication {
+      font-size: 0.75rem;
       padding: 4px;
       text-align: center;
     }

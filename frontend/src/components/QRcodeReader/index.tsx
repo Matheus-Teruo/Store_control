@@ -68,7 +68,7 @@ function QRcodeReader({ onChange, setClose }: QRcodeReaderProps) {
   return (
     <>
       <div className={styles.main}>
-        <h2>Leitor de Cartão</h2>
+        <h3>Leitor de Cartão</h3>
         <div id="reader" className={styles.frame}></div>
         <p>Aponte a camera para o QRcode do cartão</p>
       </div>
