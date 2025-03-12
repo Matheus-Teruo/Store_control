@@ -9,7 +9,13 @@ import { CreateTrade } from "@data/operations/Trade";
 import { SummaryProduct } from "@data/stands/Product";
 
 export type TradeAction =
-  | { type: "SET_CART"; payload: string }
+  | {
+      type: "SET_CART";
+      payload: {
+        cart: string;
+        products: Record<string, Omit<SummaryProduct, "uuid">>;
+      };
+    }
   | { type: "SET_ON_ORDER"; payload: boolean }
   | { type: "SET_RECHARGE_TYPE"; payload: PaymentType }
   | { type: "ADD_ITEM"; payload: SummaryProduct }
@@ -29,11 +35,12 @@ export type TradeAction =
   | { type: "REMOVE_DELIVERED_ITEM"; payload: string }
   | { type: "SET_CASH_REGISTER_UUID"; payload: string }
   | { type: "SET_ORDER_CARD_ID"; payload: string }
+  | { type: "CLEAR_ERROR" }
   | { type: "RESET" };
 
 export const initialTradeState: CreateTrade & {
   totalQuantity: number;
-} = {
+} & { error: string } = {
   onOrder: activeConfig.version === "order",
   items: [],
   orderCardId: activeConfig.version === "simple" ? fixedCardID! : "",
@@ -41,6 +48,7 @@ export const initialTradeState: CreateTrade & {
   paymentTypeEnum: PaymentType.CASH,
   cashRegisterUuid: activeConfig.version === "simple" ? fixedCashUuid! : "",
   totalQuantity: 0,
+  error: "",
 };
 
 function findProductIndex(items: CreateItem[], productUuid: string): number {
@@ -88,14 +96,35 @@ function calculateTotals(items: CreateItem[]): {
 }
 
 export function tradeReducer(
-  state: CreateTrade & { totalQuantity: number },
+  state: CreateTrade & { totalQuantity: number } & { error: string },
   action: TradeAction,
-): CreateTrade & { totalQuantity: number } {
+): CreateTrade & { totalQuantity: number } & { error: string } {
   switch (action.type) {
     case "SET_CART": {
       const object: CreateTrade & { totalQuantity: number } = JSON.parse(
-        action.payload,
+        action.payload.cart,
       );
+
+      for (const item of object.items) {
+        if (!action.payload.products[item.productUuid]) {
+          return { ...state, error: "Um produto não encontrado." };
+        }
+        if (item.quantity > action.payload.products[item.productUuid].stock) {
+          return {
+            ...state,
+            error: `Estoque insuficiente para ${action.payload.products[item.productUuid].productName}.`,
+          };
+        }
+        if (
+          item.unitPrice !== action.payload.products[item.productUuid].price
+        ) {
+          return {
+            ...state,
+            error: `Preço incorreto para ${action.payload.products[item.productUuid].productName}.`,
+          };
+        }
+      }
+
       return {
         ...state,
         paymentTypeEnum: object.paymentTypeEnum,
@@ -244,6 +273,9 @@ export function tradeReducer(
       }
       return { ...state, orderCardId: action.payload };
 
+    case "CLEAR_ERROR":
+      return { ...state, error: "" };
+
     case "RESET":
       return initialTradeState;
 
@@ -253,9 +285,14 @@ export function tradeReducer(
 }
 
 export const createTradePayload = (
-  state: CreateTrade & { totalQuantity: number },
+  state: CreateTrade & { totalQuantity: number } & { error: string },
 ): CreateTrade => {
-  const { totalQuantity: _totalQuantity, items, ...rest } = state;
+  const {
+    totalQuantity: _totalQuantity,
+    error: _error,
+    items,
+    ...rest
+  } = state;
   const validItems = items.filter((item) => item.quantity !== 0);
   return { items: validItems, ...rest };
 };

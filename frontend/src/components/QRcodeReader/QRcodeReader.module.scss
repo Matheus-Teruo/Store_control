@@ -38,9 +38,9 @@
 
   .footer {
     display: flex;
-    align-self: center;
+    align-items: flex-start;
     justify-content: space-between;
-    padding: 5px;
+    padding: 3px 0 8px;
 
     .spaceHolder {
       width: 32px;
@@ -50,7 +50,7 @@
 
     .swapCamera {
       display: flex;
-      align-self: center;
+      align-items: center;
       justify-content: center;
       width: 32px;
       height: 32px;

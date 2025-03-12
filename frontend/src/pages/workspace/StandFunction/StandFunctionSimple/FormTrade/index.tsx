@@ -32,7 +32,7 @@ import QRcodeReader from "@/components/QRcodeReader";
 
 type FormPurchaseProps = {
   reducer: [
-    CreateTrade & { totalQuantity: number },
+    CreateTrade & { totalQuantity: number } & { error: string },
     React.Dispatch<TradeAction>,
   ];
   showCart: boolean;
@@ -78,6 +78,17 @@ function FormTrade({
     fetchProducts();
   }, [getListProducts]);
 
+  useEffect(() => {
+    if (state.error !== "") {
+      addNotification({
+        title: "Erro ao carregar carrinho",
+        message: state.error,
+        type: MessageType.ERROR,
+      });
+      dispatch({ type: "CLEAR_ERROR" });
+    }
+  }, [state.error, addNotification, dispatch]);
+
   const handleShow = (value: boolean) => {
     setShowCart(value);
   };
@@ -89,8 +100,8 @@ function FormTrade({
       const purchase = await createTrade(createTradePayload(state));
       if (purchase) {
         addNotification({
-          title: "Create Purchase Success",
-          message: `Create purchase with ${purchase.items.length} itens diferent`,
+          title: "Compra criada com sucesso",
+          message: `Compra criada com ${purchase.items.length} items diferentes`,
           type: MessageType.OK,
         });
         setConfirmFinalization(false);
@@ -112,7 +123,10 @@ function FormTrade({
   };
 
   const handleCodeReader = (value: string) => {
-    dispatch({ type: "SET_CART", payload: value });
+    dispatch({
+      type: "SET_CART",
+      payload: { cart: value, products: productsRecord },
+    });
   };
 
   return (
