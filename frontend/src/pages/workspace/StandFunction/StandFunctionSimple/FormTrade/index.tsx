@@ -127,7 +127,10 @@ function FormTrade({
                   ? state.items.map((item) => {
                       const product = productsRecord[item.productUuid];
                       return (
-                        <li key={item.productUuid}>
+                        <li
+                          key={item.productUuid}
+                          className={`${product.stock <= item.quantity && styles.OutOfStock}`}
+                        >
                           <p>{product.productName}</p>
                           <Button
                             onClick={() =>

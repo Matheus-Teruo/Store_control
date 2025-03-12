@@ -58,6 +58,7 @@ function Menu() {
           <PublicDropDrown
             menuView={toggleView}
             showSearch={showSearch}
+            cartSize={state.totalQuantity}
             setTouggleView={handleToggleView}
             setShowSearch={handleShowSearch}
             setShowCart={handleShowCart}
