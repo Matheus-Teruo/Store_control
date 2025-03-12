@@ -9,7 +9,7 @@ import { useUserContext } from "@context/UserContext/useUserContext";
 import { SummaryProduct } from "@data/stands/Product";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import useProductService from "@service/stand/useProductService";
-import { useEffect, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "@/components/utils/Button";
 import {
@@ -36,27 +36,33 @@ function StandFunctionSimple() {
   const { user } = useUserContext();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchVoluntary = async () => {
-      if (
-        isUserLogged(user) &&
-        isSeller(user.summaryFunction, user.voluntaryRole)
-      ) {
-        const response = await getProducts(
-          undefined,
-          user.summaryFunction ? user.summaryFunction.uuid : undefined,
-          page.number,
-        );
-        if (response) setProducts(response.content);
-      } else if (
-        isUserUnlogged(user) ||
-        (user && !isSeller(user.summaryFunction, user.voluntaryRole))
-      ) {
-        navigate("/");
-      }
-    };
-    fetchVoluntary();
+  const fetchProducts = useCallback(async () => {
+    if (
+      isUserLogged(user) &&
+      isSeller(user.summaryFunction, user.voluntaryRole)
+    ) {
+      const response = await getProducts(
+        undefined,
+        user.summaryFunction ? user.summaryFunction.uuid : undefined,
+        page.number,
+      );
+      if (response) setProducts(response.content);
+    } else if (
+      isUserUnlogged(user) ||
+      (user && !isSeller(user.summaryFunction, user.voluntaryRole))
+    ) {
+      navigate("/");
+    }
   }, [user, page, navigate, getProducts]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  const handleShow = () => {
+    setShowCart(false);
+    fetchProducts();
+  };
 
   return (
     <div className={styles.body}>
@@ -122,7 +128,7 @@ function StandFunctionSimple() {
       <FormTrade
         reducer={[state, dispatch]}
         showCart={showCart}
-        setShowCart={setShowCart}
+        setShowCart={handleShow}
       />
       {showLast && (
         <LastPurchaseList

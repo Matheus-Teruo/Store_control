@@ -38,6 +38,12 @@
       padding: 2px 4px;
       border-radius: $border-radius;
 
+      .OutOfStock {
+        div {
+          background-color: $color-gray-200;
+        }
+      }
+
       li {
         display: grid;
         grid-template-columns: 2fr 20px 20px 1fr 20px 1fr;
@@ -47,6 +53,10 @@
         padding: 2px 6px;
         border-radius: $border-radius;
         background-color: $color-primary-1;
+
+        p {
+          align-items: center;
+        }
 
         input {
           text-align: center;
@@ -99,6 +109,7 @@
     }
 
     .communication {
+      font-size: 0.75rem;
       padding: 4px;
       text-align: center;
     }
