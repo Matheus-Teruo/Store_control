@@ -24,6 +24,7 @@
   }
 
   .frame {
+    position: relative;
     height: 100%;
     max-width: 90vw;
     max-height: 80vh;
@@ -35,9 +36,35 @@
     }
   }
 
-  p {
-    text-align: center;
+  .footer {
+    display: flex;
+    align-self: center;
+    justify-content: space-between;
     padding: 5px;
+
+    .spaceHolder {
+      width: 32px;
+      height: 32px;
+      background-color: transparent;
+    }
+
+    .swapCamera {
+      display: flex;
+      align-self: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 16px;
+      background-color: $color-secundary-1;
+
+      @media (min-width: $mobile) {
+        bottom: clac(46px);
+      }
+    }
+    p {
+      text-align: center;
+      padding: 5px;
+    }
   }
 }
 

@@ -27,7 +27,7 @@ import useProductService from "@service/stand/useProductService";
 import { useEffect, useState } from "react";
 import GlassBackground from "@/components/GlassBackground";
 import { createQRcodeImage } from "@/utils/createQRcode";
-import QRcodeView from "./QRcodeView";
+import QRcodeView from "@/components/QRcodeView";
 import QRcodeReader from "@/components/QRcodeReader";
 
 type FormPurchaseProps = {
