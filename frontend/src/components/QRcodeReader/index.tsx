@@ -26,8 +26,6 @@ function QRcodeReader({ onChange, setClose }: QRcodeReaderProps) {
           const savedIndex = localStorage.getItem("selectedCameraIndex");
           if (savedIndex) {
             const intIndex = parseInt(savedIndex);
-            console.log(intIndex);
-            console.log(devices.length);
             if (intIndex < devices.length) {
               setSelectedCamera(devices[intIndex].id);
               setSelectedIndex(intIndex);
