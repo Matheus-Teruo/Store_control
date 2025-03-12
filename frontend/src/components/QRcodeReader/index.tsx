@@ -23,8 +23,20 @@ function QRcodeReader({ onChange, setClose }: QRcodeReaderProps) {
     Html5Qrcode.getCameras()
       .then((devices) => {
         if (devices.length > 0) {
+          const savedIndex = localStorage.getItem("selectedCameraIndex");
+          if (savedIndex) {
+            const intIndex = parseInt(savedIndex);
+            if (intIndex < devices.length) {
+              setSelectedCamera(devices[intIndex].id);
+              setSelectedIndex(intIndex);
+            } else {
+              console.error("Erro ao buscar câmeras:", intIndex);
+              setSelectedCamera(devices[0].id);
+            }
+          } else {
+            setSelectedCamera(devices[0].id);
+          }
           setCameras(devices);
-          setSelectedCamera(devices[0].id);
         }
       })
       .catch((err) => console.error("Erro ao buscar câmeras:", err));
@@ -71,6 +83,7 @@ function QRcodeReader({ onChange, setClose }: QRcodeReaderProps) {
       const nextIndex = (selectedIndex + 1) % cameras.length;
       setSelectedIndex(nextIndex);
       setSelectedCamera(cameras[nextIndex].id);
+      localStorage.setItem("selectedCameraIndex", nextIndex.toString());
     }
   };
 
