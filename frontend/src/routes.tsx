@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/authentication/Login";
 import Signup from "./pages/authentication/Signup";
 import User from "./pages/authentication/User";
-import Home from "./pages/public/Home";
 import Menu from "./pages/public/Menu";
 import Order from "./pages/public/Order";
 import Hub from "./pages/workspace/Hub";
@@ -24,6 +23,8 @@ import Transaction from "./pages/workspace/TrasactionOperation";
 import activeConfig from "./config/activeConfig";
 import PublicHeader from "./components/pagePieces/PublicHeader";
 import WorkspaceHeader from "./components/pagePieces/WorkspaceHeader";
+import Public from "./pages/public";
+import NotFound from "./pages/NotFound";
 
 function AppRouter() {
   let salesComponent;
@@ -37,7 +38,8 @@ function AppRouter() {
     <Router>
       <NotificationManager />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Public />} />
+        <Route path="/about" element={<Public />} />
         <Route path="/" element={<PublicHeader />}>
           <Route path="/menu" element={<Menu />} />
           <Route path="/card/:cardID" element={<Order />} />
@@ -66,6 +68,7 @@ function AppRouter() {
           <Route path="stands" element={<Stands />} />
           <Route path="volunteers" element={<Volunteers />} />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
