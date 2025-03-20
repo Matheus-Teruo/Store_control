@@ -1,0 +1,65 @@
+@use "@styles/variables" as *;
+
+.inputGroup {
+  position: relative;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  background: $color-gray-000;
+  border-radius: $border-radius;
+
+  textarea {
+    padding: 4px 8px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: $color-gray-000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+      "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+      "Helvetica Neue", sans-serif;
+    border-radius: $border-radius;
+    border: none;
+    resize: none;
+    outline: none;
+  }
+
+  &.unfocOK {
+    border-color: $color-accepted;
+    transition: border-color 0.4s;
+
+    textarea {
+      color: $color-accepted;
+      transition: color 0.4s;
+    }
+  }
+
+  &.unfocNO {
+    border-color: $color-unaccepted;
+    transition: border-color 0.4s;
+
+    textarea {
+      color: $color-unaccepted;
+      transition: color 0.4s;
+    }
+  }
+
+  &:focus-within {
+    border-color: $color-gray-900;
+
+    textarea {
+      color: $color-gray-900;
+    }
+  }
+
+  .messageError {
+    z-index: 20;
+    font-size: 0.75rem;
+    position: absolute;
+    right: 6px;
+    top: 30px;
+    color: $color-primary-4;
+    background-color: $color-primary-1;
+    padding: 2px 5px;
+    max-width: 200px;
+    border-radius: $border-radius;
+  }
+}

@@ -1,0 +1,109 @@
+@use "@styles/variables" as *;
+
+.main {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  max-width: 1200px;
+  z-index: 100;
+  position: fixed;
+  background-color: $color-gray-100;
+  padding: 10px;
+  border-radius: $border-radius;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  h3 {
+    color: $color-gray-900;
+  }
+
+  .imageFrame {
+    border: 4px solid transparent;
+    display: flex;
+    align-items: center;
+  }
+
+  .imageUploaded {
+    border-color: #48a6db;
+  }
+
+  .imageUpdated {
+    border-color: #a5d6a7;
+  }
+
+  form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-size: 0.75rem;
+      padding: 0 6px;
+      margin-bottom: -4px;
+      z-index: 155;
+    }
+
+    .imageUpload {
+      background-color: $color-secundary-1;
+      border-radius: $border-radius;
+      margin: 6px 0;
+    }
+
+    .adminSection {
+      background-color: $color-secundary-1;
+      border-radius: $border-radius;
+      margin: 6px 0;
+      padding: 4px 0;
+
+      p {
+        padding: 0 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: $color-font-2;
+      }
+
+      div {
+        margin: 0 6px;
+      }
+    }
+
+    .footerButtons {
+      display: flex;
+      justify-content: space-between;
+      margin: 6px 2px;
+
+      button {
+        padding: 4px 10px;
+        background-color: $color-secundary-1;
+      }
+
+      .deleteBody {
+        border-radius: $border-radius;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        span {
+          color: $color-primary-5;
+          font-weight: 500;
+          font-size: 0.875rem;
+        }
+
+        button {
+          margin: 0 4px;
+        }
+
+        .buttonCancelDelete {
+          color: $color-font-2;
+        }
+
+        .buttonConfirmDelete {
+          background-color: $color-primary-2;
+          color: $color-font-1;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+@use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
+
+.main {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  max-height: 100vh;
+  aspect-ratio: 1;
+  max-width: 1200px;
+  z-index: 200;
+  position: fixed;
+  background-color: $color-gray-100;
+  padding: 10px;
+  border-radius: $border-radius;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (max-width: $mobile-sm) {
+    width: 80vw;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    padding-bottom: 10px;
+    font-weight: 500;
+    color: $color-gray-900;
+
+    @media (min-width: $mobile) {
+      font-size: 2rem;
+    }
+  }
+
+  .frame {
+    height: 100%;
+    max-width: 75vw;
+    max-height: calc(100vh - 115px);
+    aspect-ratio: 1;
+  }
+
+  p {
+    padding-top: 8px;
+    font-size: 0.875rem;
+    font-weight: 400;
+    text-align: center;
+
+    @media (min-width: $mobile) {
+      font-size: 1.225rem;
+    }
+  }
+}
+
+.background {
+  z-index: 150;
+}

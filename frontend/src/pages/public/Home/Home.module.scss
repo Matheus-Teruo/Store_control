@@ -1,0 +1,71 @@
+@use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
+
+.background {
+  background-color: $color-secundary-1;
+  width: 100%;
+  min-height: 100vh;
+  justify-items: center;
+}
+
+.body {
+  width: 100%;
+  max-width: 1024px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+
+  .title {
+    color: $color-font-2;
+    font-size: 2.5rem;
+    font-weight: 600;
+  }
+
+  @media (max-width: $mobile) {
+    flex-direction: column;
+
+    img {
+      max-width: 400px;
+      width: 75vw;
+    }
+  }
+
+  .section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .link {
+      background-color: $color-primary-2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-style: none;
+      width: 236px;
+      height: 42px;
+      border-radius: 8px;
+      box-shadow: $color-shadow-1 2px 4px 4px 0px;
+    }
+
+    .linkMenu {
+      margin: 18px;
+    }
+
+    .authSection {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 18px;
+    }
+
+    p {
+      color: $color-font-2;
+      padding: 5px;
+    }
+
+    span {
+      color: $color-font-1;
+    }
+  }
+}

@@ -1,0 +1,107 @@
+@use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
+
+.body {
+  background-color: $color-gray-000;
+  width: 100vw;
+  height: calc(100vh - $admin-header-height - 4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (max-width: $mobile) {
+    height: calc(100vh - $admin-header-height);
+  }
+
+  .listHeader {
+    background-color: $color-primary-2;
+    width: 100%;
+    max-width: 1280px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 40px;
+    grid-auto-flow: row;
+    gap: 2px;
+    padding: 2px 10px;
+    box-sizing: border-box;
+    border-radius: $border-radius;
+
+    p {
+      font-size: 1rem;
+      font-weight: 500;
+
+      @media (max-width: $mobile) {
+        font-size: 0.875rem;
+      }
+    }
+
+    .propAligned {
+      justify-content: center;
+      text-align: center;
+    }
+  }
+
+  .main {
+    padding: 6px 0;
+    max-width: calc(1280px);
+    width: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+
+    @media (max-width: $desktop_md) {
+      padding: 6px;
+    }
+
+    .itemOdd {
+      background-color: $color-primary-1;
+    }
+
+    .itemPair {
+      background-color: $color-tertiary-1;
+    }
+
+    li {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 40px;
+      grid-auto-flow: row;
+      gap: 2px;
+      margin-bottom: 4px;
+      padding: 2px 4px;
+      border-radius: $border-radius;
+
+      p {
+        display: flex;
+        align-items: center;
+        font-size: 0.875rem;
+        color: $color-font-1;
+
+        @media (max-width: $mobile) {
+          font-size: 0.75rem;
+        }
+      }
+
+      span {
+        display: flex;
+        align-content: center;
+        margin: 0 2px;
+      }
+
+      .nullFunction {
+        color: $color-gray-500;
+      }
+
+      .propAligned {
+        justify-content: center;
+        text-align: center;
+      }
+
+      .voluntaryEdit {
+        display: flex;
+        justify-content: center;
+        padding: 2px;
+        margin: 0 4px;
+        background-color: $color-secundary-1;
+        box-sizing: border-box;
+      }
+    }
+  }
+}

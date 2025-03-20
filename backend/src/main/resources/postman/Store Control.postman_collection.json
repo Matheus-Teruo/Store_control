@@ -1,0 +1,2087 @@
+{
+	"info": {
+		"_postman_id": "2936cf9a-c773-4119-b5e7-13623ee58a54",
+		"name": "Store Control",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38885305"
+	},
+	"item": [
+		{
+			"name": "Association",
+			"item": [
+				{
+					"name": "Create Association",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseBody = pm.response.json();\r",
+									"\r",
+									"if (responseBody && responseBody.uuid) {\r",
+									"    pm.collectionVariables.set(\"association_id\", responseBody.uuid);\r",
+									"    // console.log(\"association ID (UUID) saved as:\", responseBody.uuid);\r",
+									"} else {\r",
+									"    console.error(\"UUID not found in the response body\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"associationName\": \"Associationexample\",\r\n    \"principalName\": \"principalexample\",\r\n    \"associationKey\": \"exampleKey\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}associations",
+							"host": [
+								"{{hostPath}}associations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Association",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}associations/{{association_id}}",
+							"host": [
+								"{{hostPath}}associations"
+							],
+							"path": [
+								"{{association_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Page Associations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}associations?page&size&sort",
+							"host": [
+								"{{hostPath}}associations"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": null
+								},
+								{
+									"key": "size",
+									"value": null
+								},
+								{
+									"key": "sort",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Associations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}associations/list",
+							"host": [
+								"{{hostPath}}associations"
+							],
+							"path": [
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Association",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{association_id}}\",\r\n    \"associationName\": \"AssociationExampleaw\",\r\n    \"principalName\": \"PrincipalNameExamplea\",\r\n    \"associationKey\": \"exampleKeyA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}associations",
+							"host": [
+								"{{hostPath}}associations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Association",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}associations/{{association_id}}",
+							"host": [
+								"{{hostPath}}associations"
+							],
+							"path": [
+								"{{association_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CashRegister",
+			"item": [
+				{
+					"name": "Create CashRegister",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseBody = pm.response.json();\r",
+									"\r",
+									"if (responseBody && responseBody.uuid) {\r",
+									"    pm.collectionVariables.set(\"cash_register_id\", responseBody.uuid);\r",
+									"    // console.log(\"cash_register ID (UUID) saved as:\", responseBody.uuid);\r",
+									"} else {\r",
+									"    console.error(\"UUID not found in the response body\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cashRegisterName\": \"CashRegister\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}registers",
+							"host": [
+								"{{hostPath}}registers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read CashRegister",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}registers/{{cash_register_id}}",
+							"host": [
+								"{{hostPath}}registers"
+							],
+							"path": [
+								"{{cash_register_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Page CashRegisters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}registers?page&size&sort",
+							"host": [
+								"{{hostPath}}registers"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": null
+								},
+								{
+									"key": "size",
+									"value": null
+								},
+								{
+									"key": "sort",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List CashRegisters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}registers/list",
+							"host": [
+								"{{hostPath}}registers"
+							],
+							"path": [
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update CashRegister",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{cash_register_id}}\",\r\n    \"cashRegisterName\": \"Register 2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}registers",
+							"host": [
+								"{{hostPath}}registers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete CashRegister",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}registers/{{cash_register_id}}",
+							"host": [
+								"{{hostPath}}registers"
+							],
+							"path": [
+								"{{cash_register_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer",
+			"item": [
+				{
+					"name": "Read Customer",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}customers/{{customer_id}}",
+							"host": [
+								"{{hostPath}}customers"
+							],
+							"path": [
+								"{{customer_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Customer By CardID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}customers/card/{{card_id}}",
+							"host": [
+								"{{hostPath}}customers"
+							],
+							"path": [
+								"card",
+								"{{card_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Page Customers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const customers = pm.response.json().content;\r",
+									"\r",
+									"if (Array.isArray(customers) && customers.length > 0) {\r",
+									"    const randomIndex = Math.floor(Math.random() * customers.length);\r",
+									"\r",
+									"    const randomUUID = customers[randomIndex].uuid;\r",
+									"\r",
+									"    pm.collectionVariables.set(\"customer_id\", randomUUID);\r",
+									"    console.log(\"UUID aleatório salvo:\", randomUUID);\r",
+									"} else {\r",
+									"    console.warn(\"A resposta não contém dados de customers.\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}customers?page&size&sort",
+							"host": [
+								"{{hostPath}}customers"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": null
+								},
+								{
+									"key": "size",
+									"value": null
+								},
+								{
+									"key": "sort",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Page Customers Active",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}customers/active?page&size&sort",
+							"host": [
+								"{{hostPath}}customers"
+							],
+							"path": [
+								"active"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": null
+								},
+								{
+									"key": "size",
+									"value": null
+								},
+								{
+									"key": "sort",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Finalize Customer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"donationValue\": \"4\",\r\n    \"refundValue\": \"0\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"cashRegisterUuid\": \"{{cash_register_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}customers/finalize",
+							"host": [
+								"{{hostPath}}customers"
+							],
+							"path": [
+								"finalize"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UndoFinalize Customer",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}customers/finalize/{{card_id}}",
+							"host": [
+								"{{hostPath}}customers"
+							],
+							"path": [
+								"finalize",
+								"{{card_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "OrderCard",
+			"item": [
+				{
+					"name": "Create OrderCard",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\r",
+									"\r",
+									"function generateRandomId(length) {\r",
+									"    let result = '';\r",
+									"    for (let i = 0; i < length; i++) {\r",
+									"        const randomIndex = Math.floor(Math.random() * characters.length);\r",
+									"        result += characters[randomIndex];\r",
+									"    }\r",
+									"    return result;\r",
+									"}\r",
+									"\r",
+									"const generatedId = generateRandomId(6);\r",
+									"pm.collectionVariables.set(\"card_id\", \"ordercard\" + generatedId);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cardId\": \"{{card_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}cards",
+							"host": [
+								"{{hostPath}}cards"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Page OrderCard",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}cards?page&size&sort",
+							"host": [
+								"{{hostPath}}cards"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": null
+								},
+								{
+									"key": "size",
+									"value": null
+								},
+								{
+									"key": "sort",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read OrderCard",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}cards/{{card_id}}",
+							"host": [
+								"{{hostPath}}cards"
+							],
+							"path": [
+								"{{card_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Page OrderCard Active",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}cards/active?page&size&sort",
+							"host": [
+								"{{hostPath}}cards"
+							],
+							"path": [
+								"active"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": null
+								},
+								{
+									"key": "size",
+									"value": null
+								},
+								{
+									"key": "sort",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Stand",
+			"item": [
+				{
+					"name": "Create Stand",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseBody = pm.response.json();\r",
+									"\r",
+									"if (responseBody && responseBody.uuid) {\r",
+									"    pm.collectionVariables.set(\"stand_id\", responseBody.uuid);\r",
+									"    // console.log(\"stand ID (UUID) saved as:\", responseBody.uuid);\r",
+									"} else {\r",
+									"    console.error(\"UUID not found in the response body\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"standName\": \"StandExample\",\r\n    \"associationUuid\": \"{{association_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}stands",
+							"host": [
+								"{{hostPath}}stands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Stand",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}stands/{{stand_id}}",
+							"host": [
+								"{{hostPath}}stands"
+							],
+							"path": [
+								"{{stand_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Page Stands",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}stands?page&size&sort",
+							"host": [
+								"{{hostPath}}stands"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": null
+								},
+								{
+									"key": "size",
+									"value": null
+								},
+								{
+									"key": "sort",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Stands",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}stands/list",
+							"host": [
+								"{{hostPath}}stands"
+							],
+							"path": [
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Stand",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{stand_id}}\",\r\n    \"standName\": null,\r\n    \"associationUuid\": \"{{association_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}stands",
+							"host": [
+								"{{hostPath}}stands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Stand",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}stands/{{stand_id}}",
+							"host": [
+								"{{hostPath}}stands"
+							],
+							"path": [
+								"{{stand_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Create Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseBody = pm.response.json();\r",
+									"\r",
+									"if (responseBody && responseBody.uuid) {\r",
+									"    if (pm.collectionVariables.has(\"product_id\")) {\r",
+									"        // Se \"product_id\" já existe, salvar o valor atual em \"product_id2\"\r",
+									"        const existingProductId = pm.collectionVariables.get(\"product_id\");\r",
+									"        pm.collectionVariables.set(\"product_id2\", existingProductId);\r",
+									"    }\r",
+									"    // Atualizar \"product_id\" com o novo valor\r",
+									"    pm.collectionVariables.set(\"product_id\", responseBody.uuid);\r",
+									"    // console.log(\"Novo product_id salvo:\", responseBody.uuid);\r",
+									"    if (pm.collectionVariables.has(\"product_id2\")) {\r",
+									"        // console.log(\"Valor antigo movido para product_id2:\", pm.collectionVariables.get(\"product_id2\"));\r",
+									"    }\r",
+									"} else {\r",
+									"    console.error(\"UUID não encontrado no corpo da resposta.\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productName\": \"productExample\",\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}products",
+							"host": [
+								"{{hostPath}}products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}products/{{product_id}}",
+							"host": [
+								"{{hostPath}}products"
+							],
+							"path": [
+								"{{product_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Page Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}products?productName=&page=0",
+							"host": [
+								"{{hostPath}}products"
+							],
+							"query": [
+								{
+									"key": "productName",
+									"value": ""
+								},
+								{
+									"key": "standUuid",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}products/list",
+							"host": [
+								"{{hostPath}}products"
+							],
+							"path": [
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{product_id}}\",\r\n    \"productName\": \"ExampleproductName\",\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"price\": \"2.00\",\r\n    \"discount\": \"0.00\",\r\n    \"stock\": null,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}products",
+							"host": [
+								"{{hostPath}}products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}products/{{product_id}}",
+							"host": [
+								"{{hostPath}}products"
+							],
+							"path": [
+								"{{product_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Product Image",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/matak/Pictures/Projeto/Store_control/57376_shutterstock-209569699.webp"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{hostPath}}products/upload-image",
+							"host": [
+								"{{hostPath}}products"
+							],
+							"path": [
+								"upload-image"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Function",
+			"item": [
+				{
+					"name": "List Functions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}functions",
+							"host": [
+								"{{hostPath}}functions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Voluntary",
+			"item": [
+				{
+					"name": "Read Voluntary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}volunteers/{{voluntary_id}}",
+							"host": [
+								"{{hostPath}}volunteers"
+							],
+							"path": [
+								"{{voluntary_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Page Volunteers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const voluntary = pm.response.json();\r",
+									"\r",
+									"if (Array.isArray(voluntary) && voluntary.length > 0) {\r",
+									"    const randomIndex = Math.floor(Math.random() * voluntary.length);\r",
+									"\r",
+									"    const randomUUID = voluntary[randomIndex].uuid;\r",
+									"\r",
+									"    pm.collectionVariables.set(\"voluntary_id\", randomUUID);\r",
+									"    console.log(\"UUID aleatório salvo:\", randomUUID);\r",
+									"} else {\r",
+									"    console.warn(\"A resposta não contém dados de voluntary.\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}volunteers?page&size&sort",
+							"host": [
+								"{{hostPath}}volunteers"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": null
+								},
+								{
+									"key": "size",
+									"value": null
+								},
+								{
+									"key": "sort",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Voluntary",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"username\": null,\r\n    \"password\": null,\r\n    \"fullname\": \"Full Name Register\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}volunteers",
+							"host": [
+								"{{hostPath}}volunteers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Function from voluntary",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"functionUuid\": \"{{cash_register_id}}\" // \"{{stand_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}volunteers/function",
+							"host": [
+								"{{hostPath}}volunteers"
+							],
+							"path": [
+								"function"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Volunteers Role (Auth)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"voluntaryRole\": \"management\" // \"{{stand_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}volunteers/role",
+							"host": [
+								"{{hostPath}}volunteers"
+							],
+							"path": [
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Voluntary",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}volunteers/{{voluntary_id}}",
+							"host": [
+								"{{hostPath}}volunteers"
+							],
+							"path": [
+								"{{voluntary_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Operations",
+			"item": [
+				{
+					"name": "Donation",
+					"item": [
+						{
+							"name": "Read Donation",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}donations/{{donation_id}}",
+									"host": [
+										"{{hostPath}}donations"
+									],
+									"path": [
+										"{{donation_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Page Donations",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const donations = pm.response.json();\r",
+											"\r",
+											"if (Array.isArray(donations) && donations.length > 0) {\r",
+											"    const randomIndex = Math.floor(Math.random() * donations.length);\r",
+											"\r",
+											"    const randomUUID = donations[randomIndex].uuid;\r",
+											"\r",
+											"    pm.collectionVariables.set(\"donation_id\", randomUUID);\r",
+											"    console.log(\"UUID aleatório salvo:\", randomUUID);\r",
+											"} else {\r",
+											"    console.warn(\"A resposta não contém dados de donations.\");\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}donations?page&size&sort",
+									"host": [
+										"{{hostPath}}donations"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null
+										},
+										{
+											"key": "size",
+											"value": null
+										},
+										{
+											"key": "sort",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Purchase",
+					"item": [
+						{
+							"name": "Create Purchase",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseBody = pm.response.json();\r",
+											"\r",
+											"if (responseBody && responseBody.uuid) {\r",
+											"    pm.collectionVariables.set(\"purchase_id\", responseBody.uuid);\r",
+											"    // console.log(\"purchase ID (UUID) saved as:\", responseBody.uuid);\r",
+											"} else {\r",
+											"    console.error(\"UUID not found in the response body\");\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ],\r\n    \"orderCardId\": \"{{card_id}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}purchases",
+									"host": [
+										"{{hostPath}}purchases"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Purchase",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}purchases/{{purchase_id}}",
+									"host": [
+										"{{hostPath}}purchases"
+									],
+									"path": [
+										"{{purchase_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Page Purchases",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}purchases?page&size&sort",
+									"host": [
+										"{{hostPath}}purchases"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null
+										},
+										{
+											"key": "size",
+											"value": null
+										},
+										{
+											"key": "sort",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Purchases Last 3",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}purchases/last3",
+									"host": [
+										"{{hostPath}}purchases"
+									],
+									"path": [
+										"last3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Purchase",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"uuid\": \"{{purchase_id}}\",\r\n    \"onOrder\": false,\r\n    \"requestUpdateItems\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"delivered\": 1}\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}purchases",
+									"host": [
+										"{{hostPath}}purchases"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Purchase",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}purchases/{{purchase_id}}",
+									"host": [
+										"{{hostPath}}purchases"
+									],
+									"path": [
+										"{{purchase_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Recharge",
+					"item": [
+						{
+							"name": "Create Recharge",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseBody = pm.response.json();\r",
+											"\r",
+											"if (responseBody && responseBody.uuid) {\r",
+											"    pm.collectionVariables.set(\"recharge_id\", responseBody.uuid);\r",
+											"    // console.log(\"Recharge ID (UUID) saved as:\", responseBody.uuid);\r",
+											"} else {\r",
+											"    console.error(\"UUID not found in the response body\");\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"cashRegisterUuid\": \"{{cash_register_id}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}recharges",
+									"host": [
+										"{{hostPath}}recharges"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Recharge",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}recharges/{{recharge_id}}",
+									"host": [
+										"{{hostPath}}recharges"
+									],
+									"path": [
+										"{{recharge_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Page Recharges",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}recharges?page&size&sort",
+									"host": [
+										"{{hostPath}}recharges"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null
+										},
+										{
+											"key": "size",
+											"value": null
+										},
+										{
+											"key": "sort",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Recharges Last 3",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}recharges/last3",
+									"host": [
+										"{{hostPath}}recharges"
+									],
+									"path": [
+										"last3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Recharge",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}recharges/{{recharge_id}}",
+									"host": [
+										"{{hostPath}}recharges"
+									],
+									"path": [
+										"{{recharge_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Refund",
+					"item": [
+						{
+							"name": "Read Refund",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}refunds/{{refund_id}}",
+									"host": [
+										"{{hostPath}}refunds"
+									],
+									"path": [
+										"{{refund_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Page Refunds",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const refunds = pm.response.json();\r",
+											"\r",
+											"if (Array.isArray(refunds) && refunds.length > 0) {\r",
+											"    const randomIndex = Math.floor(Math.random() * refunds.length);\r",
+											"\r",
+											"    const randomUUID = refunds[randomIndex].uuid;\r",
+											"\r",
+											"    pm.collectionVariables.set(\"refund_id\", randomUUID);\r",
+											"    console.log(\"UUID aleatório salvo:\", randomUUID);\r",
+											"} else {\r",
+											"    console.warn(\"A resposta não contém dados de refunds.\");\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}refunds?page&size&sort",
+									"host": [
+										"{{hostPath}}refunds"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null
+										},
+										{
+											"key": "size",
+											"value": null
+										},
+										{
+											"key": "sort",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Transaction",
+					"item": [
+						{
+							"name": "Create Transaction",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseBody = pm.response.json();\r",
+											"\r",
+											"if (responseBody && responseBody.uuid) {\r",
+											"    pm.collectionVariables.set(\"transaction_id\", responseBody.uuid);\r",
+											"    // console.log(\"transaction ID (UUID) saved as:\", responseBody.uuid);\r",
+											"} else {\r",
+											"    console.error(\"UUID not found in the response body\");\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"amount\": \"7.60\",\r\n    \"transactionTypeEnum\": \"entry\",\r\n    \"cashRegisterUuid\": \"{{cash_register_id}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}transactions",
+									"host": [
+										"{{hostPath}}transactions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Transaction",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}transactions/{{transaction_id}}",
+									"host": [
+										"{{hostPath}}transactions"
+									],
+									"path": [
+										"{{transaction_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Page Transactions",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}transactions?page&size&sort",
+									"host": [
+										"{{hostPath}}transactions"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null
+										},
+										{
+											"key": "size",
+											"value": null
+										},
+										{
+											"key": "sort",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Transactions Last 3",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}transactions/last3",
+									"host": [
+										"{{hostPath}}transactions"
+									],
+									"path": [
+										"last3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Transaction",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}transactions/{{transaction_id}}",
+									"host": [
+										"{{hostPath}}transactions"
+									],
+									"path": [
+										"{{transaction_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Trade",
+					"item": [
+						{
+							"name": "Create Trade",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"OrderCardSimple\",\r\n    \"cashRegisterUuid\": \"12345678-abcd-4efa-bcde-f1234567890a\",\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}trades",
+									"host": [
+										"{{hostPath}}trades"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Sign up",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseBody = pm.response.json();\r",
+									"\r",
+									"if (responseBody && responseBody.uuid) {\r",
+									"    pm.collectionVariables.set(\"voluntary_id\", responseBody.uuid);\r",
+									"    // console.log(\"volunteers ID (UUID) saved as:\", responseBody.uuid);\r",
+									"} else {\r",
+									"    console.error(\"UUID not found in the response body\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"UsernameCashier\",\r\n    \"password\": \"PasswordExample\",\r\n    \"fullname\": \"Full Name Cashier\",\r\n    \"associationKey\": \"exampleKey\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}user/signup",
+							"host": [
+								"{{hostPath}}user"
+							],
+							"path": [
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log in",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"UsernameCashier\",\r\n    \"password\": \"PasswordExample\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}user/login",
+							"host": [
+								"{{hostPath}}user"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}user/check",
+							"host": [
+								"{{hostPath}}user"
+							],
+							"path": [
+								"check"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log out",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}user/logout",
+							"host": [
+								"{{hostPath}}user"
+							],
+							"path": [
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.request.headers.add({\r",
+					"  key: \"Accept-Language\",\r",
+					"  value: \"pt-BR\"\r",
+					"});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "hostPath",
+			"value": "http://localhost:8080/",
+			"type": "string"
+		},
+		{
+			"key": "association_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "customer_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "card_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "product_id",
+			"value": ""
+		},
+		{
+			"key": "product_id2",
+			"value": ""
+		},
+		{
+			"key": "purchase_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "recharge_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refund_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "stand_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "voluntary_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "donation_id",
+			"value": ""
+		},
+		{
+			"key": "cash_register_id",
+			"value": ""
+		},
+		{
+			"key": "transaction_id",
+			"value": ""
+		}
+	]
+}

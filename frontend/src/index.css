@@ -1,218 +1,33 @@
-*,
-*:before,
-*:after {
-  margin: 0;
-  padding: 0;
-}
-
-@keyframes shake {
-  0% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-3px);
-  }
-  75% {
-    transform: translateX(3px);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
-
-.shake {
-  animation: shake 1s infinite;
-}
-
 body {
-  background-color: var(--color-primary-5);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  --color-gray-100: #f4f3f1;
-  --color-gray-200: #dddbd8;
-  --color-gray-300: #ccc9c6;
-  --color-gray-400: #aeaba7;
-  --color-gray-500: #8a8784;
-  --color-gray-600: #656360;
-  --color-gray-700: #4b4a47;
-  --color-gray-800: #31302e;
-  --color-gray-900: #1f1d1b;
-
-  --color-primary-1: #fef8f3;
-  --color-primary-2: #e3d2c3;
-  --color-primary-3: #ffb9b3;
-  --color-primary-4: #ff8a78;
-  --color-secundary-1: #AAC8F0;
-  --color-secundary-2: #80A6D9;
-  --color-secundary-3: #425670;
-  --color-card: #fa6b54;
-  --color-cardInv: #d19a94;
-
-  --color-correct-1: #c0efd2;
-  --color-correct-2: #e7ede6;
-  --color-incorrect-1: #d886a4;
-  --color-incorrect-2: #f2e0df;
-
-  --color-font-1: #045071;
-  --color-font-2: #43140d;
-  --color-font-2-5: #491f19A0;
-  --color-font-3: #041c2c;
-  --color-font-4: #384252;
-
-  --color-shadow-1: #041c2c60;
-  --color-shadow-2: #42241F60;
-
-  --height-header: 8vh;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+input:focus {
+  outline: none;
 }
 
 li {
   list-style-type: none;
 }
 
-input:focus{
-  outline: none;
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
-.invalid svg{
-  color: #00000050;;
-}
-.invalid p{
-  color: #00000050;
-}
-
-.UsernameInput,
-.FullnameInput,
-.PasswordPrimary,
-.PasswordCopy{
-  width: 100%;
-}
-.UsernameInput label,
-.FullnameInput label,
-.PasswordPrimary label,
-.PasswordCopy label{
-  display: flex;
-}
-
-.UsernameCheck,
-.FullnameCheck,
-.PasswordPrimaryCheck,
-.PasswordCopyCheck{
-  margin: 0 10px
-}
-
-input#card::-webkit-inner-spin-button,
-input#card::-webkit-outer-spin-button{
-  -webkit-appearance: none;
+*,
+*:before,
+*:after {
   margin: 0;
-}
-input#amount::-webkit-inner-spin-button,
-input#amount::-webkit-outer-spin-button{
-  -webkit-appearance: none;
-  margin: 0;
-}
-input#price::-webkit-inner-spin-button,
-input#price::-webkit-outer-spin-button{
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.BlackBackground{
-  z-index: 15;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #00000050;
-}
-
-.BlackBackgroundScanner{
-  z-index: 25;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #00000050;
-}
-.ScanPreview {
-  width: 100vw;
-  display: flex;
-}
-.ScanPreview div#interactive{
-  width: 100vw;
-  display: flex;
-}
-.ScanPreview div#interactive video,
-.ScanPreview div#interactive canvas{
-  max-width: 100%;
-}
-
-@keyframes CardAppearExpand {
-  0% {
-    opacity: 100%;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    border-radius: 6px;
-  }
-  65% {
-    opacity: 100%;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    border-radius: 10px;
-  }
-  100% {
-    opacity: 0%;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    border-radius: 10px;
-  }
-}
-
-@keyframes CardAppearContract {
-  0% {
-    opacity: 100%;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    border-radius: 10px;
-  }
-  65% {
-    opacity: 100%;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    border-radius: 6px;
-  }
-  100% {
-    opacity: 0%;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    border-radius: 6px;
-  }
+  padding: 0;
 }

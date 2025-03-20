@@ -1,0 +1,80 @@
+@use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
+
+.main {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+  width: 90vw;
+  height: 90vh;
+  position: fixed;
+  background-color: $color-gray-000;
+  padding: 10px;
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-align: center;
+    padding-bottom: 10px;
+
+    @media (min-width: $mobile) {
+      font-size: 2rem;
+    }
+  }
+
+  .frame {
+    position: relative;
+    height: 100%;
+    max-width: 90vw;
+    max-height: 80vh;
+    background-color: $color-gray-600;
+
+    video {
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  .footer {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 3px 0 8px;
+
+    .spaceHolder {
+      width: 32px;
+      height: 32px;
+      background-color: transparent;
+    }
+
+    .swapCamera {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 16px;
+      background-color: $color-secundary-1;
+
+      @media (min-width: $mobile) {
+        bottom: clac(46px);
+      }
+    }
+    p {
+      text-align: center;
+      padding: 5px;
+    }
+  }
+}
+
+.background {
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 150;
+  position: fixed;
+  background-color: #aaaaaa80;
+  backdrop-filter: blur(5px);
+}

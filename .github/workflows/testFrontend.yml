@@ -1,0 +1,45 @@
+name: Test Frontend
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths-ignore:
+      - "backend/**"
+      - "db/**"
+      - "table_service/**"
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  test-frontend:
+    runs-on: "ubuntu-latest"
+    env:
+      VITE_BACKEND_BASE_URL: http://localhost:8080/
+      VITE_SYSTEM_VERSION: simple
+      VITE_ORDER_CARD_ID_FIXED: "OrderCardSimple"
+      VITE_CASH_REGISTER_UUID_FIXED: "12345678-abcd-4efa-bcde-f1234567890a"
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configura Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: yarn
+          cache-dependency-path: frontend/yarn.lock
+
+      - name: Instala dependências yarn
+        run: yarn install
+        working-directory: frontend
+
+      - name: Executa Lint
+        run: yarn lint
+        working-directory: frontend
+
+      # - name: Test
+      #   run: yarn test
+      #   working-directory: frontend

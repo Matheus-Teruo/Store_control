@@ -1,93 +1,70 @@
 services:
   backend:
     build:
-      args:
-      - NODE_ENV=development
-      context: backend
-      target: development
-    command: npm run start-watch
-    environment:
-      - DATABASE_DB=store_control
-      - DATABASE_USER=root
-      - DATABASE_PASSWORD=/run/secrets/db-password
-      - DATABASE_HOST=db
-      - SECRET_TOKEN=jashduwqekckweasd
-      - NODE_ENV=development
+      context: ./backend
+      dockerfile: dockerfile
+    env_file:
+      - .env
     ports:
-      - 5000:5000
-      # - 9229:9229
-      # - 9230:9230
-    secrets:
-      - db-password
-    volumes:
-      - backend-node:/opt/app/node_modules
-      - ./backend/images:/code/images
-      - ./backend/src:/code/src:ro
-      - ./backend/codes:/code/codes:ro
-      - ./backend/package.json:/code/package.json
-      - ./backend/package-lock.json:/code/package-lock.json
+      - 8080:8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://${DATABASE_HOST}:3306/${DATABASE_DB}
     networks:
       - public
       - private
     depends_on:
       - db
   db:
-    # We use a mariadb image which supports both amd64 & arm64 architecture
-    # image: mariadb:10.6.4-focal
-    # If you really want to use MySQL, uncomment the following line
-    image: mysql:8.0.33
+    image: mysql
     command:
-      - --default-authentication-plugin=mysql_native_password
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
     restart: always
-    secrets:
-      - db-password
+    env_file:
+      - .env
     volumes:
       - db-data:/var/lib/mysql
-      - ./db/store_control.sql:/docker-entrypoint-initdb.d/store_control.sql:ro
-      - ./db/export:/var/lib/export
+      - ./db/export:/var/lib/mysql-files
+      - ./db/scripts:/aux-scripts
+    ports:
+      - 3307:3306
     networks:
       - private
     environment:
-      - MYSQL_DATABASE=store_control
-      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db-password
+      - MYSQL_DATABASE=${DATABASE_DB}
+      - MYSQL_USER=${DATABASE_USER}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD_ROOT}
   frontend:
     build:
-      context: frontend
-      target: development
+      context: ./frontend
+      dockerfile: dockerfile
+      args:
+        VITE_BACKEND_BASE_URL: ${VITE_BACKEND_BASE_URL}
+        VITE_SYSTEM_VERSION: ${VITE_SYSTEM_VERSION}
+        VITE_ORDER_CARD_ID_FIXED: ${VITE_ORDER_CARD_ID_FIXED}
+        VITE_CASH_REGISTER_UUID_FIXED: ${VITE_CASH_REGISTER_UUID_FIXED}
+    env_file:
+      - .env
     ports:
-      - 3000:3000
-    volumes:
-      - frontend-node:/code/node_modules
-      - ./frontend/src:/code/src
-      - ./frontend/package.json:/code/package.json
-      - ./frontend/package-lock.json:/code/package-lock.json
+      - "80:80"
     networks:
       - public
-    environment:
-      - WATCHPACK_POLLING=true
     depends_on:
       - backend
-  proxymanager:
-    image: 'jc21/nginx-proxy-manager:latest'
-    restart: unless-stopped
-    ports:
-      - 80:80
-      - 81:81
-      - 443:443
-    volumes:
-      - ./proxy/data:/data
-      - ./proxy/letsencrypt:/etc/letsencrypt
-    networks:
-      - public
+  # table_service:
+  #   build:
+  #     context: ./table_service
+  #     dockerfile: dockerfile
+  #   container_name: table-service-container
+  #   networks:
+  #     - private
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./app:/app
+  #   command: python main.py
 networks:
   public:
   private:
 volumes:
-  backend-node:
   db-data:
-  frontend-node:
-secrets:
-  db-password:
-    file: db/password.txt
