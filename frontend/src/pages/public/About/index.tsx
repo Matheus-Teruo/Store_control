@@ -1,7 +1,7 @@
 import styles from "./About.module.scss";
-import entityRelationship from "./../../../../../entity_relationship_diagram.png";
-import useCaseDiagram from "./../../../../../use_case_diagram.png";
-import useCaseEventTypesDiagram from "./../../../../../use_case_event_types_diagram.png";
+import entityRelationship from "@/assets/image/entity_relationship_diagram.png";
+import useCaseDiagram from "@/assets/image/use_case_diagram.png";
+import useCaseEventTypesDiagram from "@/assets/image/use_case_event_types_diagram.png";
 
 function About() {
   return (
