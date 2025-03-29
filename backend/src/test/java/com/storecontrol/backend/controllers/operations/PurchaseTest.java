@@ -89,6 +89,7 @@ class PurchaseTest extends BaseTest {
   void testReadPurchasesSuccess() throws Exception {
     // Given
     String cardId1 = "CardIDTest12345";
+    UUID userUuid = UUID.randomUUID();
     OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
     Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
     Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
@@ -104,17 +105,18 @@ class PurchaseTest extends BaseTest {
     Page<ResponseSummaryPurchase> expectedResponse = mockPage
         .map(ResponseSummaryPurchase::new);
 
-    when(service.pagePurchases(any(Pageable.class))).thenReturn(mockPage);
+    when(service.pagePurchases(any(UUID.class), eq(userUuid), any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
-    mockMvc.perform(get("/purchases")
-            .accept(MediaType.APPLICATION_JSON))
+    mockMvc.perform(get("/purchases?standUuid=550e8400-e29b-41d4-a716-446655440000")
+            .accept(MediaType.APPLICATION_JSON)
+            .requestAttr("UserUuid", userUuid))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content.length()").value(2))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).pagePurchases(any(Pageable.class));
+    verify(service, times(1)).pagePurchases(any(UUID.class),  eq(userUuid), any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 

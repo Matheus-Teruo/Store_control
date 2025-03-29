@@ -1418,22 +1418,29 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{hostPath}}purchases?page&size&sort",
+									"raw": "{{hostPath}}purchases?standUuid={{stand_id}}",
 									"host": [
 										"{{hostPath}}purchases"
 									],
 									"query": [
 										{
+											"key": "standUuid",
+											"value": "{{stand_id}}"
+										},
+										{
 											"key": "page",
-											"value": null
+											"value": null,
+											"disabled": true
 										},
 										{
 											"key": "size",
-											"value": null
+											"value": null,
+											"disabled": true
 										},
 										{
 											"key": "sort",
-											"value": null
+											"value": null,
+											"disabled": true
 										}
 									]
 								}

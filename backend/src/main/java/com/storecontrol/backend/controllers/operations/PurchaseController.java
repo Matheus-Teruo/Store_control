@@ -48,8 +48,11 @@ public class PurchaseController {
   }
 
   @GetMapping
-  public ResponseEntity<Page<ResponseSummaryPurchase>> readPurchases(Pageable pageable) {
-    var purchases = service.pagePurchases(pageable);
+  public ResponseEntity<Page<ResponseSummaryPurchase>> readPurchases(
+      @RequestParam(required = false) UUID standUuid,
+      @RequestAttribute("UserUuid") UUID userUuid,
+      Pageable pageable) {
+    var purchases = service.pagePurchases(standUuid, userUuid, pageable);
 
     var response = purchases.map(ResponseSummaryPurchase::new);
     return ResponseEntity.ok(response);

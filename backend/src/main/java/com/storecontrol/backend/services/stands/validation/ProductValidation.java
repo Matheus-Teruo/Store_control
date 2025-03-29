@@ -36,9 +36,9 @@ public class ProductValidation {
   public void checkProductBelongsManagerStand(UUID standUuid,UUID userUuid) {
     var manager = voluntaryRepository.findByUuidValidTrue(userUuid)
         .orElseThrow(() -> new InvalidDatabaseQueryException(
-        MessageResolver.getInstance().getMessage("service.exception.product.get.validation.error"),
-        MessageResolver.getInstance().getMessage("service.exception.product.get.validation.message"),
-        userUuid.toString())
+            MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.message"),
+            userUuid.toString())
     );
     if (manager.getVoluntaryRole().isNotAdmin()) {
       if (!manager.getFunction().getUuid().equals(standUuid)) {

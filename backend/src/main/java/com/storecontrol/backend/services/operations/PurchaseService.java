@@ -82,7 +82,8 @@ public class PurchaseService {
         );
   }
 
-  public Page<Purchase> pagePurchases(Pageable pageable) {
+  public Page<Purchase> pagePurchases( UUID standUuid, UUID userUuid , Pageable pageable) {
+    validation.checkPurchasesBelongsManagerStand(standUuid ,userUuid);
     return repository.findAllValidTrue(pageable);
   }
 

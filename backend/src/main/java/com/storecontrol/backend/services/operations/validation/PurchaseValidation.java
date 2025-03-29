@@ -1,6 +1,7 @@
 package com.storecontrol.backend.services.operations.validation;
 
 import com.storecontrol.backend.config.language.MessageResolver;
+import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.infra.exceptions.InvalidOperationException;
 import com.storecontrol.backend.models.customers.Customer;
@@ -13,6 +14,7 @@ import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
+import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +29,10 @@ import java.util.stream.Collectors;
 public class PurchaseValidation {
 
   @Autowired
-  PurchaseRepository repository;
+  private PurchaseRepository repository;
+
+  @Autowired
+  private VoluntaryRepository voluntaryRepository;
 
   public void checkVoluntaryFunctionMatch(Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {
@@ -129,6 +134,27 @@ public class PurchaseValidation {
         throw new InvalidOperationException(
             MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.error"),
             MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.message")
+        );
+      }
+    }
+  }
+
+  public void checkPurchasesBelongsManagerStand(UUID standUuid,UUID userUuid) {
+    var manager = voluntaryRepository.findByUuidValidTrue(userUuid)
+        .orElseThrow(() -> new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.message"),
+            userUuid.toString())
+        );
+    if (manager.getVoluntaryRole().isNotAdmin()) {
+      if (!manager.getFunction().getUuid().equals(standUuid)) {
+        throw new InvalidDatabaseInsertionException(
+            MessageResolver.getInstance().getMessage("validation.purchase.checkManageFunction.invalidStand.error"),
+            MessageResolver.getInstance().getMessage("validation.purchase.checkManageFunction.invalidStand.message"),
+            Map.of(
+                MessageResolver.getInstance().getMessage("validation.purchase.checkManageFunction.invalidStand.field"),
+                userUuid.toString()
+            )
         );
       }
     }
