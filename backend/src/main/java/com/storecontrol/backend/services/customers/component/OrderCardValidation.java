@@ -12,10 +12,10 @@ import java.util.Map;
 public class OrderCardValidation {
 
   @Autowired
-  OrderCardRepository repository;
+  private OrderCardRepository repository;
 
   @Autowired
-  MessageResolver messageResolver;
+  private MessageResolver messageResolver;
 
   public void checkNameDuplication(String cardId) {
     if (repository.existsById(cardId)) {

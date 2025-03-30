@@ -26,10 +26,10 @@ import java.util.UUID;
 public class ProductController {
 
   @Autowired
-  ProductService service;
+  private ProductService service;
 
   @Autowired
-  GCSService GCSService;
+  private GCSService GCSService;
 
   @PostMapping
   public ResponseEntity<ResponseProduct> createProduct(

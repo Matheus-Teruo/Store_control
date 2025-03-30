@@ -20,7 +20,7 @@ import java.util.UUID;
 public class RefundController {
 
   @Autowired
-  RefundService service;
+  private RefundService service;
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseRefund> readRefund(@PathVariable @Valid UUID uuid) {

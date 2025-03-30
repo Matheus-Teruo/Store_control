@@ -20,7 +20,7 @@ import java.util.UUID;
 public class VoluntaryController {
 
   @Autowired
-  VoluntaryService service;
+  private VoluntaryService service;
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseVoluntary> readVoluntary(

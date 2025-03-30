@@ -12,7 +12,7 @@ import java.util.Map;
 public class AssociationValidation {
 
   @Autowired
-  AssociationRepository repository;
+  private AssociationRepository repository;
 
   public void checkNameDuplication(String associationName) {
     if (repository.existsByAssociationName(associationName)) {

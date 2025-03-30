@@ -21,7 +21,7 @@ import java.util.UUID;
 public class TransactionController {
 
   @Autowired
-  TransactionService service;
+  private TransactionService service;
 
   @PostMapping
   public ResponseEntity<ResponseTransaction> createTransaction(

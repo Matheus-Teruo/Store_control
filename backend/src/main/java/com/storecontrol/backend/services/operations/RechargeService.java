@@ -26,19 +26,19 @@ import java.util.UUID;
 public class RechargeService {
 
   @Autowired
-  RechargeValidation validation;
+  private RechargeValidation validation;
 
   @Autowired
-  RechargeRepository repository;
+  private RechargeRepository repository;
 
   @Autowired
-  VoluntaryService voluntaryService;
+  private VoluntaryService voluntaryService;
 
   @Autowired
-  CashRegisterService cashRegisterService;
+  private CashRegisterService cashRegisterService;
 
   @Autowired
-  CustomerService customerService;
+  private CustomerService customerService;
 
   @Transactional
   public Recharge createRecharge(RequestCreateRecharge request, UUID userUuid) {

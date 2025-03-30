@@ -17,7 +17,7 @@ import java.util.List;
 public class ItemService {
 
   @Autowired
-  ProductService productService;
+  private ProductService productService;
 
   @Transactional
   public List<Item> createItems(RequestCreatePurchase request, Purchase purchase) {

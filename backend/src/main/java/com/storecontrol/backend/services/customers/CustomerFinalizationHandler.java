@@ -20,22 +20,22 @@ import java.util.UUID;
 public class CustomerFinalizationHandler {
 
   @Autowired
-  CustomerFinalizationValidation validation;
+  private CustomerFinalizationValidation validation;
 
   @Autowired
-  CustomerService customerService;
+  private CustomerService customerService;
 
   @Autowired
-  CashRegisterService cashRegisterService;
+  private CashRegisterService cashRegisterService;
 
   @Autowired
-  VoluntaryService voluntaryService;
+  private VoluntaryService voluntaryService;
 
   @Autowired
-  RefundService refundService;
+  private RefundService refundService;
 
   @Autowired
-  DonationService donationService;
+  private DonationService donationService;
 
   public Customer finalizeCustomer(RequestCustomerFinalization request, UUID userUuid) {
     var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);

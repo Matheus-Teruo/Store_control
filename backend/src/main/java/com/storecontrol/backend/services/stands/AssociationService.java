@@ -21,10 +21,10 @@ import java.util.UUID;
 public class AssociationService {
 
   @Autowired
-  AssociationValidation validation;
+  private AssociationValidation validation;
 
   @Autowired
-  AssociationRepository repository;
+  private AssociationRepository repository;
 
   @Transactional
   public Association createAssociation(RequestCreateAssociation request) {

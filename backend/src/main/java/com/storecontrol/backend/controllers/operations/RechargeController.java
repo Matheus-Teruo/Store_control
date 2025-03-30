@@ -21,7 +21,7 @@ import java.util.UUID;
 public class RechargeController {
 
   @Autowired
-  RechargeService service;
+  private RechargeService service;
 
   @PostMapping
   public ResponseEntity<ResponseRecharge> createRecharge(

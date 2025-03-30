@@ -19,13 +19,13 @@ import java.util.UUID;
 public class VoluntaryValidation {
 
   @Autowired
-  VoluntaryRepository repository;
+  private VoluntaryRepository repository;
 
   @Autowired
-  FunctionRepository functionRepository;
+  private FunctionRepository functionRepository;
 
   @Autowired
-  AssociationRepository associationRepository;
+  private AssociationRepository associationRepository;
 
   public void checkVoluntaryAuthentication(UUID requestUuid, UUID loggedUuid){
     if (!requestUuid.equals(loggedUuid)) {

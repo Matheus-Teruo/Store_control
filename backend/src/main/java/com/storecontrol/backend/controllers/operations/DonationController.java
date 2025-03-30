@@ -20,7 +20,7 @@ import java.util.UUID;
 public class DonationController {
 
   @Autowired
-  DonationService service;
+  private DonationService service;
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseDonation> readDonation(@PathVariable @Valid UUID uuid) {

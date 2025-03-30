@@ -18,7 +18,7 @@ import java.util.UUID;
 public class TransactionValidation {
 
   @Autowired
-  TransactionRepository repository;
+  private TransactionRepository repository;
 
   public void checkCashAvailableToTransaction(
       BigDecimal amount,

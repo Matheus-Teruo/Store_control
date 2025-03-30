@@ -12,7 +12,7 @@ import java.util.Map;
 public class StandValidation {
 
   @Autowired
-  FunctionRepository repository;
+  private FunctionRepository repository;
 
   public void checkNameDuplication(String standName) {
     if (repository.existsByFunctionName(standName)) {

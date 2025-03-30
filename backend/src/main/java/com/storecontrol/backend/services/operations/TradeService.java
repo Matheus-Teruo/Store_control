@@ -28,31 +28,31 @@ import java.util.UUID;
 public class TradeService {
 
   @Autowired
-  PurchaseValidation purchaseValidation;
+  private PurchaseValidation purchaseValidation;
 
   @Autowired
-  TradeValidation validation;
+  private TradeValidation validation;
 
   @Autowired
-  RechargeRepository rechargeRepository;
+  private RechargeRepository rechargeRepository;
 
   @Autowired
-  PurchaseRepository purchaseRepository;
+  private PurchaseRepository purchaseRepository;
 
   @Autowired
-  ProductService productService;
+  private ProductService productService;
 
   @Autowired
-  VoluntaryService voluntaryService;
+  private VoluntaryService voluntaryService;
 
   @Autowired
-  CustomerService customerService;
+  private CustomerService customerService;
 
   @Autowired
-  CashRegisterService cashRegisterService;
+  private CashRegisterService cashRegisterService;
 
   @Autowired
-  ItemService itemService;
+  private ItemService itemService;
 
   @Transactional
   public ResponseTrade createTrade(RequestCreateRecharge rechargeRequest, RequestCreatePurchase purchaseRequest, UUID userUuid) {

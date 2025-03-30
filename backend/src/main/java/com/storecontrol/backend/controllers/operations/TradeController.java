@@ -24,22 +24,22 @@ import java.util.UUID;
 public class TradeController {
 
   @Autowired
-  TradeService service;
+  private TradeService service;
 
   @Autowired
-  RechargeService rechargeService;
+  private RechargeService rechargeService;
 
   @Autowired
-  PurchaseService purchaseService;
+  private PurchaseService purchaseService;
 
   @Autowired
-  OrderCardService orderCardService;
+  private OrderCardService orderCardService;
 
   @Autowired
-  CustomerService customerService;
+  private CustomerService customerService;
 
   @Autowired
-  CustomerFinalizationHandler customerFinalizationHandler;
+  private CustomerFinalizationHandler customerFinalizationHandler;
 
   @PostMapping
   public ResponseEntity<ResponseTrade> createTrade(

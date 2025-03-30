@@ -21,10 +21,10 @@ import java.util.UUID;
 public class CustomerController {
 
   @Autowired
-  CustomerService service;
+  private CustomerService service;
 
   @Autowired
-  CustomerFinalizationHandler customerFinalizationHandler;
+  private CustomerFinalizationHandler customerFinalizationHandler;
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseCustomer> readCustomer(@PathVariable UUID uuid) {

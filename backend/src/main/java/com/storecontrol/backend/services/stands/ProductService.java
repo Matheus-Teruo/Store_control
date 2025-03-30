@@ -23,13 +23,13 @@ import java.util.stream.Collectors;
 public class ProductService {
 
   @Autowired
-  ProductValidation validation;
+  private ProductValidation validation;
 
   @Autowired
-  ProductRepository repository;
+  private ProductRepository repository;
 
   @Autowired
-  StandService standService;
+  private StandService standService;
 
   @Transactional
   public Product createProduct(RequestCreateProduct request, UUID userUuid) {

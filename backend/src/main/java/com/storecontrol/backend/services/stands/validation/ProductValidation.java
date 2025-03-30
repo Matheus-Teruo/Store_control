@@ -15,10 +15,10 @@ import java.util.UUID;
 public class ProductValidation {
 
   @Autowired
-  ProductRepository repository;
+  private ProductRepository repository;
 
   @Autowired
-  VoluntaryRepository voluntaryRepository;
+  private VoluntaryRepository voluntaryRepository;
 
   public void checkNameDuplication(String productName) {
     if (repository.existsByProductName(productName)) {

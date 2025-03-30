@@ -22,7 +22,7 @@ import java.util.UUID;
 public class PurchaseController {
 
   @Autowired
-  PurchaseService service;
+  private PurchaseService service;
 
   @PostMapping
   public ResponseEntity<ResponsePurchase> createPurchase(

@@ -12,7 +12,7 @@ import java.util.Map;
 public class CashRegisterValidation {
 
   @Autowired
-  FunctionRepository repository;
+  private FunctionRepository repository;
 
   public void checkNameDuplication(String cashRegisterName) {
     if (repository.existsByFunctionName(cashRegisterName)) {

@@ -25,13 +25,13 @@ import java.net.URI;
 public class AuthController {
 
   @Autowired
-  AuthenticationManager manager;
+  private AuthenticationManager manager;
 
   @Autowired
-  TokenServiceConfig tokenService;
+  private TokenServiceConfig tokenService;
 
   @Autowired
-  VoluntaryService service;
+  private VoluntaryService service;
 
   @PostMapping("/signup")
   public ResponseEntity<ResponseVoluntary> signup(

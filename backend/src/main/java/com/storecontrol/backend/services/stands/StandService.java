@@ -21,13 +21,13 @@ import java.util.UUID;
 public class StandService {
 
   @Autowired
-  StandValidation validation;
+  private StandValidation validation;
 
   @Autowired
-  StandRepository repository;
+  private StandRepository repository;
 
   @Autowired
-  AssociationService associationService;
+  private AssociationService associationService;
 
   @Transactional
   public Stand createStand(RequestCreateStand request) {

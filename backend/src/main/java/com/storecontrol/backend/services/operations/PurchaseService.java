@@ -28,22 +28,22 @@ import java.util.stream.Collectors;
 public class PurchaseService {
 
   @Autowired
-  PurchaseValidation validation;
+  private PurchaseValidation validation;
 
   @Autowired
-  PurchaseRepository repository;
+  private PurchaseRepository repository;
 
   @Autowired
-  ProductService productService;
+  private ProductService productService;
 
   @Autowired
-  VoluntaryService voluntaryService;
+  private VoluntaryService voluntaryService;
 
   @Autowired
-  CustomerService customerService;
+  private CustomerService customerService;
 
   @Autowired
-  ItemService itemService;
+  private ItemService itemService;
 
   @Transactional
   public Purchase createPurchase(RequestCreatePurchase request, UUID userUuid) {

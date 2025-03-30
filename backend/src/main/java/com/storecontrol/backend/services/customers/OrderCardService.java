@@ -17,10 +17,10 @@ import org.springframework.stereotype.Service;
 public class OrderCardService {
 
   @Autowired
-  OrderCardValidation validation;
+  private OrderCardValidation validation;
 
   @Autowired
-  OrderCardRepository repository;
+  private OrderCardRepository repository;
 
   @Transactional
   public OrderCard createOrderCard(RequestOrderCard request) {

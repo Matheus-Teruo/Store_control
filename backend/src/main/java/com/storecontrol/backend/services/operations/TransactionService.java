@@ -23,16 +23,16 @@ import java.util.UUID;
 public class TransactionService {
 
   @Autowired
-  TransactionValidation validation;
+  private TransactionValidation validation;
 
   @Autowired
-  TransactionRepository repository;
+  private TransactionRepository repository;
 
   @Autowired
-  CashRegisterService cashRegisterService;
+  private CashRegisterService cashRegisterService;
 
   @Autowired
-  VoluntaryService voluntaryService;
+  private VoluntaryService voluntaryService;
 
   @Transactional
   public Transaction createTransaction(RequestCreateTransaction request, UUID userUuid) {

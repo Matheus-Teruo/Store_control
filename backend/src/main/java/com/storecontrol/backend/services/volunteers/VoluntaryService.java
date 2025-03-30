@@ -25,19 +25,19 @@ import java.util.UUID;
 public class VoluntaryService {
 
   @Autowired
-  VoluntaryValidation validation;
+  private VoluntaryValidation validation;
 
   @Autowired
-  VoluntaryRepository repository;
+  private VoluntaryRepository repository;
 
   @Autowired
-  AssociationService associationService;
+  private AssociationService associationService;
 
   @Autowired
-  FunctionService functionService;
+  private FunctionService functionService;
 
   @Autowired
-  PasswordEncoder passwordEncoder;
+  private PasswordEncoder passwordEncoder;
 
   @Transactional
   public Voluntary createVoluntary(RequestSignupVoluntary request) {

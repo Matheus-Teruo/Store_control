@@ -16,7 +16,7 @@ import java.util.UUID;
 public class RechargeValidation {
 
   @Autowired
-  RechargeRepository repository;
+  private RechargeRepository repository;
 
   public void checkVoluntaryFunctionMatch(Function function, Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {
