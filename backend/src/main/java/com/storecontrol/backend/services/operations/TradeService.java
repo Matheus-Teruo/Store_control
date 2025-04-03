@@ -2,23 +2,33 @@ package com.storecontrol.backend.services.operations;
 
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.customers.Customer;
+import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
-import com.storecontrol.backend.models.operations.response.ResponseTrade;
+import com.storecontrol.backend.models.operations.trades.Trade;
+import com.storecontrol.backend.models.operations.trades.TradeView;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
+import com.storecontrol.backend.repositories.operations.TradeRepository;
+import com.storecontrol.backend.repositories.operations.TradeViewRepository;
+import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
 import com.storecontrol.backend.services.customers.CustomerService;
 import com.storecontrol.backend.services.operations.validation.PurchaseValidation;
+import com.storecontrol.backend.services.operations.validation.RechargeValidation;
 import com.storecontrol.backend.services.operations.validation.TradeValidation;
 import com.storecontrol.backend.services.registers.CashRegisterService;
 import com.storecontrol.backend.services.stands.ProductService;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -28,10 +38,19 @@ import java.util.UUID;
 public class TradeService {
 
   @Autowired
+  private RechargeValidation rechargeValidation;
+
+  @Autowired
   private PurchaseValidation purchaseValidation;
 
   @Autowired
   private TradeValidation validation;
+
+  @Autowired
+  private TradeRepository repository;
+
+  @Autowired
+  private TradeViewRepository repositoryView;
 
   @Autowired
   private RechargeRepository rechargeRepository;
@@ -49,17 +68,24 @@ public class TradeService {
   private CustomerService customerService;
 
   @Autowired
+  private CustomerFinalizationHandler customerFinalizationHandler;
+
+  @Autowired
   private CashRegisterService cashRegisterService;
 
   @Autowired
   private ItemService itemService;
 
+  @Value("${spring.flyway.placeholders.CARD_ID}")
+  private String fixedCardId;
+
   @Transactional
-  public ResponseTrade createTrade(RequestCreateRecharge rechargeRequest, RequestCreatePurchase purchaseRequest, UUID userUuid) {
+  public TradeView createTrade(RequestCreateRecharge rechargeRequest, RequestCreatePurchase purchaseRequest, UUID userUuid) {
     var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
     purchaseValidation.checkVoluntaryFunctionMatch(voluntary);
 
     var productMap = productService.listProductsAsMap();
+    purchaseValidation.checkStandFromItems(voluntary, purchaseRequest.items(), productMap);
     purchaseValidation.checkItemPriceAndDiscountMatch(purchaseRequest, voluntary, productMap);
     purchaseValidation.checkPurchaseHaveItems(purchaseRequest);
     purchaseValidation.checkInsufficientProductStockValidity(purchaseRequest, productMap);
@@ -86,7 +112,57 @@ public class TradeService {
       customerService.finalizeCustomer(customer);
     }
 
-    return new ResponseTrade(recharge, purchase);
+    Trade trade = new Trade(recharge.getUuid(), purchase.getUuid());
+
+    repository.save(trade);
+
+    return new TradeView(trade, recharge, purchase);
+  }
+
+  public TradeView takeTradeByUuid(UUID uuid) {
+    return repositoryView.findByUuidValidTrue(uuid)
+        .orElseThrow(EntityNotFoundException::new);
+  }
+
+  public Page<TradeView> pageTrades(UUID standUuid, UUID userUuid, Pageable pageable) {
+    purchaseValidation.checkPurchasesBelongsManagerStand(standUuid, userUuid);
+    return repositoryView.findTradesValid(pageable);
+  }
+
+  @Transactional
+  public void deleteTrade(String cardId, UUID uuid, UUID userUuid) {
+    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
+    var trade = repository.findByUuidValidTrue(uuid)
+        .orElseThrow(EntityNotFoundException::new);
+
+    Customer customer;
+    if (fixedCardId.equals(cardId)) {
+      var requestOrderCard = new RequestOrderCard(cardId);
+      customer = customerFinalizationHandler.undoFinalizeCustomer(requestOrderCard, userUuid);
+    } else {
+      customer = customerService.takeActiveCustomerByCardId(cardId);
+    }
+
+    var purchase = customer.getPurchases().getFirst();
+    var recharge = customer.getRecharges().getFirst();
+
+    validation.checkIfLastTrade(recharge, purchase, trade);
+    if (!fixedCardId.equals(cardId)) purchaseValidation.checkSomeItemWasDelivered(purchase);
+    purchaseValidation.checkPurchaseBelongsToVoluntary(purchase, userUuid);
+    purchaseValidation.checkIfLastPurchaseOfVoluntary(purchase, voluntary);
+    rechargeValidation.checkDebitRemainderPositive(recharge);
+    rechargeValidation.checkRechargeBelongsToVoluntary(recharge, userUuid);
+    rechargeValidation.checkIfLastRechargeOfVoluntary(recharge, voluntary);
+
+    updateItemsFromItemsChanged(purchase, true);
+
+    purchase.deletePurchase();
+
+    handleCashTotal(recharge, recharge.getPaymentTypeEnum(), true);
+
+    recharge.deleteRecharge();
+
+    handleFilterFinalizeCustomer(recharge.getCustomer());
   }
 
   private Customer handleChangesOnCustomerByCardId(RequestCreateRecharge request, boolean onOrder) {
@@ -127,6 +203,16 @@ public class TradeService {
       int adjustmentFactor = isReversal ? -1 : 1;
 
       product.decreaseStock(adjustmentFactor * item.getQuantity());
+    }
+  }
+
+  private void handleFilterFinalizeCustomer(Customer customer) {
+    var recharges = customer.getRecharges().stream()
+        .filter(Recharge::isValid)
+        .toList();
+
+    if (recharges.isEmpty()) {
+      customerService.finalizeCustomer(customer);
     }
   }
 }

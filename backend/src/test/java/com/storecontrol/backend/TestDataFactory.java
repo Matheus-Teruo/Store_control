@@ -19,7 +19,8 @@ import com.storecontrol.backend.models.operations.purchases.request.RequestCreat
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
-import com.storecontrol.backend.models.operations.request.RequestCreateTrade;
+import com.storecontrol.backend.models.operations.trades.Trade;
+import com.storecontrol.backend.models.operations.trades.request.RequestCreateTrade;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
@@ -111,9 +112,9 @@ public class TestDataFactory {
   public static List<Item> createItemEntity(Purchase purchase) {
     return List.of(
         new Item(new ItemId(createProductEntity(UUID.randomUUID()), purchase),
-            2, 0, BigDecimal.TWO, BigDecimal.ZERO, true),
+            2, 0, BigDecimal.TWO, BigDecimal.ZERO, null, true),
         new Item(new ItemId(createProductEntity(UUID.randomUUID()), purchase),
-            2, 0, BigDecimal.TWO, BigDecimal.ZERO, true));
+            2, 0, BigDecimal.TWO, BigDecimal.ZERO, null, true));
   }
 
   public static RequestCreatePurchase createRequestCreatePurchase(Purchase purchase) {
@@ -222,6 +223,16 @@ public class TestDataFactory {
         recharge.getCashRegister().getUuid(),
         purchase.isOnOrder(),
         requestCreateItems
+    );
+  }
+
+  public static Trade createTradeEntity(UUID uuid, UUID rechargeUuid, UUID purchaseUuid) {
+    return new Trade(
+        uuid,
+        rechargeUuid,
+        purchaseUuid,
+        LocalDateTime.now(),
+        true
     );
   }
 

@@ -1863,6 +1863,25 @@
 					"item": [
 						{
 							"name": "Create Trade",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseBody = pm.response.json();\r",
+											"\r",
+											"if (responseBody && responseBody.uuid) {\r",
+											"    pm.collectionVariables.set(\"trade_id\", responseBody.uuid);\r",
+											"    // console.log(\"Trade ID (UUID) saved as:\", responseBody.uuid);\r",
+											"} else {\r",
+											"    console.error(\"UUID not found in the response body\");\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -1879,6 +1898,73 @@
 									"raw": "{{hostPath}}trades",
 									"host": [
 										"{{hostPath}}trades"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Trade",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}trades/{{trade_id}}",
+									"host": [
+										"{{hostPath}}trades"
+									],
+									"path": [
+										"{{trade_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Page Trades",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}trades?standUuid&page&size&sort",
+									"host": [
+										"{{hostPath}}trades"
+									],
+									"query": [
+										{
+											"key": "standUuid",
+											"value": null
+										},
+										{
+											"key": "page",
+											"value": null
+										},
+										{
+											"key": "size",
+											"value": null
+										},
+										{
+											"key": "sort",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Trade",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}trades/{{card_id}}/{{trade_id}}",
+									"host": [
+										"{{hostPath}}trades"
+									],
+									"path": [
+										"{{card_id}}",
+										"{{trade_id}}"
 									]
 								}
 							},
@@ -2089,6 +2175,11 @@
 		{
 			"key": "transaction_id",
 			"value": ""
+		},
+		{
+			"key": "trade_id",
+			"value": "",
+			"type": "string"
 		}
 	]
 }

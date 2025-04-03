@@ -19,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -46,6 +43,29 @@ public class PurchaseValidation {
           throw new InvalidOperationException(
               MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.functionDifferent.error"),
               MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.functionDifferent.message")
+          );
+        }
+      }
+    }
+  }
+
+  public void checkStandFromItems(Voluntary voluntary, List<RequestCreateItem> items, Map<UUID, Product> productMap) {
+    Set<UUID> standUuidSet = items.stream()
+        .map(RequestCreateItem::productUuid)
+        .collect(Collectors.toSet());
+    if (standUuidSet.size() > 1) {
+      throw new InvalidOperationException(
+          MessageResolver.getInstance().getMessage("validation.purchase.checkItems.differentStand.error"),
+          MessageResolver.getInstance().getMessage("validation.purchase.checkItems.differentStand.message")
+      );
+
+    } else {
+      UUID standUuid = standUuidSet.iterator().next();
+      if (!standUuid.equals(voluntary.getUuid())) {
+        if (voluntary.getVoluntaryRole().isNotAdmin()) {
+          throw new InvalidOperationException(
+              MessageResolver.getInstance().getMessage("validation.purchase.checkItems.userNotMatch.error"),
+              MessageResolver.getInstance().getMessage("validation.purchase.checkItems.userNotMatch.message")
           );
         }
       }

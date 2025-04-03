@@ -1,4 +1,4 @@
-package com.storecontrol.backend.models.operations.request;
+package com.storecontrol.backend.models.operations.trades.request;
 
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreateItem;
 import jakarta.validation.Valid;

@@ -109,6 +109,7 @@ public class SecurityConfigurations {
       "/purchases/{uuid}",
       "/recharges/last3",
       "/recharges/{uuid}",
+      "/trades/{uuid}",
       "/volunteers/{uuid}"
   };
 
@@ -128,13 +129,15 @@ public class SecurityConfigurations {
   private static final String[] AUTHORIZED_DELETE_ENDPOINTS_LOGGED = {
       "/customers/finalize",
       "/purchases",
-      "/recharges"
+      "/recharges",
+      "/trades"
   };
 
   private static final String[] AUTHORIZED_GET_ENDPOINTS_MANAGEMENT = {
       "/volunteers",
       "/functions",
       "/purchases",
+      "/trades",
       "/transactions/last3",
   };
 

@@ -52,6 +52,7 @@ public class PurchaseService {
 
     var productMap = productService.listProductsAsMap();
     var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
+    validation.checkStandFromItems(voluntary, request.items(), productMap);
     validation.checkItemPriceAndDiscountMatch(request, voluntary, productMap);
     validation.checkInsufficientDebitValidity(request, customer);
     validation.checkPurchaseHaveItems(request);
@@ -82,8 +83,8 @@ public class PurchaseService {
         );
   }
 
-  public Page<Purchase> pagePurchases( UUID standUuid, UUID userUuid , Pageable pageable) {
-    validation.checkPurchasesBelongsManagerStand(standUuid ,userUuid);
+  public Page<Purchase> pagePurchases( UUID standUuid, UUID userUuid, Pageable pageable) {
+    validation.checkPurchasesBelongsManagerStand(standUuid, userUuid);
     return repository.findAllValidTrue(pageable);
   }
 
