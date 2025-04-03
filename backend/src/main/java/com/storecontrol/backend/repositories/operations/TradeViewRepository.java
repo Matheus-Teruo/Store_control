@@ -15,6 +15,6 @@ public interface TradeViewRepository extends JpaRepository<TradeView, UUID> {
   @Query("SELECT t FROM TradeView t WHERE t.valid = true AND t.uuid = :uuid")
   Optional<TradeView> findByUuidValidTrue(UUID uuid);
 
-  @Query("SELECT t FROM TradeView t WHERE t.valid = true")
-  Page<TradeView> findTradesValid(Pageable pageable);
+  @Query("SELECT t FROM TradeView t WHERE t.valid = true AND (:standUuid is null or t.standUuid = :standUuid)")
+  Page<TradeView> findTradesValid(UUID standUuid, Pageable pageable);
 }

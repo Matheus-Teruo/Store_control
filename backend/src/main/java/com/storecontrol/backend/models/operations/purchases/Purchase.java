@@ -1,8 +1,8 @@
 package com.storecontrol.backend.models.operations.purchases;
 
+import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
-import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,26 +30,32 @@ public class Purchase {
     @Column(name = "purchase_time_stamp", nullable = false)
     private LocalDateTime purchaseTimeStamp;
 
+    @Column(name = "stand_uuid", nullable = false)
+    private UUID standUuid;
+
     @Setter
     @OneToMany(mappedBy = "itemId.purchase", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Item> items;
 
-    @ManyToOne @JoinColumn(name = "customer_uuid", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "customer_uuid", nullable = false)
     private Customer customer;
 
     @Column(name = "voluntary_uuid", insertable = false, updatable = false)
     private UUID voluntaryUuid;
 
-    @ManyToOne @JoinColumn(name = "voluntary_uuid", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "voluntary_uuid", nullable = false)
     private Voluntary voluntary;
 
     @Column(nullable = false)
     private boolean valid;
 
 
-    public Purchase(RequestCreatePurchase request, Customer customer, Voluntary voluntary) {
+    public Purchase(RequestCreatePurchase request, UUID standUuid, Customer customer, Voluntary voluntary) {
         this.onOrder = request.onOrder();
         this.purchaseTimeStamp = LocalDateTime.now();
+        this.standUuid = standUuid;
         this.customer = customer;
         this.voluntary = voluntary;
         this.valid = true;

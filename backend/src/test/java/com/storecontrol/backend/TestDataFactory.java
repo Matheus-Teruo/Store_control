@@ -97,10 +97,12 @@ public class TestDataFactory {
 
   public static Purchase createPurchaseEntity(UUID uuid, Customer customer) {
     UUID voluntaryUUID = UUID.randomUUID();
+    UUID standUUID = UUID.randomUUID();
     return new Purchase(
         uuid,
         false,
         LocalDateTime.now(),
+        standUUID,
         null,
         customer,
         voluntaryUUID,

@@ -40,6 +40,9 @@ public class TradeView {
   @Column(name = "on_order")
   private boolean onOrder;
 
+  @Column(name = "stand_uuid")
+  private UUID standUuid;
+
   @Column(name = "trade_time_stamp")
   private LocalDateTime tradeTimeStamp;
 
@@ -56,6 +59,7 @@ public class TradeView {
     this.rechargeValue = recharge.getRechargeValue();
     this.paymentTypeEnum = recharge.getPaymentTypeEnum();
     this.onOrder = purchase.isOnOrder();
+    this.standUuid = purchase.getStandUuid();
     this.tradeTimeStamp = trade.getTradeTimeStamp();
     this.items = purchase.getItems();
     this.valid = trade.isValid();

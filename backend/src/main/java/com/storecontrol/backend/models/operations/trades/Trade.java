@@ -37,4 +37,8 @@ public class Trade {
     this.tradeTimeStamp = LocalDateTime.now();
     this.valid = true;
   }
+
+  public void deleteTrade() {
+    this.valid = false;
+  }
 }

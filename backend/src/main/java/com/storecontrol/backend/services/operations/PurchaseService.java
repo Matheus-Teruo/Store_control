@@ -7,6 +7,7 @@ import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
+import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.services.customers.CustomerService;
 import com.storecontrol.backend.services.operations.validation.PurchaseValidation;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -50,7 +52,7 @@ public class PurchaseService {
     var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
     validation.checkVoluntaryFunctionMatch(voluntary);
 
-    var productMap = productService.listProductsAsMap();
+    Map<UUID, Product> productMap = productService.listProductsAsMap();
     var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
     validation.checkStandFromItems(voluntary, request.items(), productMap);
     validation.checkItemPriceAndDiscountMatch(request, voluntary, productMap);
@@ -58,7 +60,8 @@ public class PurchaseService {
     validation.checkPurchaseHaveItems(request);
     validation.checkInsufficientProductStockValidity(request, productMap);
 
-    var purchase = new Purchase(request, customer,  voluntary);
+    UUID standUuid = productMap.get(request.items().getFirst().productUuid()).getStandUuid();
+    var purchase = new Purchase(request, standUuid, customer, voluntary);
     var items = itemService.createItems(request, purchase);
     purchase.setItems(items);
 
@@ -85,7 +88,7 @@ public class PurchaseService {
 
   public Page<Purchase> pagePurchases( UUID standUuid, UUID userUuid, Pageable pageable) {
     validation.checkPurchasesBelongsManagerStand(standUuid, userUuid);
-    return repository.findAllValidTrue(pageable);
+    return repository.findAllValidTrue(standUuid, pageable);
   }
 
   public List<Purchase> listLast3Purchases(UUID voluntaryUuid) {

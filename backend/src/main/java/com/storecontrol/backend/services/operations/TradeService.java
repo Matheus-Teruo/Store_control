@@ -100,7 +100,8 @@ public class TradeService {
 
     rechargeRepository.save(recharge);
 
-    var purchase = new Purchase(purchaseRequest, customer, voluntary);
+    UUID standUuid = productMap.get(purchaseRequest.items().getFirst().productUuid()).getStandUuid();
+    var purchase = new Purchase(purchaseRequest, standUuid, customer, voluntary);
     var items = itemService.createItems(purchaseRequest, purchase);
     purchase.setItems(items);
 
@@ -126,7 +127,7 @@ public class TradeService {
 
   public Page<TradeView> pageTrades(UUID standUuid, UUID userUuid, Pageable pageable) {
     purchaseValidation.checkPurchasesBelongsManagerStand(standUuid, userUuid);
-    return repositoryView.findTradesValid(pageable);
+    return repositoryView.findTradesValid(standUuid, pageable);
   }
 
   @Transactional
@@ -161,6 +162,8 @@ public class TradeService {
     handleCashTotal(recharge, recharge.getPaymentTypeEnum(), true);
 
     recharge.deleteRecharge();
+
+    trade.deleteTrade();
 
     handleFilterFinalizeCustomer(recharge.getCustomer());
   }
