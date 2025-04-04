@@ -31,7 +31,7 @@ public class Item {
     @Column(nullable = false)
     private BigDecimal discount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "purchase_uuid", insertable=false, updatable=false)
     private TradeView tradeView;
 

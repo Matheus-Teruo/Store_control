@@ -1953,6 +1953,23 @@
 							"response": []
 						},
 						{
+							"name": "List Trades Last 3",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}trades/last3",
+									"host": [
+										"{{hostPath}}trades"
+									],
+									"path": [
+										"last3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Delete Trade",
 							"request": {
 								"method": "DELETE",
@@ -2029,7 +2046,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"UsernameCashier\",\r\n    \"password\": \"PasswordExample\"\r\n}",
+							"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2114,6 +2131,16 @@
 		{
 			"key": "hostPath",
 			"value": "http://localhost:8080/",
+			"type": "string"
+		},
+		{
+			"key": "username",
+			"value": "UsernameCashier",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "PasswordExample",
 			"type": "string"
 		},
 		{

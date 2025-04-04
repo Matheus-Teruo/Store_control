@@ -1,6 +1,7 @@
 package com.storecontrol.backend.controllers.operations;
 
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
+import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.trades.request.RequestCreateTrade;
 import com.storecontrol.backend.models.operations.trades.response.ResponseSummaryTrade;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -68,6 +70,14 @@ public class TradeController {
     var tradeView = service.pageTrades(standUuid, userUuid, pageable);
     var response = tradeView.map(ResponseSummaryTrade::new);
 
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/last3")
+  public ResponseEntity<List<ResponseSummaryTrade>> readLast3Purchases(@RequestAttribute("UserUuid") UUID userUuid) {
+    var trades = service.listLast3Purchases(userUuid);
+
+    var response = trades.stream().map(ResponseSummaryTrade::new).toList();
     return ResponseEntity.ok(response);
   }
 

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,4 +18,7 @@ public interface TradeViewRepository extends JpaRepository<TradeView, UUID> {
 
   @Query("SELECT t FROM TradeView t WHERE t.valid = true AND (:standUuid is null or t.standUuid = :standUuid)")
   Page<TradeView> findTradesValid(UUID standUuid, Pageable pageable);
+
+  @Query("select t from TradeView t where t.valid = true and t.voluntaryUuid = :voluntaryUuid order by t.tradeTimeStamp desc limit 3")
+  List<TradeView> findLast3ValidTrue(UUID voluntaryUuid);
 }

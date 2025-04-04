@@ -33,7 +33,7 @@ public class TradeView {
   @Column(name = "recharge_value")
   private BigDecimal rechargeValue;
 
-  @Column(name = "payment_type_enum")
+  @Column(name = "payment_type")
   @Enumerated(EnumType.STRING)
   private PaymentType paymentTypeEnum;
 
@@ -42,6 +42,9 @@ public class TradeView {
 
   @Column(name = "stand_uuid")
   private UUID standUuid;
+
+  @Column(name = "voluntary_uuid")
+  private UUID voluntaryUuid;
 
   @Column(name = "trade_time_stamp")
   private LocalDateTime tradeTimeStamp;
@@ -60,6 +63,7 @@ public class TradeView {
     this.paymentTypeEnum = recharge.getPaymentTypeEnum();
     this.onOrder = purchase.isOnOrder();
     this.standUuid = purchase.getStandUuid();
+    this.voluntaryUuid = purchase.getVoluntaryUuid();
     this.tradeTimeStamp = trade.getTradeTimeStamp();
     this.items = purchase.getItems();
     this.valid = trade.isValid();

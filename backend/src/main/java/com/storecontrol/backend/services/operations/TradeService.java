@@ -8,6 +8,7 @@ import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
+import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.trades.Trade;
 import com.storecontrol.backend.models.operations.trades.TradeView;
@@ -29,9 +30,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestAttribute;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -128,6 +132,10 @@ public class TradeService {
   public Page<TradeView> pageTrades(UUID standUuid, UUID userUuid, Pageable pageable) {
     purchaseValidation.checkPurchasesBelongsManagerStand(standUuid, userUuid);
     return repositoryView.findTradesValid(standUuid, pageable);
+  }
+
+  public List<TradeView> listLast3Purchases( UUID voluntaryUuid) {
+    return repositoryView.findLast3ValidTrue(voluntaryUuid);
   }
 
   @Transactional

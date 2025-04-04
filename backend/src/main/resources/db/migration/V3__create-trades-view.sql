@@ -10,6 +10,7 @@ SELECT
     r.payment_type,
     p.on_order,
     p.stand_uuid,
+    p.voluntary_uuid,
     t.trade_time_stamp,
     t.valid
 FROM trades t
