@@ -52,7 +52,7 @@ public class VoluntaryService {
   }
 
   public Voluntary takeVoluntaryByUuid(UUID uuid, UUID voluntaryUuid){
-    validation.checkVoluntaryAuthentication(uuid, voluntaryUuid);
+    validation.checkVoluntaryPermission(uuid, voluntaryUuid);
     return repository.findByUuidValidTrue(uuid)
         .orElseThrow(EntityNotFoundException::new);
   }

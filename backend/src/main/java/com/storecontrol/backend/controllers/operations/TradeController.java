@@ -1,7 +1,6 @@
 package com.storecontrol.backend.controllers.operations;
 
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
-import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.trades.request.RequestCreateTrade;
 import com.storecontrol.backend.models.operations.trades.response.ResponseSummaryTrade;

@@ -51,7 +51,7 @@ public class PurchaseValidation {
 
   public void checkStandFromItems(Voluntary voluntary, List<RequestCreateItem> items, Map<UUID, Product> productMap) {
     Set<UUID> standUuidSet = items.stream()
-        .map(RequestCreateItem::productUuid)
+        .map(item -> productMap.get(item.productUuid()).getStandUuid())
         .collect(Collectors.toSet());
     if (standUuidSet.size() > 1) {
       throw new InvalidOperationException(

@@ -3,8 +3,8 @@ package com.storecontrol.backend.services.volunteers.validation;
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
+import com.storecontrol.backend.models.enumerate.VoluntaryRole;
 import com.storecontrol.backend.models.stands.Stand;
-import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
 import com.storecontrol.backend.repositories.stands.AssociationRepository;
 import com.storecontrol.backend.repositories.volunteers.FunctionRepository;
@@ -27,18 +27,32 @@ public class VoluntaryValidation {
   @Autowired
   private AssociationRepository associationRepository;
 
+  public void checkVoluntaryPermission(UUID requestUuid, UUID loggedUuid){
+    if (!requestUuid.equals(loggedUuid)) {
+      var role = repository.takeRoleByUuidValidTrue(loggedUuid);
+      if (role.isPresent()) {
+        if (role.get().equals(VoluntaryRole.ROLE_USER)) {
+          throw new InvalidDatabaseQueryException(
+              MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.error"),
+              MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.message"),
+              requestUuid.toString()
+          );
+        }
+      }
+    }
+  }
+
   public void checkVoluntaryAuthentication(UUID requestUuid, UUID loggedUuid){
     if (!requestUuid.equals(loggedUuid)) {
-      var user = repository.findByUuidValidTrue(loggedUuid).orElseThrow(() -> new InvalidDatabaseQueryException(
-          MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.error"),
-          MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.message"),
-          loggedUuid.toString()));
-      if (user.getVoluntaryRole().isNotAdmin()) {
-        throw new InvalidDatabaseQueryException(
-            MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.error"),
-            MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.message"),
-            requestUuid.toString()
-        );
+      var role = repository.takeRoleByUuidValidTrue(loggedUuid);
+      if (role.isPresent()) {
+        if (!role.get().equals(VoluntaryRole.ROLE_ADMIN)) {
+          throw new InvalidDatabaseQueryException(
+              MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.error"),
+              MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.message"),
+              requestUuid.toString()
+          );
+        }
       }
     }
   }

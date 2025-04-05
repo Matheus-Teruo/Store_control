@@ -1292,7 +1292,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"const donations = pm.response.json();\r",
+											"const donations = pm.response.json().content;\r",
 											"\r",
 											"if (Array.isArray(donations) && donations.length > 0) {\r",
 											"    const randomIndex = Math.floor(Math.random() * donations.length);\r",
@@ -1677,7 +1677,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"const refunds = pm.response.json();\r",
+											"const refunds = pm.response.json().content;\r",
 											"\r",
 											"if (Array.isArray(refunds) && refunds.length > 0) {\r",
 											"    const randomIndex = Math.floor(Math.random() * refunds.length);\r",

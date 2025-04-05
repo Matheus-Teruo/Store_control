@@ -99,10 +99,10 @@ public class PurchaseService {
   public Purchase updatePurchase(RequestUpdatePurchase request) {
     var purchase = safeTakePurchaseByUuid(request.uuid());
 
-    validation.checkItemsFromPurchaseValidation(request.updateItems(), purchase.getItems());
+    validation.checkItemsFromPurchaseValidation(request.requestUpdateItems(), purchase.getItems());
 
     purchase.updatePurchase(request);
-    updateItemsFromPurchase(request.updateItems(), purchase.getItems());
+    updateItemsFromPurchase(request.requestUpdateItems(), purchase.getItems());
 
     return purchase;
   }

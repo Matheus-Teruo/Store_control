@@ -37,14 +37,14 @@ public class Purchase {
     @OneToMany(mappedBy = "itemId.purchase", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Item> items;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_uuid", nullable = false)
     private Customer customer;
 
     @Column(name = "voluntary_uuid", insertable = false, updatable = false)
     private UUID voluntaryUuid;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "voluntary_uuid", nullable = false)
     private Voluntary voluntary;
 

@@ -33,13 +33,13 @@ public class Transaction {
   @Column(name = "transaction_time_stamp", nullable = false)
   private LocalDateTime transactionTimeStamp;
 
-  @ManyToOne @JoinColumn(name = "cash_register_uuid", nullable = false)
+  @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "cash_register_uuid", nullable = false)
   private CashRegister cashRegister;
 
   @Column(name = "voluntary_uuid", insertable = false, updatable = false)
   private UUID voluntaryUuid;
 
-  @ManyToOne @JoinColumn(name = "voluntary_uuid", nullable = false)
+  @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "voluntary_uuid", nullable = false)
   private Voluntary voluntary;
 
   @Column(nullable = false)

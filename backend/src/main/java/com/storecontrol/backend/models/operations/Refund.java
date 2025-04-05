@@ -29,16 +29,16 @@ public class Refund {
   @Column(name = "refund_time_stamp", nullable = false)
   private LocalDateTime refundTimeStamp;
 
-  @ManyToOne @JoinColumn(name = "customer_uuid", nullable = false)
+  @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "customer_uuid", nullable = false)
   private Customer customer;
 
-  @ManyToOne @JoinColumn(name = "cash_register_uuid", nullable = false)
+  @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "cash_register_uuid", nullable = false)
   private CashRegister cashRegister;
 
   @Column(name = "voluntary_uuid", insertable = false, updatable = false)
   private UUID voluntaryUuid;
 
-  @ManyToOne @JoinColumn(name = "voluntary_uuid", nullable = false)
+  @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "voluntary_uuid", nullable = false)
   private Voluntary voluntary;
 
   @Column(nullable = false)
