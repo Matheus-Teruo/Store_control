@@ -25,11 +25,8 @@ public class PurchaseController {
   private PurchaseService service;
 
   @PostMapping
-  public ResponseEntity<ResponsePurchase> createPurchase(
-      @RequestBody @Valid RequestCreatePurchase request,
-      @RequestAttribute("UserUuid") UUID userUuid
-  ) {
-    var purchase = service.createPurchase(request, userUuid);
+  public ResponseEntity<ResponsePurchase> createPurchase(@RequestBody @Valid RequestCreatePurchase request) {
+    var purchase = service.createPurchase(request);
 
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
@@ -50,17 +47,16 @@ public class PurchaseController {
   @GetMapping
   public ResponseEntity<Page<ResponseSummaryPurchase>> readPurchases(
       @RequestParam(required = false) UUID standUuid,
-      @RequestAttribute("UserUuid") UUID userUuid,
       Pageable pageable) {
-    var purchases = service.pagePurchases(standUuid, userUuid, pageable);
+    var purchases = service.pagePurchases(standUuid, pageable);
 
     var response = purchases.map(ResponseSummaryPurchase::new);
     return ResponseEntity.ok(response);
   }
 
   @GetMapping("/last3")
-  public ResponseEntity<List<ResponseSummaryPurchase>> readLast3Purchases(@RequestAttribute("UserUuid") UUID userUuid) {
-    var purchases = service.listLast3Purchases(userUuid);
+  public ResponseEntity<List<ResponseSummaryPurchase>> readLast3Purchases() {
+    var purchases = service.listLast3Purchases();
 
     var response = purchases.stream().map(ResponseSummaryPurchase::new).toList();
     return ResponseEntity.ok(response);
@@ -74,11 +70,8 @@ public class PurchaseController {
   }
 
   @DeleteMapping("/{uuid}")
-  public ResponseEntity<Void> deletePurchase(
-      @PathVariable @Valid UUID uuid,
-      @RequestAttribute("UserUuid") UUID userUuid
-  ) {
-    service.deletePurchase(uuid, userUuid);
+  public ResponseEntity<Void> deletePurchase(@PathVariable @Valid UUID uuid) {
+    service.deletePurchase(uuid);
 
     return ResponseEntity.noContent().build();
   }

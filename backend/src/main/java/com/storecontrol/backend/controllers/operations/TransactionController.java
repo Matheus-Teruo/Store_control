@@ -24,11 +24,8 @@ public class TransactionController {
   private TransactionService service;
 
   @PostMapping
-  public ResponseEntity<ResponseTransaction> createTransaction(
-      @RequestBody @Valid RequestCreateTransaction request,
-      @RequestAttribute("UserUuid") UUID userUuid
-  ) {
-    var transaction = service.createTransaction(request, userUuid);
+  public ResponseEntity<ResponseTransaction> createTransaction(@RequestBody @Valid RequestCreateTransaction request) {
+    var transaction = service.createTransaction(request);
 
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
@@ -55,19 +52,16 @@ public class TransactionController {
   }
 
   @GetMapping("/last3")
-  public ResponseEntity<List<ResponseSummaryTransaction>> readLast3Purchases(@RequestAttribute("UserUuid") String userUuid) {
-    var transactions = service.listLast3Purchases(UUID.fromString(userUuid));
+  public ResponseEntity<List<ResponseSummaryTransaction>> readLast3Purchases() {
+    var transactions = service.listLast3Purchases();
 
     var response = transactions.stream().map(ResponseSummaryTransaction::new).toList();
     return ResponseEntity.ok(response);
   }
 
   @DeleteMapping("/{uuid}")
-  public ResponseEntity<Void> deleteTransaction(
-      @PathVariable @Valid UUID uuid,
-      @RequestAttribute("UserUuid") UUID userUuid
-  ) {
-    service.deleteTransaction(uuid, userUuid);
+  public ResponseEntity<Void> deleteTransaction(@PathVariable @Valid UUID uuid) {
+    service.deleteTransaction(uuid);
 
     return ResponseEntity.noContent().build();
   }

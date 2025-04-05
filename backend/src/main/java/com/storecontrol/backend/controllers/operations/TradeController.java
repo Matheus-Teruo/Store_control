@@ -26,10 +26,7 @@ public class TradeController {
   private TradeService service;
 
   @PostMapping
-  public ResponseEntity<ResponseTrade> createTrade(
-      @RequestBody @Valid RequestCreateTrade request,
-      @RequestAttribute("UserUuid") UUID userUuid
-  ) {
+  public ResponseEntity<ResponseTrade> createTrade(@RequestBody @Valid RequestCreateTrade request) {
     var rechargeRequest = new RequestCreateRecharge(
         request.rechargeValue(),
         request.paymentTypeEnum(),
@@ -43,7 +40,7 @@ public class TradeController {
         request.orderCardId()
     );
 
-    var trade = service.createTrade(rechargeRequest, purchaseRequest, userUuid);
+    var trade = service.createTrade(rechargeRequest, purchaseRequest);
 
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
@@ -64,17 +61,16 @@ public class TradeController {
   @GetMapping
   public ResponseEntity<Page<ResponseSummaryTrade>> readTrades(
       @RequestParam(required = false) UUID standUuid,
-      @RequestAttribute("UserUuid") UUID userUuid,
       Pageable pageable) {
-    var tradeView = service.pageTrades(standUuid, userUuid, pageable);
+    var tradeView = service.pageTrades(standUuid, pageable);
     var response = tradeView.map(ResponseSummaryTrade::new);
 
     return ResponseEntity.ok(response);
   }
 
   @GetMapping("/last3")
-  public ResponseEntity<List<ResponseSummaryTrade>> readLast3Purchases(@RequestAttribute("UserUuid") UUID userUuid) {
-    var trades = service.listLast3Purchases(userUuid);
+  public ResponseEntity<List<ResponseSummaryTrade>> readLast3Purchases() {
+    var trades = service.listLast3Trades();
 
     var response = trades.stream().map(ResponseSummaryTrade::new).toList();
     return ResponseEntity.ok(response);
@@ -83,10 +79,9 @@ public class TradeController {
   @DeleteMapping("/{cardId}/{uuid}")
   public ResponseEntity<Void> deleteTrade(
       @PathVariable @Valid String cardId,
-      @PathVariable @Valid UUID uuid,
-      @RequestAttribute("UserUuid") UUID userUuid
+      @PathVariable @Valid UUID uuid
   ) {
-    service.deleteTrade(cardId, uuid, userUuid);
+    service.deleteTrade(cardId, uuid);
 
     return ResponseEntity.noContent().build();
   }

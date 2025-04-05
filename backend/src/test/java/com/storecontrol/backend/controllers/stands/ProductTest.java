@@ -37,18 +37,16 @@ class ProductTest extends BaseTest {
   @Test
   void testCreateProductSuccess() throws Exception {
     // Given
-    UUID voluntaryUuid = UUID.randomUUID();
     Product mockProduct = createProductEntity(UUID.randomUUID());
     RequestCreateProduct requestProduct = createRequestCreateProduct(mockProduct);
     ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
 
-    when(service.createProduct(requestProduct, voluntaryUuid)).thenReturn(mockProduct);
+    when(service.createProduct(requestProduct)).thenReturn(mockProduct);
 
     // When & Then
     mockMvc.perform(post("/products")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(requestProduct))
-            .requestAttr("UserUuid", voluntaryUuid))
+            .content(toJson(requestProduct)))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location",
             containsString("/products/" + mockProduct.getUuid().toString())))
@@ -56,7 +54,7 @@ class ProductTest extends BaseTest {
 
 
     // Verify interactions
-    verify(service, times(1)).createProduct(requestProduct, voluntaryUuid);
+    verify(service, times(1)).createProduct(requestProduct);
     verifyNoMoreInteractions(service);
   }
 
@@ -135,7 +133,6 @@ class ProductTest extends BaseTest {
   void testUpdateProductSuccess() throws Exception {
     // Given
     Product mockProduct = createProductEntity(UUID.randomUUID());
-    UUID voluntaryUuid = UUID.randomUUID();
     Stand updatedMockStand = createStandEntity(UUID.randomUUID());
     RequestUpdateProduct updateRequest = createRequestUpdateProduct(mockProduct.getUuid(), updatedMockStand.getUuid());
 
@@ -143,18 +140,17 @@ class ProductTest extends BaseTest {
     mockProduct.updateProduct(updatedMockStand);
     ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
 
-    when(service.updateProduct(updateRequest, voluntaryUuid)).thenReturn(mockProduct);
+    when(service.updateProduct(updateRequest)).thenReturn(mockProduct);
 
     // When & Then
     mockMvc.perform(put("/products")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(updateRequest))
-            .requestAttr("UserUuid", voluntaryUuid))
+            .content(toJson(updateRequest)))
         .andExpect(status().isOk())
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).updateProduct(updateRequest, voluntaryUuid);
+    verify(service, times(1)).updateProduct(updateRequest);
     verifyNoMoreInteractions(service);
   }
 

@@ -8,16 +8,17 @@ import com.storecontrol.backend.models.operations.purchases.request.RequestCreat
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
 import com.storecontrol.backend.models.stands.Product;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.services.customers.CustomerService;
 import com.storecontrol.backend.services.operations.validation.PurchaseValidation;
 import com.storecontrol.backend.services.stands.ProductService;
-import com.storecontrol.backend.services.volunteers.VoluntaryService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -39,17 +40,14 @@ public class PurchaseService {
   private ProductService productService;
 
   @Autowired
-  private VoluntaryService voluntaryService;
-
-  @Autowired
   private CustomerService customerService;
 
   @Autowired
   private ItemService itemService;
 
   @Transactional
-  public Purchase createPurchase(RequestCreatePurchase request, UUID userUuid) {
-    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
+  public Purchase createPurchase(RequestCreatePurchase request) {
+    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkVoluntaryFunctionMatch(voluntary);
 
     Map<UUID, Product> productMap = productService.listProductsAsMap();
@@ -86,13 +84,15 @@ public class PurchaseService {
         );
   }
 
-  public Page<Purchase> pagePurchases( UUID standUuid, UUID userUuid, Pageable pageable) {
-    validation.checkPurchasesBelongsManagerStand(standUuid, userUuid);
+  public Page<Purchase> pagePurchases( UUID standUuid, Pageable pageable) {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    validation.checkPurchasesBelongsManagerStand(standUuid, manager);
     return repository.findAllValidTrue(standUuid, pageable);
   }
 
-  public List<Purchase> listLast3Purchases(UUID voluntaryUuid) {
-    return repository.findLast3ValidTrue(voluntaryUuid);
+  public List<Purchase> listLast3Purchases() {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    return repository.findLast3ValidTrue(manager.getUuid());
   }
 
   @Transactional
@@ -108,12 +108,12 @@ public class PurchaseService {
   }
 
   @Transactional
-  public void deletePurchase(UUID uuid, UUID userUuid) {
+  public void deletePurchase(UUID uuid) {
+    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     var purchase = safeTakePurchaseByUuid(uuid);
-    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
 
     validation.checkSomeItemWasDelivered(purchase);
-    validation.checkPurchaseBelongsToVoluntary(purchase, userUuid);
+    validation.checkPurchaseBelongsToVoluntary(purchase, voluntary.getUuid());
     validation.checkIfLastPurchaseOfVoluntary(purchase, voluntary);
 
     updateItemsFromItemsChanged(purchase, true);

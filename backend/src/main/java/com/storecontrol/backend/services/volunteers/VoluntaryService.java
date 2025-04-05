@@ -16,6 +16,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -51,8 +52,9 @@ public class VoluntaryService {
     return voluntary;
   }
 
-  public Voluntary takeVoluntaryByUuid(UUID uuid, UUID voluntaryUuid){
-    validation.checkVoluntaryPermission(uuid, voluntaryUuid);
+  public Voluntary takeVoluntaryByUuid(UUID uuid){
+    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    validation.checkVoluntaryPermission(uuid, voluntary);
     return repository.findByUuidValidTrue(uuid)
         .orElseThrow(EntityNotFoundException::new);
   }
@@ -71,11 +73,11 @@ public class VoluntaryService {
   }
 
   @Transactional
-  public Voluntary updateVoluntary(RequestUpdateVoluntary request, UUID voluntaryUuid) {
-    validation.checkVoluntaryAuthentication(request.uuid(), voluntaryUuid);
+  public Voluntary updateVoluntary(RequestUpdateVoluntary request) {
+    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    validation.checkVoluntaryAuthentication(request.uuid(), voluntary);
     validation.checkNameDuplication(request.username(), request.fullname());
     validation.checkRootFullname(request.uuid(), request.fullname());
-    var voluntary = safeTakeVoluntaryByUuid(request.uuid());
 
     String newPassword = "";
     boolean newPasswordFlag = false;
@@ -89,8 +91,9 @@ public class VoluntaryService {
   }
 
   @Transactional
-  public Voluntary updateFunctionFromVoluntary(RequestUpdateVoluntaryFunction request, UUID userUuid) {
-    validation.checkManagerBelongsSelectedStand(request, userUuid);
+  public Voluntary updateFunctionFromVoluntary(RequestUpdateVoluntaryFunction request) {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    validation.checkManagerBelongsSelectedStand(request, manager);
     var voluntary = safeTakeVoluntaryByUuid(request.uuid());
 
     verifyUpdateFunction(request.functionUuid(), voluntary);

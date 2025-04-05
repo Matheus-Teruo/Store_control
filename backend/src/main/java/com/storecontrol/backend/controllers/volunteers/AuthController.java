@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -73,12 +74,9 @@ public class AuthController {
 
   @GetMapping("/check")
   public ResponseEntity<ResponseUser> user(HttpServletRequest request) {
-    var jwt = recoverCookie(request);
+    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-    var UserUuid = tokenService.recoverVoluntaryUuid(jwt);
-    var user = service.safeTakeVoluntaryByUuid(UserUuid);
-
-    return ResponseEntity.ok(new ResponseUser(user));
+    return ResponseEntity.ok(new ResponseUser(voluntary));
   }
 
   @PostMapping("/logout")
@@ -95,18 +93,5 @@ public class AuthController {
     authCookie.setPath("/");
     authCookie.setMaxAge(60 * 60 * hours);
     return authCookie;
-  }
-
-  private String recoverCookie(HttpServletRequest request) {
-    Cookie[] cookies = request.getCookies();
-    if (cookies != null) {
-      for (Cookie cookie : cookies) {
-        if ("auth".equals(cookie.getName())) {
-          return cookie.getValue();
-        }
-      }
-    }
-
-    return null;
   }
 }

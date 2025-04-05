@@ -14,7 +14,6 @@ import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
-import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,9 +26,6 @@ public class PurchaseValidation {
 
   @Autowired
   private PurchaseRepository repository;
-
-  @Autowired
-  private VoluntaryRepository voluntaryRepository;
 
   public void checkVoluntaryFunctionMatch(Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {
@@ -159,13 +155,7 @@ public class PurchaseValidation {
     }
   }
 
-  public void checkPurchasesBelongsManagerStand(UUID standUuid,UUID userUuid) {
-    var manager = voluntaryRepository.findByUuidValidTrue(userUuid)
-        .orElseThrow(() -> new InvalidDatabaseQueryException(
-            MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.error"),
-            MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.message"),
-            userUuid.toString())
-        );
+  public void checkPurchasesBelongsManagerStand(UUID standUuid, Voluntary manager) {
     if (manager.getVoluntaryRole().isNotAdmin()) {
       if (!manager.getFunction().getUuid().equals(standUuid)) {
         throw new InvalidDatabaseInsertionException(
@@ -173,7 +163,7 @@ public class PurchaseValidation {
             MessageResolver.getInstance().getMessage("validation.purchase.checkManageFunction.invalidStand.message"),
             Map.of(
                 MessageResolver.getInstance().getMessage("validation.purchase.checkManageFunction.invalidStand.field"),
-                userUuid.toString()
+                manager.getUuid().toString()
             )
         );
       }
@@ -223,7 +213,7 @@ public class PurchaseValidation {
   }
 
   public void checkPurchaseBelongsToVoluntary(Purchase purchase, UUID userUuid) {
-    if (purchase.getVoluntary().getVoluntaryRole().isNotAdmin() && !purchase.getVoluntary().getUuid().equals(userUuid)) {
+    if (purchase.getVoluntary().getVoluntaryRole().isNotAdmin() && !purchase.getVoluntaryUuid().equals(userUuid)) {
       throw new InvalidOperationException(
           MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.notOwner.error"),
           MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.notOwner.message")

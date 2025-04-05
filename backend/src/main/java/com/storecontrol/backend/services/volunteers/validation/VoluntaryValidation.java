@@ -5,6 +5,7 @@ import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionExcepti
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.enumerate.VoluntaryRole;
 import com.storecontrol.backend.models.stands.Stand;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
 import com.storecontrol.backend.repositories.stands.AssociationRepository;
 import com.storecontrol.backend.repositories.volunteers.FunctionRepository;
@@ -27,32 +28,28 @@ public class VoluntaryValidation {
   @Autowired
   private AssociationRepository associationRepository;
 
-  public void checkVoluntaryPermission(UUID requestUuid, UUID loggedUuid){
-    if (!requestUuid.equals(loggedUuid)) {
-      var role = repository.takeRoleByUuidValidTrue(loggedUuid);
-      if (role.isPresent()) {
-        if (role.get().equals(VoluntaryRole.ROLE_USER)) {
-          throw new InvalidDatabaseQueryException(
-              MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.error"),
-              MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.message"),
-              requestUuid.toString()
-          );
-        }
+  public void checkVoluntaryPermission(UUID requestUuid, Voluntary user){
+    if (!requestUuid.equals(user.getUuid())) {
+      var role = user.getVoluntaryRole();
+      if (role.equals(VoluntaryRole.ROLE_USER)) {
+        throw new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.error"),
+            MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.message"),
+            requestUuid.toString()
+        );
       }
     }
   }
 
-  public void checkVoluntaryAuthentication(UUID requestUuid, UUID loggedUuid){
-    if (!requestUuid.equals(loggedUuid)) {
-      var role = repository.takeRoleByUuidValidTrue(loggedUuid);
-      if (role.isPresent()) {
-        if (!role.get().equals(VoluntaryRole.ROLE_ADMIN)) {
-          throw new InvalidDatabaseQueryException(
-              MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.error"),
-              MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.message"),
-              requestUuid.toString()
-          );
-        }
+  public void checkVoluntaryAuthentication(UUID requestUuid, Voluntary user){
+    if (!requestUuid.equals(user.getUuid())) {
+      var role = user.getVoluntaryRole();
+      if (!role.equals(VoluntaryRole.ROLE_ADMIN)) {
+        throw new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.error"),
+            MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.message"),
+            requestUuid.toString()
+        );
       }
     }
   }
@@ -106,11 +103,7 @@ public class VoluntaryValidation {
     }
   }
 
-  public void checkManagerBelongsSelectedStand(RequestUpdateVoluntaryFunction request, UUID managerUuid) {
-    var manager = repository.findByUuidValidTrue(managerUuid).orElseThrow(() -> new InvalidDatabaseQueryException(
-        MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.error"),
-        MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.message"),
-        managerUuid.toString()));
+  public void checkManagerBelongsSelectedStand(RequestUpdateVoluntaryFunction request, Voluntary manager) {
     var voluntary = repository.findByUuidValidTrue(request.uuid()).orElseThrow(() -> new InvalidDatabaseQueryException(
         MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.error"),
         MessageResolver.getInstance().getMessage("service.exception.voluntary.get.validation.message"),
@@ -148,7 +141,7 @@ public class VoluntaryValidation {
           }
         }
       }
-      else if (request.functionUuid() == null && !voluntary.getFunction().getUuid().equals(managerUuid)) {
+      else if (request.functionUuid() == null && !voluntary.getFunction().getUuid().equals(manager.getUuid())) {
         // Stand validation
         if (voluntary.getFunction() instanceof Stand) {
           throw new InvalidDatabaseInsertionException(

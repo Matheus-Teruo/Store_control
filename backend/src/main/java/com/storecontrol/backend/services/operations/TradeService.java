@@ -11,6 +11,7 @@ import com.storecontrol.backend.models.operations.purchases.request.RequestCreat
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.trades.Trade;
 import com.storecontrol.backend.models.operations.trades.TradeView;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
 import com.storecontrol.backend.repositories.operations.TradeRepository;
@@ -22,13 +23,13 @@ import com.storecontrol.backend.services.operations.validation.RechargeValidatio
 import com.storecontrol.backend.services.operations.validation.TradeValidation;
 import com.storecontrol.backend.services.registers.CashRegisterService;
 import com.storecontrol.backend.services.stands.ProductService;
-import com.storecontrol.backend.services.volunteers.VoluntaryService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -63,9 +64,6 @@ public class TradeService {
   private ProductService productService;
 
   @Autowired
-  private VoluntaryService voluntaryService;
-
-  @Autowired
   private CustomerService customerService;
 
   @Autowired
@@ -81,8 +79,8 @@ public class TradeService {
   private String fixedCardId;
 
   @Transactional
-  public TradeView createTrade(RequestCreateRecharge rechargeRequest, RequestCreatePurchase purchaseRequest, UUID userUuid) {
-    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
+  public TradeView createTrade(RequestCreateRecharge rechargeRequest, RequestCreatePurchase purchaseRequest) {
+    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     purchaseValidation.checkVoluntaryFunctionMatch(voluntary);
 
     var productMap = productService.listProductsAsMap();
@@ -126,25 +124,27 @@ public class TradeService {
         .orElseThrow(EntityNotFoundException::new);
   }
 
-  public Page<TradeView> pageTrades(UUID standUuid, UUID userUuid, Pageable pageable) {
-    purchaseValidation.checkPurchasesBelongsManagerStand(standUuid, userUuid);
+  public Page<TradeView> pageTrades(UUID standUuid, Pageable pageable) {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    purchaseValidation.checkPurchasesBelongsManagerStand(standUuid, manager);
     return repositoryView.findTradesValid(standUuid, pageable);
   }
 
-  public List<TradeView> listLast3Purchases( UUID voluntaryUuid) {
-    return repositoryView.findLast3ValidTrue(voluntaryUuid);
+  public List<TradeView> listLast3Trades() {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    return repositoryView.findLast3ValidTrue(manager.getUuid());
   }
 
   @Transactional
-  public void deleteTrade(String cardId, UUID uuid, UUID userUuid) {
-    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
+  public void deleteTrade(String cardId, UUID uuid) {
+    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     var trade = repository.findByUuidValidTrue(uuid)
         .orElseThrow(EntityNotFoundException::new);
 
     Customer customer;
     if (fixedCardId.equals(cardId)) {
       var requestOrderCard = new RequestOrderCard(cardId);
-      customer = customerFinalizationHandler.undoFinalizeCustomer(requestOrderCard, userUuid);
+      customer = customerFinalizationHandler.undoFinalizeCustomer(requestOrderCard, false);
     } else {
       customer = customerService.takeActiveCustomerByCardId(cardId);
     }
@@ -154,10 +154,10 @@ public class TradeService {
 
     validation.checkIfLastTrade(recharge, purchase, trade);
     if (!fixedCardId.equals(cardId)) purchaseValidation.checkSomeItemWasDelivered(purchase);
-    purchaseValidation.checkPurchaseBelongsToVoluntary(purchase, userUuid);
+    purchaseValidation.checkPurchaseBelongsToVoluntary(purchase, voluntary.getUuid());
     purchaseValidation.checkIfLastPurchaseOfVoluntary(purchase, voluntary);
     rechargeValidation.checkDebitRemainderPositive(recharge);
-    rechargeValidation.checkRechargeBelongsToVoluntary(recharge, userUuid);
+    rechargeValidation.checkRechargeBelongsToVoluntary(recharge, voluntary.getUuid());
     rechargeValidation.checkIfLastRechargeOfVoluntary(recharge, voluntary);
 
     updateItemsFromItemsChanged(purchase, true);

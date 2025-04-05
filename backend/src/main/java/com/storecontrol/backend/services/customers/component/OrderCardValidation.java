@@ -14,16 +14,13 @@ public class OrderCardValidation {
   @Autowired
   private OrderCardRepository repository;
 
-  @Autowired
-  private MessageResolver messageResolver;
-
   public void checkNameDuplication(String cardId) {
     if (repository.existsById(cardId)) {
       throw new InvalidDatabaseInsertionException(
-          messageResolver.getMessage("validation.orderCard.checkName.nameDuplication.error"),
-          messageResolver.getMessage("validation.orderCard.checkName.nameDuplication.message"),
+          MessageResolver.getInstance().getMessage("validation.orderCard.checkName.nameDuplication.error"),
+          MessageResolver.getInstance().getMessage("validation.orderCard.checkName.nameDuplication.message"),
           Map.of(
-              messageResolver.getMessage("validation.orderCard.checkName.nameDuplication.field"),
+              MessageResolver.getInstance().getMessage("validation.orderCard.checkName.nameDuplication.field"),
               cardId
           )
       );

@@ -3,12 +3,9 @@ package com.storecontrol.backend.controllers.operations;
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
-import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
-import com.storecontrol.backend.models.operations.purchases.response.ResponsePurchase;
-import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.trades.Trade;
 import com.storecontrol.backend.models.operations.trades.TradeView;
@@ -16,11 +13,6 @@ import com.storecontrol.backend.models.operations.trades.request.RequestCreateTr
 import com.storecontrol.backend.models.operations.trades.response.ResponseSummaryTrade;
 import com.storecontrol.backend.models.operations.trades.response.ResponseTrade;
 import com.storecontrol.backend.models.volunteers.Voluntary;
-import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
-import com.storecontrol.backend.services.customers.CustomerService;
-import com.storecontrol.backend.services.customers.OrderCardService;
-import com.storecontrol.backend.services.operations.PurchaseService;
-import com.storecontrol.backend.services.operations.RechargeService;
 import com.storecontrol.backend.services.operations.TradeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -41,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TradeTest extends BaseTest {
 
   @MockBean
-  TradeService service;
+  private TradeService service;
 
   @Test
   void testCreateTradeSuccess() throws Exception {
@@ -61,8 +53,7 @@ public class TradeTest extends BaseTest {
 
     when(service.createTrade(
         any(RequestCreateRecharge.class),
-        any(RequestCreatePurchase.class),
-        eq(mockVoluntary.getUuid())))
+        any(RequestCreatePurchase.class)))
         .thenReturn(tradeView);
 
     // When & Then
@@ -79,8 +70,7 @@ public class TradeTest extends BaseTest {
     verify(service, times(1))
         .createTrade(
             any(RequestCreateRecharge.class),
-            any(RequestCreatePurchase.class),
-            eq(mockVoluntary.getUuid()));
+            any(RequestCreatePurchase.class));
     verifyNoMoreInteractions(service);
   }
 
@@ -117,7 +107,6 @@ public class TradeTest extends BaseTest {
   void testReadTradesSuccess() throws Exception {
     // Given
     String cardId1 = "CardIDTest12345";
-    UUID userUuid = UUID.randomUUID();
     OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
     Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
     Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
@@ -145,18 +134,17 @@ public class TradeTest extends BaseTest {
     Page<ResponseSummaryTrade> expectedResponse = mockPage
         .map(ResponseSummaryTrade::new);
 
-    when(service.pageTrades(any(UUID.class), eq(userUuid), any(Pageable.class))).thenReturn(mockPage);
+    when(service.pageTrades(any(UUID.class), any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
     mockMvc.perform(get("/trades?standUuid=550e8400-e29b-41d4-a716-446655440000")
-            .accept(MediaType.APPLICATION_JSON)
-            .requestAttr("UserUuid", userUuid))
+            .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content.length()").value(2))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).pageTrades(any(UUID.class),  eq(userUuid), any(Pageable.class));
+    verify(service, times(1)).pageTrades(any(UUID.class), any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 
@@ -166,7 +154,6 @@ public class TradeTest extends BaseTest {
     String cardId = "CardIDTest12345";
     OrderCard mockOrderCard = createOrderCardEntity(cardId, false);
     Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockOrderCard,false);
-    Voluntary mockVoluntary = createVoluntaryEntity(UUID.randomUUID());
 
     Recharge mockRecharge = createRechargeEntity(UUID.randomUUID(), mockCustomer, false);
     Purchase mockPurchase = createPurchaseEntity(UUID.randomUUID(), mockCustomer);
@@ -175,16 +162,15 @@ public class TradeTest extends BaseTest {
     mockCustomer.setPurchases(List.of(mockPurchase));
     mockCustomer.setRecharges(List.of(mockRecharge));
 
-    doNothing().when(service).deleteTrade(cardId, trade.getUuid(), mockVoluntary.getUuid());
+    doNothing().when(service).deleteTrade(cardId, trade.getUuid());
 
     // When & Then
     mockMvc.perform(delete("/trades/{cardId}/{uuid}", cardId, trade.getUuid())
-            .contentType(MediaType.APPLICATION_JSON)
-            .requestAttr("UserUuid", mockVoluntary.getUuid()))
+            .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());
 
     // Verify interactions
-    verify(service, times(1)).deleteTrade(cardId, trade.getUuid(), mockVoluntary.getUuid());
+    verify(service, times(1)).deleteTrade(cardId, trade.getUuid());
     verifyNoMoreInteractions(service);
   }
 }

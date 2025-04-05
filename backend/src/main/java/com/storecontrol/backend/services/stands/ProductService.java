@@ -5,6 +5,7 @@ import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.stands.ProductRepository;
 import com.storecontrol.backend.services.stands.validation.ProductValidation;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,9 +34,10 @@ public class ProductService {
   private StandService standService;
 
   @Transactional
-  public Product createProduct(RequestCreateProduct request, UUID userUuid) {
+  public Product createProduct(RequestCreateProduct request) {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkNameDuplication(request.productName());
-    validation.checkProductBelongsManagerStand(request.standUuid() ,userUuid);
+    validation.checkProductBelongsManagerStand(request.standUuid(), manager);
     var stand = standService.safeTakeStandByUuid(request.standUuid());
     var product = new Product(request, stand);
     repository.save(product);
@@ -71,9 +74,10 @@ public class ProductService {
   }
 
   @Transactional
-  public Product updateProduct(RequestUpdateProduct request, UUID userUuid) {
+  public Product updateProduct(RequestUpdateProduct request) {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkNameDuplication(request.productName());
-    validation.checkProductBelongsManagerStand(request.standUuid() ,userUuid);
+    validation.checkProductBelongsManagerStand(request.standUuid(), manager);
     var product = safeTakeProductByUuid(request.uuid());
 
     product.updateProduct(request);

@@ -4,8 +4,8 @@ import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.stands.response.ResponseProduct;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
-import com.storecontrol.backend.services.stands.ProductService;
 import com.storecontrol.backend.services.stands.GCSService;
+import com.storecontrol.backend.services.stands.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,9 +33,8 @@ public class ProductController {
 
   @PostMapping
   public ResponseEntity<ResponseProduct> createProduct(
-      @RequestBody @Valid RequestCreateProduct request,
-      @RequestAttribute("UserUuid") UUID userUuid) {
-    var product = service.createProduct(request, userUuid);
+      @RequestBody @Valid RequestCreateProduct request) {
+    var product = service.createProduct(request);
 
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
@@ -72,10 +71,8 @@ public class ProductController {
   }
 
   @PutMapping
-  public ResponseEntity<ResponseProduct> updateProduct(
-      @RequestBody @Valid RequestUpdateProduct request,
-      @RequestAttribute("UserUuid") UUID userUuid) {
-    var response = new ResponseProduct(service.updateProduct(request, userUuid));
+  public ResponseEntity<ResponseProduct> updateProduct(@RequestBody @Valid RequestUpdateProduct request) {
+    var response = new ResponseProduct(service.updateProduct(request));
 
     return ResponseEntity.ok(response);
   }

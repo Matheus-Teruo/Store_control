@@ -24,9 +24,8 @@ public class VoluntaryController {
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseVoluntary> readVoluntary(
-      @PathVariable @Valid UUID uuid,
-      @RequestAttribute("UserUuid") UUID userUuid) {
-    var response = new ResponseVoluntary(service.takeVoluntaryByUuid(uuid, userUuid));
+      @PathVariable @Valid UUID uuid) {
+    var response = new ResponseVoluntary(service.takeVoluntaryByUuid(uuid));
 
     return ResponseEntity.ok(response);
   }
@@ -43,18 +42,16 @@ public class VoluntaryController {
 
   @PutMapping
   public ResponseEntity<ResponseVoluntary> updateVoluntary(
-      @RequestBody @Valid RequestUpdateVoluntary request,
-      @RequestAttribute("UserUuid") UUID userUuid) {
-    var response = new ResponseVoluntary(service.updateVoluntary(request, userUuid));
+      @RequestBody @Valid RequestUpdateVoluntary request) {
+    var response = new ResponseVoluntary(service.updateVoluntary(request));
 
     return ResponseEntity.ok(response);
   }
 
   @PutMapping("/function")
   public ResponseEntity<ResponseVoluntary> updateFunctionFromVoluntary(
-      @RequestBody @Valid RequestUpdateVoluntaryFunction request,
-      @RequestAttribute("UserUuid") UUID userUuid) {
-    var response = new ResponseVoluntary(service.updateFunctionFromVoluntary(request, userUuid));
+      @RequestBody @Valid RequestUpdateVoluntaryFunction request) {
+    var response = new ResponseVoluntary(service.updateFunctionFromVoluntary(request));
 
     return ResponseEntity.ok(response);
   }
