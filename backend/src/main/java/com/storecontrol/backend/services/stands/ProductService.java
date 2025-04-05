@@ -88,7 +88,9 @@ public class ProductService {
 
   @Transactional
   public void deleteProduct(UUID uuid) {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     var product = safeTakeProductByUuid(uuid);
+    validation.checkProductBelongsManagerStand(product.getStandUuid(), manager);
 
     product.deleteProduct();
   }

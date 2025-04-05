@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 @Entity
@@ -107,6 +108,19 @@ public class Product {
     }
 
     public void deleteProduct() {
+        this.productName = this.productName + "_deleted_" + generateRandomString();
         this.valid = false;
+    }
+
+    private String generateRandomString() {
+        String chars = "abcdefghijklmnopqrstuvwxyz";
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 3; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+
+        return sb.toString();
     }
 }

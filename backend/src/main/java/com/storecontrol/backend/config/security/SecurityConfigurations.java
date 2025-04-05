@@ -104,7 +104,6 @@ public class SecurityConfigurations {
 
   private static final String[] AUTHORIZED_GET_ENDPOINTS_LOGGED = {
       "/user/check",
-      "/stands/{uuid}",
       "/purchases/last3",
       "/purchases/{uuid}",
       "/recharges/last3",
