@@ -117,6 +117,20 @@ CREATE TABLE stands (
     association_uuid BINARY(16) NOT NULL
 );
 
+-- Table for tags
+CREATE TABLE tags (
+    uuid BINARY(16) PRIMARY KEY,
+    tag_name VARCHAR(255) UNIQUE NOT NULL,
+    color CHAR(7)
+);
+
+-- Table for tag_product
+CREATE TABLE tag_product (
+    tag_uuid BINARY(16),
+    product_uuid BINARY(16),
+    PRIMARY KEY (tag_uuid, product_uuid)
+);
+
 -- Table for trades
 CREATE TABLE trades (
     uuid BINARY(16) PRIMARY KEY,

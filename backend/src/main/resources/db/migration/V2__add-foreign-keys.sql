@@ -65,6 +65,13 @@ FOREIGN KEY (uuid) REFERENCES functions (uuid),
 ADD CONSTRAINT fk_stands_association_uuid
 FOREIGN KEY (association_uuid) REFERENCES associations (uuid);
 
+-- Foreign keys for tag_product table
+ALTER TABLE tag_product
+ADD CONSTRAINT fk_tag_product_tag_uuid
+FOREIGN KEY (tag_uuid) REFERENCES tags (uuid),
+ADD CONSTRAINT fk_tag_product_product_uuid
+FOREIGN KEY (product_uuid) REFERENCES products (uuid);
+
 -- Foreign keys for trades table
 ALTER TABLE trades
 ADD CONSTRAINT fk_trades_recharge_uuid
