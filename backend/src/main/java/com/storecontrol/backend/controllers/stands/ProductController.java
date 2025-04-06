@@ -56,17 +56,17 @@ public class ProductController {
       @RequestParam(required = false) String productName,
       @RequestParam(required = false) UUID standUuid,
       Pageable pageable) {
-    var items = service.pageProducts(productName, standUuid, pageable);
+    var products = service.pageProducts(productName, standUuid, pageable);
 
-    var response = items.map(ResponseSummaryProduct::new);
+    var response = products.map(ResponseSummaryProduct::new);
     return ResponseEntity.ok(response);
   }
 
   @GetMapping("/list")
   public ResponseEntity<List<ResponseSummaryProduct>> readListProducts() {
-    var items = service.listProducts();
+    var products = service.listProducts();
 
-    var response = items.stream().map(ResponseSummaryProduct::new).toList();
+    var response = products.stream().map(ResponseSummaryProduct::new).toList();
     return ResponseEntity.ok(response);
   }
 

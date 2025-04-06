@@ -94,6 +94,7 @@ public class SecurityConfigurations {
       "/products/list",
       "/products/{uuid}",
       "/stands/list",
+      "/tags",
       "/customers/card/{cardId}"
   };
 
