@@ -1,6 +1,6 @@
-package com.storecontrol.backend.models.stands.tag.response;
+package com.storecontrol.backend.models.stands.products.response;
 
-import com.storecontrol.backend.models.stands.tag.Tag;
+import com.storecontrol.backend.models.stands.products.Tag;
 
 import java.util.UUID;
 

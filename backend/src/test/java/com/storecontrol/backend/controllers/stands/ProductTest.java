@@ -1,12 +1,12 @@
 package com.storecontrol.backend.controllers.stands;
 
 import com.storecontrol.backend.BaseTest;
-import com.storecontrol.backend.models.stands.Product;
+import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.models.stands.Stand;
-import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
-import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
-import com.storecontrol.backend.models.stands.response.ResponseProduct;
-import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
+import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
+import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
+import com.storecontrol.backend.models.stands.products.response.ResponseProduct;
+import com.storecontrol.backend.models.stands.products.response.ResponseSummaryProduct;
 import com.storecontrol.backend.services.stands.GCSService;
 import com.storecontrol.backend.services.stands.ProductService;
 import org.junit.jupiter.api.Test;
@@ -39,6 +39,7 @@ class ProductTest extends BaseTest {
     // Given
     Product mockProduct = createProductEntity(UUID.randomUUID());
     RequestCreateProduct requestProduct = createRequestCreateProduct(mockProduct);
+    mockProduct.updateProduct(createTagProductsRelation(mockProduct));
     ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
 
     when(service.createProduct(requestProduct)).thenReturn(mockProduct);
@@ -64,6 +65,7 @@ class ProductTest extends BaseTest {
     UUID productUuid = UUID.randomUUID();
 
     Product mockProduct = createProductEntity(productUuid);
+    mockProduct.updateProduct(createTagProductsRelation(mockProduct));
     ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
 
     when(service.takeProductByUuid(productUuid)).thenReturn(mockProduct);
@@ -136,6 +138,7 @@ class ProductTest extends BaseTest {
     Stand updatedMockStand = createStandEntity(UUID.randomUUID());
     RequestUpdateProduct updateRequest = createRequestUpdateProduct(mockProduct.getUuid(), updatedMockStand.getUuid());
 
+    mockProduct.updateProduct(createTagProductsRelation(mockProduct));
     mockProduct.updateProduct(updateRequest);
     mockProduct.updateProduct(updatedMockStand);
     ResponseProduct expectedResponse = new ResponseProduct(mockProduct);

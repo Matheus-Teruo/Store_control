@@ -1,15 +1,18 @@
 package com.storecontrol.backend.services.stands;
 
-import com.storecontrol.backend.models.stands.tag.Tag;
-import com.storecontrol.backend.models.stands.tag.request.RequestCreateTag;
+import com.storecontrol.backend.config.language.MessageResolver;
+import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
+import com.storecontrol.backend.models.stands.products.Tag;
+import com.storecontrol.backend.models.stands.products.request.RequestCreateTag;
+import com.storecontrol.backend.models.stands.products.request.RequestUpdateTag;
 import com.storecontrol.backend.repositories.stands.TagRepository;
 import com.storecontrol.backend.services.stands.validation.TagValidation;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -35,9 +38,30 @@ public class TagService {
     return repository.findAll();
   }
 
+  public List<Tag> listSelectedTags(Set<UUID> tagsUuid) {
+    return repository.findAllByUuidIn(tagsUuid);
+  }
+
+  @Transactional
+  public Tag updateTag(RequestUpdateTag request) {
+    validation.checkNameDuplication(request.tagName());
+    var tag = repository.findById(request.uuid())
+        .orElseThrow(() -> new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("service.exception.tag.get.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.tag.get.validation.message"),
+            request.uuid().toString()));
+
+    tag.updateTag(request);
+
+    return tag;
+  }
+
   public void deleteTag(UUID uuid){
     var tag = repository.findById(uuid)
-        .orElseThrow(EntityNotFoundException::new);
+        .orElseThrow(() -> new InvalidDatabaseQueryException(
+            MessageResolver.getInstance().getMessage("service.exception.tag.get.validation.error"),
+            MessageResolver.getInstance().getMessage("service.exception.tag.get.validation.message"),
+            uuid.toString()));
 
     repository.delete(tag);
   }

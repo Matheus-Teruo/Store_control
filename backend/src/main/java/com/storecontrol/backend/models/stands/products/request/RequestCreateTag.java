@@ -1,4 +1,4 @@
-package com.storecontrol.backend.models.stands.tag.request;
+package com.storecontrol.backend.models.stands.products.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -10,7 +10,7 @@ public record RequestCreateTag(
     @Pattern(regexp = "^[\\p{L}\\p{N}]*$", message = "{request.validation.createProductTag.tagName.pattern}")
     String tagName,
 
-    @Pattern(regexp = "^#([A-Fa-f0-9]{6})$", message = "{request.validation.createProductTag.color.pattern}A cor deve estar no formato hexadecimal, como #1A2B3C")
+    @Pattern(regexp = "^#([A-Fa-f0-9]{6})$", message = "{request.validation.createProductTag.color.pattern}")
     String color
 ) {
 }

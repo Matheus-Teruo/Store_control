@@ -1,6 +1,6 @@
 package com.storecontrol.backend.repositories.stands;
 
-import com.storecontrol.backend.models.stands.Product;
+import com.storecontrol.backend.models.stands.products.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

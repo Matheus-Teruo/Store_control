@@ -1,12 +1,14 @@
-package com.storecontrol.backend.models.stands;
+package com.storecontrol.backend.models.stands.products;
 
-import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
-import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.operations.purchases.Item;
+import com.storecontrol.backend.models.stands.Stand;
+import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
+import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -40,6 +42,10 @@ public class Product {
 
     @Column(nullable = false)
     private int stock;
+
+    @Setter
+    @OneToMany(mappedBy = "tagProductId.product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TagProduct> tagProducts;
 
     @Column(name = "product_img")
     private String productImg;
@@ -97,6 +103,10 @@ public class Product {
         if (request.productImg() != null) {
             this.productImg = request.productImg();
         }
+    }
+
+    public void updateProduct(List<TagProduct> tagProducts) {
+        this.tagProducts = tagProducts;
     }
 
     public void updateProduct(Stand stand) {

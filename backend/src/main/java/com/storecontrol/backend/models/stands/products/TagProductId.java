@@ -1,6 +1,5 @@
-package com.storecontrol.backend.models.operations.purchases;
+package com.storecontrol.backend.models.stands.products;
 
-import com.storecontrol.backend.models.stands.products.Product;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -10,17 +9,17 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @Getter
 @NoArgsConstructor
-public class ItemId{
+public class TagProductId {
 
-  @ManyToOne @JoinColumn(name = "purchase_uuid")
-  private Purchase purchase;
+  @ManyToOne @JoinColumn(name = "tag_uuid")
+  private Tag tag;
 
   @ManyToOne @JoinColumn(name = "product_uuid")
   private Product product;
 
 
-  public ItemId(Product product, Purchase purchase) {
+  public TagProductId(Tag tag, Product product) {
+    this.tag = tag;
     this.product = product;
-    this.purchase = purchase;
   }
 }

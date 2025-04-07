@@ -1,12 +1,13 @@
 package com.storecontrol.backend.controllers.stands;
 
-import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
-import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
-import com.storecontrol.backend.models.stands.response.ResponseProduct;
-import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
+import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
+import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
+import com.storecontrol.backend.models.stands.products.response.ResponseProduct;
+import com.storecontrol.backend.models.stands.products.response.ResponseSummaryProduct;
 import com.storecontrol.backend.services.stands.GCSService;
 import com.storecontrol.backend.services.stands.ProductService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -2,9 +2,9 @@ package com.storecontrol.backend.services.stands;
 
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
-import com.storecontrol.backend.models.stands.Product;
-import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
-import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
+import com.storecontrol.backend.models.stands.products.Product;
+import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
+import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.stands.ProductRepository;
 import com.storecontrol.backend.services.stands.validation.ProductValidation;
@@ -33,6 +33,12 @@ public class ProductService {
   @Autowired
   private StandService standService;
 
+  @Autowired
+  private TagService tagService;
+
+  @Autowired
+  private TagProductService tagProductService;
+
   @Transactional
   public Product createProduct(RequestCreateProduct request) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -40,6 +46,13 @@ public class ProductService {
     validation.checkProductBelongsManagerStand(request.standUuid(), manager);
     var stand = standService.safeTakeStandByUuid(request.standUuid());
     var product = new Product(request, stand);
+
+    if (!request.tagsUuid().isEmpty()) {
+      var tags = tagService.listSelectedTags(request.tagsUuid());
+      var tagProducts = tagProductService.createTagProducts(tags, product);
+      product.updateProduct(tagProducts);
+    }
+
     repository.save(product);
 
     return product;
@@ -79,6 +92,11 @@ public class ProductService {
     validation.checkNameDuplication(request.productName());
     validation.checkProductBelongsManagerStand(request.standUuid(), manager);
     var product = safeTakeProductByUuid(request.uuid());
+
+    if (!request.tagsUuid().isEmpty()) {
+      var tagProduct = tagProductService.updateTagProducts(request.tagsUuid(), product.getTagProducts(), product);
+      product.updateProduct(tagProduct);
+    }
 
     product.updateProduct(request);
     updateStandFromProduct(request.standUuid(), product);

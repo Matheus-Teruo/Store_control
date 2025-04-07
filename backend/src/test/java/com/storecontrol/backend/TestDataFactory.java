@@ -26,8 +26,14 @@ import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
 import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
 import com.storecontrol.backend.models.stands.Association;
-import com.storecontrol.backend.models.stands.Product;
+import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.models.stands.Stand;
+import com.storecontrol.backend.models.stands.products.Tag;
+import com.storecontrol.backend.models.stands.products.TagProduct;
+import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
+import com.storecontrol.backend.models.stands.products.request.RequestCreateTag;
+import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
+import com.storecontrol.backend.models.stands.products.request.RequestUpdateTag;
 import com.storecontrol.backend.models.stands.request.*;
 import com.storecontrol.backend.models.volunteers.Function;
 import com.storecontrol.backend.models.volunteers.User;
@@ -321,6 +327,7 @@ public class TestDataFactory {
         BigDecimal.ZERO,
         1000,
         null,
+        null,
         stand.getUuid(),
         stand,
         null,
@@ -328,9 +335,21 @@ public class TestDataFactory {
     );
   }
 
+  public static List<TagProduct> createTagProductsRelation(Product product) {
+    List<Tag> tags = List.of(
+        createTagEntity(UUID.randomUUID()),
+        createTagEntity(UUID.randomUUID())
+    );
+    return List.of(
+        new TagProduct (tags.get(0), product),
+        new TagProduct (tags.get(1), product)
+    );
+  }
+
   public static RequestCreateProduct createRequestCreateProduct(Product product) {
     return new RequestCreateProduct(
         product.getProductName(),
+        null,
         product.getSummary(),
         product.getDescription(),
         product.getPrice(),
@@ -344,6 +363,7 @@ public class TestDataFactory {
     return new RequestUpdateProduct(
         uuid,
         nameOnlyLettersSpaceAndNumbers(),
+        null,
         nameOnlyLettersSpaceAndNumbers(),
         textOnlyLettersSpaceAndNumbers(),
         BigDecimal.TEN,
@@ -377,6 +397,30 @@ public class TestDataFactory {
         uuid,
         nameOnlyLettersSpaceAndNumbers(),
         associationUuid
+    );
+  }
+
+  public static Tag createTagEntity(UUID uuid) {
+    return new Tag(
+        uuid,
+        nameOnlyLettersAndNumbers(),
+        null,
+        null
+    );
+  }
+
+  public static RequestCreateTag createRequestCreateTag(Tag tag) {
+    return new RequestCreateTag(
+        tag.getTagName(),
+        tag.getColor()
+    );
+  }
+
+  public static RequestUpdateTag createRequestUpdateTag(UUID uuid) {
+    return new RequestUpdateTag(
+        uuid,
+        nameOnlyLettersAndNumbers(),
+        null
     );
   }
 

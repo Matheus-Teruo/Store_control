@@ -1,32 +1,32 @@
-package com.storecontrol.backend.models.stands.response;
+package com.storecontrol.backend.models.stands.products.response;
 
-import com.storecontrol.backend.models.stands.Product;
+import com.storecontrol.backend.models.stands.products.Product;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record ResponseProduct(
+public record ResponseSummaryProduct(
     UUID uuid,
     String productName,
     String summary,
-    String description,
+    boolean description,
     BigDecimal price,
     BigDecimal discount,
     Integer stock,
     String productImg,
-    ResponseStand stand
+    UUID standUuid
 ) {
 
-  public ResponseProduct(Product product) {
+  public ResponseSummaryProduct(Product product) {
     this(product.getUuid(),
         product.getProductName(),
         product.getSummary(),
-        product.getDescription(),
+        product.getDescription() != null,
         product.getPrice(),
         product.getDiscount(),
         product.getStock(),
         product.getProductImg(),
-        new ResponseStand(product.getStand())
+        product.getStandUuid()
     );
   }
 }
