@@ -3,7 +3,6 @@ package com.storecontrol.backend.models.stands.products.request;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 

@@ -50,7 +50,7 @@ public class PurchaseService {
     Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkVoluntaryFunctionMatch(voluntary);
 
-    Map<UUID, Product> productMap = productService.listProductsAsMap();
+    Map<UUID, Product> productMap = productService.listProductsAsMap(request.standUuid());
     var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
     validation.checkStandFromItems(voluntary, request.items(), productMap);
     validation.checkItemPriceAndDiscountMatch(request, voluntary, productMap);
@@ -60,7 +60,7 @@ public class PurchaseService {
 
     UUID standUuid = productMap.get(request.items().getFirst().productUuid()).getStandUuid();
     var purchase = new Purchase(request, standUuid, customer, voluntary);
-    var items = itemService.createItems(request, purchase);
+    var items = itemService.createItems(request, purchase, standUuid);
     purchase.setItems(items);
 
     updateItemsFromItemsChanged(purchase, false);

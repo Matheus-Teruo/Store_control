@@ -27,6 +27,9 @@ public record RequestCreateTrade(
     @NotNull(message = "{request.validation.createPurchase.onOrder.notnull}")
     Boolean onOrder,
 
+    @NotNull(message = "{request.validation.createPurchase.standUuid.notnull}")
+    UUID standUuid,
+
     @Valid
     @NotNull(message = "{request.validation.createPurchase.items.notnull}")
     List<RequestCreateItem> items

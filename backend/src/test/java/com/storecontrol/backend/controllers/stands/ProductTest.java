@@ -116,18 +116,19 @@ class ProductTest extends BaseTest {
     List<ResponseSummaryProduct> expectedResponse = mockProducts.stream()
         .map(ResponseSummaryProduct::new)
         .toList();
+    UUID standUuid = UUID.randomUUID();
 
-    when(service.listProducts()).thenReturn(mockProducts);
+    when(service.listProducts(standUuid)).thenReturn(mockProducts);
 
     // When & Then
-    mockMvc.perform(get("/products/list")
+    mockMvc.perform(get("/products/list/{standUuid}", standUuid)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listProducts();
+    verify(service, times(1)).listProducts(standUuid);
     verifyNoMoreInteractions(service);
   }
 

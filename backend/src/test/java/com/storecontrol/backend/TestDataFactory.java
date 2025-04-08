@@ -144,6 +144,7 @@ public class TestDataFactory {
     );
     return new RequestCreatePurchase(
         purchase.isOnOrder(),
+        purchase.getStandUuid(),
         requestCreateItems,
         purchase.getCustomer().getOrderCard().getId()
     );
@@ -230,6 +231,7 @@ public class TestDataFactory {
         orderCard.getId(),
         recharge.getCashRegister().getUuid(),
         purchase.isOnOrder(),
+        purchase.getStandUuid(),
         requestCreateItems
     );
   }

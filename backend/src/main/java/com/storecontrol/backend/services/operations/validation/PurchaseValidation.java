@@ -47,9 +47,17 @@ public class PurchaseValidation {
 
   public void checkStandFromItems(Voluntary voluntary, List<RequestCreateItem> items, Map<UUID, Product> productMap) {
     Set<UUID> standUuidSet = items.stream()
-        .map(item -> productMap.get(item.productUuid()).getStandUuid())
+        .map(item ->
+          {Product product = productMap.get(item.productUuid());
+          if (product == null) {
+            throw new InvalidOperationException(
+                MessageResolver.getInstance().getMessage("validation.purchase.checkItems.differentStand.error"),
+                MessageResolver.getInstance().getMessage("validation.purchase.checkItems.differentStand.message")
+            );
+          }
+          return product.getStandUuid();})
         .collect(Collectors.toSet());
-    if (standUuidSet.size() > 1) {
+    if (standUuidSet.size() != 1) {
       throw new InvalidOperationException(
           MessageResolver.getInstance().getMessage("validation.purchase.checkItems.differentStand.error"),
           MessageResolver.getInstance().getMessage("validation.purchase.checkItems.differentStand.message")

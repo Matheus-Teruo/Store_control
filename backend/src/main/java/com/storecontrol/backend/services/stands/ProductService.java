@@ -72,16 +72,16 @@ public class ProductService {
         );
   }
 
-  public Page<Product> pageProducts(String productName, UUID standUuid, Pageable pageable) {
-    return repository.findAllValidTruePage(productName, standUuid, pageable);
+  public Page<Product> pageProducts(String productName, UUID tagUuid, UUID standUuid, Pageable pageable) {
+    return repository.findAllValidTruePage(productName, tagUuid, standUuid, pageable);
   }
 
-  public List<Product> listProducts() {
-    return repository.findAllValidTrue();
+  public List<Product> listProducts(UUID standUuid) {
+    return repository.findAllValidTrueByStandUuid(standUuid);
   }
 
-  public Map<UUID, Product> listProductsAsMap() {
-    List<Product> products = repository.findAllValidTrue();
+  public Map<UUID, Product> listProductsAsMap(UUID standUuid) {
+    List<Product> products = repository.findAllValidTrueByStandUuid(standUuid);
     return products.stream()
         .collect(Collectors.toMap(Product::getUuid, product -> product));
   }

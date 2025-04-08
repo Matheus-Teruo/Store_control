@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ItemService {
@@ -20,10 +21,10 @@ public class ItemService {
   private ProductService productService;
 
   @Transactional
-  public List<Item> createItems(RequestCreatePurchase request, Purchase purchase) {
+  public List<Item> createItems(RequestCreatePurchase request, Purchase purchase, UUID standUuid) {
     List<Item> items = new ArrayList<>();
 
-    var productMap = productService.listProductsAsMap();
+    var productMap = productService.listProductsAsMap(standUuid);
 
     for (RequestCreateItem requestCreateItem : request.items()) {
       var product = productMap.get(requestCreateItem.productUuid());

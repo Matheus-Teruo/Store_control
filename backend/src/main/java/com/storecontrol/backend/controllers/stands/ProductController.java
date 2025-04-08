@@ -7,7 +7,6 @@ import com.storecontrol.backend.models.stands.products.response.ResponseSummaryP
 import com.storecontrol.backend.services.stands.GCSService;
 import com.storecontrol.backend.services.stands.ProductService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,17 +54,18 @@ public class ProductController {
   @GetMapping()
   public ResponseEntity<Page<ResponseSummaryProduct>> readProducts(
       @RequestParam(required = false) String productName,
+      @RequestParam(required = false) UUID tagUuid,
       @RequestParam(required = false) UUID standUuid,
       Pageable pageable) {
-    var products = service.pageProducts(productName, standUuid, pageable);
+    var products = service.pageProducts(productName, tagUuid, standUuid, pageable);
 
     var response = products.map(ResponseSummaryProduct::new);
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping("/list")
-  public ResponseEntity<List<ResponseSummaryProduct>> readListProducts() {
-    var products = service.listProducts();
+  @GetMapping("/list/{standUuid}")
+  public ResponseEntity<List<ResponseSummaryProduct>> readListProducts(@PathVariable @Valid UUID standUuid) {
+    var products = service.listProducts(standUuid);
 
     var response = products.stream().map(ResponseSummaryProduct::new).toList();
     return ResponseEntity.ok(response);

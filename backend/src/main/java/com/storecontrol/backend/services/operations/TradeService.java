@@ -83,7 +83,7 @@ public class TradeService {
     Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     purchaseValidation.checkVoluntaryFunctionMatch(voluntary);
 
-    var productMap = productService.listProductsAsMap();
+    var productMap = productService.listProductsAsMap(purchaseRequest.standUuid());
     purchaseValidation.checkStandFromItems(voluntary, purchaseRequest.items(), productMap);
     purchaseValidation.checkItemPriceAndDiscountMatch(purchaseRequest, voluntary, productMap);
     purchaseValidation.checkPurchaseHaveItems(purchaseRequest);
@@ -101,7 +101,7 @@ public class TradeService {
 
     UUID standUuid = productMap.get(purchaseRequest.items().getFirst().productUuid()).getStandUuid();
     var purchase = new Purchase(purchaseRequest, standUuid, customer, voluntary);
-    var items = itemService.createItems(purchaseRequest, purchase);
+    var items = itemService.createItems(purchaseRequest, purchase, standUuid);
     purchase.setItems(items);
 
     updateItemsFromItemsChanged(purchase, false);
