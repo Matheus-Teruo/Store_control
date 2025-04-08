@@ -91,7 +91,7 @@ public class SecurityConfigurations {
 
   private static final String[] AUTHORIZED_GET_ENDPOINTS_ALL = {
       "/products",
-      "/products/list",
+      "/products/list/{standUuid}",
       "/products/{uuid}",
       "/stands/list",
       "/tags",

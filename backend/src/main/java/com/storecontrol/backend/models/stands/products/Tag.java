@@ -1,13 +1,13 @@
 package com.storecontrol.backend.models.stands.products;
 
 import com.storecontrol.backend.models.stands.products.request.RequestCreateTag;
-import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.stands.products.request.RequestUpdateTag;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,8 +27,8 @@ public class Tag {
 
   private String color;
 
-  @OneToMany(mappedBy = "tagProductId.tag")
-  private List<TagProduct> tagProducts;
+  @ManyToMany(mappedBy = "tags", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  private List<Product> Products;
 
 
   public Tag(RequestCreateTag request){

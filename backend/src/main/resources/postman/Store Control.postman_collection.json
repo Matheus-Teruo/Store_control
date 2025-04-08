@@ -1042,18 +1042,24 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}products?productName=&page=0",
+							"raw": "{{hostPath}}products?page=0",
 							"host": [
 								"{{hostPath}}products"
 							],
 							"query": [
 								{
 									"key": "productName",
-									"value": ""
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "tagUuid",
+									"value": null,
+									"disabled": true
 								},
 								{
 									"key": "standUuid",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
@@ -1062,12 +1068,12 @@
 								},
 								{
 									"key": "size",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "sort",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -1081,12 +1087,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}products/list",
+							"raw": "{{hostPath}}products/list/{{stand_id}}",
 							"host": [
 								"{{hostPath}}products"
 							],
 							"path": [
-								"list"
+								"list",
+								"{{stand_id}}"
 							]
 						}
 					},
@@ -2308,6 +2315,10 @@
 			"key": "trade_id",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "tag_id",
+			"value": ""
 		}
 	]
 }

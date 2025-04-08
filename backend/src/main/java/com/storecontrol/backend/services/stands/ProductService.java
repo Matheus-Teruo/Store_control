@@ -3,6 +3,7 @@ package com.storecontrol.backend.services.stands;
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.stands.products.Product;
+import com.storecontrol.backend.models.stands.products.Tag;
 import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.volunteers.Voluntary;
@@ -36,9 +37,6 @@ public class ProductService {
   @Autowired
   private TagService tagService;
 
-  @Autowired
-  private TagProductService tagProductService;
-
   @Transactional
   public Product createProduct(RequestCreateProduct request) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -49,8 +47,7 @@ public class ProductService {
 
     if (!request.tagsUuid().isEmpty()) {
       var tags = tagService.listSelectedTags(request.tagsUuid());
-      var tagProducts = tagProductService.createTagProducts(tags, product);
-      product.updateProduct(tagProducts);
+      product.createTags(tags);
     }
 
     repository.save(product);
@@ -93,9 +90,9 @@ public class ProductService {
     validation.checkProductBelongsManagerStand(request.standUuid(), manager);
     var product = safeTakeProductByUuid(request.uuid());
 
-    if (!request.tagsUuid().isEmpty()) {
-      var tagProduct = tagProductService.updateTagProducts(request.tagsUuid(), product.getTagProducts(), product);
-      product.updateProduct(tagProduct);
+    if (request.tagsUuid() != null) {
+      List<Tag> newTags = tagService.listSelectedTags(request.tagsUuid());
+      product.updateTags(request.tagsUuid(), newTags);
     }
 
     product.updateProduct(request);

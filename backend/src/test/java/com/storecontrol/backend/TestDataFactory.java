@@ -19,22 +19,24 @@ import com.storecontrol.backend.models.operations.purchases.request.RequestCreat
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
+import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.operations.trades.Trade;
 import com.storecontrol.backend.models.operations.trades.request.RequestCreateTrade;
-import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
 import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
 import com.storecontrol.backend.models.stands.Association;
-import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.models.stands.Stand;
+import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.models.stands.products.Tag;
-import com.storecontrol.backend.models.stands.products.TagProduct;
 import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.products.request.RequestCreateTag;
 import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.stands.products.request.RequestUpdateTag;
-import com.storecontrol.backend.models.stands.request.*;
+import com.storecontrol.backend.models.stands.request.RequestCreateAssociation;
+import com.storecontrol.backend.models.stands.request.RequestCreateStand;
+import com.storecontrol.backend.models.stands.request.RequestUpdateAssociation;
+import com.storecontrol.backend.models.stands.request.RequestUpdateStand;
 import com.storecontrol.backend.models.volunteers.Function;
 import com.storecontrol.backend.models.volunteers.User;
 import com.storecontrol.backend.models.volunteers.Voluntary;
@@ -328,23 +330,12 @@ public class TestDataFactory {
         BigDecimal.TEN,
         BigDecimal.ZERO,
         1000,
-        null,
+        new ArrayList<>(),
         null,
         stand.getUuid(),
         stand,
-        null,
+        new ArrayList<>(),
         true
-    );
-  }
-
-  public static List<TagProduct> createTagProductsRelation(Product product) {
-    List<Tag> tags = List.of(
-        createTagEntity(UUID.randomUUID()),
-        createTagEntity(UUID.randomUUID())
-    );
-    return List.of(
-        new TagProduct (tags.get(0), product),
-        new TagProduct (tags.get(1), product)
     );
   }
 

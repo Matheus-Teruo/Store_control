@@ -8,12 +8,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "products")
@@ -43,9 +41,13 @@ public class Product {
     @Column(nullable = false)
     private int stock;
 
-    @Setter
-    @OneToMany(mappedBy = "tagProductId.product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TagProduct> tagProducts;
+    @ManyToMany
+    @JoinTable(
+        name = "tag_product",
+        joinColumns = @JoinColumn(name = "product_uuid"),
+        inverseJoinColumns = @JoinColumn(name = "tag_uuid")
+    )
+    private List<Tag> tags;
 
     @Column(name = "product_img")
     private String productImg;
@@ -105,8 +107,20 @@ public class Product {
         }
     }
 
-    public void updateProduct(List<TagProduct> tagProducts) {
-        this.tagProducts = tagProducts;
+    public void createTags(List<Tag> tag) {
+        this.tags = tag;
+    }
+
+    public void updateTags(Set<UUID> tagsUuid, List<Tag> newTags) {
+        this.tags.removeIf(existingTag -> !tagsUuid.contains(existingTag.getUuid()));
+
+        Set<UUID> existingUuids = this.tags.stream()
+            .map(Tag::getUuid)
+            .collect(Collectors.toSet());
+
+        newTags.stream()
+            .filter(tag -> !existingUuids.contains(tag.getUuid()))
+            .forEach(this.tags::add);
     }
 
     public void updateProduct(Stand stand) {

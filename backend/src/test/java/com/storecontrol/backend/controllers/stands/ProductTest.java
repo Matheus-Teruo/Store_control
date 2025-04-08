@@ -3,6 +3,7 @@ package com.storecontrol.backend.controllers.stands;
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.models.stands.Stand;
+import com.storecontrol.backend.models.stands.products.Tag;
 import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.stands.products.response.ResponseProduct;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
@@ -39,7 +41,7 @@ class ProductTest extends BaseTest {
     // Given
     Product mockProduct = createProductEntity(UUID.randomUUID());
     RequestCreateProduct requestProduct = createRequestCreateProduct(mockProduct);
-    mockProduct.updateProduct(createTagProductsRelation(mockProduct));
+    mockProduct.createTags(List.of(createTagEntity(UUID.randomUUID())));
     ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
 
     when(service.createProduct(requestProduct)).thenReturn(mockProduct);
@@ -65,7 +67,7 @@ class ProductTest extends BaseTest {
     UUID productUuid = UUID.randomUUID();
 
     Product mockProduct = createProductEntity(productUuid);
-    mockProduct.updateProduct(createTagProductsRelation(mockProduct));
+    mockProduct.createTags(List.of(createTagEntity(UUID.randomUUID())));
     ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
 
     when(service.takeProductByUuid(productUuid)).thenReturn(mockProduct);
@@ -92,17 +94,17 @@ class ProductTest extends BaseTest {
     Page<ResponseSummaryProduct> expectedResponse = mockPage
         .map(ResponseSummaryProduct::new);
 
-    when(service.pageProducts(any(String.class), any(UUID.class), any(Pageable.class))).thenReturn(mockPage);
+    when(service.pageProducts(any(String.class), any(UUID.class), any(UUID.class), any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
-    mockMvc.perform(get("/products?productName=&standUuid=550e8400-e29b-41d4-a716-446655440000")
+    mockMvc.perform(get("/products?productName=&tagUuid=550e8400-e29b-41d4-a716-446655440000&standUuid=550e8400-e29b-41d4-a716-446655440000")
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content.length()").value(2))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).pageProducts(any(String.class),  any(UUID.class), any(Pageable.class));
+    verify(service, times(1)).pageProducts(any(String.class),  any(UUID.class), any(UUID.class), any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 
@@ -139,7 +141,15 @@ class ProductTest extends BaseTest {
     Stand updatedMockStand = createStandEntity(UUID.randomUUID());
     RequestUpdateProduct updateRequest = createRequestUpdateProduct(mockProduct.getUuid(), updatedMockStand.getUuid());
 
-    mockProduct.updateProduct(createTagProductsRelation(mockProduct));
+    Set<UUID> tagsUuid = Set.of(
+        UUID.randomUUID(),
+        UUID.randomUUID()
+    );
+    List<Tag> tags = List.of(
+        createTagEntity(UUID.randomUUID()),
+        createTagEntity(UUID.randomUUID())
+    );
+    mockProduct.updateTags(tagsUuid, tags);
     mockProduct.updateProduct(updateRequest);
     mockProduct.updateProduct(updatedMockStand);
     ResponseProduct expectedResponse = new ResponseProduct(mockProduct);

@@ -1,7 +1,6 @@
 package com.storecontrol.backend.models.stands.products.response;
 
 import com.storecontrol.backend.models.stands.products.Product;
-import com.storecontrol.backend.models.stands.products.TagProduct;
 import com.storecontrol.backend.models.stands.response.ResponseStand;
 
 import java.math.BigDecimal;
@@ -24,9 +23,8 @@ public record ResponseProduct(
   public ResponseProduct(Product product) {
     this(product.getUuid(),
         product.getProductName(),
-        product.getTagProducts()
+        product.getTags()
             .stream()
-            .map(tagProduct -> tagProduct.getTagProductId().getTag())
             .map(ResponseTag::new).toList(),
         product.getSummary(),
         product.getDescription(),
