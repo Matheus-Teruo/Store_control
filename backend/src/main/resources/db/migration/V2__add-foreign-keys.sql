@@ -68,7 +68,7 @@ FOREIGN KEY (association_uuid) REFERENCES associations (uuid);
 -- Foreign keys for tag_product table
 ALTER TABLE tag_product
 ADD CONSTRAINT fk_tag_product_tag_uuid
-FOREIGN KEY (tag_uuid) REFERENCES tags (uuid),
+FOREIGN KEY (tag_uuid) REFERENCES tags (uuid) ON DELETE CASCADE,
 ADD CONSTRAINT fk_tag_product_product_uuid
 FOREIGN KEY (product_uuid) REFERENCES products (uuid);
 
