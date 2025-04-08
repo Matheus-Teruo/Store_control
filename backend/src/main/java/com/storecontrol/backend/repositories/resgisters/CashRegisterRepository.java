@@ -11,12 +11,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CashRegisterRepository extends JpaRepository<CashRegister, UUID> {
-  @Query("select c from CashRegister c where c.valid = true and c.uuid = :uuid")
+  @Query("SELECT c FROM CashRegister c WHERE c.valid = true AND c.uuid = :uuid")
   Optional<CashRegister> findByUuidValidTrue(UUID uuid);
 
-  @Query("select c from CashRegister c where c.valid = true")
+  @Query("SELECT c FROM CashRegister c WHERE c.valid = true")
   Page<CashRegister> findAllValidTruePage(Pageable pageable);
 
-  @Query("select c from CashRegister c where c.valid = true")
+  @Query("SELECT c FROM CashRegister c WHERE c.valid = true")
   List<CashRegister> findAllValidTrue();
 }

@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface OrderCardRepository extends JpaRepository<OrderCard, String> {
 
-  @Query("select c from OrderCard c where c.active = true")
+  @Query("SELECT c FROM OrderCard c WHERE c.active = true")
   Page<OrderCard> findAllActiveTrue(Pageable pageable);
 }

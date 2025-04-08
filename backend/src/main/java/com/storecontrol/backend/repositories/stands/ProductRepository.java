@@ -11,14 +11,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ProductRepository extends JpaRepository<Product, UUID> {
-  @Query("select p from Product p where p.valid = true and p.uuid = :uuid")
+  @Query("SELECT p FROM Product p WHERE p.valid = true AND p.uuid = :uuid")
   Optional<Product> findByUuidValidTrue(UUID uuid);
 
-  @Query("select p from Product p where p.valid = true")
-  List<Product> findAllValidTrue();
+  @Query("SELECT p FROM Product p WHERE p.valid = true AND p.standUuid = :standUuid")
+  List<Product> findAllValidTrueByStandUuid(UUID standUuid);
 
-  @Query("select p from Product p where p.valid = true and (:name is null or lower(p.productName) like lower(concat('%', :name, '%'))) and (:standUuid is null or p.standUuid = :standUuid)")
-  Page<Product> findAllValidTruePage(String name, UUID standUuid, Pageable pageable);
+  @Query("SELECT p FROM Product p WHERE p.valid = true AND (:name is null OR lower(p.productName) like lower(concat('%', :name, '%'))) AND (:standUuid is null OR p.standUuid = :standUuid)")
+  Page<Product> findAllValidTruePage(String name, UUID tagUuid, UUID standUuid, Pageable pageable);
 
   boolean existsByProductName(String productName);
 }

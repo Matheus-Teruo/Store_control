@@ -11,15 +11,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface PurchaseRepository extends JpaRepository<Purchase, UUID> {
-  @Query("select p from Purchase p where p.valid = true and p.uuid = :uuid")
+  @Query("SELECT p FROM Purchase p WHERE p.valid = true AND p.uuid = :uuid")
   Optional<Purchase> findByUuidValidTrue(UUID uuid);
 
-  @Query("select p from Purchase p where p.valid = true and (:standUuid is null or p.standUuid = :standUuid)")
+  @Query("SELECT p FROM Purchase p WHERE p.valid = true AND (:standUuid is null OR p.standUuid = :standUuid)")
   Page<Purchase> findAllValidTrue(UUID standUuid, Pageable pageable);
 
-  @Query("select p from Purchase p where p.valid = true and p.voluntary.uuid = :voluntaryUuid order by p.purchaseTimeStamp desc limit 3")
+  @Query("SELECT p FROM Purchase p WHERE p.valid = true AND p.voluntary.uuid = :voluntaryUuid ORDER BY p.purchaseTimeStamp DESC limit 3")
   List<Purchase> findLast3ValidTrue(UUID voluntaryUuid);
 
-  @Query("select p from Purchase p where p.voluntary.uuid = :userUuid order by p.purchaseTimeStamp desc limit 1")
+  @Query("SELECT p FROM Purchase p WHERE p.voluntary.uuid = :userUuid ORDER BY p.purchaseTimeStamp DESC limit 1")
   Optional<Purchase> findLastFromVoluntary(UUID userUuid);
 }

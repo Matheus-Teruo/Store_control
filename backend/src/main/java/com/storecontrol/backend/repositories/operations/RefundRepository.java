@@ -10,9 +10,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface RefundRepository extends JpaRepository<Refund, UUID> {
-  @Query("select r from Refund r where r.valid = true and r.uuid = :uuid")
+  @Query("SELECT r FROM Refund r WHERE r.valid = true AND r.uuid = :uuid")
   Optional<Refund> findByUuidValidTrue(UUID uuid);
 
-  @Query("select r from Refund r where r.valid = true")
+  @Query("SELECT r FROM Refund r WHERE r.valid = true")
   Page<Refund> findAllValidTrue(Pageable pageable);
 }
