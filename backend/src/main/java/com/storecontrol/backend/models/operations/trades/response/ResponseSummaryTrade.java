@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record ResponseSummaryTrade(
+    UUID uuid,
     UUID rechargeUuid,
     UUID purchaseUuid,
     BigDecimal rechargeValue,
@@ -18,7 +19,8 @@ public record ResponseSummaryTrade(
 ) {
 
   public ResponseSummaryTrade(TradeView tradeView) {
-    this(tradeView.getRechargeUuid(),
+    this(tradeView.getUuid(),
+        tradeView.getRechargeUuid(),
         tradeView.getPurchaseUuid(),
         tradeView.getRechargeValue(),
         tradeView.getPaymentTypeEnum(),
