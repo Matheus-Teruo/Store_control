@@ -61,8 +61,9 @@ const useProductService = () => {
 
   const getProducts = useCallback(
     async (
-      productName?: string,
       standUuid?: string,
+      productName?: string,
+      tagUuid?: string,
       page?: number,
       size?: number,
       sort?: "asc" | "desc",
@@ -70,7 +71,14 @@ const useProductService = () => {
       safeRequest(() =>
         api
           .get<PaginatedResponse<SummaryProduct>>("products", {
-            params: { productName, standUuid, page, size, sort },
+            params: {
+              standUuid: standUuid != "" ? standUuid : undefined,
+              productName: productName != "" ? productName : undefined,
+              tagUuid: tagUuid != "" ? tagUuid : undefined,
+              page,
+              size,
+              sort,
+            },
           })
           .then((res) => res.data),
       ),
@@ -78,9 +86,11 @@ const useProductService = () => {
   );
 
   const getListProducts = useCallback(
-    async (): Promise<SummaryProduct[] | null> =>
+    async (standUuid: string): Promise<SummaryProduct[] | null> =>
       safeRequest(() =>
-        api.get<SummaryProduct[]>("products/list").then((res) => res.data),
+        api
+          .get<SummaryProduct[]>(`products/list/${standUuid}`)
+          .then((res) => res.data),
       ),
     [api, safeRequest],
   );
