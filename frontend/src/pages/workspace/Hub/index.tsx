@@ -62,36 +62,36 @@ function Hub() {
       ) : (
         <h2>Administrador</h2>
       )}
-      <ul className={styles.manager}>
-        {isManeger(user) && (
+      {isManeger(user) && (
+        <ul className={styles.manager}>
           <li className={styles.liVolunteers}>
             <Link className={styles.links} to="/admin/volunteers">
               Voluntários
             </Link>
           </li>
-        )}
-        {isAdmin(user) && (
-          <>
-            <li className={styles.liAssociations}>
-              <Link className={styles.links} to="/admin/associations">
-                Associações
-              </Link>
-            </li>
-            <li className={styles.liStands}>
-              <Link className={styles.links} to="/admin/stands">
-                Estandes
-              </Link>
-            </li>
-            {activeConfig.enableCard && (
-              <li className={styles.liCards}>
-                <Link className={styles.links} to="/admin/cards">
-                  Cartões
+          {isAdmin(user) && (
+            <>
+              <li className={styles.liAssociations}>
+                <Link className={styles.links} to="/admin/associations">
+                  Associações
                 </Link>
               </li>
-            )}
-          </>
-        )}
-      </ul>
+              <li className={styles.liStands}>
+                <Link className={styles.links} to="/admin/stands">
+                  Estandes
+                </Link>
+              </li>
+              {activeConfig.enableCard && (
+                <li className={styles.liCards}>
+                  <Link className={styles.links} to="/admin/cards">
+                    Cartões
+                  </Link>
+                </li>
+              )}
+            </>
+          )}
+        </ul>
+      )}
     </div>
   );
 }

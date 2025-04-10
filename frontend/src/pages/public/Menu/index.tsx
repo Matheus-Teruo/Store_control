@@ -10,7 +10,7 @@ import {
   initialTradeState,
   tradeReducer,
 } from "@reducer/operation/tradeReducer";
-import FormTrade from "@/pages/workspace/StandFunction/StandFunctionSimple/FormTrade";
+import FormTrade from "@/pages/workspace/StandFunctionTrade/FormTrade";
 
 type ViewType = "List" | "Items";
 
@@ -28,7 +28,12 @@ function Menu() {
 
   useEffect(() => {
     const fetchStand = async () => {
-      const response = await getProducts(filter.toLowerCase(), selectedStands);
+      const response = await getProducts(
+        selectedStands,
+        filter.toLowerCase(),
+        undefined,
+        undefined,
+      );
       if (response) {
         setProducts(response.content);
       }
@@ -125,12 +130,13 @@ function Menu() {
           );
         })}
       </ul>
-      <FormTrade
-        reducer={[state, dispatch]}
-        showCart={showCart}
-        setShowCart={setShowCart}
-        type="pre"
-      />
+      {showCart && (
+        <FormTrade
+          reducer={[state, dispatch]}
+          hide={handleShowCart}
+          type="pre"
+        />
+      )}
     </div>
   );
 }

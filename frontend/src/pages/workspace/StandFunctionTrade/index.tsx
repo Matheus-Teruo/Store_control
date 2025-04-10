@@ -1,4 +1,4 @@
-import styles from "./StandFunctionSimple.module.scss";
+import styles from "./StandFunctionTrade.module.scss";
 import PageSelect from "@/components/selects/PageSelect";
 import {
   isSeller,
@@ -16,7 +16,7 @@ import {
   initialTradeState,
   tradeReducer,
 } from "@reducer/operation/tradeReducer";
-import LastPurchaseList from "../LastPurchaseList";
+import LastTradeList from "./LastTradeList";
 import FormTrade from "./FormTrade";
 import {
   HistorySVG,
@@ -42,8 +42,9 @@ function StandFunctionSimple() {
       isSeller(user.summaryFunction, user.voluntaryRole)
     ) {
       const response = await getProducts(
-        undefined,
         user.summaryFunction ? user.summaryFunction.uuid : undefined,
+        undefined,
+        undefined,
         page.number,
       );
       if (response) setProducts(response.content);
@@ -59,7 +60,7 @@ function StandFunctionSimple() {
     fetchProducts();
   }, [fetchProducts]);
 
-  const handleShow = () => {
+  const handleShowTrade = () => {
     setShowCart(false);
     fetchProducts();
   };
@@ -125,13 +126,15 @@ function StandFunctionSimple() {
         })}
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
-      <FormTrade
-        reducer={[state, dispatch]}
-        showCart={showCart}
-        setShowCart={handleShow}
-      />
+      {showCart && (
+        <FormTrade
+          reducer={[state, dispatch]}
+          hide={handleShowTrade}
+          type="normal"
+        />
+      )}
       {showLast && (
-        <LastPurchaseList
+        <LastTradeList
           setShow={() => {
             setShowLast(false);
           }}

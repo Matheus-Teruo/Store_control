@@ -35,8 +35,9 @@ function Products() {
         isSeller(user.summaryFunction, user.voluntaryRole)
       ) {
         const response = await getProducts(
-          undefined,
           requestMode ? selectedStand : user.summaryFunction.uuid,
+          undefined,
+          undefined,
           page.number,
         );
         if (response) {

@@ -7,7 +7,7 @@ import Order from "./pages/public/Order";
 import Hub from "./pages/workspace/Hub";
 import CashierFunction from "./pages/workspace/CashierFunction";
 import StandFunction from "./pages/workspace/StandFunction";
-import StandFunctionSimple from "./pages/workspace/StandFunction/StandFunctionSimple";
+import StandFunctionSimple from "./pages/workspace/StandFunctionTrade";
 import Products from "./pages/workspace/Products";
 import Associations from "./pages/admin/Associations";
 import Cards from "./pages/admin/Cards";
