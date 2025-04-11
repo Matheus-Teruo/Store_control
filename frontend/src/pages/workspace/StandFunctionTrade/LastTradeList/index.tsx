@@ -6,6 +6,12 @@ import ShowLastPurchase from "./ShowLastTrade";
 import { formReducer, initialFormState } from "@reducer/formReducer";
 import GlassBackground from "@/components/GlassBackground";
 
+const PaymentRoleMetadata: Record<string, { label: string }> = {
+  CASH: { label: "Dinheiro" },
+  DEBIT: { label: "Débito" },
+  CREDIT: { label: "Crédito" },
+};
+
 function LastTradeList({ setShow }: { setShow: () => void }) {
   const [trades, setTrades] = useState<SummaryTrade[]>([]);
   const [state, dispatch] = useReducer(formReducer, initialFormState);
@@ -28,7 +34,7 @@ function LastTradeList({ setShow }: { setShow: () => void }) {
           <li key={"Header"} className={styles.header}>
             <p>Quantidade</p>
             <p>Total</p>
-            <p>Método de pagamento</p>
+            <p>Pagamento</p>
           </li>
           {trades.map((trade, index) => (
             <li
@@ -40,12 +46,16 @@ function LastTradeList({ setShow }: { setShow: () => void }) {
             >
               <p>{trade.totalItems}</p>
               <p>R${trade.rechargeValue}</p>
-              <p>{trade.paymentTypeEnum}</p>
+              <p>{PaymentRoleMetadata[trade.paymentTypeEnum].label}</p>
             </li>
           ))}
         </ul>
         {state.show && (
-          <ShowLastPurchase uuid={state.uuid} deletable={deletable} />
+          <ShowLastPurchase
+            uuid={state.uuid}
+            deletable={deletable}
+            setShow={setShow}
+          />
         )}
       </div>
       <GlassBackground onClick={setShow} />

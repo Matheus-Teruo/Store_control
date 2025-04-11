@@ -17,44 +17,84 @@
   }
 
   .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     max-width: 1280px;
     width: 100%;
-    padding: 4px;
-    background-color: $color-secundary-2;
-    box-shadow: $color-shadow-1 0 2px 4px inset;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 
-    .resumeCart {
+    .filter {
+      width: 100%;
+      padding: 4px;
+      box-sizing: border-box;
       display: flex;
       align-items: center;
-      width: 62%;
-      padding: 4px 6px;
       justify-content: space-between;
-      background-color: $color-secundary-1;
-      border-radius: $border-radius;
+      box-shadow: $color-shadow-1 0 2px 4px inset;
 
-      button {
-        background-color: $color-secundary-2;
+      .title {
+        font-weight: 500;
+        color: $color-font-2;
       }
 
-      p {
-        padding: 2px 4px;
-        min-width: 25px;
-        text-align: end;
-        background-color: $color-gray-000;
-        border-radius: $border-radius;
+      .filterSelect {
+        display: flex;
+        align-items: center;
+
+        svg {
+          margin: 4px;
+          stroke: $color-font-2;
+        }
+      }
+
+      @media (max-width: $mobile-sm) {
+        select {
+          width: 150px;
+        }
       }
     }
 
-    button {
-      margin: 0 2px;
-      padding: 2px;
-      background-color: $color-secundary-1;
+    .header_main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      max-width: 1280px;
+      width: 100%;
+      padding: 4px;
+      background-color: $color-secundary-2;
+      box-shadow: $color-shadow-1 0 2px 4px inset;
 
-      svg {
-        stroke: $color-font-2;
+      .resumeCart {
+        display: flex;
+        align-items: center;
+        width: 62%;
+        padding: 4px 6px;
+        justify-content: space-between;
+        background-color: $color-secundary-1;
+        border-radius: $border-radius;
+
+        button {
+          background-color: $color-secundary-2;
+        }
+
+        p {
+          padding: 2px 4px;
+          min-width: 25px;
+          text-align: end;
+          background-color: $color-gray-000;
+          border-radius: $border-radius;
+        }
+      }
+
+      button {
+        margin: 0 2px;
+        padding: 2px;
+        background-color: $color-secundary-1;
+
+        svg {
+          stroke: $color-font-2;
+        }
       }
     }
   }

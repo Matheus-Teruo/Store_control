@@ -39,6 +39,17 @@ type FormPurchaseProps = {
   type?: "normal" | "pre";
 };
 
+const emptyProduct: Omit<SummaryProduct, "uuid"> = {
+  productName: "productName",
+  summary: "",
+  description: false,
+  price: 0,
+  discount: 0,
+  stock: 0,
+  productImg: null,
+  standUuid: "",
+};
+
 function FormTrade({ reducer, hide, type = "normal" }: FormPurchaseProps) {
   const [productsRecord, setProductsRecord] = useState<
     Record<string, Omit<SummaryProduct, "uuid">>
@@ -129,7 +140,10 @@ function FormTrade({ reducer, hide, type = "normal" }: FormPurchaseProps) {
           <ul className={styles.itemList}>
             {state.items.length !== 0
               ? state.items.map((item) => {
-                  const product = productsRecord[item.productUuid];
+                  const product =
+                    Object.keys(productsRecord).length !== 0
+                      ? productsRecord[item.productUuid]
+                      : emptyProduct;
                   return (
                     <li
                       key={item.productUuid}

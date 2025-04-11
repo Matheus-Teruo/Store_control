@@ -286,7 +286,8 @@ export function tradeReducer(
         return state;
       }
       if (state.standUuid !== action.payload) {
-        return { ...state, standUuid: action.payload, items: [] };
+        const totals = calculateTotals([]);
+        return { ...state, standUuid: action.payload, items: [], ...totals };
       } else {
         return { ...state, standUuid: action.payload };
       }

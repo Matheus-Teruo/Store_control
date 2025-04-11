@@ -3,6 +3,7 @@ import PageSelect from "@/components/selects/PageSelect";
 import {
   isAdmin,
   isSeller,
+  isManeger,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
@@ -146,6 +147,7 @@ function Products() {
                 onClick={() =>
                   formDispach({ type: "SET_UPDATE", payload: product.uuid })
                 }
+                disabled={!isManeger(user)}
               >
                 <EditSVG size={16} />
               </Button>

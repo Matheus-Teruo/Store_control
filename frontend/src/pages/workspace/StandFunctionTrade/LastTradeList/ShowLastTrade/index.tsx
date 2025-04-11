@@ -1,45 +1,58 @@
 import Button from "@/components/utils/Button";
 import styles from "./ShowLastPurchase.module.scss";
-import Purchase from "@data/operations/Purchase";
-import usePurchaseService from "@service/operations/usePurchaseService";
+import Trade from "@data/operations/Trade";
 import { useEffect, useState } from "react";
 import useTradeService from "@service/operations/useTradeService";
+import activeConfig, { fixedCardID } from "@/config/activeConfig";
+
+type ShowLastTradeProps = {
+  uuid: string | undefined;
+  deletable: boolean;
+  setShow: () => void;
+};
 
 function ShowLastTrade({
   uuid,
   deletable = false,
-}: {
-  uuid: string | undefined;
-  deletable: boolean;
-}) {
-  const [purchase, setPurchase] = useState<Purchase | undefined>();
-  const { getPurchase } = usePurchaseService();
-  const { deleteTrade } = useTradeService();
+  setShow,
+}: ShowLastTradeProps) {
+  const [waitingFetch, setWaitingFetch] = useState<
+    "create/update" | "delete" | ""
+  >("");
+  const [trade, setTrade] = useState<Trade | undefined>();
+  const { readTrade, deleteTrade } = useTradeService();
 
   useEffect(() => {
     const fetchPurchase = async () => {
       if (uuid) {
-        const purchase = await getPurchase(uuid);
-        if (purchase) setPurchase(purchase);
+        const trade = await readTrade(uuid);
+        if (trade) setTrade(trade);
       }
     };
 
     fetchPurchase();
-  }, [uuid, getPurchase]);
+  }, [uuid, readTrade]);
 
-  const handleDelete = () => {
-    if (purchase && uuid) {
-      deleteTrade(purchase?.uuid, uuid);
+  const handleDelete = async () => {
+    if (!activeConfig.enableCard) {
+      if (uuid) {
+        setWaitingFetch("delete");
+        await deleteTrade(fixedCardID, uuid);
+        setShow();
+      }
+    } else {
+      // TODO: create card logic
     }
+    setWaitingFetch("");
   };
 
   return (
     <div className={styles.body}>
-      {purchase && (
+      {trade && (
         <>
-          <h4>{purchase.onOrder ? "Ativo" : "Concluido"}</h4>
+          <h4>{trade.onOrder ? "Ativo" : "Concluido"}</h4>
           <p className={styles.timestamp}>
-            Data: {purchase.purchaseTimeStamp.replace("T1", " ")}
+            Data: {trade.tradeTimeStamp.replace("T", " ")}
           </p>
           <ul>
             <li key={"header"} className={styles.listHeader}>
@@ -47,7 +60,7 @@ function ShowLastTrade({
               <p>Quantidade</p>
               <p>Total</p>
             </li>
-            {purchase.items.map((item) => (
+            {trade.items.map((item) => (
               <li key={item.productUuid}>
                 <p>{item.productName}</p>
                 <p>{item.quantity}</p>
@@ -57,7 +70,10 @@ function ShowLastTrade({
           </ul>
           {deletable && (
             <div className={styles.delete}>
-              <Button onClick={handleDelete}>
+              <Button
+                onClick={handleDelete}
+                loading={waitingFetch === "delete"}
+              >
                 <p>Deletar</p>
               </Button>
             </div>

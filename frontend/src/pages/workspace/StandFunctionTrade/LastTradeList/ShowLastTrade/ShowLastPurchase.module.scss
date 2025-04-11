@@ -30,6 +30,10 @@
     flex-direction: column;
     align-items: center;
 
+    p {
+      font-size: 0.875rem;
+    }
+
     .listHeader {
       background-color: $color-primary-2;
     }

@@ -61,12 +61,11 @@ const useTradeService = () => {
   );
 
   const deleteTrade = useCallback(
-    async (cardId: string, tradeUuid: string): Promise<Trade | null> =>
-      safeRequest(() =>
-        api
-          .delete<Trade>(`trades/${cardId}/${tradeUuid}`)
-          .then((res) => res.data),
-      ),
+    async (cardId: string, tradeUuid: string): Promise<void> => {
+      await safeRequest(() =>
+        api.delete<void>(`trades/${cardId}/${tradeUuid}`),
+      );
+    },
     [api, safeRequest],
   );
 
