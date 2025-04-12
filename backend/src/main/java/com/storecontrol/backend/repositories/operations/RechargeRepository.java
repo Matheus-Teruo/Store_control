@@ -20,6 +20,6 @@ public interface RechargeRepository extends JpaRepository<Recharge, UUID> {
   @Query("SELECT r FROM Recharge r WHERE r.valid = true AND r.voluntary.uuid = :voluntaryUuid ORDER BY r.rechargeTimeStamp DESC limit 3")
   List<Recharge> findLast3ValidTrue(UUID voluntaryUuid);
 
-  @Query("SELECT r FROM Recharge r WHERE r.voluntary.uuid = :userUuid ORDER BY r.rechargeTimeStamp DESC limit 1")
+  @Query("SELECT r FROM Recharge r WHERE r.valid = true AND r.voluntary.uuid = :userUuid ORDER BY r.rechargeTimeStamp DESC limit 1")
   Optional<Recharge> findLastFromVoluntary(UUID userUuid);
 }

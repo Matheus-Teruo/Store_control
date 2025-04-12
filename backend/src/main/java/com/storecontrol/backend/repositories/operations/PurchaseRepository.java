@@ -1,5 +1,6 @@
 package com.storecontrol.backend.repositories.operations;
 
+import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,12 @@ public interface PurchaseRepository extends JpaRepository<Purchase, UUID> {
   @Query("SELECT p FROM Purchase p WHERE p.valid = true AND p.voluntary.uuid = :voluntaryUuid ORDER BY p.purchaseTimeStamp DESC limit 3")
   List<Purchase> findLast3ValidTrue(UUID voluntaryUuid);
 
-  @Query("SELECT p FROM Purchase p WHERE p.voluntary.uuid = :userUuid ORDER BY p.purchaseTimeStamp DESC limit 1")
+  @Query("SELECT p FROM Purchase p WHERE p.valid = true AND p.voluntary.uuid = :userUuid ORDER BY p.purchaseTimeStamp DESC limit 1")
   Optional<Purchase> findLastFromVoluntary(UUID userUuid);
+
+  @Query("SELECT i from Item i WHERE i.itemId.purchase.uuid = :purchaseUuid")
+  List<Item> findByPurchaseUuid(UUID purchaseUuid);
+
+  @Query("SELECT i from Item i WHERE i.itemId.purchase.uuid IN :purchasesUuid")
+  List<Item> findByPurchasesUuid(List<UUID> purchasesUuid);
 }

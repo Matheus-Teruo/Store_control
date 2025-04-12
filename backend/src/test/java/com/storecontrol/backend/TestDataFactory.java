@@ -122,9 +122,9 @@ public class TestDataFactory {
   public static List<Item> createItemEntity(Purchase purchase) {
     return List.of(
         new Item(new ItemId(createProductEntity(UUID.randomUUID()), purchase),
-            2, 0, BigDecimal.TWO, BigDecimal.ZERO, null, true),
+            2, 0, BigDecimal.TWO, BigDecimal.ZERO, true),
         new Item(new ItemId(createProductEntity(UUID.randomUUID()), purchase),
-            2, 0, BigDecimal.TWO, BigDecimal.ZERO, null, true));
+            2, 0, BigDecimal.TWO, BigDecimal.ZERO, true));
   }
 
   public static RequestCreatePurchase createRequestCreatePurchase(Purchase purchase) {

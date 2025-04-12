@@ -1,6 +1,5 @@
 package com.storecontrol.backend.repositories.volunteers;
 
-import com.storecontrol.backend.models.enumerate.VoluntaryRole;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,9 +16,6 @@ public interface VoluntaryRepository extends JpaRepository<Voluntary, UUID> {
 
   @Query("SELECT v FROM Voluntary v WHERE v.valid = true")
   Page<Voluntary> findAllValidTrue(Pageable pageable);
-
-  @Query("SELECT v.voluntaryRole FROM Voluntary v WHERE v.valid = true AND v.uuid = :uuid")
-  Optional<VoluntaryRole> takeRoleByUuidValidTrue(UUID uuid);
 
   boolean existsByUserUsername(String username);
 

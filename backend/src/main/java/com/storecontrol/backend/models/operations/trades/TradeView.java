@@ -7,6 +7,7 @@ import com.storecontrol.backend.models.operations.purchases.Purchase;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Immutable;
 
 import java.math.BigDecimal;
@@ -49,7 +50,8 @@ public class TradeView {
   @Column(name = "trade_time_stamp")
   private LocalDateTime tradeTimeStamp;
 
-  @OneToMany(mappedBy = "tradeView", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+  @Transient
+  @Setter
   private List<Item> items;
 
   @Column(nullable = false)
