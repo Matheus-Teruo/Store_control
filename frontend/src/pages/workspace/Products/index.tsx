@@ -86,7 +86,10 @@ function Products() {
           ) : (
             <div />
           )}
-          <Button onClick={() => formDispach({ type: "SET_CREATE" })}>
+          <Button
+            onClick={() => formDispach({ type: "SET_CREATE" })}
+            disabled={!isManeger(user)}
+          >
             <PlusSVG size={16} />
             <p>Produto</p>
           </Button>

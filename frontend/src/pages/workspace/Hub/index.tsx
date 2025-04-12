@@ -32,7 +32,11 @@ function Hub() {
           alt="Logo: imagem circular com um rosto de raposa no meio"
         />
       </Link>
-      <h2>Função</h2>
+      {isUserLogged(user) &&
+        (isSeller(user.summaryFunction, user.voluntaryRole) ||
+          isCashier(user.summaryFunction, user.voluntaryRole)) && (
+          <h2>Função</h2>
+        )}
       <ul className={styles.home}>
         {isUserLogged(user) &&
           isSeller(user.summaryFunction, user.voluntaryRole) && (
@@ -51,16 +55,31 @@ function Hub() {
               </Link>
             </li>
           )}
-        <li className={styles.liProducts}>
-          <Link className={styles.links} to="/workspace/products">
-            Produtos
-          </Link>
-        </li>
+        {isUserLogged(user) &&
+          isSeller(user.summaryFunction, user.voluntaryRole) && (
+            <li className={styles.liProducts}>
+              <Link className={styles.links} to="/workspace/products">
+                Produtos
+              </Link>
+            </li>
+          )}
+        {isUserLogged(user) &&
+          !isSeller(user.summaryFunction, user.voluntaryRole) &&
+          !isCashier(user.summaryFunction, user.voluntaryRole) && (
+            <li className={styles.liDefault}>
+              <h3>Bem vindo</h3>
+              <p>
+                Você não está alocado no momento, comunique com o coordenador da
+                sua associação para conseguir permissão
+              </p>
+            </li>
+          )}
       </ul>
       {isUserLogged(user) && user.voluntaryRole === VoluntaryRole.MANAGEMENT ? (
         <h2>Gerente</h2>
       ) : (
-        <h2>Administrador</h2>
+        isUserLogged(user) &&
+        user.voluntaryRole === VoluntaryRole.ADMIN && <h2>Administrador</h2>
       )}
       {isManeger(user) && (
         <ul className={styles.manager}>
@@ -71,6 +90,11 @@ function Hub() {
           </li>
           {isAdmin(user) && (
             <>
+              <li className={styles.liTags}>
+                <Link className={styles.links} to="/admin/tags">
+                  Tags
+                </Link>
+              </li>
               <li className={styles.liAssociations}>
                 <Link className={styles.links} to="/admin/associations">
                   Associações

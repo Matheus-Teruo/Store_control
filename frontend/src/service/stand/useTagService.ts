@@ -2,6 +2,7 @@ import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
 import { Message } from "@context/AlertsContext/useAlertsContext";
 import Tag, { CreateTag, UpdateTag } from "@data/stands/Tag";
+import { PaginatedResponse } from "@service/PagesType";
 import { AxiosError } from "axios";
 import { useCallback } from "react";
 
@@ -44,13 +45,29 @@ const useTagService = () => {
     [api, safeRequestWithFeedback],
   );
 
-  const getListTags = useCallback(
-    async (): Promise<Tag[] | null> =>
-      safeRequest(() => api.get<Tag[]>("tags").then((res) => res.data)),
+  const getTags = useCallback(
+    async (
+      page?: number,
+      size?: number,
+      sort?: "asc" | "desc",
+    ): Promise<PaginatedResponse<Tag> | null> =>
+      safeRequest(() =>
+        api
+          .get<PaginatedResponse<Tag>>("tags", {
+            params: { page, size, sort },
+          })
+          .then((res) => res.data),
+      ),
     [api, safeRequest],
   );
 
-  const updateStand = useCallback(
+  const getListTags = useCallback(
+    async (): Promise<Tag[] | null> =>
+      safeRequest(() => api.get<Tag[]>("tags/list").then((res) => res.data)),
+    [api, safeRequest],
+  );
+
+  const updateTag = useCallback(
     async (tag: UpdateTag): Promise<Tag | Message | null> =>
       safeRequestWithFeedback(() =>
         api.put<Tag>("tags", tag).then((res) => res.data),
@@ -60,12 +77,12 @@ const useTagService = () => {
 
   const deleteTag = useCallback(
     async (tagUuid: string): Promise<void> => {
-      await safeRequest(() => api.delete<void>(`tags/${tagUuid}}`));
+      await safeRequest(() => api.delete<void>(`tags/${tagUuid}`));
     },
     [api, safeRequest],
   );
 
-  return { createTag, getListTags, updateStand, deleteTag };
+  return { createTag, getTags, getListTags, updateTag, deleteTag };
 };
 
 export default useTagService;

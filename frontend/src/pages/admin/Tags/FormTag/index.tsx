@@ -1,34 +1,34 @@
-import styles from "./FormStand.module.scss";
-import Button from "@/components/utils/Button";
+import styles from "./FormTag.module.scss";
 import {
   isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
+import Tag from "@data/stands/Tag";
 import {
-  createStandPayload,
-  initialStandState,
-  standReducer,
-  updateStandPayload,
-} from "@reducer/stand/standReducer";
-import useStandService from "@service/stand/useStandService";
-import { useEffect, useReducer, useState } from "react";
-import AssociationSelect from "@/components/selects/AssociationSelect";
+  createTagPayload,
+  initialTagState,
+  tagReducer,
+  updateTagPayload,
+} from "@reducer/stand/tagReducer";
 import Input from "@/components/utils/ProductInput";
-import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
+import useTagService from "@service/stand/useTagService";
+import { useEffect, useReducer, useState } from "react";
+import Button from "@/components/utils/Button";
 import { CheckSVG, XSVG } from "@/assets/svg";
+import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import GlassBackground from "@/components/GlassBackground";
-import Stand from "@data/stands/Stand";
+import ColorSelect from "@/components/selects/ColorSelect";
 
-type FormStandProps = {
+type FormTagProps = {
   type: "create" | "update";
   hide: () => void;
-  uuid?: string;
+  tag?: Tag;
 };
 
-function FormStand({ type, hide, uuid }: FormStandProps) {
-  const [state, dispatch] = useReducer(standReducer, initialStandState);
-  const [initial, setInitial] = useState<Stand>();
+function FormTag({ type, hide, tag }: FormTagProps) {
+  const [state, dispatch] = useReducer(tagReducer, initialTagState);
+  const [initial, setInitial] = useState<Tag>();
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const [waitingFetch, setWaitingFetch] = useState<
     "create/update" | "delete" | ""
@@ -36,39 +36,32 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   const [touched, setTouched] = useState<boolean>(false);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
-  const { getStand, createStand, updateStand, deleteStand } = useStandService();
+  const { createTag, updateTag, deleteTag } = useTagService();
 
   useEffect(() => {
-    const fetchStand = async () => {
-      if (type === "update" && uuid) {
-        const stand = await getStand(uuid);
-        if (stand) {
-          dispatch({ type: "SET_STAND", payload: stand });
-          setInitial(stand);
-        }
-      } else if (type === "update" && uuid === undefined) {
-        console.error("uuid need to be defined when type is update");
-      }
-    };
-
-    fetchStand();
-  }, [uuid, type, getStand]);
+    if (type === "update" && tag) {
+      dispatch({ type: "SET_TAG", payload: tag });
+      setInitial(tag);
+    } else if (type === "update" && tag === undefined) {
+      console.error("uuid need to be defined when type is update");
+    }
+  }, [tag, type]);
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setWaitingFetch("create/update");
     setTouched(false);
-    const stand = await createStand(createStandPayload(state));
-    if (stand && !isMessage(stand)) {
+    const tag = await createTag(createTagPayload(state));
+    if (tag && !isMessage(tag)) {
       addNotification({
-        title: "Create Stand Success",
-        message: `Create stand: ${stand.standName}, with president: ${stand.association.associationName}`,
+        title: "Create Tag Success",
+        message: `Create tag: ${tag.tagName}, with color: ${tag.color}`,
         type: MessageType.OK,
       });
       dispatch({ type: "RESET" });
       hide();
-    } else if (isMessage(stand)) {
-      const message = stand;
+    } else if (isMessage(tag)) {
+      const message = tag;
       if (message.invalidFields) setMessageError(message.invalidFields);
     }
     setTouched(true);
@@ -80,17 +73,17 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
     if (initial) {
       setWaitingFetch("create/update");
       setTouched(false);
-      const stand = await updateStand(updateStandPayload(state, initial));
-      if (stand && !isMessage(stand)) {
+      const tag = await updateTag(updateTagPayload(state, initial));
+      if (tag && !isMessage(tag)) {
         addNotification({
-          title: "Update Stand Success",
-          message: `Update stand: ${stand.standName}, with president: ${stand.association.associationName}`,
+          title: "Update Tag Success",
+          message: `Update tag: ${tag.tagName}, with color: ${tag.color}`,
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
         hide();
-      } else if (isMessage(stand)) {
-        const message = stand;
+      } else if (isMessage(tag)) {
+        const message = tag;
         if (message.invalidFields) setMessageError(message.invalidFields);
       }
     }
@@ -99,12 +92,12 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   };
 
   const handleDeleteSubmit = async () => {
-    if (uuid) {
+    if (tag) {
       setWaitingFetch("delete");
-      await deleteStand(state.uuid);
+      await deleteTag(state.uuid);
       addNotification({
-        title: "Delete Stand Success",
-        message: `Delete stand: ${state.standName}`,
+        title: "Delete Tag Success",
+        message: `Delete tag: ${state.tagName}`,
         type: MessageType.OK,
       });
       dispatch({ type: "RESET" });
@@ -117,33 +110,33 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   return (
     <>
       <div className={styles.main}>
-        <h3>{type === "create" ? "Criar Estande" : "Editar Estande"}</h3>
+        <h3>{type === "create" ? "Criar Tag" : "Editar Tag"}</h3>
         <form
           onSubmit={type === "create" ? handleCreateSubmit : handleUpdateSubmit}
         >
-          <label>Nome do estande</label>
+          <label>Nome da tag</label>
           <Input
             type="text"
-            id="standName"
-            value={state.standName}
+            id="tagName"
+            value={state.tagName}
             onChange={(e) =>
-              dispatch({ type: "SET_STAND_NAME", payload: e.target.value })
+              dispatch({ type: "SET_TAG_NAME", payload: e.target.value })
             }
             showStatus={touched}
-            message={messageError["standName"]}
+            message={messageError["tagName"]}
             isRequired
           />
-          <label>Associação</label>
-          <AssociationSelect
-            value={state.associationUuid}
+          <label>Cor</label>
+          <ColorSelect
+            value={state.color}
             onChange={(e) =>
               dispatch({
-                type: "SET_ASSOCIATION_UUID",
+                type: "SET_COLOR",
                 payload: e.target.value,
               })
             }
             showStatus={touched}
-            message={messageError["associationUuid"]}
+            message={messageError["color"]}
           />
           <div className={styles.footerButtons}>
             {type === "update" && !confirmDelete && (
@@ -182,4 +175,4 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   );
 }
 
-export default FormStand;
+export default FormTag;
