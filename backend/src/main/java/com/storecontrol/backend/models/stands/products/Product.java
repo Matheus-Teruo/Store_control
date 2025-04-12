@@ -76,6 +76,7 @@ public class Product {
         this.price = request.price();
         this.discount = BigDecimal.ZERO;
         this.stock = request.stock();
+        this.tags = new ArrayList<>();
         if (request.productImg() != null) {
             this.productImg = request.productImg();
         }

@@ -45,7 +45,7 @@ public class ProductService {
     var stand = standService.safeTakeStandByUuid(request.standUuid());
     var product = new Product(request, stand);
 
-    if (!request.tagsUuid().isEmpty()) {
+    if (request.tagsUuid() != null) {
       var tags = tagService.listSelectedTags(request.tagsUuid());
       product.createTags(tags);
     }

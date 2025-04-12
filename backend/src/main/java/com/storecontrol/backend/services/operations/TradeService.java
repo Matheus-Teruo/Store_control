@@ -1,8 +1,8 @@
 package com.storecontrol.backend.services.operations;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.customers.Customer;
-import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.purchases.Item;
@@ -16,7 +16,6 @@ import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
 import com.storecontrol.backend.repositories.operations.TradeRepository;
 import com.storecontrol.backend.repositories.operations.TradeViewRepository;
-import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
 import com.storecontrol.backend.services.customers.CustomerService;
 import com.storecontrol.backend.services.operations.validation.PurchaseValidation;
 import com.storecontrol.backend.services.operations.validation.RechargeValidation;
@@ -33,7 +32,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -65,9 +66,6 @@ public class TradeService {
 
   @Autowired
   private CustomerService customerService;
-
-  @Autowired
-  private CustomerFinalizationHandler customerFinalizationHandler;
 
   @Autowired
   private CashRegisterService cashRegisterService;
@@ -120,19 +118,44 @@ public class TradeService {
   }
 
   public TradeView takeTradeByUuid(UUID uuid) {
-    return repositoryView.findByUuidValidTrue(uuid)
+    var trade = repositoryView.findByUuidValidTrue(uuid)
         .orElseThrow(EntityNotFoundException::new);
+
+    var items = itemService.listItems(trade.getPurchaseUuid());
+    trade.setItems(items);
+
+    return trade;
   }
 
   public Page<TradeView> pageTrades(UUID standUuid, Pageable pageable) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     purchaseValidation.checkPurchasesBelongsManagerStand(standUuid, manager);
-    return repositoryView.findTradesValid(standUuid, pageable);
+
+    var trades = repositoryView.findTradesValid(standUuid, pageable);
+    List<UUID> purchasesUUid = trades.stream().map(TradeView::getPurchaseUuid).toList();
+
+    Map<UUID, List<Item>> itemMap = itemService.listItemsFromMultiPurchase(purchasesUUid);
+    trades.forEach(tradeView -> {
+      List<Item> items = itemMap.getOrDefault(tradeView.getPurchaseUuid(), new ArrayList<>());
+      tradeView.setItems(items);
+    });
+
+    return trades;
   }
 
   public List<TradeView> listLast3Trades() {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    return repositoryView.findLast3ValidTrue(manager.getUuid());
+    var trades = repositoryView.findLast3ValidTrue(manager.getUuid());
+
+    List<UUID> purchasesUUid = trades.stream().map(TradeView::getPurchaseUuid).toList();
+
+    Map<UUID, List<Item>> itemMap = itemService.listItemsFromMultiPurchase(purchasesUUid);
+    trades.forEach(tradeView -> {
+      List<Item> items = itemMap.getOrDefault(tradeView.getPurchaseUuid(), new ArrayList<>());
+      tradeView.setItems(items);
+    });
+
+    return trades;
   }
 
   @Transactional
@@ -142,21 +165,31 @@ public class TradeService {
         .orElseThrow(EntityNotFoundException::new);
 
     Customer customer;
+    Purchase purchase;
+    Recharge recharge;
     if (fixedCardId.equals(cardId)) {
-      var requestOrderCard = new RequestOrderCard(cardId);
-      customer = customerFinalizationHandler.undoFinalizeCustomer(requestOrderCard, false);
+      purchase = purchaseRepository.findByUuidValidTrue(trade.getPurchaseUuid())
+          .orElseThrow(() -> new InvalidDatabaseQueryException(
+              MessageResolver.getInstance().getMessage("service.exception.purchase.get.validation.error"),
+              MessageResolver.getInstance().getMessage("service.exception.purchase.get.validation.message"),
+              uuid.toString())
+          );
+      recharge = rechargeRepository.findByUuidValidTrue(trade.getRechargeUuid())
+          .orElseThrow(() -> new InvalidDatabaseQueryException(
+              MessageResolver.getInstance().getMessage("service.exception.recharge.get.validation.error"),
+              MessageResolver.getInstance().getMessage("service.exception.recharge.get.validation.message"),
+              uuid.toString())
+          );
     } else {
       customer = customerService.takeActiveCustomerByCardId(cardId);
+      purchase = customer.getPurchases().getFirst();
+      recharge = customer.getRecharges().getFirst();
     }
-
-    var purchase = customer.getPurchases().getFirst();
-    var recharge = customer.getRecharges().getFirst();
 
     validation.checkIfLastTrade(recharge, purchase, trade);
     if (!fixedCardId.equals(cardId)) purchaseValidation.checkSomeItemWasDelivered(purchase);
     purchaseValidation.checkPurchaseBelongsToVoluntary(purchase, voluntary.getUuid());
     purchaseValidation.checkIfLastPurchaseOfVoluntary(purchase, voluntary);
-    rechargeValidation.checkDebitRemainderPositive(recharge);
     rechargeValidation.checkRechargeBelongsToVoluntary(recharge, voluntary.getUuid());
     rechargeValidation.checkIfLastRechargeOfVoluntary(recharge, voluntary);
 
