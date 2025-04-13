@@ -130,11 +130,12 @@ public class SecurityConfigurations {
       "/customers/finalize",
       "/purchases",
       "/recharges",
-      "/trades"
+      "/trades/{cardId}/{uuid}"
   };
 
   private static final String[] AUTHORIZED_GET_ENDPOINTS_MANAGEMENT = {
       "/volunteers",
+      "/associations/list",
       "/functions",
       "/purchases",
       "/trades",

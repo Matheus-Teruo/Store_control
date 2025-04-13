@@ -6,6 +6,8 @@ import com.storecontrol.backend.models.stands.products.response.ResponseTag;
 import com.storecontrol.backend.services.stands.TagService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -35,7 +37,15 @@ public class TagController {
   }
 
   @GetMapping
-  public ResponseEntity<List<ResponseTag>> readTags() {
+  public ResponseEntity<Page<ResponseTag>> readTags(Pageable pageable) {
+    var tags = service.pageTags(pageable);
+
+    var response = tags.map(ResponseTag::new);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/list")
+  public ResponseEntity<List<ResponseTag>> readListTags() {
     var tags = service.listTags();
 
     var response = tags.stream().map(ResponseTag::new).toList();

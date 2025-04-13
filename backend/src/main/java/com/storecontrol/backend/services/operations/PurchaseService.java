@@ -48,7 +48,7 @@ public class PurchaseService {
   @Transactional
   public Purchase createPurchase(RequestCreatePurchase request) {
     Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    validation.checkVoluntaryFunctionMatch(voluntary);
+    validation.checkVoluntaryFunctionMatch(request.standUuid(), voluntary);
 
     Map<UUID, Product> productMap = productService.listProductsAsMap(request.standUuid());
     var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());

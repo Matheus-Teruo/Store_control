@@ -9,6 +9,8 @@ import com.storecontrol.backend.repositories.stands.TagRepository;
 import com.storecontrol.backend.services.stands.validation.TagValidation;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,6 +36,10 @@ public class TagService {
     return stand;
   }
 
+  public Page<Tag> pageTags(Pageable pageable) {
+    return repository.findAll(pageable);
+  }
+
   public List<Tag> listTags() {
     return repository.findAll();
   }
@@ -56,6 +62,7 @@ public class TagService {
     return tag;
   }
 
+  @Transactional
   public void deleteTag(UUID uuid){
     var tag = repository.findById(uuid)
         .orElseThrow(() -> new InvalidDatabaseQueryException(

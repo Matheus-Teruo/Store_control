@@ -79,7 +79,7 @@ public class TradeService {
   @Transactional
   public TradeView createTrade(RequestCreateRecharge rechargeRequest, RequestCreatePurchase purchaseRequest) {
     Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    purchaseValidation.checkVoluntaryFunctionMatch(voluntary);
+    purchaseValidation.checkVoluntaryFunctionMatch(purchaseRequest.standUuid(), voluntary);
 
     var productMap = productService.listProductsAsMap(purchaseRequest.standUuid());
     purchaseValidation.checkStandFromItems(voluntary, purchaseRequest.items(), productMap);
