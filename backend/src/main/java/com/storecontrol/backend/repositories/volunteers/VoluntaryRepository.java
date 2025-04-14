@@ -11,10 +11,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface VoluntaryRepository extends JpaRepository<Voluntary, UUID> {
-  @Query("select v from Voluntary v where v.valid = true and v.uuid = :uuid")
+  @Query("SELECT v FROM Voluntary v WHERE v.valid = true AND v.uuid = :uuid")
   Optional<Voluntary> findByUuidValidTrue(UUID uuid);
 
-  @Query("select v from Voluntary v where v.valid = true")
+  @Query("SELECT v FROM Voluntary v WHERE v.valid = true")
   Page<Voluntary> findAllValidTrue(Pageable pageable);
 
   boolean existsByUserUsername(String username);

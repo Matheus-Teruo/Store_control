@@ -33,6 +33,8 @@ FOREIGN KEY (stand_uuid) REFERENCES stands (uuid);
 
 -- Foreign keys for purchases table
 ALTER TABLE purchases
+ADD CONSTRAINT fk_purchases_stand_uuid
+FOREIGN KEY (stand_uuid) REFERENCES stands (uuid),
 ADD CONSTRAINT fk_purchases_customer_uuid
 FOREIGN KEY (customer_uuid) REFERENCES customers (uuid),
 ADD CONSTRAINT fk_purchases_voluntary_uuid
@@ -63,6 +65,20 @@ FOREIGN KEY (uuid) REFERENCES functions (uuid),
 ADD CONSTRAINT fk_stands_association_uuid
 FOREIGN KEY (association_uuid) REFERENCES associations (uuid);
 
+-- Foreign keys for tag_product table
+ALTER TABLE tag_product
+ADD CONSTRAINT fk_tag_product_tag_uuid
+FOREIGN KEY (tag_uuid) REFERENCES tags (uuid) ON DELETE CASCADE,
+ADD CONSTRAINT fk_tag_product_product_uuid
+FOREIGN KEY (product_uuid) REFERENCES products (uuid);
+
+-- Foreign keys for trades table
+ALTER TABLE trades
+ADD CONSTRAINT fk_trades_recharge_uuid
+FOREIGN KEY (recharge_uuid) REFERENCES recharges (uuid),
+ADD CONSTRAINT fk_trades_purchase_uuid
+FOREIGN KEY (purchase_uuid) REFERENCES purchases (uuid);
+
 -- Foreign keys for transactions table
 ALTER TABLE transactions
 ADD CONSTRAINT fk_transactions_cash_register_uuid
@@ -71,4 +87,6 @@ FOREIGN KEY (cash_register_uuid) REFERENCES cash_registers (uuid);
 -- Foreign key for volunteers table
 ALTER TABLE volunteers
 ADD CONSTRAINT fk_volunteers_function_uuid
-FOREIGN KEY (function_uuid) REFERENCES functions (uuid);
+FOREIGN KEY (function_uuid) REFERENCES functions (uuid),
+ADD CONSTRAINT fk_volunteers_association_uuid
+FOREIGN KEY (related_association_uuid) REFERENCES associations (uuid);

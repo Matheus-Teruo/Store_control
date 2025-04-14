@@ -11,15 +11,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface RechargeRepository extends JpaRepository<Recharge, UUID> {
-  @Query("select r from Recharge r where r.valid = true and r.uuid = :uuid")
+  @Query("SELECT r FROM Recharge r WHERE r.valid = true AND r.uuid = :uuid")
   Optional<Recharge> findByUuidValidTrue(UUID uuid);
 
-  @Query("select r from Recharge r where r.valid = true")
+  @Query("SELECT r FROM Recharge r WHERE r.valid = true")
   Page<Recharge> findAllValidTrue(Pageable pageable);
 
-  @Query("select r from Recharge r where r.valid = true and r.voluntary.uuid = :voluntaryUuid order by r.rechargeTimeStamp desc limit 3")
+  @Query("SELECT r FROM Recharge r WHERE r.valid = true AND r.voluntary.uuid = :voluntaryUuid ORDER BY r.rechargeTimeStamp DESC limit 3")
   List<Recharge> findLast3ValidTrue(UUID voluntaryUuid);
 
-  @Query("select r from Recharge r where r.voluntary.uuid = :userUuid order by r.rechargeTimeStamp desc limit 1")
+  @Query("SELECT r FROM Recharge r WHERE r.valid = true AND r.voluntary.uuid = :userUuid ORDER BY r.rechargeTimeStamp DESC limit 1")
   Optional<Recharge> findLastFromVoluntary(UUID userUuid);
 }

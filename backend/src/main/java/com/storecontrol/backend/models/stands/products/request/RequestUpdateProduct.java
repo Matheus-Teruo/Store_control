@@ -1,8 +1,9 @@
-package com.storecontrol.backend.models.stands.request;
+package com.storecontrol.backend.models.stands.products.request;
 
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
+import java.util.Set;
 import java.util.UUID;
 
 public record RequestUpdateProduct(
@@ -12,6 +13,8 @@ public record RequestUpdateProduct(
     @Size(min = 3, message = "{request.validation.updateProduct.productName.size}")
     @Pattern(regexp = "^[\\p{L}\\p{N} ]*$", message = "{request.validation.updateProduct.productName.pattern}")
     String productName,
+
+    Set<UUID> tagsUuid,
 
     @Size(min=3, max = 255, message = "{request.validation.updateProduct.summary.size}")
     @Pattern(regexp = "^[\\p{L}\\p{N} ,.!()?]*$", message = "{request.validation.updateProduct.summary.pattern}")

@@ -22,13 +22,13 @@ import java.util.UUID;
 public class RefundService {
 
   @Autowired
-  RefundValidation validation;
+  private RefundValidation validation;
 
   @Autowired
-  RefundRepository repository;
+  private RefundRepository repository;
 
   @Autowired
-  CustomerFinalizationValidation finalizationValidation;
+  private CustomerFinalizationValidation finalizationValidation;
 
   @Transactional
   public void createRefund(RequestCustomerFinalization request,

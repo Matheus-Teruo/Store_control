@@ -8,7 +8,6 @@ import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.customers.response.ResponseCustomer;
 import com.storecontrol.backend.models.customers.response.ResponseCustomerOrder;
 import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
-import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
 import com.storecontrol.backend.services.customers.CustomerService;
 import org.junit.jupiter.api.Test;
@@ -29,10 +28,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CustomerTest extends BaseTest {
 
   @MockBean
-  CustomerService service;
+  private CustomerService service;
 
   @MockBean
-  CustomerFinalizationHandler customerFinalizationHandler;
+  private CustomerFinalizationHandler customerFinalizationHandler;
 
   @Test
   void testReadCustomerSuccess() throws Exception {
@@ -149,24 +148,22 @@ class CustomerTest extends BaseTest {
 
     String cardId = "CardIDTest12345";
     OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
-    Voluntary mockVoluntary = createVoluntaryEntity(UUID.randomUUID());
 
     Customer mockCustomer = createCustomerEntity(customerUuid, mockOrderCard,false);
     RequestCustomerFinalization request = createRequestCustomerFinalization(mockCustomer);
     ResponseCustomer expectedResponse = new ResponseCustomer(mockCustomer);
 
-    when(customerFinalizationHandler.finalizeCustomer(request, mockVoluntary.getUuid())).thenReturn(mockCustomer);
+    when(customerFinalizationHandler.finalizeCustomer(request)).thenReturn(mockCustomer);
 
     // When & Then
     mockMvc.perform(post("/customers/finalize")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(request))
-            .requestAttr("UserUuid", mockVoluntary.getUuid()))
+            .content(toJson(request)))
         .andExpect(status().isOk())
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(customerFinalizationHandler, times(1)).finalizeCustomer(request, mockVoluntary.getUuid());
+    verify(customerFinalizationHandler, times(1)).finalizeCustomer(request);
     verifyNoMoreInteractions(customerFinalizationHandler);
     verifyNoMoreInteractions(service);
   }
@@ -180,21 +177,19 @@ class CustomerTest extends BaseTest {
 
     RequestOrderCard requestOrderCard = createRequestOrderCard(cardId);
     OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
-    Voluntary mockVoluntary = createVoluntaryEntity(UUID.randomUUID());
 
     Customer mockCustomer = createCustomerEntity(customerUuid, mockOrderCard,false);
     ResponseCustomer expectedResponse = new ResponseCustomer(mockCustomer);
 
-    when(customerFinalizationHandler.undoFinalizeCustomer(requestOrderCard, mockVoluntary.getUuid())).thenReturn(mockCustomer);
+    when(customerFinalizationHandler.undoFinalizeCustomer(requestOrderCard, true)).thenReturn(mockCustomer);
 
     mockMvc.perform(delete("/customers/finalize/{uuid}", cardId)
-            .contentType(MediaType.APPLICATION_JSON)
-            .requestAttr("UserUuid", mockVoluntary.getUuid()))
+            .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(customerFinalizationHandler, times(1)).undoFinalizeCustomer(requestOrderCard, mockVoluntary.getUuid());
+    verify(customerFinalizationHandler, times(1)).undoFinalizeCustomer(requestOrderCard, true);
     verifyNoMoreInteractions(customerFinalizationHandler);
     verifyNoMoreInteractions(service);
   }

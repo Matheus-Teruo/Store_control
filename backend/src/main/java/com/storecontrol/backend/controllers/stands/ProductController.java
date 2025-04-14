@@ -1,11 +1,11 @@
 package com.storecontrol.backend.controllers.stands;
 
-import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
-import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
-import com.storecontrol.backend.models.stands.response.ResponseProduct;
-import com.storecontrol.backend.models.stands.response.ResponseSummaryProduct;
-import com.storecontrol.backend.services.stands.ProductService;
+import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
+import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
+import com.storecontrol.backend.models.stands.products.response.ResponseProduct;
+import com.storecontrol.backend.models.stands.products.response.ResponseSummaryProduct;
 import com.storecontrol.backend.services.stands.GCSService;
+import com.storecontrol.backend.services.stands.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,16 +26,15 @@ import java.util.UUID;
 public class ProductController {
 
   @Autowired
-  ProductService service;
+  private ProductService service;
 
   @Autowired
-  GCSService GCSService;
+  private GCSService GCSService;
 
   @PostMapping
   public ResponseEntity<ResponseProduct> createProduct(
-      @RequestBody @Valid RequestCreateProduct request,
-      @RequestAttribute("UserUuid") UUID userUuid) {
-    var product = service.createProduct(request, userUuid);
+      @RequestBody @Valid RequestCreateProduct request) {
+    var product = service.createProduct(request);
 
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
@@ -55,27 +54,26 @@ public class ProductController {
   @GetMapping()
   public ResponseEntity<Page<ResponseSummaryProduct>> readProducts(
       @RequestParam(required = false) String productName,
+      @RequestParam(required = false) UUID tagUuid,
       @RequestParam(required = false) UUID standUuid,
       Pageable pageable) {
-    var items = service.pageProducts(productName, standUuid, pageable);
+    var products = service.pageProducts(productName, tagUuid, standUuid, pageable);
 
-    var response = items.map(ResponseSummaryProduct::new);
+    var response = products.map(ResponseSummaryProduct::new);
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping("/list")
-  public ResponseEntity<List<ResponseSummaryProduct>> readListProducts() {
-    var items = service.listProducts();
+  @GetMapping("/list/{standUuid}")
+  public ResponseEntity<List<ResponseSummaryProduct>> readListProducts(@PathVariable @Valid UUID standUuid) {
+    var products = service.listProducts(standUuid);
 
-    var response = items.stream().map(ResponseSummaryProduct::new).toList();
+    var response = products.stream().map(ResponseSummaryProduct::new).toList();
     return ResponseEntity.ok(response);
   }
 
   @PutMapping
-  public ResponseEntity<ResponseProduct> updateProduct(
-      @RequestBody @Valid RequestUpdateProduct request,
-      @RequestAttribute("UserUuid") UUID userUuid) {
-    var response = new ResponseProduct(service.updateProduct(request, userUuid));
+  public ResponseEntity<ResponseProduct> updateProduct(@RequestBody @Valid RequestUpdateProduct request) {
+    var response = new ResponseProduct(service.updateProduct(request));
 
     return ResponseEntity.ok(response);
   }

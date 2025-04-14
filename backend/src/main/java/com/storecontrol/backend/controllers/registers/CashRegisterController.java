@@ -22,7 +22,7 @@ import java.util.UUID;
 public class CashRegisterController {
 
   @Autowired
-  CashRegisterService service;
+  private CashRegisterService service;
 
   @PostMapping
   public ResponseEntity<ResponseCashRegister> createCashRegister(@RequestBody @Valid RequestCreateCashRegister request) {

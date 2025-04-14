@@ -21,10 +21,10 @@ import java.util.UUID;
 public class CustomerController {
 
   @Autowired
-  CustomerService service;
+  private CustomerService service;
 
   @Autowired
-  CustomerFinalizationHandler customerFinalizationHandler;
+  private CustomerFinalizationHandler customerFinalizationHandler;
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseCustomer> readCustomer(@PathVariable UUID uuid) {
@@ -58,20 +58,16 @@ public class CustomerController {
 
   @PostMapping("/finalize")
   public ResponseEntity<ResponseCustomer> finalizeCustomer(
-      @RequestBody @Valid RequestCustomerFinalization request,
-      @RequestAttribute("UserUuid") UUID userUuid
+      @RequestBody @Valid RequestCustomerFinalization request
   ) {
-    var response = new ResponseCustomer(customerFinalizationHandler.finalizeCustomer(request, userUuid));
+    var response = new ResponseCustomer(customerFinalizationHandler.finalizeCustomer(request));
 
     return ResponseEntity.ok(response);
   }
 
   @DeleteMapping("/finalize/{cardId}")
-  public ResponseEntity<ResponseCustomer> undoFinalizeCustomer(
-      @PathVariable @Valid RequestOrderCard cardId,
-      @RequestAttribute("UserUuid") UUID userUuid
-  ) {
-    var response = new ResponseCustomer(customerFinalizationHandler.undoFinalizeCustomer(cardId, userUuid));
+  public ResponseEntity<ResponseCustomer> undoFinalizeCustomer(@PathVariable @Valid RequestOrderCard cardId) {
+    var response = new ResponseCustomer(customerFinalizationHandler.undoFinalizeCustomer(cardId, true));
 
     return ResponseEntity.ok(response);
   }

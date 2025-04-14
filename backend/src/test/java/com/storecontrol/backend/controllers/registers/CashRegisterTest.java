@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CashRegisterTest extends BaseTest {
 
   @MockBean
-  CashRegisterService service;
+  private CashRegisterService service;
 
   @Test
   void testCreateCashRegister() throws Exception {

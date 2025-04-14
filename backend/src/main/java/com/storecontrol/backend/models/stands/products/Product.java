@@ -1,16 +1,17 @@
-package com.storecontrol.backend.models.stands;
+package com.storecontrol.backend.models.stands.products;
 
-import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
-import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.operations.purchases.Item;
+import com.storecontrol.backend.models.stands.Stand;
+import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
+import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "products")
@@ -40,6 +41,14 @@ public class Product {
     @Column(nullable = false)
     private int stock;
 
+    @ManyToMany
+    @JoinTable(
+        name = "tag_product",
+        joinColumns = @JoinColumn(name = "product_uuid"),
+        inverseJoinColumns = @JoinColumn(name = "tag_uuid")
+    )
+    private List<Tag> tags;
+
     @Column(name = "product_img")
     private String productImg;
 
@@ -67,6 +76,7 @@ public class Product {
         this.price = request.price();
         this.discount = BigDecimal.ZERO;
         this.stock = request.stock();
+        this.tags = new ArrayList<>();
         if (request.productImg() != null) {
             this.productImg = request.productImg();
         }
@@ -98,6 +108,22 @@ public class Product {
         }
     }
 
+    public void createTags(List<Tag> tag) {
+        this.tags = tag;
+    }
+
+    public void updateTags(Set<UUID> tagsUuid, List<Tag> newTags) {
+        this.tags.removeIf(existingTag -> !tagsUuid.contains(existingTag.getUuid()));
+
+        Set<UUID> existingUuids = this.tags.stream()
+            .map(Tag::getUuid)
+            .collect(Collectors.toSet());
+
+        newTags.stream()
+            .filter(tag -> !existingUuids.contains(tag.getUuid()))
+            .forEach(this.tags::add);
+    }
+
     public void updateProduct(Stand stand) {
         this.stand = stand;
     }
@@ -107,6 +133,19 @@ public class Product {
     }
 
     public void deleteProduct() {
+        this.productName = this.productName + "_deleted_" + generateRandomString();
         this.valid = false;
+    }
+
+    private String generateRandomString() {
+        String chars = "abcdefghijklmnopqrstuvwxyz";
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 3; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+
+        return sb.toString();
     }
 }

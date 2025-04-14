@@ -16,7 +16,7 @@ import java.util.UUID;
 public class RechargeValidation {
 
   @Autowired
-  RechargeRepository repository;
+  private RechargeRepository repository;
 
   public void checkVoluntaryFunctionMatch(Function function, Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {
@@ -49,7 +49,7 @@ public class RechargeValidation {
   }
 
   public void checkRechargeBelongsToVoluntary(Recharge recharge, UUID userUuid) {
-    if (recharge.getVoluntary().getVoluntaryRole().isNotAdmin() && !recharge.getVoluntary().getUuid().equals(userUuid)) {
+    if (recharge.getVoluntary().getVoluntaryRole().isNotAdmin() && !recharge.getVoluntaryUuid().equals(userUuid)) {
       throw new InvalidOperationException(
           MessageResolver.getInstance().getMessage("validation.recharge.checkVoluntary.notOwner.error"),
           MessageResolver.getInstance().getMessage("validation.recharge.checkVoluntary.notOwner.message")

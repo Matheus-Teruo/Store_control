@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RefundTest extends BaseTest {
 
   @MockBean
-  RefundService service;
+  private RefundService service;
 
   @Test
   void testReadRefundSuccess() throws Exception {

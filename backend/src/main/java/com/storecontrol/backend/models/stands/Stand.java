@@ -1,5 +1,6 @@
 package com.storecontrol.backend.models.stands;
 
+import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.models.stands.request.RequestCreateStand;
 import com.storecontrol.backend.models.stands.request.RequestUpdateStand;
 import com.storecontrol.backend.models.volunteers.Function;

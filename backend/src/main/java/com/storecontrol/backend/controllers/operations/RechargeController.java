@@ -21,14 +21,13 @@ import java.util.UUID;
 public class RechargeController {
 
   @Autowired
-  RechargeService service;
+  private RechargeService service;
 
   @PostMapping
   public ResponseEntity<ResponseRecharge> createRecharge(
-      @RequestBody @Valid RequestCreateRecharge request,
-      @RequestAttribute("UserUuid") UUID userUuid
+      @RequestBody @Valid RequestCreateRecharge request
   ) {
-    var recharge = service.createRecharge(request, userUuid);
+    var recharge = service.createRecharge(request);
 
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
@@ -55,19 +54,16 @@ public class RechargeController {
   }
 
   @GetMapping("/last3")
-  public ResponseEntity<List<ResponseSummaryRecharge>> readLast3Purchases(@RequestAttribute("UserUuid") UUID userUuid) {
-    var recharges = service.listLast3Purchases(userUuid);
+  public ResponseEntity<List<ResponseSummaryRecharge>> readLast3Purchases() {
+    var recharges = service.listLast3Purchases();
 
     var response = recharges.stream().map(ResponseSummaryRecharge::new).toList();
     return ResponseEntity.ok(response);
   }
 
   @DeleteMapping("/{uuid}")
-  public ResponseEntity<Void> deleteRecharge(
-      @PathVariable @Valid UUID uuid,
-      @RequestAttribute("UserUuid") UUID userUuid
-  ) {
-    service.deleteRecharge(uuid, userUuid);
+  public ResponseEntity<Void> deleteRecharge(@PathVariable @Valid UUID uuid) {
+    service.deleteRecharge(uuid);
 
     return ResponseEntity.noContent().build();
   }

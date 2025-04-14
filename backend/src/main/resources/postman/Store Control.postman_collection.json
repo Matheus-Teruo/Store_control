@@ -868,6 +868,107 @@
 			"name": "Product",
 			"item": [
 				{
+					"name": "Tag",
+					"item": [
+						{
+							"name": "Create Tag",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseBody = pm.response.json();\r",
+											"\r",
+											"if (responseBody && responseBody.uuid) {\r",
+											"    pm.collectionVariables.set(\"tag_id\", responseBody.uuid);\r",
+											"    // console.log(\"stand ID (UUID) saved as:\", responseBody.uuid);\r",
+											"} else {\r",
+											"    console.error(\"UUID not found in the response body\");\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"tagName\": \"doce\",\r\n    \"color\": \"#ED3962\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}tags",
+									"host": [
+										"{{hostPath}}tags"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Tags",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}tags",
+									"host": [
+										"{{hostPath}}tags"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Tag",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"uuid\": \"{{tag_id}}\",\r\n    \"tagName\": \"doce\",\r\n    \"color\": \"#ED3962\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}tags",
+									"host": [
+										"{{hostPath}}tags"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Tag",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}tags/{{tag_id}}",
+									"host": [
+										"{{hostPath}}tags"
+									],
+									"path": [
+										"{{tag_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "Create Product",
 					"event": [
 						{
@@ -902,7 +1003,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"productName\": \"productExample\",\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"productName\": \"productExample\",\r\n    \"tagsUuid\": [{{tag_id}}],\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -941,18 +1042,24 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}products?productName=&page=0",
+							"raw": "{{hostPath}}products?page=0",
 							"host": [
 								"{{hostPath}}products"
 							],
 							"query": [
 								{
 									"key": "productName",
-									"value": ""
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "tagUuid",
+									"value": null,
+									"disabled": true
 								},
 								{
 									"key": "standUuid",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
@@ -961,12 +1068,12 @@
 								},
 								{
 									"key": "size",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "sort",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -980,12 +1087,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}products/list",
+							"raw": "{{hostPath}}products/list/{{stand_id}}",
 							"host": [
 								"{{hostPath}}products"
 							],
 							"path": [
-								"list"
+								"list",
+								"{{stand_id}}"
 							]
 						}
 					},
@@ -998,7 +1106,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{product_id}}\",\r\n    \"productName\": \"ExampleproductName\",\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"price\": \"2.00\",\r\n    \"discount\": \"0.00\",\r\n    \"stock\": null,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{product_id}}\",\r\n    \"productName\": \"ExampleproductName\",\r\n    \"tagsUuid\": [{{tag_id}}],\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"price\": \"2.00\",\r\n    \"discount\": \"0.00\",\r\n    \"stock\": null,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1292,7 +1400,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"const donations = pm.response.json();\r",
+											"const donations = pm.response.json().content;\r",
 											"\r",
 											"if (Array.isArray(donations) && donations.length > 0) {\r",
 											"    const randomIndex = Math.floor(Math.random() * donations.length);\r",
@@ -1418,22 +1526,29 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{hostPath}}purchases?page&size&sort",
+									"raw": "{{hostPath}}purchases?standUuid={{stand_id}}",
 									"host": [
 										"{{hostPath}}purchases"
 									],
 									"query": [
 										{
+											"key": "standUuid",
+											"value": "{{stand_id}}"
+										},
+										{
 											"key": "page",
-											"value": null
+											"value": null,
+											"disabled": true
 										},
 										{
 											"key": "size",
-											"value": null
+											"value": null,
+											"disabled": true
 										},
 										{
 											"key": "sort",
-											"value": null
+											"value": null,
+											"disabled": true
 										}
 									]
 								}
@@ -1670,7 +1785,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"const refunds = pm.response.json();\r",
+											"const refunds = pm.response.json().content;\r",
 											"\r",
 											"if (Array.isArray(refunds) && refunds.length > 0) {\r",
 											"    const randomIndex = Math.floor(Math.random() * refunds.length);\r",
@@ -1856,6 +1971,25 @@
 					"item": [
 						{
 							"name": "Create Trade",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseBody = pm.response.json();\r",
+											"\r",
+											"if (responseBody && responseBody.uuid) {\r",
+											"    pm.collectionVariables.set(\"trade_id\", responseBody.uuid);\r",
+											"    // console.log(\"Trade ID (UUID) saved as:\", responseBody.uuid);\r",
+											"} else {\r",
+											"    console.error(\"UUID not found in the response body\");\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -1872,6 +2006,90 @@
 									"raw": "{{hostPath}}trades",
 									"host": [
 										"{{hostPath}}trades"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Trade",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}trades/{{trade_id}}",
+									"host": [
+										"{{hostPath}}trades"
+									],
+									"path": [
+										"{{trade_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Page Trades",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}trades?standUuid&page&size&sort",
+									"host": [
+										"{{hostPath}}trades"
+									],
+									"query": [
+										{
+											"key": "standUuid",
+											"value": null
+										},
+										{
+											"key": "page",
+											"value": null
+										},
+										{
+											"key": "size",
+											"value": null
+										},
+										{
+											"key": "sort",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Trades Last 3",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}trades/last3",
+									"host": [
+										"{{hostPath}}trades"
+									],
+									"path": [
+										"last3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Trade",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}trades/{{card_id}}/{{trade_id}}",
+									"host": [
+										"{{hostPath}}trades"
+									],
+									"path": [
+										"{{card_id}}",
+										"{{trade_id}}"
 									]
 								}
 							},
@@ -1936,7 +2154,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"UsernameCashier\",\r\n    \"password\": \"PasswordExample\"\r\n}",
+							"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2024,6 +2242,16 @@
 			"type": "string"
 		},
 		{
+			"key": "username",
+			"value": "UsernameCashier",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "PasswordExample",
+			"type": "string"
+		},
+		{
 			"key": "association_id",
 			"value": "",
 			"type": "string"
@@ -2081,6 +2309,15 @@
 		},
 		{
 			"key": "transaction_id",
+			"value": ""
+		},
+		{
+			"key": "trade_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "tag_id",
 			"value": ""
 		}
 	]

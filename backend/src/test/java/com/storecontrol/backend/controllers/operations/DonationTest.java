@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class DonationTest extends BaseTest {
 
   @MockBean
-  DonationService service;
+  private DonationService service;
 
   @Test
   void testReadDonationSuccess() throws Exception {

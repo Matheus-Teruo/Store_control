@@ -22,13 +22,13 @@ import java.util.UUID;
 public class DonationService {
 
   @Autowired
-  DonationValidation validation;
+  private DonationValidation validation;
 
   @Autowired
-  DonationRepository repository;
+  private DonationRepository repository;
 
   @Autowired
-  CustomerFinalizationValidation finalizationValidation;
+  private CustomerFinalizationValidation finalizationValidation;
 
   @Transactional
   public void createDonation(RequestCustomerFinalization request,

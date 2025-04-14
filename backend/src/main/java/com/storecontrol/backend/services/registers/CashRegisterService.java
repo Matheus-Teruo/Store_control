@@ -21,10 +21,10 @@ import java.util.UUID;
 public class CashRegisterService {
 
   @Autowired
-  CashRegisterValidation validation;
+  private CashRegisterValidation validation;
 
   @Autowired
-  CashRegisterRepository repository;
+  private CashRegisterRepository repository;
 
   @Transactional
   public CashRegister createCashRegister(RequestCreateCashRegister request) {

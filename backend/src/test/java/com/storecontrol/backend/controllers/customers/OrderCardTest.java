@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class OrderCardTest extends BaseTest {
 
   @MockBean
-  OrderCardService service;
+  private OrderCardService service;
 
   @Test
   void testCreateCardSuccess() throws Exception {

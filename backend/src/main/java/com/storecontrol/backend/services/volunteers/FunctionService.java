@@ -14,7 +14,7 @@ import java.util.UUID;
 public class FunctionService {
 
   @Autowired
-  FunctionRepository repository;
+  private FunctionRepository repository;
 
   public Function takeFunctionByUuid(UUID uuid) {
     return repository.findByUuidValidTrue(uuid)

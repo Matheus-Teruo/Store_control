@@ -15,7 +15,7 @@ import java.util.List;
 public class FunctionController {
 
   @Autowired
-  FunctionService service;
+  private FunctionService service;
 
   @GetMapping
   public ResponseEntity<List<ResponseSummaryFunction>> readVolunteers() {

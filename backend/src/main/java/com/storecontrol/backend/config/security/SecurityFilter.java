@@ -33,7 +33,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     if (tokenJWT != null) {
       var userUuid = service.recoverVoluntaryUuid(tokenJWT);
-      request.setAttribute("UserUuid", userUuid);
       Optional<Voluntary> user = repository.findByUuidValidTrue(userUuid);
 
       if (user.isPresent()){

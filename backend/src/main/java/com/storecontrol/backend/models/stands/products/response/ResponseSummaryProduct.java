@@ -1,6 +1,6 @@
-package com.storecontrol.backend.models.stands.response;
+package com.storecontrol.backend.models.stands.products.response;
 
-import com.storecontrol.backend.models.stands.Product;
+import com.storecontrol.backend.models.stands.products.Product;
 
 import java.math.BigDecimal;
 import java.util.UUID;

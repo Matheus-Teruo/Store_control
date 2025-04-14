@@ -1,4 +1,4 @@
-package com.storecontrol.backend.models.operations.request;
+package com.storecontrol.backend.models.operations.trades.request;
 
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreateItem;
 import jakarta.validation.Valid;
@@ -26,6 +26,9 @@ public record RequestCreateTrade(
 
     @NotNull(message = "{request.validation.createPurchase.onOrder.notnull}")
     Boolean onOrder,
+
+    @NotNull(message = "{request.validation.createPurchase.standUuid.notnull}")
+    UUID standUuid,
 
     @Valid
     @NotNull(message = "{request.validation.createPurchase.items.notnull}")

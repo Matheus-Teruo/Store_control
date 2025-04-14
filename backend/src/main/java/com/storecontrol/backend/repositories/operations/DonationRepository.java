@@ -10,9 +10,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DonationRepository extends JpaRepository<Donation, UUID> {
-  @Query("select d from Donation d where d.valid = true and d.uuid = :uuid")
+  @Query("SELECT d FROM Donation d WHERE d.valid = true AND d.uuid = :uuid")
   Optional<Donation> findByUuidValidTrue(UUID uuid);
 
-  @Query("select d from Donation d where d.valid = true")
+  @Query("SELECT d FROM Donation d WHERE d.valid = true")
   Page<Donation> findAllValidTrue(Pageable pageable);
 }

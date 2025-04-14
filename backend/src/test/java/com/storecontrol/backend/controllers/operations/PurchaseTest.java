@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PurchaseTest extends BaseTest {
 
   @MockBean
-  PurchaseService service;
+  private PurchaseService service;
 
   @Test
   void testCreatePurchaseSuccess() throws Exception {
@@ -42,20 +42,19 @@ class PurchaseTest extends BaseTest {
     RequestCreatePurchase requestPurchase = createRequestCreatePurchase(mockPurchase);
     ResponsePurchase expectedResponse = new ResponsePurchase(mockPurchase);
 
-    when(service.createPurchase(requestPurchase, mockPurchase.getVoluntary().getUuid())).thenReturn(mockPurchase);
+    when(service.createPurchase(requestPurchase)).thenReturn(mockPurchase);
 
     // When & Then
     mockMvc.perform(post("/purchases")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(requestPurchase))
-            .requestAttr("UserUuid", mockPurchase.getVoluntary().getUuid()))
+            .content(toJson(requestPurchase)))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location",
             containsString("/purchases/" + mockPurchase.getUuid().toString())))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).createPurchase(requestPurchase, mockPurchase.getVoluntary().getUuid());
+    verify(service, times(1)).createPurchase(requestPurchase);
     verifyNoMoreInteractions(service);
   }
 
@@ -104,24 +103,23 @@ class PurchaseTest extends BaseTest {
     Page<ResponseSummaryPurchase> expectedResponse = mockPage
         .map(ResponseSummaryPurchase::new);
 
-    when(service.pagePurchases(any(Pageable.class))).thenReturn(mockPage);
+    when(service.pagePurchases(any(UUID.class), any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
-    mockMvc.perform(get("/purchases")
+    mockMvc.perform(get("/purchases?standUuid=550e8400-e29b-41d4-a716-446655440000")
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content.length()").value(2))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).pagePurchases(any(Pageable.class));
+    verify(service, times(1)).pagePurchases(any(UUID.class), any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 
   @Test
   void testReadLast3PurchasesSuccess() throws Exception {
     // Given
-    UUID userUuid = UUID.randomUUID();
     String cardId1 = "CardIDTest12345";
     OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
     Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
@@ -140,18 +138,17 @@ class PurchaseTest extends BaseTest {
         .map(ResponseSummaryPurchase::new)
         .toList();
 
-    when(service.listLast3Purchases(userUuid)).thenReturn(mockPurchases);
+    when(service.listLast3Purchases()).thenReturn(mockPurchases);
 
     // When & Then
     mockMvc.perform(get("/purchases/last3")
-            .requestAttr("UserUuid", userUuid)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(3))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listLast3Purchases(userUuid);
+    verify(service, times(1)).listLast3Purchases();
     verifyNoMoreInteractions(service);
   }
 
@@ -197,7 +194,7 @@ class PurchaseTest extends BaseTest {
     Purchase mockPurchase = createPurchaseEntity(UUID.randomUUID(), mockCustomer);
     mockPurchase.setItems(createItemEntity(mockPurchase));
 
-    doNothing().when(service).deletePurchase(mockPurchase.getUuid(), mockPurchase.getVoluntary().getUuid());
+    doNothing().when(service).deletePurchase(mockPurchase.getUuid());
 
     // When & Then
     mockMvc.perform(delete("/purchases/{uuid}", mockPurchase.getUuid())
@@ -206,7 +203,7 @@ class PurchaseTest extends BaseTest {
         .andExpect(status().isNoContent());
 
     // Verify interactions
-    verify(service, times(1)).deletePurchase(mockPurchase.getUuid(), mockPurchase.getVoluntary().getUuid());
+    verify(service, times(1)).deletePurchase(mockPurchase.getUuid());
     verifyNoMoreInteractions(service);
   }
 }

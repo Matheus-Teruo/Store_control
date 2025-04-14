@@ -1,22 +1,21 @@
 package com.storecontrol.backend.controllers.operations;
 
-import com.storecontrol.backend.models.customers.Customer;
-import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
-import com.storecontrol.backend.models.operations.request.RequestCreateTrade;
-import com.storecontrol.backend.models.operations.response.ResponseTrade;
-import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
-import com.storecontrol.backend.services.customers.CustomerService;
-import com.storecontrol.backend.services.customers.OrderCardService;
-import com.storecontrol.backend.services.operations.PurchaseService;
-import com.storecontrol.backend.services.operations.RechargeService;
+import com.storecontrol.backend.models.operations.trades.request.RequestCreateTrade;
+import com.storecontrol.backend.models.operations.trades.response.ResponseSummaryTrade;
+import com.storecontrol.backend.models.operations.trades.response.ResponseTrade;
 import com.storecontrol.backend.services.operations.TradeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -24,28 +23,10 @@ import java.util.UUID;
 public class TradeController {
 
   @Autowired
-  TradeService service;
-
-  @Autowired
-  RechargeService rechargeService;
-
-  @Autowired
-  PurchaseService purchaseService;
-
-  @Autowired
-  OrderCardService orderCardService;
-
-  @Autowired
-  CustomerService customerService;
-
-  @Autowired
-  CustomerFinalizationHandler customerFinalizationHandler;
+  private TradeService service;
 
   @PostMapping
-  public ResponseEntity<ResponseTrade> createTrade(
-      @RequestBody @Valid RequestCreateTrade request,
-      @RequestAttribute("UserUuid") UUID userUuid
-  ) {
+  public ResponseEntity<ResponseTrade> createTrade(@RequestBody @Valid RequestCreateTrade request) {
     var rechargeRequest = new RequestCreateRecharge(
         request.rechargeValue(),
         request.paymentTypeEnum(),
@@ -55,35 +36,54 @@ public class TradeController {
 
     var purchaseRequest = new RequestCreatePurchase(
         request.onOrder(),
+        request.standUuid(),
         request.items(),
         request.orderCardId()
     );
 
-    var response = service.createTrade(rechargeRequest, purchaseRequest, userUuid);
+    var trade = service.createTrade(rechargeRequest, purchaseRequest);
+
+    URI location = ServletUriComponentsBuilder
+        .fromCurrentRequest()
+        .path("/{uuid}")
+        .buildAndExpand(trade.getUuid())
+        .toUri();
+
+    return ResponseEntity.created(location).body(new ResponseTrade(trade));
+  }
+
+  @GetMapping("/{uuid}")
+  public ResponseEntity<ResponseTrade> readTrade(@PathVariable @Valid UUID uuid) {
+    var response = new ResponseTrade(service.takeTradeByUuid(uuid));
 
     return ResponseEntity.ok(response);
   }
 
-  @DeleteMapping("/{cardId}")
-  public ResponseEntity<ResponseTrade> deleteTrade(
-      @PathVariable @Valid String cardId,
-      @RequestAttribute("UserUuid") UUID userUuid
-  ) {
-    var card = orderCardService.takeOrderCardById(cardId);
+  @GetMapping
+  public ResponseEntity<Page<ResponseSummaryTrade>> readTrades(
+      @RequestParam(required = false) UUID standUuid,
+      Pageable pageable) {
+    var tradeView = service.pageTrades(standUuid, pageable);
+    var response = tradeView.map(ResponseSummaryTrade::new);
 
-    Customer customer;
-    if (card.isActive()) {
-      customer = customerService.takeActiveCustomerByCardId(card.getId());
-    } else {
-      var requestOrderCard = new RequestOrderCard(card.getId());
-      customer = customerFinalizationHandler.undoFinalizeCustomer(requestOrderCard, userUuid);
-    }
-
-    purchaseService.deletePurchase(customer.getPurchases().getFirst().getUuid(), userUuid);
-
-    rechargeService.deleteRecharge(customer.getRecharges().getFirst().getUuid(), userUuid);
-
-    var response = new ResponseTrade(customer.getRecharges().getFirst(), customer.getPurchases().getFirst());
     return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/last3")
+  public ResponseEntity<List<ResponseSummaryTrade>> readLast3Purchases() {
+    var trades = service.listLast3Trades();
+
+    var response = trades.stream().map(ResponseSummaryTrade::new).toList();
+    return ResponseEntity.ok(response);
+  }
+
+  @DeleteMapping("/{cardId}/{uuid}")
+  public ResponseEntity<Void> deleteTrade(
+      @PathVariable @Valid String cardId,
+      @PathVariable @Valid UUID uuid
+  ) {
+    service.deleteTrade(cardId, uuid);
+
+    return ResponseEntity.noContent().build();
   }
 }

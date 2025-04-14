@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class VoluntaryTest extends BaseTest {
 
   @MockBean
-  VoluntaryService service;
+  private VoluntaryService service;
 
   @Test
   void testReadVoluntarySuccess() throws Exception {
@@ -36,17 +36,16 @@ class VoluntaryTest extends BaseTest {
     Voluntary mockVoluntary = createVoluntaryEntity(voluntaryUuid);
     ResponseVoluntary expectedResponse = new ResponseVoluntary(mockVoluntary);
 
-    when(service.takeVoluntaryByUuid(voluntaryUuid, voluntaryUuid)).thenReturn(mockVoluntary);
+    when(service.takeVoluntaryByUuid(voluntaryUuid)).thenReturn(mockVoluntary);
 
     // When & Then
     mockMvc.perform(get("/volunteers/{uuid}", voluntaryUuid)
-            .accept(MediaType.APPLICATION_JSON)
-            .requestAttr("UserUuid", voluntaryUuid))
+            .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).takeVoluntaryByUuid(voluntaryUuid, voluntaryUuid);
+    verify(service, times(1)).takeVoluntaryByUuid(voluntaryUuid);
     verifyNoMoreInteractions(service);
   }
 
@@ -84,18 +83,17 @@ class VoluntaryTest extends BaseTest {
     mockVoluntary.updateVoluntary(updateRequest, updateRequest.password(), true);
     ResponseVoluntary expectedResponse = new ResponseVoluntary(mockVoluntary);
 
-    when(service.updateVoluntary(updateRequest, mockVoluntary.getUuid())).thenReturn(mockVoluntary);
+    when(service.updateVoluntary(updateRequest)).thenReturn(mockVoluntary);
 
     // When & Then
     mockMvc.perform(put("/volunteers")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(updateRequest))
-            .requestAttr("UserUuid", mockVoluntary.getUuid()))
+            .content(toJson(updateRequest)))
         .andExpect(status().isOk())
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).updateVoluntary(updateRequest, mockVoluntary.getUuid());
+    verify(service, times(1)).updateVoluntary(updateRequest);
     verifyNoMoreInteractions(service);
   }
 
@@ -111,18 +109,17 @@ class VoluntaryTest extends BaseTest {
     mockVoluntary.updateVoluntary(mockStand);
     ResponseVoluntary expectedResponse = new ResponseVoluntary(mockVoluntary);
 
-    when(service.updateFunctionFromVoluntary(updateRequest, mockVoluntary.getUuid())).thenReturn(mockVoluntary);
+    when(service.updateFunctionFromVoluntary(updateRequest)).thenReturn(mockVoluntary);
 
     // When & Then
     mockMvc.perform(put("/volunteers/function")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(updateRequest))
-            .requestAttr("UserUuid", mockVoluntary.getUuid()))
+            .content(toJson(updateRequest)))
         .andExpect(status().isOk())
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).updateFunctionFromVoluntary(updateRequest, mockVoluntary.getUuid());
+    verify(service, times(1)).updateFunctionFromVoluntary(updateRequest);
     verifyNoMoreInteractions(service);
   }
 

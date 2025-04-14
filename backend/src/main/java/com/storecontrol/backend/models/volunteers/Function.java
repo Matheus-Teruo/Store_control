@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 @Entity
@@ -39,6 +40,19 @@ public abstract class Function {
   }
 
   public void deleteFunction() {
+    this.functionName = this.functionName + "_deleted_" + generateRandomString();
     this.valid = false;
+  }
+
+  private String generateRandomString() {
+    String chars = "abcdefghijklmnopqrstuvwxyz";
+    StringBuilder sb = new StringBuilder();
+    Random random = new Random();
+
+    for (int i = 0; i < 3; i++) {
+      sb.append(chars.charAt(random.nextInt(chars.length())));
+    }
+
+    return sb.toString();
   }
 }

@@ -19,15 +19,24 @@ import com.storecontrol.backend.models.operations.purchases.request.RequestCreat
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
-import com.storecontrol.backend.models.operations.request.RequestCreateTrade;
 import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
+import com.storecontrol.backend.models.operations.trades.Trade;
+import com.storecontrol.backend.models.operations.trades.request.RequestCreateTrade;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
 import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
 import com.storecontrol.backend.models.stands.Association;
-import com.storecontrol.backend.models.stands.Product;
 import com.storecontrol.backend.models.stands.Stand;
-import com.storecontrol.backend.models.stands.request.*;
+import com.storecontrol.backend.models.stands.products.Product;
+import com.storecontrol.backend.models.stands.products.Tag;
+import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
+import com.storecontrol.backend.models.stands.products.request.RequestCreateTag;
+import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
+import com.storecontrol.backend.models.stands.products.request.RequestUpdateTag;
+import com.storecontrol.backend.models.stands.request.RequestCreateAssociation;
+import com.storecontrol.backend.models.stands.request.RequestCreateStand;
+import com.storecontrol.backend.models.stands.request.RequestUpdateAssociation;
+import com.storecontrol.backend.models.stands.request.RequestUpdateStand;
 import com.storecontrol.backend.models.volunteers.Function;
 import com.storecontrol.backend.models.volunteers.User;
 import com.storecontrol.backend.models.volunteers.Voluntary;
@@ -96,10 +105,12 @@ public class TestDataFactory {
 
   public static Purchase createPurchaseEntity(UUID uuid, Customer customer) {
     UUID voluntaryUUID = UUID.randomUUID();
+    UUID standUUID = UUID.randomUUID();
     return new Purchase(
         uuid,
         false,
         LocalDateTime.now(),
+        standUUID,
         null,
         customer,
         voluntaryUUID,
@@ -135,6 +146,7 @@ public class TestDataFactory {
     );
     return new RequestCreatePurchase(
         purchase.isOnOrder(),
+        purchase.getStandUuid(),
         requestCreateItems,
         purchase.getCustomer().getOrderCard().getId()
     );
@@ -221,7 +233,18 @@ public class TestDataFactory {
         orderCard.getId(),
         recharge.getCashRegister().getUuid(),
         purchase.isOnOrder(),
+        purchase.getStandUuid(),
         requestCreateItems
+    );
+  }
+
+  public static Trade createTradeEntity(UUID uuid, UUID rechargeUuid, UUID purchaseUuid) {
+    return new Trade(
+        uuid,
+        rechargeUuid,
+        purchaseUuid,
+        LocalDateTime.now(),
+        true
     );
   }
 
@@ -307,10 +330,11 @@ public class TestDataFactory {
         BigDecimal.TEN,
         BigDecimal.ZERO,
         1000,
+        new ArrayList<>(),
         null,
         stand.getUuid(),
         stand,
-        null,
+        new ArrayList<>(),
         true
     );
   }
@@ -318,6 +342,7 @@ public class TestDataFactory {
   public static RequestCreateProduct createRequestCreateProduct(Product product) {
     return new RequestCreateProduct(
         product.getProductName(),
+        null,
         product.getSummary(),
         product.getDescription(),
         product.getPrice(),
@@ -331,6 +356,7 @@ public class TestDataFactory {
     return new RequestUpdateProduct(
         uuid,
         nameOnlyLettersSpaceAndNumbers(),
+        null,
         nameOnlyLettersSpaceAndNumbers(),
         textOnlyLettersSpaceAndNumbers(),
         BigDecimal.TEN,
@@ -364,6 +390,30 @@ public class TestDataFactory {
         uuid,
         nameOnlyLettersSpaceAndNumbers(),
         associationUuid
+    );
+  }
+
+  public static Tag createTagEntity(UUID uuid) {
+    return new Tag(
+        uuid,
+        nameOnlyLettersAndNumbers(),
+        null,
+        null
+    );
+  }
+
+  public static RequestCreateTag createRequestCreateTag(Tag tag) {
+    return new RequestCreateTag(
+        tag.getTagName(),
+        tag.getColor()
+    );
+  }
+
+  public static RequestUpdateTag createRequestUpdateTag(UUID uuid) {
+    return new RequestUpdateTag(
+        uuid,
+        nameOnlyLettersAndNumbers(),
+        null
     );
   }
 

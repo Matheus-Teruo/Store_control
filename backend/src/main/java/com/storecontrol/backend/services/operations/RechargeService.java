@@ -6,16 +6,17 @@ import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
 import com.storecontrol.backend.services.customers.CustomerService;
 import com.storecontrol.backend.services.operations.validation.RechargeValidation;
 import com.storecontrol.backend.services.registers.CashRegisterService;
-import com.storecontrol.backend.services.volunteers.VoluntaryService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,23 +27,20 @@ import java.util.UUID;
 public class RechargeService {
 
   @Autowired
-  RechargeValidation validation;
+  private RechargeValidation validation;
 
   @Autowired
-  RechargeRepository repository;
+  private RechargeRepository repository;
 
   @Autowired
-  VoluntaryService voluntaryService;
+  private CashRegisterService cashRegisterService;
 
   @Autowired
-  CashRegisterService cashRegisterService;
-
-  @Autowired
-  CustomerService customerService;
+  private CustomerService customerService;
 
   @Transactional
-  public Recharge createRecharge(RequestCreateRecharge request, UUID userUuid) {
-    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
+  public Recharge createRecharge(RequestCreateRecharge request) {
+    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterUuid());
 
     validation.checkVoluntaryFunctionMatch(cashRegister, voluntary);
@@ -76,17 +74,18 @@ public class RechargeService {
     return repository.findAllValidTrue(pageable);
   }
 
-  public List<Recharge> listLast3Purchases(UUID voluntaryUuid) {
-    return repository.findLast3ValidTrue(voluntaryUuid);
+  public List<Recharge> listLast3Purchases() {
+    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    return repository.findLast3ValidTrue(voluntary.getUuid());
   }
 
   @Transactional
-  public void deleteRecharge(UUID uuid, UUID userUuid) {
+  public void deleteRecharge(UUID uuid) {
+    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     var recharge = safeTakeRechargeByUuid(uuid);
-    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
 
     validation.checkDebitRemainderPositive(recharge);
-    validation.checkRechargeBelongsToVoluntary(recharge, userUuid);
+    validation.checkRechargeBelongsToVoluntary(recharge, voluntary.getUuid());
     validation.checkIfLastRechargeOfVoluntary(recharge, voluntary);
 
     recharge.getCustomer().getOrderCard().incrementDebit(recharge.getRechargeValue().negate());
