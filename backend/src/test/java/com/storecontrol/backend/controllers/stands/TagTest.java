@@ -14,6 +14,8 @@ import com.storecontrol.backend.models.stands.products.response.ResponseTag;
 import com.storecontrol.backend.services.stands.TagService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
@@ -63,6 +65,31 @@ public class TagTest extends BaseTest {
         createTagEntity(UUID.randomUUID()),
         createTagEntity(UUID.randomUUID())
     );
+    Page<Tag> mockPage = new PageImpl<>(mockTags);
+    Page<ResponseTag> expectedResponse = mockPage
+        .map(ResponseTag::new);
+
+    when(service.pageTags(any(Pageable.class))).thenReturn(mockPage);
+
+    // When & Then
+    mockMvc.perform(get("/tags")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content.length()").value(2))
+        .andExpect(content().json(toJson(expectedResponse)));
+
+    // Verify interactions
+    verify(service, times(1)).pageTags(any(Pageable.class));
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
+  void testReadListTagsSuccess() throws Exception {
+    // Given
+    List<Tag> mockTags = List.of(
+        createTagEntity(UUID.randomUUID()),
+        createTagEntity(UUID.randomUUID())
+    );
     List<ResponseTag> expectedResponse = mockTags.stream()
         .map(ResponseTag::new)
         .toList();
@@ -70,7 +97,7 @@ public class TagTest extends BaseTest {
     when(service.listTags()).thenReturn(mockTags);
 
     // When & Then
-    mockMvc.perform(get("/tags")
+    mockMvc.perform(get("/tags/list")
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))

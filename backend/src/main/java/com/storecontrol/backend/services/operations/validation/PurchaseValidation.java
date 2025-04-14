@@ -27,7 +27,7 @@ public class PurchaseValidation {
   @Autowired
   private PurchaseRepository repository;
 
-  public void checkVoluntaryFunctionMatch(Voluntary voluntary) {
+  public void checkVoluntaryFunctionMatch(UUID standUuid, Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {
       if ((voluntary.getFunction() == null)) {
         throw new InvalidOperationException(
@@ -35,7 +35,7 @@ public class PurchaseValidation {
             MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.functionNull.message")
         );
       } else {
-        if (!(voluntary.getFunction() instanceof Stand)) {
+        if (!(voluntary.getFunction().getUuid().equals(standUuid))) {
           throw new InvalidOperationException(
               MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.functionDifferent.error"),
               MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.functionDifferent.message")
@@ -65,7 +65,7 @@ public class PurchaseValidation {
 
     } else {
       UUID standUuid = standUuidSet.iterator().next();
-      if (!standUuid.equals(voluntary.getUuid())) {
+      if (!standUuid.equals(voluntary.getFunction().getUuid())) {
         if (voluntary.getVoluntaryRole().isNotAdmin()) {
           throw new InvalidOperationException(
               MessageResolver.getInstance().getMessage("validation.purchase.checkItems.userNotMatch.error"),
