@@ -54,9 +54,12 @@ function Products() {
   );
 
   useEffect(() => {
-    const admin = isAdmin(user) && user.summaryFunction === null;
-    if (isAdmin(user)) if (!admin) setSelectedStand(user.summaryFunction!.uuid);
-    setModeAdmin(admin);
+    const admin = isAdmin(user);
+    if (admin)
+      if (user.summaryFunction !== null && !modeAdmin) {
+        setSelectedStand(user.summaryFunction!.uuid);
+        setModeAdmin(admin);
+      }
     fetchProducts(admin);
     if (
       isUserUnlogged(user) ||
@@ -64,7 +67,7 @@ function Products() {
     ) {
       navigate("/");
     }
-  }, [user, navigate, fetchProducts]);
+  }, [user, navigate, fetchProducts, modeAdmin]);
 
   const handleFormShow = () => {
     formDispach({ type: "SET_FALSE" });

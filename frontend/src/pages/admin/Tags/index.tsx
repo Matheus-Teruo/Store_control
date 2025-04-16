@@ -17,15 +17,7 @@ import PageSelect from "@/components/selects/PageSelect";
 import FormTag from "./FormTag";
 import { formReducer, initialFormState } from "@reducer/formReducer";
 import { Link } from "react-router-dom";
-
-const isColorDark = (hex: string) => {
-  hex = hex.replace("#", "");
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-  return brightness < 128;
-};
+import { isColorDark } from "@/utils/colorTextTag";
 
 function Tags() {
   const [tags, setTags] = useState<Tag[]>([]);

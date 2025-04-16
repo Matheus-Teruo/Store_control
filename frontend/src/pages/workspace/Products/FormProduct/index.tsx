@@ -23,6 +23,7 @@ import Input from "@/components/utils/ProductInput";
 import TextInput from "@/components/utils/TextInput";
 import { CheckSVG, XSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
+import MultTagSelect from "@/components/selects/TagSelect/MultTagSelect";
 
 type FormPurchaseProps = {
   type: "create" | "update";
@@ -160,6 +161,14 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             }
             showStatus={touched}
             message={messageError["productName"]}
+          />
+          <label>Tags (opcional)</label>
+          <MultTagSelect
+            value={state.tagsUuid}
+            onChangeAdd={(e) => dispatch({ type: "ADD_TAG", payload: e })}
+            onChangeDelete={(e) => dispatch({ type: "REMOVE_TAG", payload: e })}
+            showStatus={touched}
+            message={messageError["summary"]}
           />
           <label>Resumo (opcional)</label>
           <Input

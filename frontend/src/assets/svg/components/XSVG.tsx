@@ -1,6 +1,15 @@
 import { SVGProps } from "../SVGprops";
 
-const XSVG = ({ size = 24, color = "currentColor", className }: SVGProps) => (
+interface XSVGProps extends SVGProps {
+  style?: React.CSSProperties;
+}
+
+const XSVG = ({
+  size = 24,
+  color = "currentColor",
+  className,
+  style,
+}: XSVGProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -12,6 +21,7 @@ const XSVG = ({ size = 24, color = "currentColor", className }: SVGProps) => (
     strokeLinecap="round"
     strokeLinejoin="round"
     className={className}
+    style={style}
   >
     <line x1="18" y1="6" x2="6" y2="18"></line>
     <line x1="6" y1="6" x2="18" y2="18"></line>

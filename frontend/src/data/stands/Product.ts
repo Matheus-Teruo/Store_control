@@ -32,7 +32,7 @@ export interface SummaryProduct {
 
 export interface CreateProduct {
   productName: string;
-  tagsUuid?: string[];
+  tagsUuid: string[];
   summary?: string;
   description?: string;
   price: number;

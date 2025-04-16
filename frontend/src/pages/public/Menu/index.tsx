@@ -11,6 +11,7 @@ import {
   tradeReducer,
 } from "@reducer/operation/tradeReducer";
 import FormTrade from "@/pages/workspace/StandFunctionTrade/FormTrade";
+import SingleTagSelect from "@/components/selects/TagSelect/SingleTagSelect";
 
 type ViewType = "List" | "Items";
 
@@ -22,24 +23,25 @@ function Menu() {
   const [selectedStand, setSelectedStand] = useState<string | undefined>(
     undefined,
   );
+  const [selectedTag, setSelectedTag] = useState<string | undefined>();
   const [filter, setFilter] = useState<string>("");
   const [products, setProducts] = useState<SummaryProduct[]>([]);
   const { getProducts } = useProductService();
 
   useEffect(() => {
-    const fetchStand = async () => {
+    const fetchProducts = async () => {
       const response = await getProducts(
         selectedStand,
         filter.toLowerCase(),
-        undefined,
+        selectedTag,
         undefined,
       );
       if (response) {
         setProducts(response.content);
       }
     };
-    fetchStand();
-  }, [filter, selectedStand, getProducts]);
+    fetchProducts();
+  }, [filter, selectedStand, selectedTag, getProducts]);
 
   useEffect(() => {
     setSelectedStand(state.standUuid);
@@ -58,7 +60,10 @@ function Menu() {
 
   const handleShowSearch = () => {
     setShowSearch((value) => {
-      if (value) setFilter("");
+      if (value) {
+        setFilter("");
+        setSelectedTag(undefined);
+      }
       return !value;
     });
   };
@@ -80,10 +85,19 @@ function Menu() {
             setShowCart={handleShowCart}
           />
           {showSearch && (
-            <SearchFilter
-              value={filter}
-              onChange={(event) => setFilter(event.target.value)}
-            />
+            <>
+              <div className={styles.tagSelection}>
+                <p>Tag:</p>
+                <SingleTagSelect
+                  value={selectedTag}
+                  onChange={(value) => setSelectedTag(value)}
+                />
+              </div>
+              <SearchFilter
+                value={filter}
+                onChange={(event) => setFilter(event.target.value)}
+              />
+            </>
           )}
           <StandOptionsFilter
             value={selectedStand}

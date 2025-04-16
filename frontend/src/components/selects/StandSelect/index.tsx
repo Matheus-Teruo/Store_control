@@ -26,11 +26,11 @@ function StandSelect({
   const { getListStands } = useStandService();
 
   useEffect(() => {
-    const fetchStand = async () => {
+    const fetchStands = async () => {
       const stands = await getListStands();
       if (stands) setListStands(stands);
     };
-    fetchStand();
+    fetchStands();
   }, [getListStands]);
 
   useEffect(() => {
