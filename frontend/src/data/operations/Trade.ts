@@ -2,6 +2,7 @@ import Item, { CreateItem } from "./Item";
 import { PaymentType } from "./Recharge";
 
 export default interface Trade {
+  uuid: string;
   rechargeUuid: string;
   purchaseUuid: string;
   rechargeValue: boolean;
@@ -11,11 +12,23 @@ export default interface Trade {
   items: Item[];
 }
 
+export interface SummaryTrade {
+  uuid: string;
+  rechargeUuid: string;
+  purchaseUuid: string;
+  rechargeValue: boolean;
+  paymentTypeEnum: PaymentType;
+  onOrder: boolean;
+  tradeTimeStamp: string; // TODO: data
+  totalItems: number;
+}
+
 export interface CreateTrade {
   rechargeValue: number;
   paymentTypeEnum: PaymentType;
   orderCardId: string;
   cashRegisterUuid: string;
   onOrder: boolean;
+  standUuid: string;
   items: CreateItem[];
 }

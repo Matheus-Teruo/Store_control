@@ -52,6 +52,12 @@
         font-weight: 600;
         color: $color-font-2;
       }
+
+      &:disabled {
+        p {
+          color: $color-gray-400;
+        }
+      }
     }
   }
 
@@ -183,6 +189,10 @@
       .productEdit {
         grid-row: span 2;
         padding: 4px;
+
+        button:disabled {
+          color: $color-gray-300;
+        }
       }
     }
 

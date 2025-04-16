@@ -1,0 +1,48 @@
+@use "@styles/variables" as *;
+
+.checkBackground {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  width: 100%;
+  padding: 3px;
+  margin: 3px;
+  border-radius: $border-radius;
+  box-sizing: border-box;
+  box-shadow: $color-shadow-2 0 1px 4px inset;
+  background-color: $color-secundary-1;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  .container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .selected {
+    box-shadow: none;
+    box-shadow: $color-shadow-1 0 2px 4px inset;
+    border: solid $color-gray-100 2px;
+  }
+
+  label {
+    display: flex;
+    justify-content: center;
+    padding: 3px 12px;
+    margin: 0 3px;
+    border-radius: $border-radius;
+    border: solid transparent 2px;
+    box-shadow: $color-shadow-1 0 2px 4px;
+
+    span {
+      font-weight: 500;
+      user-select: none;
+      white-space: nowrap;
+    }
+  }
+
+  input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+}

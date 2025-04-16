@@ -1,8 +1,10 @@
 import Stand from "./Stand";
+import Tag from "./Tag";
 
 export default interface Product {
   uuid: string;
   productName: string;
+  tags: Tag[];
   summary: string;
   description: string;
   price: number;
@@ -30,6 +32,7 @@ export interface SummaryProduct {
 
 export interface CreateProduct {
   productName: string;
+  tagsUuid: string[];
   summary?: string;
   description?: string;
   price: number;
@@ -41,6 +44,7 @@ export interface CreateProduct {
 export interface UpdateProduct {
   uuid: string;
   productName?: string;
+  tagsUuid?: string[];
   summary?: string;
   description?: string;
   price?: number;

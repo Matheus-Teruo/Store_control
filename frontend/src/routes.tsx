@@ -7,11 +7,12 @@ import Order from "./pages/public/Order";
 import Hub from "./pages/workspace/Hub";
 import CashierFunction from "./pages/workspace/CashierFunction";
 import StandFunction from "./pages/workspace/StandFunction";
-import StandFunctionSimple from "./pages/workspace/StandFunction/StandFunctionSimple";
+import StandFunctionSimple from "./pages/workspace/StandFunctionTrade";
 import Products from "./pages/workspace/Products";
 import Associations from "./pages/admin/Associations";
 import Cards from "./pages/admin/Cards";
 import Stands from "./pages/admin/Stands";
+import Tags from "./pages/admin/Tags";
 import Volunteers from "./pages/admin/Volunteers";
 import Purchases from "./pages/analytics/Purchases";
 import Statistics from "./pages/analytics/Statistics";
@@ -62,6 +63,7 @@ function AppRouter() {
           <Route path="transactions" element={<Transactions />} />
           {/* TODO: arrumar path depois */}
         </Route>
+        <Route path="/admin/tags" element={<Tags />} />
         <Route path="/admin" element={<AdminHeader />}>
           <Route path="associations" element={<Associations />} />
           <Route path="cards" element={<Cards />} />

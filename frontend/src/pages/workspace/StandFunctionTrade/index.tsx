@@ -1,6 +1,7 @@
-import styles from "./StandFunctionSimple.module.scss";
+import styles from "./StandFunctionTrade.module.scss";
 import PageSelect from "@/components/selects/PageSelect";
 import {
+  isAdmin,
   isSeller,
   isUserLogged,
   isUserUnlogged,
@@ -16,18 +17,22 @@ import {
   initialTradeState,
   tradeReducer,
 } from "@reducer/operation/tradeReducer";
-import LastPurchaseList from "../LastPurchaseList";
+import LastTradeList from "./LastTradeList";
 import FormTrade from "./FormTrade";
 import {
+  FilterSVG,
   HistorySVG,
   ImageSVG,
   MinusSVG,
   PlusSVG,
   ShoppingCartSVG,
 } from "@/assets/svg";
+import StandSelect from "@/components/selects/StandSelect";
+import { VoluntaryRole } from "@data/volunteers/Voluntary";
 
 function StandFunctionSimple() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
+  const [selectedStand, setSelectedStand] = useState<string | undefined>();
   const [state, dispatch] = useReducer(tradeReducer, initialTradeState);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [showCart, setShowCart] = useState<boolean>(false);
@@ -42,8 +47,11 @@ function StandFunctionSimple() {
       isSeller(user.summaryFunction, user.voluntaryRole)
     ) {
       const response = await getProducts(
+        user.voluntaryRole === VoluntaryRole.ADMIN
+          ? selectedStand
+          : user.summaryFunction.uuid,
         undefined,
-        user.summaryFunction ? user.summaryFunction.uuid : undefined,
+        undefined,
         page.number,
       );
       if (response) setProducts(response.content);
@@ -53,14 +61,23 @@ function StandFunctionSimple() {
     ) {
       navigate("/");
     }
-  }, [user, page, navigate, getProducts]);
+  }, [user, page, selectedStand, navigate, getProducts]);
+
+  useEffect(() => {
+    setSelectedStand(state.standUuid);
+  }, [state.standUuid]);
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
-  const handleShow = () => {
+  const handleShowTrade = () => {
     setShowCart(false);
+    fetchProducts();
+  };
+
+  const handleShowLastTrade = () => {
+    setShowLast(false);
     fetchProducts();
   };
 
@@ -68,13 +85,30 @@ function StandFunctionSimple() {
     <div className={styles.body}>
       <div className={styles.headerBackground}>
         <div className={styles.header}>
-          <Button onClick={() => setShowLast(true)}>
-            <HistorySVG />
-          </Button>
-          <div className={styles.resumeCart} onClick={() => setShowCart(true)}>
-            <ShoppingCartSVG />
-            <p>{state.totalQuantity}</p>
-            <p>R${state.rechargeValue}</p>
+          {isAdmin(user) && (
+            <div className={styles.filter}>
+              <p className={styles.title}>Modo Admin</p>
+              <div className={styles.filterSelect}>
+                <FilterSVG size={16} />
+                <StandSelect
+                  value={selectedStand}
+                  onChange={(value) => setSelectedStand(value)}
+                />
+              </div>
+            </div>
+          )}
+          <div className={styles.header_main}>
+            <Button onClick={() => setShowLast(true)}>
+              <HistorySVG />
+            </Button>
+            <div
+              className={styles.resumeCart}
+              onClick={() => setShowCart(true)}
+            >
+              <ShoppingCartSVG />
+              <p>{state.totalQuantity}</p>
+              <p>R${state.rechargeValue}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -125,15 +159,17 @@ function StandFunctionSimple() {
         })}
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
-      <FormTrade
-        reducer={[state, dispatch]}
-        showCart={showCart}
-        setShowCart={handleShow}
-      />
+      {showCart && (
+        <FormTrade
+          reducer={[state, dispatch]}
+          hide={handleShowTrade}
+          type="normal"
+        />
+      )}
       {showLast && (
-        <LastPurchaseList
+        <LastTradeList
           setShow={() => {
-            setShowLast(false);
+            handleShowLastTrade();
           }}
         />
       )}

@@ -3,6 +3,7 @@ import PageSelect from "@/components/selects/PageSelect";
 import {
   isAdmin,
   isSeller,
+  isManeger,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
@@ -35,8 +36,9 @@ function Products() {
         isSeller(user.summaryFunction, user.voluntaryRole)
       ) {
         const response = await getProducts(
-          undefined,
           requestMode ? selectedStand : user.summaryFunction.uuid,
+          undefined,
+          undefined,
           page.number,
         );
         if (response) {
@@ -52,9 +54,12 @@ function Products() {
   );
 
   useEffect(() => {
-    const admin = isAdmin(user) && user.summaryFunction === null;
-    if (isAdmin(user)) if (!admin) setSelectedStand(user.summaryFunction!.uuid);
-    setModeAdmin(admin);
+    const admin = isAdmin(user);
+    if (admin)
+      if (user.summaryFunction !== null && !modeAdmin) {
+        setSelectedStand(user.summaryFunction!.uuid);
+        setModeAdmin(admin);
+      }
     fetchProducts(admin);
     if (
       isUserUnlogged(user) ||
@@ -62,7 +67,7 @@ function Products() {
     ) {
       navigate("/");
     }
-  }, [user, navigate, fetchProducts]);
+  }, [user, navigate, fetchProducts, modeAdmin]);
 
   const handleFormShow = () => {
     formDispach({ type: "SET_FALSE" });
@@ -84,7 +89,10 @@ function Products() {
           ) : (
             <div />
           )}
-          <Button onClick={() => formDispach({ type: "SET_CREATE" })}>
+          <Button
+            onClick={() => formDispach({ type: "SET_CREATE" })}
+            disabled={!isManeger(user)}
+          >
             <PlusSVG size={16} />
             <p>Produto</p>
           </Button>
@@ -145,6 +153,7 @@ function Products() {
                 onClick={() =>
                   formDispach({ type: "SET_UPDATE", payload: product.uuid })
                 }
+                disabled={!isManeger(user)}
               >
                 <EditSVG size={16} />
               </Button>

@@ -1,0 +1,66 @@
+@use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
+
+.base {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 2px 0;
+  box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  .container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .selectedTags {
+    box-shadow: none;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 2px 0;
+
+    p {
+      justify-items: center;
+    }
+
+    span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px 8px;
+      margin: 2px 3px;
+      border-radius: $border-radius;
+      font-weight: 500;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .removeButton {
+      padding: 1px 0 1px 4px;
+      background-color: transparent;
+      box-shadow: none;
+    }
+  }
+
+  .select {
+    border: none;
+    width: 200px;
+    height: 32px;
+    font-size: 1rem;
+    border-radius: $border-radius;
+    padding: 0 6px;
+    background-color: $color-gray-000;
+
+    @media (max-width: $mobile) {
+      font-size: 0.875rem;
+      padding: 3px 6px;
+    }
+  }
+
+  input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+}

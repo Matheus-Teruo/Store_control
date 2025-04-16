@@ -31,6 +31,7 @@ export interface PurchaseOrder {
 
 export interface CreatePurchase {
   onOrder: boolean;
+  standUuid: string;
   items: CreateItem[];
   orderCardId: string;
 }

@@ -3,6 +3,8 @@ import Product, { CreateProduct, UpdateProduct } from "@data/stands/Product";
 
 type ProductAction =
   | { type: "SET_PRODUCT"; payload: Product }
+  | { type: "ADD_TAG"; payload: string }
+  | { type: "REMOVE_TAG"; payload: string }
   | { type: "SET_PRODUCT_NAME"; payload: string }
   | { type: "SET_SUMMARY"; payload: string }
   | { type: "SET_DESCRIPTION"; payload: string }
@@ -16,6 +18,7 @@ type ProductAction =
 export const initialProductState: CreateProduct & UpdateProduct = {
   uuid: "",
   productName: "",
+  tagsUuid: [],
   summary: "",
   description: "",
   price: 0,
@@ -34,6 +37,7 @@ export function productReducer(
       return {
         uuid: action.payload.uuid,
         productName: action.payload.productName,
+        tagsUuid: action.payload.tags.map((tag) => tag.uuid),
         summary: action.payload.summary !== null ? action.payload.summary : "",
         description:
           action.payload.description !== null ? action.payload.description : "",
@@ -53,6 +57,28 @@ export function productReducer(
       }
       return { ...state, productName: action.payload };
     }
+    case "ADD_TAG":
+      if (action.payload) {
+        if (!regexUuid.test(action.payload)) {
+          return state;
+        }
+        if (!state.tagsUuid.includes(action.payload)) {
+          return {
+            ...state,
+            tagsUuid: [...state.tagsUuid, action.payload],
+          };
+        }
+        return state;
+      }
+      return state;
+    case "REMOVE_TAG":
+      if (action.payload && regexUuid.test(action.payload)) {
+        return {
+          ...state,
+          tagsUuid: state.tagsUuid.filter((id) => id !== action.payload),
+        };
+      }
+      return state;
     case "SET_SUMMARY":
       if (!regexText.test(action.payload)) {
         return state;

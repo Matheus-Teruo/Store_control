@@ -10,7 +10,8 @@ import {
   initialTradeState,
   tradeReducer,
 } from "@reducer/operation/tradeReducer";
-import FormTrade from "@/pages/workspace/StandFunction/StandFunctionSimple/FormTrade";
+import FormTrade from "@/pages/workspace/StandFunctionTrade/FormTrade";
+import SingleTagSelect from "@/components/selects/TagSelect/SingleTagSelect";
 
 type ViewType = "List" | "Items";
 
@@ -19,30 +20,50 @@ function Menu() {
   const [state, dispatch] = useReducer(tradeReducer, initialTradeState);
   const [showCart, setShowCart] = useState<boolean>(false);
   const [showSearch, setShowSearch] = useState<boolean>(false);
-  const [selectedStands, setSelectedStands] = useState<string | undefined>(
+  const [selectedStand, setSelectedStand] = useState<string | undefined>(
     undefined,
   );
+  const [selectedTag, setSelectedTag] = useState<string | undefined>();
   const [filter, setFilter] = useState<string>("");
   const [products, setProducts] = useState<SummaryProduct[]>([]);
   const { getProducts } = useProductService();
 
   useEffect(() => {
-    const fetchStand = async () => {
-      const response = await getProducts(filter.toLowerCase(), selectedStands);
+    const fetchProducts = async () => {
+      const response = await getProducts(
+        selectedStand,
+        filter.toLowerCase(),
+        selectedTag,
+        undefined,
+      );
       if (response) {
         setProducts(response.content);
       }
     };
-    fetchStand();
-  }, [filter, selectedStands, getProducts]);
+    fetchProducts();
+  }, [filter, selectedStand, selectedTag, getProducts]);
+
+  useEffect(() => {
+    setSelectedStand(state.standUuid);
+  }, [state.standUuid]);
 
   const handleToggleView = (value: ViewType) => {
     setToggleView(value);
   };
 
+  const handlerSelectStand = (value: string | undefined) => {
+    setSelectedStand(value);
+    if (value) {
+      dispatch({ type: "SET_STAND_UUID", payload: value });
+    }
+  };
+
   const handleShowSearch = () => {
     setShowSearch((value) => {
-      if (value) setFilter("");
+      if (value) {
+        setFilter("");
+        setSelectedTag(undefined);
+      }
       return !value;
     });
   };
@@ -64,14 +85,23 @@ function Menu() {
             setShowCart={handleShowCart}
           />
           {showSearch && (
-            <SearchFilter
-              value={filter}
-              onChange={(event) => setFilter(event.target.value)}
-            />
+            <>
+              <div className={styles.tagSelection}>
+                <p>Tag:</p>
+                <SingleTagSelect
+                  value={selectedTag}
+                  onChange={(value) => setSelectedTag(value)}
+                />
+              </div>
+              <SearchFilter
+                value={filter}
+                onChange={(event) => setFilter(event.target.value)}
+              />
+            </>
           )}
           <StandOptionsFilter
-            value={selectedStands}
-            onChange={(value) => setSelectedStands(value)}
+            value={selectedStand}
+            onChange={(value) => handlerSelectStand(value)}
             mode="radio"
           />
         </div>
@@ -125,12 +155,13 @@ function Menu() {
           );
         })}
       </ul>
-      <FormTrade
-        reducer={[state, dispatch]}
-        showCart={showCart}
-        setShowCart={setShowCart}
-        type="pre"
-      />
+      {showCart && (
+        <FormTrade
+          reducer={[state, dispatch]}
+          hide={handleShowCart}
+          type="pre"
+        />
+      )}
     </div>
   );
 }
