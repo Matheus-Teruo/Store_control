@@ -107,7 +107,7 @@ function FormVoluntary({ hide, uuid, association }: FormVoluntaryProps) {
           <div className={styles.field}>
             <label>Função</label>
             <FunctionSelect
-              value={state.functionUuid}
+              value={state.functionUuid !== null ? state.functionUuid : ""}
               onChange={(e) =>
                 dispatch({ type: "SET_FUNCTION", payload: e.target.value })
               }
