@@ -32,21 +32,23 @@ function FormPurchase({ reducer }: FormPurchaseProps) {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const products = await getListProducts();
-      if (products) {
-        const productsObject = products.reduce(
-          (acc, product) => {
-            const { uuid, ...rest } = product;
-            acc[uuid] = rest;
-            return acc;
-          },
-          {} as Record<string, Omit<SummaryProduct, "uuid">>,
-        );
-        setProductsRecord(productsObject);
+      if (state.standUuid) {
+        const products = await getListProducts(state.standUuid);
+        if (products) {
+          const productsObject = products.reduce(
+            (acc, product) => {
+              const { uuid, ...rest } = product;
+              acc[uuid] = rest;
+              return acc;
+            },
+            {} as Record<string, Omit<SummaryProduct, "uuid">>,
+          );
+          setProductsRecord(productsObject);
+        }
       }
     };
     fetchProducts();
-  }, [getListProducts]);
+  }, [state.standUuid, getListProducts]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -36,10 +36,11 @@ function StandFunction() {
         isSeller(user.summaryFunction, user.voluntaryRole)
       ) {
         const response = await getProducts(
-          undefined,
           user.voluntaryRole === VoluntaryRole.ADMIN
             ? undefined
             : user.summaryFunction.uuid,
+          undefined,
+          undefined,
           page.number,
         );
         if (response) setProducts(response.content);
