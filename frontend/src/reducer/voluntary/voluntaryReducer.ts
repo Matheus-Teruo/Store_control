@@ -39,9 +39,6 @@ export function voluntaryReducer(
       };
     }
     case "SET_FUNCTION": {
-      if (!regexUuid.test(action.payload)) {
-        return state;
-      }
       return {
         ...state,
         functionUuid: action.payload,
@@ -72,7 +69,12 @@ export const updateVoluntaryFunctionPayload = (
   if (!updatePayload.uuid || !regexUuid.test(updatePayload.uuid)) {
     throw new Error("UUID is required to update the voluntary role");
   }
-  if (
+  if (updatePayload.functionUuid === "") {
+    return {
+      ...updatePayload,
+      functionUuid: null,
+    } as UpdateVoluntaryFunction;
+  } else if (
     !updatePayload.functionUuid ||
     !regexUuid.test(updatePayload.functionUuid)
   ) {

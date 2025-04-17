@@ -69,8 +69,8 @@ function Hub() {
             <li className={styles.liDefault}>
               <h3>Bem vindo</h3>
               <p>
-                Você não está alocado no momento, comunique com o coordenador da
-                sua associação para conseguir permissão
+                Você não está alocado no momento. Comunique-se com o coordenador
+                da sua associação para conseguir permissão.
               </p>
             </li>
           )}
@@ -83,6 +83,13 @@ function Hub() {
       )}
       {isManeger(user) && (
         <ul className={styles.manager}>
+          {isAdmin(user) && (
+            <li className={styles.liTags}>
+              <Link className={styles.links} to="/admin/tags">
+                Tags
+              </Link>
+            </li>
+          )}
           <li className={styles.liVolunteers}>
             <Link className={styles.links} to="/admin/volunteers">
               Voluntários
@@ -90,11 +97,6 @@ function Hub() {
           </li>
           {isAdmin(user) && (
             <>
-              <li className={styles.liTags}>
-                <Link className={styles.links} to="/admin/tags">
-                  Tags
-                </Link>
-              </li>
               <li className={styles.liAssociations}>
                 <Link className={styles.links} to="/admin/associations">
                   Associações

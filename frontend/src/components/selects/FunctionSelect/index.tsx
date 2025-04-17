@@ -44,6 +44,9 @@ function FunctionSelect({
         value={value}
         onChange={onChange}
       >
+        <option key="null" value="">
+          -- não definida --
+        </option>
         {listFunctions.map((voluntaryFunction) => (
           <option key={voluntaryFunction.uuid} value={voluntaryFunction.uuid}>
             {voluntaryFunction.functionName}
