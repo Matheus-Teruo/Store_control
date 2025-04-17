@@ -122,6 +122,8 @@ public class VoluntaryService {
       var function = functionService.takeFunctionByUuid(uuid);
 
       voluntary.updateVoluntary(function);
+    } else {
+      voluntary.updateVoluntary(null);
     }
   }
 }
