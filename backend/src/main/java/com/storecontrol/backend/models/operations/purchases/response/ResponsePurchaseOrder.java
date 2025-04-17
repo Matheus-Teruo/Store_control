@@ -8,6 +8,7 @@ import java.util.UUID;
 public record ResponsePurchaseOrder(
     UUID uuid,
     Boolean onOrder,
+    UUID standUuid,
     String purchaseTimeStamp,
     List<ResponseItem> items
 ) {
@@ -16,6 +17,7 @@ public record ResponsePurchaseOrder(
     this(
         purchase.getUuid(),
         purchase.isOnOrder(),
+        purchase.getStandUuid(),
         purchase.getPurchaseTimeStamp().toString(),
         purchase.getItems().stream().map(ResponseItem::new).toList()
     );
