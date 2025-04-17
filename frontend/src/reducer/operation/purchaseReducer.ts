@@ -11,6 +11,7 @@ export type PurchaseAction =
     }
   | { type: "DECREASE_ITEM"; payload: string }
   | { type: "REMOVE_ITEM"; payload: string }
+  | { type: "SET_STAND_UUID"; payload: string }
   | { type: "SET_CARD_ID"; payload: string }
   | { type: "RESET" };
 
@@ -19,6 +20,7 @@ export const initialPurchaseState: CreatePurchase & {
   totalQuantity: number;
 } = {
   onOrder: false,
+  standUuid: "",
   items: [],
   orderCardId: "",
   totalPrice: 0,
@@ -134,6 +136,18 @@ export function purchaseReducer(
 
       const totals = calculateTotals(updatedItems);
       return { ...state, items: updatedItems, ...totals };
+    }
+
+    case "SET_STAND_UUID": {
+      if (!regexUuid.test(action.payload)) {
+        return state;
+      }
+      if (state.standUuid !== action.payload) {
+        const totals = calculateTotals([]);
+        return { ...state, standUuid: action.payload, items: [], ...totals };
+      } else {
+        return { ...state, standUuid: action.payload };
+      }
     }
 
     case "SET_CARD_ID":

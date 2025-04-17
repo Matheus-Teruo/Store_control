@@ -1,13 +1,13 @@
-import { PurchaseOrder } from "@data/operations/Purchase";
 import styles from "./Order.module.scss";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useProductService from "@service/stand/useProductService";
 import { SummaryProduct } from "@data/stands/Product";
 import useCustomersApi from "@service/customer/useCustomerService";
+import { CustomerOrder } from "@data/customers/Customer";
 
 function Order() {
-  const [cart, setCart] = useState<PurchaseOrder[]>([]);
+  const [customer, setCustomer] = useState<CustomerOrder>();
   const [productsRecord, setProductsRecord] = useState<
     Record<string, Omit<SummaryProduct, "uuid">>
   >({});
@@ -17,30 +17,11 @@ function Order() {
   const { cardID } = useParams();
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const products = await getListProducts();
-      if (products) {
-        const productsObject = products.reduce(
-          (acc, product) => {
-            const { uuid, ...rest } = product;
-            acc[uuid] = rest;
-            return acc;
-          },
-          {} as Record<string, Omit<SummaryProduct, "uuid">>,
-        );
-        setProductsRecord(productsObject);
-      }
-    };
-
-    fetchProducts();
-  }, [getListProducts]);
-
-  useEffect(() => {
     const fetchCustomer = async () => {
       if (cardID !== undefined) {
-        const customer = await getCustomerByCard(cardID);
-        if (customer) {
-          setCart(customer.purchases);
+        const customerResponse = await getCustomerByCard(cardID);
+        if (customerResponse) {
+          setCustomer(customerResponse);
         } else {
           navigate("/");
         }
@@ -50,12 +31,36 @@ function Order() {
     fetchCustomer();
   }, [cardID, getCustomerByCard, navigate]);
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (customer) {
+        const allProductsRecord: Record<
+          string,
+          Omit<SummaryProduct, "uuid">
+        > = {};
+
+        for (const purchase of customer.purchases) {
+          const products = await getListProducts(purchase.standUuid);
+          if (products) {
+            products.forEach((product) => {
+              const { uuid, ...rest } = product;
+              allProductsRecord[uuid] = rest;
+            });
+          }
+        }
+        setProductsRecord(allProductsRecord);
+      }
+    };
+
+    fetchProducts();
+  }, [customer, getListProducts]);
+
   return (
     <div className={styles.background}>
       <div className={styles.headerBackground}></div>
       <div className={styles.main}>
         <ul>
-          {cart?.map((purchase) =>
+          {customer?.purchases?.map((purchase) =>
             purchase.items.map((item) => {
               const product = productsRecord[item.productUuid];
               return (

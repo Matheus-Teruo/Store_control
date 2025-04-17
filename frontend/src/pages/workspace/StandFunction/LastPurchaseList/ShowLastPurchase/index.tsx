@@ -3,7 +3,6 @@ import styles from "./ShowLastPurchase.module.scss";
 import Purchase from "@data/operations/Purchase";
 import usePurchaseService from "@service/operations/usePurchaseService";
 import { useEffect, useState } from "react";
-import useTradeService from "@service/operations/useTradeService";
 
 function ShowLastPurchase({
   uuid,
@@ -14,7 +13,7 @@ function ShowLastPurchase({
 }) {
   const [purchase, setPurchase] = useState<Purchase | undefined>();
   const { getPurchase } = usePurchaseService();
-  const { deleteTrade } = useTradeService();
+  const { deletePurchase } = usePurchaseService();
 
   useEffect(() => {
     const fetchPurchase = async () => {
@@ -29,7 +28,7 @@ function ShowLastPurchase({
 
   const handleDelete = () => {
     if (purchase) {
-      deleteTrade(purchase?.uuid);
+      deletePurchase(purchase?.uuid);
     }
   };
 
