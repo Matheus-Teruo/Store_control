@@ -8,7 +8,6 @@ public record RequestUpdateVoluntaryFunction(
     @NotNull(message = "{request.validation.updateVoluntaryFunction.uuid.notnull}")
     UUID uuid,
 
-    @NotNull(message = "{request.validation.updateVoluntaryFunction.functionUuid.notnull}")
     UUID functionUuid
 ) {
 }
