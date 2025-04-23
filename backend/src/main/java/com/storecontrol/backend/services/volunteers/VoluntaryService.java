@@ -104,6 +104,7 @@ public class VoluntaryService {
   @Transactional
   public Voluntary updateVoluntaryRole(RequestVoluntaryRole request) {
     var voluntary = safeTakeVoluntaryByUuid(request.uuid());
+    validation.checkRootCantChangeRole(voluntary);
 
     voluntary.updateVoluntaryRole(request);
 
