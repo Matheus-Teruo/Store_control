@@ -169,4 +169,17 @@ public class VoluntaryValidation {
       }
     }
   }
+
+  public void checkRootCantChangeRole(Voluntary voluntary) {
+    if (voluntary.getFullname().equals("Root User")) {
+      throw new InvalidDatabaseInsertionException(
+          MessageResolver.getInstance().getMessage("validation.voluntary.checkRootRole.invalidChangeRole.error"),
+          MessageResolver.getInstance().getMessage("validation.voluntary.checkRootRole.invalidChangeRole.message"),
+          Map.of(
+              MessageResolver.getInstance().getMessage("validation.voluntary.checkRootRole.invalidChangeRole.field"),
+              "null"
+          )
+      );
+    }
+  }
 }
