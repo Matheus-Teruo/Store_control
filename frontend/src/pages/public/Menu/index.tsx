@@ -20,9 +20,6 @@ function Menu() {
   const [state, dispatch] = useReducer(tradeReducer, initialTradeState);
   const [showCart, setShowCart] = useState<boolean>(false);
   const [showSearch, setShowSearch] = useState<boolean>(false);
-  const [selectedStand, setSelectedStand] = useState<string | undefined>(
-    undefined,
-  );
   const [selectedTag, setSelectedTag] = useState<string | undefined>();
   const [filter, setFilter] = useState<string>("");
   const [products, setProducts] = useState<SummaryProduct[]>([]);
@@ -31,7 +28,7 @@ function Menu() {
   useEffect(() => {
     const fetchProducts = async () => {
       const response = await getProducts(
-        selectedStand,
+        state.standUuid,
         filter.toLowerCase(),
         selectedTag,
         undefined,
@@ -41,21 +38,14 @@ function Menu() {
       }
     };
     fetchProducts();
-  }, [filter, selectedStand, selectedTag, getProducts]);
-
-  useEffect(() => {
-    setSelectedStand(state.standUuid);
-  }, [state.standUuid]);
+  }, [filter, state.standUuid, selectedTag, getProducts]);
 
   const handleToggleView = (value: ViewType) => {
     setToggleView(value);
   };
 
   const handlerSelectStand = (value: string | undefined) => {
-    setSelectedStand(value);
-    if (value) {
-      dispatch({ type: "SET_STAND_UUID", payload: value });
-    }
+    dispatch({ type: "SET_STAND_UUID", payload: value });
   };
 
   const handleShowSearch = () => {
@@ -100,7 +90,7 @@ function Menu() {
             </>
           )}
           <StandOptionsFilter
-            value={selectedStand}
+            value={state.standUuid}
             onChange={(value) => handlerSelectStand(value)}
             mode="radio"
           />

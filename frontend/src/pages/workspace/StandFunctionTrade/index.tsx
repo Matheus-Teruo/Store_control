@@ -28,7 +28,6 @@ import {
   ShoppingCartSVG,
 } from "@/assets/svg";
 import StandSelect from "@/components/selects/StandSelect";
-import { VoluntaryRole } from "@data/volunteers/Voluntary";
 
 function StandFunctionSimple() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
@@ -37,48 +36,64 @@ function StandFunctionSimple() {
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [showCart, setShowCart] = useState<boolean>(false);
   const [showLast, setShowLast] = useState<boolean>(false);
+  const [modeAdmin, setModeAdmin] = useState<boolean>(false);
   const { getProducts } = useProductService();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
-  const fetchProducts = useCallback(async () => {
+  const fetchProducts = useCallback(
+    async (requestMode: boolean) => {
     if (
       isUserLogged(user) &&
       isSeller(user.summaryFunction, user.voluntaryRole)
     ) {
       const response = await getProducts(
-        user.voluntaryRole === VoluntaryRole.ADMIN
-          ? selectedStand
-          : user.summaryFunction.uuid,
+          requestMode ? selectedStand : user.summaryFunction.uuid,
         undefined,
         undefined,
         page.number,
       );
       if (response) setProducts(response.content);
-    } else if (
-      isUserUnlogged(user) ||
-      (user && !isSeller(user.summaryFunction, user.voluntaryRole))
-    ) {
-      navigate("/");
     }
-  }, [user, page, selectedStand, navigate, getProducts]);
+    },
+    [user, page.number, selectedStand, getProducts],
+  );
 
   useEffect(() => {
     setSelectedStand(state.standUuid);
   }, [state.standUuid]);
 
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    if (fetchProducts && user) {
+      const admin = isAdmin(user);
+      if (admin) {
+        setModeAdmin(true);
+        if (user.summaryFunction !== null && !modeAdmin) {
+          setSelectedStand(user.summaryFunction!.uuid);
+          fetchProducts(false);
+        } else {
+          fetchProducts(true);
+        }
+      } else {
+        fetchProducts(false);
+      }
+      if (
+        isUserUnlogged(user) ||
+        (user && !isSeller(user.summaryFunction, user.voluntaryRole))
+      ) {
+        navigate("/");
+      }
+    }
+  }, [user, navigate, fetchProducts, modeAdmin]);
 
   const handleShowTrade = () => {
     setShowCart(false);
-    fetchProducts();
+    fetchProducts(modeAdmin);
   };
 
   const handleShowLastTrade = () => {
     setShowLast(false);
-    fetchProducts();
+    fetchProducts(modeAdmin);
   };
 
   return (
