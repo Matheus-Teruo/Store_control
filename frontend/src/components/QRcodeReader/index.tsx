@@ -4,7 +4,7 @@ import {
   Html5Qrcode,
   Html5QrcodeScannerState,
 } from "html5-qrcode";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "../utils/Button";
 import { CameraSVG } from "@/assets/svg";
 
@@ -18,44 +18,52 @@ function QRcodeReader({ onChange, setClose }: QRcodeReaderProps) {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [selectedCamera, setSelectedCamera] = useState<string | null>(null);
   const [scanner, setScanner] = useState<Html5Qrcode | null>(null);
+  const readerRef = useRef<HTMLDivElement | null>(null);
+
+  const getQrboxSize = () => {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const minEdge = Math.min(vw, vh);
+    const size = Math.floor(minEdge * 0.6);
+    return { width: size, height: size };
+  };
 
   useEffect(() => {
     Html5Qrcode.getCameras()
       .then((devices) => {
         if (devices.length > 0) {
-          const savedIndex = localStorage.getItem("selectedCameraIndex");
-          if (savedIndex) {
-            const intIndex = parseInt(savedIndex);
-            if (intIndex < devices.length) {
-              setSelectedCamera(devices[intIndex].id);
-              setSelectedIndex(intIndex);
-            } else {
-              console.error("Erro ao buscar câmeras:", intIndex);
-              setSelectedCamera(devices[0].id);
-            }
-          } else {
-            setSelectedCamera(devices[0].id);
-          }
+          const savedIndex = parseInt(
+            localStorage.getItem("selectedCameraIndex") || "0",
+          );
+          const index = savedIndex < devices.length ? savedIndex : 0;
           setCameras(devices);
+          setSelectedIndex(index);
+          setSelectedCamera(devices[index].id);
         }
       })
       .catch((err) => console.error("Erro ao buscar câmeras:", err));
   }, []);
 
   useEffect(() => {
-    if (!selectedCamera) return;
+    if (!selectedCamera || !readerRef.current) return;
     const qrScanner = new Html5Qrcode("reader");
+    const config = {
+      fps: 10,
+      qrbox: getQrboxSize() || 250,
+    };
 
     setScanner(qrScanner);
     qrScanner
       .start(
         selectedCamera,
-        { fps: 10 },
+        config,
         (decodedText) => {
           onChange(decodedText);
           setClose();
         },
-        (error) => console.log(error),
+        (_error) => {
+          // console.log(error);
+        },
       )
       .catch((err) => console.error("Erro ao iniciar scanner:", err));
 
@@ -91,9 +99,7 @@ function QRcodeReader({ onChange, setClose }: QRcodeReaderProps) {
     if (scanner) {
       scanner
         .stop()
-        .then(() => {
-          setScanner(null);
-        })
+        .then(() => setScanner(null))
         .catch((err) =>
           console.error("Erro ao parar scanner ao desmontar:", err),
         );
@@ -106,7 +112,9 @@ function QRcodeReader({ onChange, setClose }: QRcodeReaderProps) {
     <>
       <div className={styles.main}>
         <h3>Leitor de Cartão</h3>
-        <div id="reader" className={styles.frame}></div>
+        <div className={styles.frame}>
+          <div ref={readerRef} id="reader" className={styles.camera}></div>
+        </div>
         <div className={styles.footer}>
           <div className={styles.spaceHolder} />
           <p>Aponte a camera para o QRcode do cartão</p>

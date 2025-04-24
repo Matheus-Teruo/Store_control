@@ -2,6 +2,7 @@ import activeConfig, {
   fixedCardID,
   fixedCashUuid,
 } from "@/config/activeConfig";
+import { cartUnpacking } from "@/utils/cartCompactor";
 import { regexUuid } from "@/utils/regex";
 import { CreateItem } from "@data/operations/Item";
 import { PaymentType } from "@data/operations/Recharge";
@@ -34,7 +35,7 @@ export type TradeAction =
   | { type: "DECREASE_DELIVERED_ITEM"; payload: string }
   | { type: "REMOVE_DELIVERED_ITEM"; payload: string }
   | { type: "SET_CASH_REGISTER_UUID"; payload: string }
-  | { type: "SET_STAND_UUID"; payload: string }
+  | { type: "SET_STAND_UUID"; payload: string | undefined }
   | { type: "SET_ORDER_CARD_ID"; payload: string }
   | { type: "CLEAR_ERROR" }
   | { type: "RESET" };
@@ -104,7 +105,7 @@ export function tradeReducer(
   switch (action.type) {
     case "SET_CART": {
       const object: CreateTrade & { totalQuantity: number } = JSON.parse(
-        action.payload.cart,
+        cartUnpacking(action.payload.cart, action.payload.products),
       );
 
       for (const item of object.items) {
@@ -282,6 +283,10 @@ export function tradeReducer(
     }
 
     case "SET_STAND_UUID": {
+      if (action.payload === undefined) {
+        const totals = calculateTotals([]);
+        return { ...state, standUuid: "", items: [], ...totals };
+      }
       if (!regexUuid.test(action.payload)) {
         return state;
       }

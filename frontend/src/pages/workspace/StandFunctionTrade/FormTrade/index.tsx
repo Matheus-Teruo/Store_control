@@ -29,6 +29,7 @@ import GlassBackground from "@/components/GlassBackground";
 import { createQRcodeImage } from "@/utils/createQRcode";
 import QRcodeView from "@/components/QRcodeView";
 import QRcodeReader from "@/components/QRcodeReader";
+import { cartPacking, takeStandUuid } from "@/utils/cartCompactor";
 
 type FormPurchaseProps = {
   reducer: [
@@ -37,6 +38,7 @@ type FormPurchaseProps = {
   ];
   hide: () => void;
   type?: "normal" | "pre";
+  isAdmin?: boolean;
 };
 
 const emptyProduct: Omit<SummaryProduct, "uuid"> = {
@@ -50,7 +52,12 @@ const emptyProduct: Omit<SummaryProduct, "uuid"> = {
   standUuid: "",
 };
 
-function FormTrade({ reducer, hide, type = "normal" }: FormPurchaseProps) {
+function FormTrade({
+  reducer,
+  hide,
+  type = "normal",
+  isAdmin = false,
+}: FormPurchaseProps) {
   const [productsRecord, setProductsRecord] = useState<
     Record<string, Omit<SummaryProduct, "uuid">>
   >({});
@@ -113,7 +120,7 @@ function FormTrade({ reducer, hide, type = "normal" }: FormPurchaseProps) {
       }
     } else {
       const jsonString = JSON.stringify(state);
-      const image = createQRcodeImage(jsonString);
+      const image = createQRcodeImage(cartPacking(jsonString, productsRecord));
       setqrcode(image);
     }
     setWaitingFetch(false);
@@ -125,7 +132,35 @@ function FormTrade({ reducer, hide, type = "normal" }: FormPurchaseProps) {
     }
   };
 
-  const handleCodeReader = (value: string) => {
+  const handleCodeReader = async (value: string) => {
+    const fetchStand = takeStandUuid(value);
+    if (!isAdmin) {
+      if (fetchStand !== state.standUuid) {
+        addNotification({
+          title: "Carrinho não pertence a esse estande",
+          message: `Não pode criar carrinho com de estande diferente do estande do voluntário`,
+          type: MessageType.WARNING,
+        });
+        return;
+      }
+    } else {
+      const products = await getListProducts(fetchStand);
+      if (products) {
+        const productsObject = products.reduce(
+          (acc, product) => {
+            const { uuid, ...rest } = product;
+            acc[uuid] = rest;
+            return acc;
+          },
+          {} as Record<string, Omit<SummaryProduct, "uuid">>,
+        );
+        dispatch({
+          type: "SET_CART",
+          payload: { cart: value, products: productsObject },
+        });
+      }
+      return;
+    }
     dispatch({
       type: "SET_CART",
       payload: { cart: value, products: productsRecord },

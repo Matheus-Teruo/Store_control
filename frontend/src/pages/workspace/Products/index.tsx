@@ -54,18 +54,25 @@ function Products() {
   );
 
   useEffect(() => {
-    const admin = isAdmin(user);
-    if (admin)
-      if (user.summaryFunction !== null && !modeAdmin) {
-        setSelectedStand(user.summaryFunction!.uuid);
-        setModeAdmin(admin);
+    if (fetchProducts && user) {
+      const admin = isAdmin(user);
+      if (admin) {
+        setModeAdmin(true);
+        if (user.summaryFunction !== null && !modeAdmin) {
+          setSelectedStand(user.summaryFunction!.uuid);
+          fetchProducts(false);
+        } else {
+          fetchProducts(true);
+        }
+      } else {
+        fetchProducts(false);
       }
-    fetchProducts(admin);
-    if (
-      isUserUnlogged(user) ||
-      (user && !isSeller(user.summaryFunction, user.voluntaryRole))
-    ) {
-      navigate("/");
+      if (
+        isUserUnlogged(user) ||
+        (user && !isSeller(user.summaryFunction, user.voluntaryRole))
+      ) {
+        navigate("/");
+      }
     }
   }, [user, navigate, fetchProducts, modeAdmin]);
 
