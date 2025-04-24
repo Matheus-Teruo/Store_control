@@ -106,7 +106,7 @@ class VoluntaryTest extends BaseTest {
         mockVoluntary.getUuid(),
         mockStand.getUuid());
 
-    mockVoluntary.updateVoluntary(mockStand);
+    mockVoluntary.updateVoluntaryFunction(mockStand);
     ResponseVoluntary expectedResponse = new ResponseVoluntary(mockVoluntary);
 
     when(service.updateFunctionFromVoluntary(updateRequest)).thenReturn(mockVoluntary);
