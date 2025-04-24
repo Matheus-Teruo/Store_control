@@ -43,18 +43,18 @@ function StandFunctionSimple() {
 
   const fetchProducts = useCallback(
     async (requestMode: boolean) => {
-    if (
-      isUserLogged(user) &&
-      isSeller(user.summaryFunction, user.voluntaryRole)
-    ) {
-      const response = await getProducts(
+      if (
+        isUserLogged(user) &&
+        isSeller(user.summaryFunction, user.voluntaryRole)
+      ) {
+        const response = await getProducts(
           requestMode ? selectedStand : user.summaryFunction.uuid,
-        undefined,
-        undefined,
-        page.number,
-      );
-      if (response) setProducts(response.content);
-    }
+          undefined,
+          undefined,
+          page.number,
+        );
+        if (response) setProducts(response.content);
+      }
     },
     [user, page.number, selectedStand, getProducts],
   );
@@ -179,6 +179,7 @@ function StandFunctionSimple() {
           reducer={[state, dispatch]}
           hide={handleShowTrade}
           type="normal"
+          isAdmin={modeAdmin}
         />
       )}
       {showLast && (
