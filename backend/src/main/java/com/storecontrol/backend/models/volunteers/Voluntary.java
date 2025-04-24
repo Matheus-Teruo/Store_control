@@ -84,7 +84,7 @@ public class Voluntary implements UserDetails {
     }
   }
 
-  public void updateVoluntary(Function function){
+  public void updateVoluntaryFunction(Function function){
     this.function = function;
   }
 

@@ -74,7 +74,7 @@ public class VoluntaryService {
 
   @Transactional
   public Voluntary updateVoluntary(RequestUpdateVoluntary request) {
-    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    var voluntary = safeTakeVoluntaryByUuid(request.uuid());
     validation.checkVoluntaryAuthentication(request.uuid(), voluntary);
     validation.checkNameDuplication(request.username(), request.fullname());
     validation.checkRootFullname(request.uuid(), request.fullname());
@@ -122,9 +122,9 @@ public class VoluntaryService {
     if (uuid != null) {
       var function = functionService.takeFunctionByUuid(uuid);
 
-      voluntary.updateVoluntary(function);
+      voluntary.updateVoluntaryFunction(function);
     } else {
-      voluntary.updateVoluntary(null);
+      voluntary.updateVoluntaryFunction(null);
     }
   }
 }
