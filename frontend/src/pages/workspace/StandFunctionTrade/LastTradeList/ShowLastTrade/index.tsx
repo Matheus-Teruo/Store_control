@@ -20,18 +20,18 @@ function ShowLastTrade({
     "create/update" | "delete" | ""
   >("");
   const [trade, setTrade] = useState<Trade | undefined>();
-  const { readTrade, deleteTrade } = useTradeService();
+  const { getTrade, deleteTrade } = useTradeService();
 
   useEffect(() => {
     const fetchPurchase = async () => {
       if (uuid) {
-        const trade = await readTrade(uuid);
+        const trade = await getTrade(uuid);
         if (trade) setTrade(trade);
       }
     };
 
     fetchPurchase();
-  }, [uuid, readTrade]);
+  }, [uuid, getTrade]);
 
   const handleDelete = async () => {
     if (!activeConfig.enableCard) {
@@ -64,7 +64,12 @@ function ShowLastTrade({
               <li key={item.productUuid}>
                 <p>{item.productName}</p>
                 <p>{item.quantity}</p>
-                <p>{(item.unitPrice - item.discount) * item.quantity}</p>
+                <p>
+                  R$
+                  {((item.unitPrice - item.discount) * item.quantity).toFixed(
+                    2,
+                  )}
+                </p>
               </li>
             ))}
           </ul>

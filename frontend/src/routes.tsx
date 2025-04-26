@@ -14,12 +14,14 @@ import Cards from "./pages/admin/Cards";
 import Stands from "./pages/admin/Stands";
 import Tags from "./pages/admin/Tags";
 import Volunteers from "./pages/admin/Volunteers";
-import Purchases from "./pages/analytics/Purchases";
+import LogHeader from "./components/pagePieces/LogsHeader";
+import TradesLogs from "./pages/logpages/TradeLogs";
+import PurchaseLogs from "./pages/logpages/PurchaseLogs";
+import Transactions from "./pages/analytics/Statistics/Transactions";
 import Statistics from "./pages/analytics/Statistics";
 import AuthPage from "./components/pagePieces/AuthBackground";
 import NotificationManager from "./components/NotificationManager";
 import AdminHeader from "./components/pagePieces/AdminHeader";
-import Transactions from "./pages/analytics/Statistics/Transactions";
 import Transaction from "./pages/workspace/TrasactionOperation";
 import activeConfig from "./config/activeConfig";
 import PublicHeader from "./components/pagePieces/PublicHeader";
@@ -57,11 +59,13 @@ function AppRouter() {
           <Route path="products" element={<Products />} />
           <Route path="transaction" element={<Transaction />} />
         </Route>
-        <Route path="/analytics">
-          <Route path="purchases" element={<Purchases />} />
-          <Route path="statistics" element={<Statistics />} />
+        <Route path="/logs" element={<LogHeader />}>
+          <Route path="trades" element={<TradesLogs />} />
+          <Route path="purchases" element={<PurchaseLogs />} />
           <Route path="transactions" element={<Transactions />} />
-          {/* TODO: arrumar path depois */}
+        </Route>
+        <Route path="/analytics">
+          <Route path="statistics" element={<Statistics />} />
         </Route>
         <Route path="/admin/tags" element={<Tags />} />
         <Route path="/admin" element={<AdminHeader />}>

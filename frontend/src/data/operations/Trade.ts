@@ -5,7 +5,7 @@ export default interface Trade {
   uuid: string;
   rechargeUuid: string;
   purchaseUuid: string;
-  rechargeValue: boolean;
+  rechargeValue: number;
   paymentTypeEnum: PaymentType;
   onOrder: boolean;
   tradeTimeStamp: string; // TODO: data
@@ -16,7 +16,7 @@ export interface SummaryTrade {
   uuid: string;
   rechargeUuid: string;
   purchaseUuid: string;
-  rechargeValue: boolean;
+  rechargeValue: number;
   paymentTypeEnum: PaymentType;
   onOrder: boolean;
   tradeTimeStamp: string; // TODO: data

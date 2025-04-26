@@ -83,6 +83,13 @@ function Hub() {
       )}
       {isManeger(user) && (
         <ul className={styles.manager}>
+          <h3>Histórico (Logs)</h3>
+          <li className={styles.liTags}>
+            <Link className={styles.links} to="/logs/trades">
+              Vendas Diretas
+            </Link>
+          </li>
+          <h3>Organização</h3>
           {isAdmin(user) && (
             <li className={styles.liTags}>
               <Link className={styles.links} to="/admin/tags">
