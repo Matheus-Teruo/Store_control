@@ -3,9 +3,9 @@ package com.storecontrol.backend.controllers.volunteers;
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.volunteers.Voluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
+import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
 import com.storecontrol.backend.models.volunteers.response.ResponseSummaryVoluntary;
 import com.storecontrol.backend.models.volunteers.response.ResponseVoluntary;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;
@@ -71,6 +71,31 @@ class VoluntaryTest extends BaseTest {
 
     // Verify interactions
     verify(service, times(1)).pageVolunteers(any(Pageable.class));
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
+  void testReadListVolunteersSuccess() throws Exception {
+    // Given
+    List<Voluntary> mockVolunteers = List.of(
+        createVoluntaryEntity(UUID.randomUUID()),
+        createVoluntaryEntity(UUID.randomUUID())
+    );
+    List<ResponseSummaryVoluntary> expectedResponse = mockVolunteers.stream()
+        .map(ResponseSummaryVoluntary::new)
+        .toList();
+
+    when(service.listVolunteers()).thenReturn(mockVolunteers);
+
+    // When & Then
+    mockMvc.perform(get("/volunteers/list")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(content().json(toJson(expectedResponse)));
+
+    // Verify interactions
+    verify(service, times(1)).listVolunteers();
     verifyNoMoreInteractions(service);
   }
 
