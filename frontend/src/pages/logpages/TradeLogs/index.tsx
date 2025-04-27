@@ -16,15 +16,39 @@ import {
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { useNavigate } from "react-router-dom";
 import { PaymentStringMetadata } from "@/components/selects/PaymentSelect/paymentMetadata";
+import useVoluntaryService from "@service/voluntary/useVoluntaryService";
+import { SummaryVoluntary } from "@data/volunteers/Voluntary";
 
 function TradeLogs() {
   const [trades, setTrades] = useState<SummaryTrade[]>([]);
+  const [volunteersRecord, setVolunteersRecord] = useState<
+    Record<string, Omit<SummaryVoluntary, "uuid">>
+  >({});
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [formState, formDispach] = useReducer(formReducer, initialFormState);
   const [modeAdmin, setModeAdmin] = useState<boolean>(false);
   const { getTrades } = useTradeService();
+  const { getListVolunteers } = useVoluntaryService();
   const { user } = useUserContext();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchAssociations = async () => {
+      const products = await getListVolunteers();
+      if (products) {
+        const productsObject = products.reduce(
+          (acc, product) => {
+            const { uuid, ...rest } = product;
+            acc[uuid] = rest;
+            return acc;
+          },
+          {} as Record<string, Omit<SummaryVoluntary, "uuid">>,
+        );
+        setVolunteersRecord(productsObject);
+      }
+    };
+    fetchAssociations();
+  }, [getListVolunteers]);
 
   const fetchTrades = useCallback(
     async (modeAmin: boolean) => {
@@ -67,6 +91,7 @@ function TradeLogs() {
     <div className={styles.body}>
       <li key={"header"} className={styles.listHeader}>
         <p>Data</p>
+        <p>Voluntário</p>
         <p>Quantidade de itens</p>
         <p>Método de pagamento</p>
         <p>Custo total</p>
@@ -79,6 +104,7 @@ function TradeLogs() {
             className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
           >
             <p>{trade.tradeTimeStamp.replace("T", " ")}</p>
+            <p>{volunteersRecord[trade.voluntaryUuid].fullname}</p>
             <p>{trade.totalItems}</p>
             <p>{PaymentStringMetadata[trade.paymentTypeEnum].pt}</p>
             <p>R${trade.rechargeValue.toFixed(2)}</p>

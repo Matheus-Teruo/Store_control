@@ -67,6 +67,8 @@ function TradeDetail({ hide, uuid }: TradeDetailProps) {
         <div className={styles.details}>
           <label>Data</label>
           <p>{trade?.tradeTimeStamp.replace("T", " ")}</p>
+          <label>Voluntário</label>
+          <p>{trade?.summaryVoluntary.fullname}</p>
           <label>Recarga</label>
           <p>R${trade && trade?.rechargeValue.toFixed(2)}</p>
           <label>Tipo de pagamento</label>

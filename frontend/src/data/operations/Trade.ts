@@ -1,3 +1,4 @@
+import { SummaryVoluntary } from "@data/volunteers/Voluntary";
 import Item, { CreateItem } from "./Item";
 import { PaymentType } from "./Recharge";
 
@@ -10,6 +11,7 @@ export default interface Trade {
   onOrder: boolean;
   tradeTimeStamp: string; // TODO: data
   items: Item[];
+  summaryVoluntary: SummaryVoluntary;
 }
 
 export interface SummaryTrade {
@@ -21,6 +23,7 @@ export interface SummaryTrade {
   onOrder: boolean;
   tradeTimeStamp: string; // TODO: data
   totalItems: number;
+  voluntaryUuid: string;
 }
 
 export interface CreateTrade {
