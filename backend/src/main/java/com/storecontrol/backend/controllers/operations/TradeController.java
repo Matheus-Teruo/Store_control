@@ -5,12 +5,15 @@ import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.trades.request.RequestCreateTrade;
 import com.storecontrol.backend.models.operations.trades.response.ResponseSummaryTrade;
 import com.storecontrol.backend.models.operations.trades.response.ResponseTrade;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.services.operations.TradeService;
+import com.storecontrol.backend.services.volunteers.VoluntaryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -24,6 +27,9 @@ public class TradeController {
 
   @Autowired
   private TradeService service;
+
+  @Autowired
+  private VoluntaryService voluntaryService;
 
   @PostMapping
   public ResponseEntity<ResponseTrade> createTrade(@RequestBody @Valid RequestCreateTrade request) {
@@ -43,20 +49,24 @@ public class TradeController {
 
     var trade = service.createTrade(rechargeRequest, purchaseRequest);
 
+    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
         .path("/{uuid}")
         .buildAndExpand(trade.getUuid())
         .toUri();
 
-    return ResponseEntity.created(location).body(new ResponseTrade(trade));
+    return ResponseEntity.created(location).body(new ResponseTrade(trade, voluntary));
   }
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseTrade> readTrade(@PathVariable @Valid UUID uuid) {
-    var response = new ResponseTrade(service.takeTradeByUuid(uuid));
+    var trade = service.takeTradeByUuid(uuid);
 
-    return ResponseEntity.ok(response);
+    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(trade.getVoluntaryUuid());
+
+    return ResponseEntity.ok(new ResponseTrade(trade, voluntary));
   }
 
   @GetMapping
