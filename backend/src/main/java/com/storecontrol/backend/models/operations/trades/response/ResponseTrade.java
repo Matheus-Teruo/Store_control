@@ -3,6 +3,8 @@ package com.storecontrol.backend.models.operations.trades.response;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import com.storecontrol.backend.models.operations.purchases.response.ResponseItem;
 import com.storecontrol.backend.models.operations.trades.TradeView;
+import com.storecontrol.backend.models.volunteers.Voluntary;
+import com.storecontrol.backend.models.volunteers.response.ResponseSummaryVoluntary;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,10 +18,11 @@ public record ResponseTrade(
     PaymentType paymentTypeEnum,
     Boolean onOrder,
     String tradeTimeStamp,
-    List<ResponseItem> items
+    List<ResponseItem> items,
+    ResponseSummaryVoluntary summaryVoluntary
 ) {
 
-  public ResponseTrade(TradeView trade) {
+  public ResponseTrade(TradeView trade, Voluntary voluntary) {
     this(trade.getUuid(),
         trade.getRechargeUuid(),
         trade.getPurchaseUuid(),
@@ -27,7 +30,8 @@ public record ResponseTrade(
         trade.getPaymentTypeEnum(),
         trade.isOnOrder(),
         trade.getTradeTimeStamp().toString(),
-        trade.getItems().stream().map(ResponseItem::new).toList()
+        trade.getItems().stream().map(ResponseItem::new).toList(),
+        new ResponseSummaryVoluntary(voluntary)
     );
   }
 }
