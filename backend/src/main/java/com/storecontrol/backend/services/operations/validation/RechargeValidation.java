@@ -48,8 +48,8 @@ public class RechargeValidation {
     }
   }
 
-  public void checkRechargeBelongsToVoluntary(Recharge recharge, UUID userUuid) {
-    if (recharge.getVoluntary().getVoluntaryRole().isNotAdmin() && !recharge.getVoluntaryUuid().equals(userUuid)) {
+  public void checkRechargeBelongsToVoluntary(Recharge recharge, Voluntary voluntary) {
+    if (voluntary.getVoluntaryRole().isNotAdmin() && !recharge.getVoluntaryUuid().equals(voluntary.getUuid())) {
       throw new InvalidOperationException(
           MessageResolver.getInstance().getMessage("validation.recharge.checkVoluntary.notOwner.error"),
           MessageResolver.getInstance().getMessage("validation.recharge.checkVoluntary.notOwner.message")

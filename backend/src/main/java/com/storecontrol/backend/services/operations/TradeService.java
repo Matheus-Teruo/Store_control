@@ -188,9 +188,9 @@ public class TradeService {
 
     validation.checkIfLastTrade(recharge, purchase, trade);
     if (!fixedCardId.equals(cardId)) purchaseValidation.checkSomeItemWasDelivered(purchase);
-    purchaseValidation.checkPurchaseBelongsToVoluntary(purchase, voluntary.getUuid());
+    purchaseValidation.checkPurchaseBelongsToVoluntary(purchase, voluntary);
     purchaseValidation.checkIfLastPurchaseOfVoluntary(purchase, voluntary);
-    rechargeValidation.checkRechargeBelongsToVoluntary(recharge, voluntary.getUuid());
+    rechargeValidation.checkRechargeBelongsToVoluntary(recharge, voluntary);
     rechargeValidation.checkIfLastRechargeOfVoluntary(recharge, voluntary);
 
     updateItemsFromItemsChanged(purchase, true);

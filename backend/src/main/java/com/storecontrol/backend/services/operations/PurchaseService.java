@@ -113,7 +113,7 @@ public class PurchaseService {
     var purchase = safeTakePurchaseByUuid(uuid);
 
     validation.checkSomeItemWasDelivered(purchase);
-    validation.checkPurchaseBelongsToVoluntary(purchase, voluntary.getUuid());
+    validation.checkPurchaseBelongsToVoluntary(purchase, voluntary);
     validation.checkIfLastPurchaseOfVoluntary(purchase, voluntary);
 
     updateItemsFromItemsChanged(purchase, true);

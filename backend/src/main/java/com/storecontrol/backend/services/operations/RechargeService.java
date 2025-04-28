@@ -85,7 +85,7 @@ public class RechargeService {
     var recharge = safeTakeRechargeByUuid(uuid);
 
     validation.checkDebitRemainderPositive(recharge);
-    validation.checkRechargeBelongsToVoluntary(recharge, voluntary.getUuid());
+    validation.checkRechargeBelongsToVoluntary(recharge, voluntary);
     validation.checkIfLastRechargeOfVoluntary(recharge, voluntary);
 
     recharge.getCustomer().getOrderCard().incrementDebit(recharge.getRechargeValue().negate());

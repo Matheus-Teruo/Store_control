@@ -220,8 +220,8 @@ public class PurchaseValidation {
     }
   }
 
-  public void checkPurchaseBelongsToVoluntary(Purchase purchase, UUID userUuid) {
-    if (purchase.getVoluntary().getVoluntaryRole().isNotAdmin() && !purchase.getVoluntaryUuid().equals(userUuid)) {
+  public void checkPurchaseBelongsToVoluntary(Purchase purchase, Voluntary voluntary) {
+    if (voluntary.getVoluntaryRole().isNotAdmin() && !purchase.getVoluntaryUuid().equals(voluntary.getUuid())) {
       throw new InvalidOperationException(
           MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.notOwner.error"),
           MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.notOwner.message")
