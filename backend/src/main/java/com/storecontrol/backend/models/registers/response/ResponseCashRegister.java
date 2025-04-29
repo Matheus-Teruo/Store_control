@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public record ResponseCashRegister(
     UUID uuid,
-    String cashRegister,
+    String cashRegisterName,
     BigDecimal cashTotal,
     BigDecimal creditTotal,
     BigDecimal debitTotal

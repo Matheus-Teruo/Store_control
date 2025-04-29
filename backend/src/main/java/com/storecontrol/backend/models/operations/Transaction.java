@@ -33,6 +33,9 @@ public class Transaction {
   @Column(name = "transaction_time_stamp", nullable = false)
   private LocalDateTime transactionTimeStamp;
 
+  @Column(name = "cash_register_uuid", insertable = false, updatable = false)
+  private UUID cashRegisterUuid;
+
   @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "cash_register_uuid", nullable = false)
   private CashRegister cashRegister;
 

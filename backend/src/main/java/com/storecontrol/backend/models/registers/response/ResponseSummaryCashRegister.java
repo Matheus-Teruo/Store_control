@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public record ResponseSummaryCashRegister(
     UUID uuid,
-    String cashRegister
+    String cashRegisterName
 ) {
 
   public ResponseSummaryCashRegister(CashRegister cashRegister) {
