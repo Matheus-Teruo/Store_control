@@ -1,6 +1,6 @@
 export default interface CashRegister {
   uuid: string;
-  cashRegister: string;
+  cashRegisterName: string;
   cashTotal: number;
   creditTotal: number;
   debitTotal: number;
@@ -8,7 +8,7 @@ export default interface CashRegister {
 
 export interface SummaryCashRegister {
   uuid: string;
-  cashRegister: string;
+  cashRegisterName: string;
 }
 
 export interface CreateCashRegister {
