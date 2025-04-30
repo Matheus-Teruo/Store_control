@@ -84,7 +84,7 @@ public class TransactionService {
         transaction.getTransactionTypeEnum().toString(),
         transaction.getCashRegister(),
         true);
-    validation.checkTransactionBelongsToVoluntary(transaction, manager.getUuid());
+    validation.checkTransactionBelongsToVoluntary(transaction, manager);
     validation.checkIfLastTransactionOfVoluntary(transaction, manager);
 
     handleCashTotal(transaction, transaction.getTransactionTypeEnum().isExit());

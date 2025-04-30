@@ -54,8 +54,8 @@ public class TransactionValidation {
     }
   }
 
-  public void checkTransactionBelongsToVoluntary(Transaction transaction, UUID userUuid) {
-    if (transaction.getVoluntary().getVoluntaryRole().isNotAdmin() && !transaction.getVoluntaryUuid().equals(userUuid)) {
+  public void checkTransactionBelongsToVoluntary(Transaction transaction, Voluntary manager) {
+    if (manager.getVoluntaryRole().isNotAdmin() && !transaction.getVoluntaryUuid().equals(manager.getUuid())) {
       throw new InvalidOperationException(
           MessageResolver.getInstance().getMessage("validation.transaction.checkVoluntary.notOwner.error"),
           MessageResolver.getInstance().getMessage("validation.transaction.checkVoluntary.notOwner.message")

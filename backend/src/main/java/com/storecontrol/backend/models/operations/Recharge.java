@@ -37,6 +37,9 @@ public class Recharge {
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "customer_uuid", nullable = false)
     private Customer customer;
 
+    @Column(name = "cash_register_uuid", insertable = false, updatable = false)
+    private UUID cashRegisterUuid;
+
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "cash_register_uuid", nullable = false)
     private CashRegister cashRegister;
 
