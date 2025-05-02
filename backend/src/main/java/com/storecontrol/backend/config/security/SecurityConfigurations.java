@@ -145,6 +145,8 @@ public class SecurityConfigurations {
       "/registers/list",
       "/transactions/last3",
       "/transactions/{uuid}",
+      "/charts/registers/recharges",
+      "/charts/stands/purchases"
   };
 
   private static final String[] AUTHORIZED_POST_ENDPOINTS_MANAGEMENT = {

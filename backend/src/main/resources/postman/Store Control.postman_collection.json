@@ -323,6 +323,54 @@
 			]
 		},
 		{
+			"name": "Chart",
+			"item": [
+				{
+					"name": "Chart Recharges",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}charts/registers/recharges",
+							"host": [
+								"{{hostPath}}charts"
+							],
+							"path": [
+								"registers",
+								"recharges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Chart Purchases",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}charts/stands/purchases",
+							"host": [
+								"{{hostPath}}charts"
+							],
+							"path": [
+								"stands",
+								"purchases"
+							],
+							"query": [
+								{
+									"key": "standUuid",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Customer",
 			"item": [
 				{
@@ -1526,28 +1574,29 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{hostPath}}purchases?standUuid={{stand_id}}",
+									"raw": "{{hostPath}}purchases",
 									"host": [
 										"{{hostPath}}purchases"
 									],
 									"query": [
 										{
 											"key": "standUuid",
-											"value": "{{stand_id}}"
+											"value": "{{stand_id}}",
+											"disabled": true
 										},
 										{
 											"key": "page",
-											"value": null,
+											"value": "",
 											"disabled": true
 										},
 										{
 											"key": "size",
-											"value": null,
+											"value": "",
 											"disabled": true
 										},
 										{
 											"key": "sort",
-											"value": null,
+											"value": "",
 											"disabled": true
 										}
 									]
@@ -2034,26 +2083,30 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{hostPath}}trades?standUuid&page&size&sort",
+									"raw": "{{hostPath}}trades",
 									"host": [
 										"{{hostPath}}trades"
 									],
 									"query": [
 										{
 											"key": "standUuid",
-											"value": null
+											"value": null,
+											"disabled": true
 										},
 										{
 											"key": "page",
-											"value": null
+											"value": null,
+											"disabled": true
 										},
 										{
 											"key": "size",
-											"value": null
+											"value": null,
+											"disabled": true
 										},
 										{
 											"key": "sort",
-											"value": null
+											"value": null,
+											"disabled": true
 										}
 									]
 								}

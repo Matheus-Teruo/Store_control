@@ -122,10 +122,12 @@ public class TestDataFactory {
   }
 
   public static List<Item> createItemEntity(Purchase purchase) {
+    UUID productUuid1 = UUID.randomUUID();
+    UUID productUuid2 = UUID.randomUUID();
     return List.of(
-        new Item(new ItemId(createProductEntity(UUID.randomUUID()), purchase),
+        new Item(new ItemId(createProductEntity(productUuid1), purchase), productUuid1,
             2, 0, BigDecimal.TWO, BigDecimal.ZERO, true),
-        new Item(new ItemId(createProductEntity(UUID.randomUUID()), purchase),
+        new Item(new ItemId(createProductEntity(productUuid2), purchase), productUuid2,
             2, 0, BigDecimal.TWO, BigDecimal.ZERO, true));
   }
 
