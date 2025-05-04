@@ -1,12 +1,16 @@
 package com.storecontrol.backend.controllers.charts;
 
 import com.storecontrol.backend.models.registers.response.ResponseCashRegisterChart;
+import com.storecontrol.backend.models.registers.response.ResponsePaymentTypeChart;
 import com.storecontrol.backend.models.stands.response.ResponseStandChart;
+import com.storecontrol.backend.models.stands.response.ResponseStandTotalChart;
 import com.storecontrol.backend.services.charts.ChartService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,9 +22,21 @@ public class ChartController {
   @Autowired
   private ChartService service;
 
+  @GetMapping("/registers/payment-type")
+  public ResponseEntity<ResponsePaymentTypeChart> readPaymentTypeTotalCharts() {
+    ResponsePaymentTypeChart charts = service.getPaymentTypeTotalCharts();
+    return ResponseEntity.ok(charts);
+  }
+
   @GetMapping("/registers/recharges")
   public ResponseEntity<List<ResponseCashRegisterChart>> readRechargeCharts() {
     List<ResponseCashRegisterChart> charts = service.getRechargeCharts();
+    return ResponseEntity.ok(charts);
+  }
+
+  @GetMapping("/stands")
+  public ResponseEntity<List<ResponseStandTotalChart>> readStandCharts(@RequestParam(required = false) UUID standUuid) {
+    List<ResponseStandTotalChart> charts = service.getStandsCharts(standUuid);
     return ResponseEntity.ok(charts);
   }
 

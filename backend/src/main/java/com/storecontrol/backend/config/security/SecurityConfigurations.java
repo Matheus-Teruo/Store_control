@@ -145,7 +145,9 @@ public class SecurityConfigurations {
       "/registers/list",
       "/transactions/last3",
       "/transactions/{uuid}",
+      "/charts/registers/payment-type",
       "/charts/registers/recharges",
+      "/charts/stands",
       "/charts/stands/purchases"
   };
 

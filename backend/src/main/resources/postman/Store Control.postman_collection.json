@@ -326,6 +326,24 @@
 			"name": "Chart",
 			"item": [
 				{
+					"name": "Chart Payment Total",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}charts/registers/payment-type",
+							"host": [
+								"{{hostPath}}charts"
+							],
+							"path": [
+								"registers",
+								"payment-type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Chart Recharges",
 					"request": {
 						"method": "GET",
@@ -338,6 +356,23 @@
 							"path": [
 								"registers",
 								"recharges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Chart Stand",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}charts/stands",
+							"host": [
+								"{{hostPath}}charts"
+							],
+							"path": [
+								"stands"
 							]
 						}
 					},
@@ -1293,23 +1328,43 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}volunteers?page&size&sort",
+							"raw": "{{hostPath}}volunteers",
 							"host": [
 								"{{hostPath}}volunteers"
 							],
 							"query": [
 								{
 									"key": "page",
-									"value": null
+									"value": null,
+									"disabled": true
 								},
 								{
 									"key": "size",
-									"value": null
+									"value": null,
+									"disabled": true
 								},
 								{
 									"key": "sort",
-									"value": null
+									"value": null,
+									"disabled": true
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Volunteers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}volunteers/list",
+							"host": [
+								"{{hostPath}}volunteers"
+							],
+							"path": [
+								"list"
 							]
 						}
 					},

@@ -8,10 +8,12 @@ import com.storecontrol.backend.models.operations.purchases.response.ResponsePur
 import com.storecontrol.backend.models.operations.response.ResponseRechargeChartNode;
 import com.storecontrol.backend.models.registers.CashRegister;
 import com.storecontrol.backend.models.registers.response.ResponseCashRegisterChart;
+import com.storecontrol.backend.models.registers.response.ResponsePaymentTypeChart;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.models.stands.products.response.ResponseProductChart;
 import com.storecontrol.backend.models.stands.response.ResponseStandChart;
+import com.storecontrol.backend.models.stands.response.ResponseStandTotalChart;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
@@ -49,6 +51,24 @@ public class ChartService {
 
   @Autowired
   private ChartValidation validation;
+
+  public ResponsePaymentTypeChart getPaymentTypeTotalCharts() {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    validation.checkManagerRegister(manager);
+
+    List<Recharge> recharges = rechargeRepository.findAllValid();
+
+    BigDecimal totalCash = BigDecimal.ZERO;
+    BigDecimal totalCredit = BigDecimal.ZERO;
+    BigDecimal totalDebit = BigDecimal.ZERO;
+    for (Recharge recharge : recharges) {
+      if (recharge.getPaymentTypeEnum() == PaymentType.CASH) totalCash = totalCash.add(recharge.getRechargeValue());
+      if (recharge.getPaymentTypeEnum() == PaymentType.CREDIT) totalCredit = totalCredit.add(recharge.getRechargeValue());
+      if (recharge.getPaymentTypeEnum() == PaymentType.DEBIT) totalDebit = totalDebit.add(recharge.getRechargeValue());
+    }
+
+    return new ResponsePaymentTypeChart(totalCash, totalCredit, totalDebit);
+  }
 
   public List<ResponseCashRegisterChart> getRechargeCharts() {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -100,13 +120,66 @@ public class ChartService {
     return response;
   }
 
+  public List<ResponseStandTotalChart> getStandsCharts(UUID standUuid) {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    validation.checkManagerStand(manager, standUuid);
+
+    List<Stand> stands = standService.listStands();
+    List<Purchase> purchases = purchaseRepository.findAllValidAndByStandUuid(standUuid);
+
+    Map<UUID, Stand> standMap = stands.stream()
+        .collect(Collectors.toMap(Stand::getUuid, Function.identity()));
+
+    Map<UUID, ResponseStandTotalChart> totalsMap = new HashMap<>();
+
+    for (Purchase purchase : purchases) {
+      UUID currentStandUuid = purchase.getStandUuid();
+      Stand stand = standMap.get(currentStandUuid);
+      if (stand == null) continue; // Skip if stand is missing (defensive)
+
+      int totalQuantity = 0;
+      BigDecimal totalValue = BigDecimal.ZERO;
+
+      for (Item item : purchase.getItems()) {
+        if (!item.isValid()) continue;
+
+        int quantity = item.getQuantity();
+        BigDecimal price = item.getUnitPrice();
+        BigDecimal discount = item.getDiscount();
+
+        BigDecimal itemTotal = price.multiply(BigDecimal.valueOf(quantity)).subtract(discount);
+
+        totalQuantity += quantity;
+        totalValue = totalValue.add(itemTotal);
+      }
+
+      totalsMap.merge(
+          currentStandUuid,
+          new ResponseStandTotalChart(
+              currentStandUuid,
+              stand.getFunctionName(), // ou stand.getFunctionName() se preferir
+              totalQuantity,
+              totalValue
+          ),
+          (oldVal, newVal) -> new ResponseStandTotalChart(
+              oldVal.standUuid(),
+              oldVal.standName(),
+              oldVal.totalProductQuantity() + newVal.totalProductQuantity(),
+              oldVal.totalAmount().add(newVal.totalAmount())
+          )
+      );
+    }
+
+    return new ArrayList<>(totalsMap.values());
+  }
+
   public List<ResponseStandChart> getPurchaseCharts(UUID standUuid) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerStand(manager, standUuid);
 
     List<Stand> stands = standService.listStands();
-    List<Purchase> purchases = purchaseRepository.findAllValid();
-    List<Product> products = productRepository.findAllValidTrueOrByStandUuid(standUuid);
+    List<Purchase> purchases = purchaseRepository.findAllValidAndByStandUuid(standUuid);
+    List<Product> products = productRepository.findAllValidAndByStandUuid(standUuid);
 
     Map<UUID, Stand> standMap = stands.stream()
         .collect(Collectors.toMap(Stand::getUuid, Function.identity()));
@@ -137,8 +210,8 @@ public class ChartService {
 
         // Total
         BigDecimal itemTotal = item.getUnitPrice()
-            .multiply(BigDecimal.valueOf(item.getQuantity()))
-            .subtract(item.getDiscount() != null ? item.getDiscount() : BigDecimal.ZERO);
+            .subtract(item.getDiscount() != null ? item.getDiscount() : BigDecimal.ZERO)
+            .multiply(BigDecimal.valueOf(item.getQuantity()));
 
         totalData
             .computeIfAbsent(pStandUuid, k -> new HashMap<>())
@@ -193,7 +266,6 @@ public class ChartService {
 
     return response;
   }
-
 
 
   // Auxiliares
