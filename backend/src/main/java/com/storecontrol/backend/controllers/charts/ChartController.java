@@ -1,9 +1,10 @@
 package com.storecontrol.backend.controllers.charts;
 
-import com.storecontrol.backend.models.registers.response.ResponseCashRegisterChart;
-import com.storecontrol.backend.models.registers.response.ResponsePaymentTypeChart;
-import com.storecontrol.backend.models.stands.response.ResponseStandChart;
-import com.storecontrol.backend.models.stands.response.ResponseStandTotalChart;
+import com.storecontrol.backend.models.charts.response.ResponseCashRegisterChart;
+import com.storecontrol.backend.models.charts.response.ResponsePaymentTypeChart;
+import com.storecontrol.backend.models.charts.response.ResponseStandChart;
+import com.storecontrol.backend.models.charts.response.ResponseStandProductTotalChart;
+import com.storecontrol.backend.models.charts.response.ResponseStandTotalChart;
 import com.storecontrol.backend.services.charts.ChartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,12 @@ public class ChartController {
   @GetMapping("/stands")
   public ResponseEntity<List<ResponseStandTotalChart>> readStandCharts(@RequestParam(required = false) UUID standUuid) {
     List<ResponseStandTotalChart> charts = service.getStandsCharts(standUuid);
+    return ResponseEntity.ok(charts);
+  }
+
+  @GetMapping("/stands/products")
+  public ResponseEntity<List<ResponseStandProductTotalChart>> readProductsCharts(@RequestParam(required = false) UUID standUuid) {
+    List<ResponseStandProductTotalChart> charts = service.getProductsCharts(standUuid);
     return ResponseEntity.ok(charts);
   }
 

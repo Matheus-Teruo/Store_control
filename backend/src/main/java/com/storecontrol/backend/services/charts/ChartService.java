@@ -4,16 +4,18 @@ import com.storecontrol.backend.models.enumerate.PaymentType;
 import com.storecontrol.backend.models.operations.Recharge;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
-import com.storecontrol.backend.models.operations.purchases.response.ResponsePurchaseChartNode;
-import com.storecontrol.backend.models.operations.response.ResponseRechargeChartNode;
+import com.storecontrol.backend.models.charts.response.ResponsePurchaseChartNode;
+import com.storecontrol.backend.models.charts.response.ResponseRechargeChartNode;
 import com.storecontrol.backend.models.registers.CashRegister;
-import com.storecontrol.backend.models.registers.response.ResponseCashRegisterChart;
-import com.storecontrol.backend.models.registers.response.ResponsePaymentTypeChart;
+import com.storecontrol.backend.models.charts.response.ResponseCashRegisterChart;
+import com.storecontrol.backend.models.charts.response.ResponsePaymentTypeChart;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.products.Product;
-import com.storecontrol.backend.models.stands.products.response.ResponseProductChart;
-import com.storecontrol.backend.models.stands.response.ResponseStandChart;
-import com.storecontrol.backend.models.stands.response.ResponseStandTotalChart;
+import com.storecontrol.backend.models.charts.response.ResponseProductChart;
+import com.storecontrol.backend.models.charts.response.ResponseProductTotalChart;
+import com.storecontrol.backend.models.charts.response.ResponseStandChart;
+import com.storecontrol.backend.models.charts.response.ResponseStandProductTotalChart;
+import com.storecontrol.backend.models.charts.response.ResponseStandTotalChart;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
@@ -173,6 +175,75 @@ public class ChartService {
     return new ArrayList<>(totalsMap.values());
   }
 
+  public List<ResponseStandProductTotalChart> getProductsCharts(UUID standUuid) {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    validation.checkManagerStand(manager, standUuid);
+
+    List<Stand> stands = standService.listStands();
+    List<Purchase> purchases = purchaseRepository.findAllValidAndByStandUuid(standUuid);
+    List<Product> products = productRepository.findAllValidAndByStandUuid(standUuid);
+
+    Map<UUID, Stand> standMap = stands.stream()
+        .collect(Collectors.toMap(Stand::getUuid, Function.identity()));
+
+    Map<UUID, Product> productMap = products.stream()
+        .collect(Collectors.toMap(Product::getUuid, Function.identity()));
+
+    Map<UUID, Map<UUID, ResponseProductTotalChart>> standProductTotals = new HashMap<>();
+
+    for (Purchase purchase : purchases) {
+      UUID currentStandUuid = purchase.getStandUuid();
+      Stand stand = standMap.get(currentStandUuid);
+      if (stand == null) continue;
+
+      Map<UUID, ResponseProductTotalChart> productTotals =
+          standProductTotals.computeIfAbsent(currentStandUuid, k -> new HashMap<>());
+
+      for (Item item : purchase.getItems()) {
+        if (!item.isValid()) continue;
+
+        UUID productUuid = item.getProductUuid();
+        Product product = productMap.get(productUuid);
+        if (product == null) continue;
+
+        int quantity = item.getQuantity();
+        BigDecimal price = item.getUnitPrice();
+        BigDecimal discount = item.getDiscount();
+
+        BigDecimal itemTotal = price.multiply(BigDecimal.valueOf(quantity)).subtract(discount);
+
+        productTotals.merge(
+            productUuid,
+            new ResponseProductTotalChart(
+                productUuid,
+                product.getProductName(),
+                quantity,
+                itemTotal
+            ),
+            (oldVal, newVal) -> new ResponseProductTotalChart(
+                oldVal.productUuid(),
+                oldVal.productName(),
+                oldVal.totalProductQuantity() + newVal.totalProductQuantity(),
+                oldVal.totalAmount().add(newVal.totalAmount())
+            )
+        );
+      }
+    }
+
+    List<ResponseStandProductTotalChart> response = new ArrayList<>();
+
+    for (Map.Entry<UUID, Map<UUID, ResponseProductTotalChart>> standEntry : standProductTotals.entrySet()) {
+      UUID currentStandUuid = standEntry.getKey();
+      Stand stand = standMap.get(currentStandUuid);
+      if (stand == null) continue;
+
+      List<ResponseProductTotalChart> productCharts = new ArrayList<>(standEntry.getValue().values());
+      response.add(new ResponseStandProductTotalChart(currentStandUuid, stand.getFunctionName(), productCharts));
+    }
+
+    return response;
+  }
+
   public List<ResponseStandChart> getPurchaseCharts(UUID standUuid) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerStand(manager, standUuid);
@@ -268,7 +339,6 @@ public class ChartService {
   }
 
 
-  // Auxiliares
   private LocalDateTime truncateTo5Minutes(LocalDateTime timestamp) {
     int minute = timestamp.getMinute();
     int minutesGroup = (minute / 5) * 5;

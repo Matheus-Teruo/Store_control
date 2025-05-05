@@ -1,4 +1,4 @@
-package com.storecontrol.backend.models.registers.response;
+package com.storecontrol.backend.models.charts.response;
 
 import java.math.BigDecimal;
 

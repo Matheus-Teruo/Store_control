@@ -379,6 +379,24 @@
 					"response": []
 				},
 				{
+					"name": "Chart Product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}charts/stands/products",
+							"host": [
+								"{{hostPath}}charts"
+							],
+							"path": [
+								"stands",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Chart Purchases",
 					"request": {
 						"method": "GET",

@@ -1,6 +1,4 @@
-package com.storecontrol.backend.models.registers.response;
-
-import com.storecontrol.backend.models.operations.response.ResponseRechargeChartNode;
+package com.storecontrol.backend.models.charts.response;
 
 import java.util.List;
 import java.util.UUID;

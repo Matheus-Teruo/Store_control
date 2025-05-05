@@ -148,6 +148,7 @@ public class SecurityConfigurations {
       "/charts/registers/payment-type",
       "/charts/registers/recharges",
       "/charts/stands",
+      "/charts/stands/products",
       "/charts/stands/purchases"
   };
 

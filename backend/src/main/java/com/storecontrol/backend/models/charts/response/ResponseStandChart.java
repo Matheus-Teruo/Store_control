@@ -1,6 +1,4 @@
-package com.storecontrol.backend.models.stands.response;
-
-import com.storecontrol.backend.models.stands.products.response.ResponseProductChart;
+package com.storecontrol.backend.models.charts.response;
 
 import java.util.List;
 import java.util.UUID;

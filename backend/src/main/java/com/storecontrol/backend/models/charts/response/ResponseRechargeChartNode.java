@@ -1,4 +1,4 @@
-package com.storecontrol.backend.models.operations.response;
+package com.storecontrol.backend.models.charts.response;
 
 import com.storecontrol.backend.models.enumerate.PaymentType;
 
