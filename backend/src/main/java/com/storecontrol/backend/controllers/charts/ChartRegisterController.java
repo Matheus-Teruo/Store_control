@@ -19,8 +19,8 @@ public class ChartRegisterController {
   private ChartService service;
 
   @GetMapping("/payment-type")
-  public ResponseEntity<ResponsePaymentTypeChart> readPaymentTypeTotalCharts() {
-    ResponsePaymentTypeChart charts = service.getPaymentTypeTotalCharts();
+  public ResponseEntity<List<ResponsePaymentTypeChart>> readPaymentTypeTotalCharts() {
+    List<ResponsePaymentTypeChart> charts = service.getPaymentTypeTotalCharts();
     return ResponseEntity.ok(charts);
   }
 
