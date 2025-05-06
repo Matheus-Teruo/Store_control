@@ -1,4 +1,4 @@
-package com.storecontrol.backend.models.charts.response;
+package com.storecontrol.backend.models.statistics.registers.response;
 
 import java.util.List;
 import java.util.UUID;

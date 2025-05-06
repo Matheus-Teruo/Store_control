@@ -1,6 +1,9 @@
-package com.storecontrol.backend.services.charts;
+package com.storecontrol.backend.services.statistics;
 
-import com.storecontrol.backend.models.charts.response.*;
+import com.storecontrol.backend.models.statistics.registers.response.ResponsePaymentTypeTotal;
+import com.storecontrol.backend.models.statistics.registers.response.ResponseRechargeChartNode;
+import com.storecontrol.backend.models.statistics.registers.response.ResponseRegisterChart;
+import com.storecontrol.backend.models.statistics.stands.response.*;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import com.storecontrol.backend.models.operations.recharges.Recharge;
 import com.storecontrol.backend.models.operations.purchases.Item;
@@ -12,7 +15,7 @@ import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
 import com.storecontrol.backend.repositories.stands.ProductRepository;
-import com.storecontrol.backend.services.charts.validation.ChartValidation;
+import com.storecontrol.backend.services.statistics.validation.StatisticsValidation;
 import com.storecontrol.backend.services.registers.RegisterService;
 import com.storecontrol.backend.services.stands.StandService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +29,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-public class ChartService {
+public class StatisticsService {
 
   @Autowired
   private RechargeRepository rechargeRepository;
@@ -44,9 +47,9 @@ public class ChartService {
   private ProductRepository productRepository;
 
   @Autowired
-  private ChartValidation validation;
+  private StatisticsValidation validation;
 
-  public List<ResponsePaymentTypeChart> getPaymentTypeTotalCharts() {
+  public List<ResponsePaymentTypeTotal> getPaymentTypeTotalCharts() {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerRegister(manager);
 
@@ -59,9 +62,9 @@ public class ChartService {
       totalsByType.put(type, currentTotal.add(recharge.getRechargeValue()));
     }
 
-    List<ResponsePaymentTypeChart> result = new ArrayList<>();
+    List<ResponsePaymentTypeTotal> result = new ArrayList<>();
     for (Map.Entry<PaymentType, BigDecimal> entry : totalsByType.entrySet()) {
-      result.add(new ResponsePaymentTypeChart(
+      result.add(new ResponsePaymentTypeTotal(
           entry.getKey(),
           entry.getValue()
       ));
@@ -120,7 +123,7 @@ public class ChartService {
     return response;
   }
 
-  public List<ResponseStandTotalChart> getStandsCharts(UUID standUuid) {
+  public List<ResponseStandTotal> getStandsCharts(UUID standUuid) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerStand(manager, standUuid);
 
@@ -130,7 +133,7 @@ public class ChartService {
     Map<UUID, Stand> standMap = stands.stream()
         .collect(Collectors.toMap(Stand::getUuid, Function.identity()));
 
-    Map<UUID, ResponseStandTotalChart> totalsMap = new HashMap<>();
+    Map<UUID, ResponseStandTotal> totalsMap = new HashMap<>();
 
     for (Purchase purchase : purchases) {
       UUID currentStandUuid = purchase.getStandUuid();
@@ -155,13 +158,13 @@ public class ChartService {
 
       totalsMap.merge(
           currentStandUuid,
-          new ResponseStandTotalChart(
+          new ResponseStandTotal(
               currentStandUuid,
               stand.getFunctionName(), // ou stand.getFunctionName() se preferir
               totalQuantity,
               totalValue
           ),
-          (oldVal, newVal) -> new ResponseStandTotalChart(
+          (oldVal, newVal) -> new ResponseStandTotal(
               oldVal.standUuid(),
               oldVal.standName(),
               oldVal.totalProductQuantity() + newVal.totalProductQuantity(),
@@ -173,7 +176,7 @@ public class ChartService {
     return new ArrayList<>(totalsMap.values());
   }
 
-  public List<ResponseStandProductTotalChart> getProductsCharts(UUID standUuid) {
+  public List<ResponseStandProductTotal> getProductsCharts(UUID standUuid) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerStand(manager, standUuid);
 
@@ -187,14 +190,14 @@ public class ChartService {
     Map<UUID, Product> productMap = products.stream()
         .collect(Collectors.toMap(Product::getUuid, Function.identity()));
 
-    Map<UUID, Map<UUID, ResponseProductTotalChart>> standProductTotals = new HashMap<>();
+    Map<UUID, Map<UUID, ResponseProductTotal>> standProductTotals = new HashMap<>();
 
     for (Purchase purchase : purchases) {
       UUID currentStandUuid = purchase.getStandUuid();
       Stand stand = standMap.get(currentStandUuid);
       if (stand == null) continue;
 
-      Map<UUID, ResponseProductTotalChart> productTotals =
+      Map<UUID, ResponseProductTotal> productTotals =
           standProductTotals.computeIfAbsent(currentStandUuid, k -> new HashMap<>());
 
       for (Item item : purchase.getItems()) {
@@ -212,13 +215,13 @@ public class ChartService {
 
         productTotals.merge(
             productUuid,
-            new ResponseProductTotalChart(
+            new ResponseProductTotal(
                 productUuid,
                 product.getProductName(),
                 quantity,
                 itemTotal
             ),
-            (oldVal, newVal) -> new ResponseProductTotalChart(
+            (oldVal, newVal) -> new ResponseProductTotal(
                 oldVal.productUuid(),
                 oldVal.productName(),
                 oldVal.totalProductQuantity() + newVal.totalProductQuantity(),
@@ -228,15 +231,15 @@ public class ChartService {
       }
     }
 
-    List<ResponseStandProductTotalChart> response = new ArrayList<>();
+    List<ResponseStandProductTotal> response = new ArrayList<>();
 
-    for (Map.Entry<UUID, Map<UUID, ResponseProductTotalChart>> standEntry : standProductTotals.entrySet()) {
+    for (Map.Entry<UUID, Map<UUID, ResponseProductTotal>> standEntry : standProductTotals.entrySet()) {
       UUID currentStandUuid = standEntry.getKey();
       Stand stand = standMap.get(currentStandUuid);
       if (stand == null) continue;
 
-      List<ResponseProductTotalChart> productCharts = new ArrayList<>(standEntry.getValue().values());
-      response.add(new ResponseStandProductTotalChart(currentStandUuid, stand.getFunctionName(), productCharts));
+      List<ResponseProductTotal> productCharts = new ArrayList<>(standEntry.getValue().values());
+      response.add(new ResponseStandProductTotal(currentStandUuid, stand.getFunctionName(), productCharts));
     }
 
     return response;

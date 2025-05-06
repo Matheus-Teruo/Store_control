@@ -1,9 +1,9 @@
-package com.storecontrol.backend.models.charts.response;
+package com.storecontrol.backend.models.statistics.stands.response;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record ResponseProductTotalChart(
+public record ResponseProductTotal(
     UUID productUuid,
     String productName,
     Integer totalProductQuantity,

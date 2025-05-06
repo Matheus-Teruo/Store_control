@@ -64,10 +64,10 @@ public class CustomerFinalizationHandler {
     return customer;
   }
 
-  public Customer undoFinalizeCustomer(RequestOrderCard request, boolean fromCashier) {
+  public Customer undoFinalizeCustomer(RequestOrderCard request, boolean fromRegister) {
     var customer = customerService.takeLastActiveFilteredCustomerByCardId(request.cardId());
 
-    if (fromCashier) {
+    if (fromRegister) {
       Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
       validation.checkVoluntaryFunctionType(voluntary);
     }
