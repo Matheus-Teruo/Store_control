@@ -9,7 +9,7 @@ import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.services.customers.component.CustomerFinalizationValidation;
 import com.storecontrol.backend.services.operations.DonationService;
 import com.storecontrol.backend.services.operations.RefundService;
-import com.storecontrol.backend.services.registers.CashRegisterService;
+import com.storecontrol.backend.services.registers.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -26,7 +26,7 @@ public class CustomerFinalizationHandler {
   private CustomerService customerService;
 
   @Autowired
-  private CashRegisterService cashRegisterService;
+  private RegisterService registerService;
 
   @Autowired
   private RefundService refundService;
@@ -36,21 +36,21 @@ public class CustomerFinalizationHandler {
 
   public Customer finalizeCustomer(RequestCustomerFinalization request) {
     Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterUuid());
+    var register = registerService.safeTakeRegisterByUuid(request.registerUuid());
     var customer = customerService.takeActiveFilteredCustomerByCardId(request.orderCardId());
     var remainingDebit = customer.getOrderCard().getDebit();
 
-    validation.checkVoluntaryFunctionMatch(cashRegister, voluntary);
+    validation.checkVoluntaryFunctionMatch(register, voluntary);
 
     if (remainingDebit.compareTo(BigDecimal.ZERO) > 0) {
       if (request.refundValue()
           .add(request.donationValue())
           .compareTo(remainingDebit) == 0) {
         if (request.refundValue().compareTo(BigDecimal.ZERO) > 0) {
-          refundService.createRefund(request, customer, cashRegister, voluntary);
+          refundService.createRefund(request, customer, register, voluntary);
         }
         if (request.donationValue().compareTo(BigDecimal.ZERO) > 0) {
-          donationService.createDonation(request, customer, cashRegister, voluntary);
+          donationService.createDonation(request, customer, register, voluntary);
         }
       } else {
         throw new InvalidCustomerException(

@@ -121,7 +121,7 @@ public class VoluntaryValidation {
               )
           );
         }
-        // CashRegister validation
+        // Register validation
         else {
           var function = functionRepository.findByUuidValidTrue(request.functionUuid())
             .orElseThrow(() -> new InvalidDatabaseQueryException(
@@ -131,10 +131,10 @@ public class VoluntaryValidation {
             );
           if (function instanceof Stand) {
             throw new InvalidDatabaseInsertionException(
-                MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidCashRegister.error"),
-                MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidCashRegister.message"),
+                MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidRegister.error"),
+                MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidRegister.message"),
                 Map.of(
-                    MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidCashRegister.field"),
+                    MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidRegister.field"),
                     request.functionUuid().toString()
                 )
             );
@@ -153,14 +153,14 @@ public class VoluntaryValidation {
               )
           );
         }
-        // CashRegister validation
+        // Register validation
         else {
           if (manager.getFunction() instanceof Stand) {
             throw new InvalidDatabaseInsertionException(
-                MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidCashRegister.error"),
-                MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidCashRegister.message"),
+                MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidRegister.error"),
+                MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidRegister.message"),
                 Map.of(
-                    MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidCashRegister.field"),
+                    MessageResolver.getInstance().getMessage("validation.voluntary.checkManageFunction.invalidRegister.field"),
                     "null"
                 )
             );

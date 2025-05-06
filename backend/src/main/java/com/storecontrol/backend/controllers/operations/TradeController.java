@@ -1,7 +1,7 @@
 package com.storecontrol.backend.controllers.operations;
 
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
-import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
+import com.storecontrol.backend.models.operations.recharges.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.trades.request.RequestCreateTrade;
 import com.storecontrol.backend.models.operations.trades.response.ResponseSummaryTrade;
 import com.storecontrol.backend.models.operations.trades.response.ResponseTrade;
@@ -37,7 +37,7 @@ public class TradeController {
         request.rechargeValue(),
         request.paymentTypeEnum(),
         request.orderCardId(),
-        request.cashRegisterUuid()
+        request.registerUuid()
     );
 
     var purchaseRequest = new RequestCreatePurchase(

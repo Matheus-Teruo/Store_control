@@ -2,7 +2,7 @@ package com.storecontrol.backend.services.operations.validation;
 
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidOperationException;
-import com.storecontrol.backend.models.operations.Recharge;
+import com.storecontrol.backend.models.operations.recharges.Recharge;
 import com.storecontrol.backend.models.volunteers.Function;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Component
 public class RechargeValidation {

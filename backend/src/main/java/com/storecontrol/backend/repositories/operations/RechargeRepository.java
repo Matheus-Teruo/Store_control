@@ -1,6 +1,6 @@
 package com.storecontrol.backend.repositories.operations;
 
-import com.storecontrol.backend.models.operations.Recharge;
+import com.storecontrol.backend.models.operations.recharges.Recharge;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
