@@ -1,8 +1,8 @@
 package com.storecontrol.backend.controllers.operations;
 
-import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
-import com.storecontrol.backend.models.operations.response.ResponseRecharge;
-import com.storecontrol.backend.models.operations.response.ResponseSummaryRecharge;
+import com.storecontrol.backend.models.operations.recharges.request.RequestCreateRecharge;
+import com.storecontrol.backend.models.operations.recharges.response.ResponseRecharge;
+import com.storecontrol.backend.models.operations.recharges.response.ResponseSummaryRecharge;
 import com.storecontrol.backend.services.operations.RechargeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

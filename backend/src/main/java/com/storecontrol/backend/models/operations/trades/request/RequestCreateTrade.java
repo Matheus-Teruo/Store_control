@@ -21,8 +21,8 @@ public record RequestCreateTrade(
     @Pattern(regexp = "^[A-Za-z0-9]{15}$", message = "{request.validation.createRecharge.orderCardId.pattern}")
     String orderCardId,
 
-    @NotNull(message = "{request.validation.createRecharge.cashRegisterUuid.notnull}")
-    UUID cashRegisterUuid,
+    @NotNull(message = "{request.validation.createRecharge.registerUuid.notnull}")
+    UUID registerUuid,
 
     @NotNull(message = "{request.validation.createPurchase.onOrder.notnull}")
     Boolean onOrder,

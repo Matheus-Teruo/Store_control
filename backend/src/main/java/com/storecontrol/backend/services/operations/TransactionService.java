@@ -2,12 +2,12 @@ package com.storecontrol.backend.services.operations;
 
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
-import com.storecontrol.backend.models.operations.Transaction;
-import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
+import com.storecontrol.backend.models.operations.transactions.Transaction;
+import com.storecontrol.backend.models.operations.transactions.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.TransactionRepository;
 import com.storecontrol.backend.services.operations.validation.TransactionValidation;
-import com.storecontrol.backend.services.registers.CashRegisterService;
+import com.storecontrol.backend.services.registers.RegisterService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,21 +30,21 @@ public class TransactionService {
   private TransactionRepository repository;
 
   @Autowired
-  private CashRegisterService cashRegisterService;
+  private RegisterService registerService;
 
   @Transactional
   public Transaction createTransaction(RequestCreateTransaction request) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterUuid());
+    var register = registerService.safeTakeRegisterByUuid(request.registerUuid());
 
     validation.checkVoluntaryFunctionType(manager);
     validation.checkCashAvailableToTransaction(
         request.amount(),
         request.transactionTypeEnum(),
-        cashRegister,
+        register,
         false);
 
-    var transaction = new Transaction(request, cashRegister, manager);
+    var transaction = new Transaction(request, register, manager);
     handleCashTotal(transaction, !transaction.getTransactionTypeEnum().isExit());
     repository.save(transaction);
 
@@ -82,7 +82,7 @@ public class TransactionService {
     validation.checkCashAvailableToTransaction(
         transaction.getAmount(),
         transaction.getTransactionTypeEnum().toString(),
-        transaction.getCashRegister(),
+        transaction.getRegister(),
         true);
     validation.checkTransactionBelongsToVoluntary(transaction, manager);
     validation.checkIfLastTransactionOfVoluntary(transaction, manager);
@@ -96,6 +96,6 @@ public class TransactionService {
 
     BigDecimal adjustmentFactor = isReversal ? BigDecimal.ONE : BigDecimal.ONE.negate();
 
-    transaction.getCashRegister().incrementCash(transaction.getAmount().multiply(adjustmentFactor));
+    transaction.getRegister().incrementCash(transaction.getAmount().multiply(adjustmentFactor));
   }
 }

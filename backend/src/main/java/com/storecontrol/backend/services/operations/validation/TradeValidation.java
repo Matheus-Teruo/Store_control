@@ -2,10 +2,10 @@ package com.storecontrol.backend.services.operations.validation;
 
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidOperationException;
-import com.storecontrol.backend.models.operations.Recharge;
+import com.storecontrol.backend.models.operations.recharges.Recharge;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
-import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
+import com.storecontrol.backend.models.operations.recharges.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.trades.Trade;
 import org.springframework.stereotype.Component;
 

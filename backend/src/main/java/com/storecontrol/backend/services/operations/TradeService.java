@@ -4,11 +4,11 @@ import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.enumerate.PaymentType;
-import com.storecontrol.backend.models.operations.Recharge;
+import com.storecontrol.backend.models.operations.recharges.Recharge;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
-import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
+import com.storecontrol.backend.models.operations.recharges.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.trades.Trade;
 import com.storecontrol.backend.models.operations.trades.TradeView;
 import com.storecontrol.backend.models.volunteers.Voluntary;
@@ -20,7 +20,7 @@ import com.storecontrol.backend.services.customers.CustomerService;
 import com.storecontrol.backend.services.operations.validation.PurchaseValidation;
 import com.storecontrol.backend.services.operations.validation.RechargeValidation;
 import com.storecontrol.backend.services.operations.validation.TradeValidation;
-import com.storecontrol.backend.services.registers.CashRegisterService;
+import com.storecontrol.backend.services.registers.RegisterService;
 import com.storecontrol.backend.services.stands.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -68,7 +68,7 @@ public class TradeService {
   private CustomerService customerService;
 
   @Autowired
-  private CashRegisterService cashRegisterService;
+  private RegisterService registerService;
 
   @Autowired
   private ItemService itemService;
@@ -88,11 +88,11 @@ public class TradeService {
     purchaseValidation.checkInsufficientProductStockValidity(purchaseRequest, productMap);
     validation.checkRechargeMatchTotalPrice(rechargeRequest, purchaseRequest);
 
-    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(rechargeRequest.cashRegisterUuid());
+    var register = registerService.safeTakeRegisterByUuid(rechargeRequest.registerUuid());
 
     var customer = handleChangesOnCustomerByCardId(rechargeRequest, purchaseRequest.onOrder());
 
-    var recharge = new Recharge(rechargeRequest, customer, cashRegister, voluntary);
+    var recharge = new Recharge(rechargeRequest, customer, register, voluntary);
     handleCashTotal(recharge, recharge.getPaymentTypeEnum(), false);
 
     rechargeRepository.save(recharge);
@@ -227,13 +227,13 @@ public class TradeService {
 
     switch(paymentType) {
       case PaymentType.CASH:
-        recharge.getCashRegister().incrementCash(rechargeValue);
+        recharge.getRegister().incrementCash(rechargeValue);
         break;
       case PaymentType.CREDIT:
-        recharge.getCashRegister().incrementCredit(rechargeValue);
+        recharge.getRegister().incrementCredit(rechargeValue);
         break;
       case PaymentType.DEBIT:
-        recharge.getCashRegister().incrementDebit(rechargeValue);
+        recharge.getRegister().incrementDebit(rechargeValue);
         break;
     }
   }

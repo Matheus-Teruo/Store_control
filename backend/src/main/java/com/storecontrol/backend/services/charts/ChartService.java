@@ -1,27 +1,19 @@
 package com.storecontrol.backend.services.charts;
 
+import com.storecontrol.backend.models.charts.response.*;
 import com.storecontrol.backend.models.enumerate.PaymentType;
-import com.storecontrol.backend.models.operations.Recharge;
+import com.storecontrol.backend.models.operations.recharges.Recharge;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
-import com.storecontrol.backend.models.charts.response.ResponsePurchaseChartNode;
-import com.storecontrol.backend.models.charts.response.ResponseRechargeChartNode;
-import com.storecontrol.backend.models.registers.CashRegister;
-import com.storecontrol.backend.models.charts.response.ResponseCashRegisterChart;
-import com.storecontrol.backend.models.charts.response.ResponsePaymentTypeChart;
+import com.storecontrol.backend.models.registers.Register;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.products.Product;
-import com.storecontrol.backend.models.charts.response.ResponseProductChart;
-import com.storecontrol.backend.models.charts.response.ResponseProductTotalChart;
-import com.storecontrol.backend.models.charts.response.ResponseStandChart;
-import com.storecontrol.backend.models.charts.response.ResponseStandProductTotalChart;
-import com.storecontrol.backend.models.charts.response.ResponseStandTotalChart;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
 import com.storecontrol.backend.repositories.stands.ProductRepository;
 import com.storecontrol.backend.services.charts.validation.ChartValidation;
-import com.storecontrol.backend.services.registers.CashRegisterService;
+import com.storecontrol.backend.services.registers.RegisterService;
 import com.storecontrol.backend.services.stands.StandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,7 +35,7 @@ public class ChartService {
   private PurchaseRepository purchaseRepository;
 
   @Autowired
-  private CashRegisterService cashRegisterService;
+  private RegisterService registerService;
 
   @Autowired
   private StandService standService;
@@ -72,36 +64,36 @@ public class ChartService {
     return new ResponsePaymentTypeChart(totalCash, totalCredit, totalDebit);
   }
 
-  public List<ResponseCashRegisterChart> getRechargeCharts() {
+  public List<ResponseRegisterChart> getRechargeCharts() {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerRegister(manager);
-    List<CashRegister> cashRegisters = cashRegisterService.listCashRegisters();
+    List<Register> registers = registerService.listRegisters();
     List<Recharge> recharges = rechargeRepository.findAllValid();
 
-    Map<UUID, CashRegister> cashRegisterMap = cashRegisters.stream()
-        .collect(Collectors.toMap(CashRegister::getUuid, Function.identity()));
+    Map<UUID, Register> registerMap = registers.stream()
+        .collect(Collectors.toMap(Register::getUuid, Function.identity()));
 
     Map<UUID, Map<LocalDateTime, Map<PaymentType, BigDecimal>>> groupedData = new HashMap<>();
 
     for (Recharge recharge : recharges) {
-      UUID cashRegisterUuid = recharge.getCashRegisterUuid();
-      if (cashRegisterUuid == null || recharge.getRechargeTimeStamp() == null) continue;
+      UUID registerUuid = recharge.getRegisterUuid();
+      if (registerUuid == null || recharge.getRechargeTimeStamp() == null) continue;
 
       LocalDateTime groupedTime = truncateTo5Minutes(recharge.getRechargeTimeStamp());
       PaymentType paymentType = recharge.getPaymentTypeEnum();
       BigDecimal value = getTotal(recharge);
 
       groupedData
-          .computeIfAbsent(cashRegisterUuid, k -> new HashMap<>())
+          .computeIfAbsent(registerUuid, k -> new HashMap<>())
           .computeIfAbsent(groupedTime, k -> new HashMap<>())
           .merge(paymentType, value, BigDecimal::add);
     }
 
-    List<ResponseCashRegisterChart> response = new ArrayList<>();
+    List<ResponseRegisterChart> response = new ArrayList<>();
 
     for (var entry : groupedData.entrySet()) {
       UUID registerUuid = entry.getKey();
-      CashRegister register = cashRegisterMap.get(registerUuid);
+      Register register = registerMap.get(registerUuid);
       if (register == null) continue;
 
       List<ResponseRechargeChartNode> nodes = new ArrayList<>();
@@ -116,7 +108,7 @@ public class ChartService {
         }
       }
 
-      response.add(new ResponseCashRegisterChart(registerUuid, register.getFunctionName(), nodes));
+      response.add(new ResponseRegisterChart(registerUuid, register.getFunctionName(), nodes));
     }
 
     return response;

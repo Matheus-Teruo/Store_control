@@ -20,7 +20,7 @@ public record RequestCustomerFinalization(
     @Pattern(regexp = "^[A-Za-z0-9]{15}$", message = "{request.validation.customer.orderCardId.pattern}")
     String orderCardId,
 
-    @NotNull(message = "{request.validation.customer.cashRegisterUuid.notnull}")
-    UUID cashRegisterUuid
+    @NotNull(message = "{request.validation.customer.registerUuid.notnull}")
+    UUID registerUuid
 ) {
 }

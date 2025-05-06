@@ -7,10 +7,10 @@ import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import com.storecontrol.backend.models.enumerate.TransactionType;
 import com.storecontrol.backend.models.enumerate.VoluntaryRole;
-import com.storecontrol.backend.models.operations.Donation;
-import com.storecontrol.backend.models.operations.Recharge;
-import com.storecontrol.backend.models.operations.Refund;
-import com.storecontrol.backend.models.operations.Transaction;
+import com.storecontrol.backend.models.operations.finalization.Donation;
+import com.storecontrol.backend.models.operations.recharges.Recharge;
+import com.storecontrol.backend.models.operations.finalization.Refund;
+import com.storecontrol.backend.models.operations.transactions.Transaction;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.ItemId;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
@@ -18,13 +18,13 @@ import com.storecontrol.backend.models.operations.purchases.request.RequestCreat
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
-import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
-import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
+import com.storecontrol.backend.models.operations.recharges.request.RequestCreateRecharge;
+import com.storecontrol.backend.models.operations.transactions.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.operations.trades.Trade;
 import com.storecontrol.backend.models.operations.trades.request.RequestCreateTrade;
-import com.storecontrol.backend.models.registers.CashRegister;
-import com.storecontrol.backend.models.registers.request.RequestCreateCashRegister;
-import com.storecontrol.backend.models.registers.request.RequestUpdateCashRegister;
+import com.storecontrol.backend.models.registers.Register;
+import com.storecontrol.backend.models.registers.request.RequestCreateRegister;
+import com.storecontrol.backend.models.registers.request.RequestUpdateRegister;
 import com.storecontrol.backend.models.stands.Association;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.products.Product;
@@ -90,15 +90,15 @@ public class TestDataFactory {
   }
 
   public static Donation createDonationEntity(UUID uuid, Customer customer) {
-    UUID cashRegisterUUID = UUID.randomUUID();
+    UUID registerUUID = UUID.randomUUID();
     UUID voluntaryUUID = UUID.randomUUID();
     return new Donation(
         uuid,
         BigDecimal.TWO,
         LocalDateTime.now(),
         customer,
-        cashRegisterUUID,
-        createCashRegisterEntity(cashRegisterUUID),
+        registerUUID,
+        createRegisterEntity(registerUUID),
         voluntaryUUID,
         createVoluntaryEntity(voluntaryUUID),
         true
@@ -177,7 +177,7 @@ public class TestDataFactory {
   public static Recharge createRechargeEntity(UUID uuid, Customer customer, boolean isCash) {
     PaymentType[] paymentTypes = PaymentType.values();
     int randomIndex = new Random().nextInt(paymentTypes.length);
-    UUID cashRegisterUUID = UUID.randomUUID();
+    UUID registerUUID = UUID.randomUUID();
     UUID voluntaryUUID = UUID.randomUUID();
     return new Recharge(
         uuid,
@@ -185,8 +185,8 @@ public class TestDataFactory {
         isCash ? PaymentType.CASH : paymentTypes[randomIndex],
         LocalDateTime.now(),
         customer,
-        cashRegisterUUID,
-        createCashRegisterEntity(cashRegisterUUID),
+        registerUUID,
+        createRegisterEntity(registerUUID),
         voluntaryUUID,
         createVoluntaryEntity(voluntaryUUID),
         true
@@ -198,20 +198,20 @@ public class TestDataFactory {
         recharge.getRechargeValue(),
         recharge.getPaymentTypeEnum().toString().toLowerCase(),
         recharge.getCustomer().getOrderCard().getId(),
-        recharge.getCashRegister().getUuid()
+        recharge.getRegister().getUuid()
     );
   }
 
   public static Refund createRefundEntity(UUID uuid, Customer customer) {
-    UUID cashRegisterUUID = UUID.randomUUID();
+    UUID registerUUID = UUID.randomUUID();
     UUID voluntaryUUID = UUID.randomUUID();
     return new Refund(
         uuid,
         BigDecimal.TWO,
         LocalDateTime.now(),
         customer,
-        cashRegisterUUID,
-        createCashRegisterEntity(cashRegisterUUID),
+        registerUUID,
+        createRegisterEntity(registerUUID),
         voluntaryUUID,
         createVoluntaryEntity(voluntaryUUID),
         true
@@ -239,7 +239,7 @@ public class TestDataFactory {
         recharge.getRechargeValue(),
         recharge.getPaymentTypeEnum().toString(),
         orderCard.getId(),
-        recharge.getCashRegister().getUuid(),
+        recharge.getRegister().getUuid(),
         purchase.isOnOrder(),
         purchase.getStandUuid(),
         requestCreateItems
@@ -257,15 +257,15 @@ public class TestDataFactory {
   }
 
   public static Transaction createTransactionEntity(UUID uuid, boolean isEntry) {
-    UUID cashRegisterUUID = UUID.randomUUID();
+    UUID registerUUID = UUID.randomUUID();
     UUID voluntaryUUID = UUID.randomUUID();
     return new Transaction(
         uuid,
         BigDecimal.valueOf(50),
         isEntry ? TransactionType.ENTRY : TransactionType.EXIT,
         LocalDateTime.now(),
-        cashRegisterUUID,
-        createCashRegisterEntity(cashRegisterUUID),
+        registerUUID,
+        createRegisterEntity(registerUUID),
         voluntaryUUID,
         createVoluntaryEntity(voluntaryUUID),
         true
@@ -276,12 +276,12 @@ public class TestDataFactory {
     return new RequestCreateTransaction(
         transaction.getAmount(),
         transaction.getTransactionTypeEnum().toString().toLowerCase(),
-        transaction.getCashRegister().getUuid()
+        transaction.getRegister().getUuid()
     );
   }
 
-  public static CashRegister createCashRegisterEntity(UUID uuid) {
-    return new CashRegister(
+  public static Register createRegisterEntity(UUID uuid) {
+    return new Register(
         uuid,
         nameOnlyLettersSpaceAndNumbers(),
         null,
@@ -289,14 +289,14 @@ public class TestDataFactory {
     );
   }
 
-  public static RequestCreateCashRegister createRequestCreateCashRegister(CashRegister cashRegister) {
-    return new RequestCreateCashRegister(
-        cashRegister.getFunctionName()
+  public static RequestCreateRegister createRequestCreateRegister(Register register) {
+    return new RequestCreateRegister(
+        register.getFunctionName()
     );
   }
 
-  public static RequestUpdateCashRegister createRequestUpdateCashRegister(UUID uuid) {
-    return new RequestUpdateCashRegister(
+  public static RequestUpdateRegister createRequestUpdateRegister(UUID uuid) {
+    return new RequestUpdateRegister(
         uuid,
         nameOnlyLettersSpaceAndNumbers()
     );
