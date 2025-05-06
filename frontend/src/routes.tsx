@@ -5,7 +5,7 @@ import User from "./pages/authentication/User";
 import Menu from "./pages/public/Menu";
 import Order from "./pages/public/Order";
 import Hub from "./pages/workspace/Hub";
-import CashierFunction from "./pages/workspace/CashierFunction";
+import RegisterFunction from "./pages/workspace/RegisterFunction";
 import StandFunction from "./pages/workspace/StandFunction";
 import StandFunctionSimple from "./pages/workspace/StandFunctionTrade";
 import Products from "./pages/workspace/Products";
@@ -54,7 +54,7 @@ function AppRouter() {
         </Route>
         <Route path="/workspace" element={<WorkspaceHeader />}>
           <Route path="" element={<Hub />} />
-          <Route path="cashiers" element={<CashierFunction />} />
+          <Route path="registers" element={<RegisterFunction />} />
           <Route path="sales" element={salesComponent} />
           <Route path="products" element={<Products />} />
           <Route path="transaction" element={<Transaction />} />

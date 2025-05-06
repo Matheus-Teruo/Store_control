@@ -1,7 +1,7 @@
 import PaymentSelect from "@/components/selects/PaymentSelect";
 import {
   hasFunction,
-  isCashier,
+  isRegisters,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
@@ -24,7 +24,7 @@ import { PaymentType } from "@data/operations/Recharge";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import PageSelect from "@/components/selects/PageSelect";
 
-function Cashier() {
+function RegisterFunction() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
   const [showItemCalculater, setShowItemCalculater] = useState<boolean>(false);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
@@ -54,7 +54,7 @@ function Cashier() {
       });
     } else if (
       isUserUnlogged(user) ||
-      (user && !isCashier(user.summaryFunction, user.voluntaryRole))
+      (user && !isRegisters(user.summaryFunction, user.voluntaryRole))
     ) {
       navigate("/");
     }
@@ -62,12 +62,12 @@ function Cashier() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isUserLogged(user) && isCashier(user.summaryFunction)) {
+    if (isUserLogged(user) && isRegisters(user.summaryFunction)) {
       const recharge = await createRecharge({
         rechargeValue: state.rechargeValue,
         paymentTypeEnum: state.paymentTypeEnum!,
         orderCardId: state.orderCardId,
-        cashRegisterUuid: state.cashRegisterUuid,
+        registerUuid: state.registerUuid,
       });
       if (recharge) {
         addNotification({
@@ -130,4 +130,4 @@ function Cashier() {
   );
 }
 
-export default Cashier;
+export default RegisterFunction;

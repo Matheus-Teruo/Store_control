@@ -30,7 +30,7 @@ export interface CreateTrade {
   rechargeValue: number;
   paymentTypeEnum: PaymentType;
   orderCardId: string;
-  cashRegisterUuid: string;
+  registerUuid: string;
   onOrder: boolean;
   standUuid: string;
   items: CreateItem[];

@@ -1,7 +1,7 @@
 import styles from "./Hub.module.scss";
 import {
   isAdmin,
-  isCashier,
+  isRegisters,
   isManeger,
   isSeller,
   isUserLogged,
@@ -34,7 +34,7 @@ function Hub() {
       </Link>
       {isUserLogged(user) &&
         (isSeller(user.summaryFunction, user.voluntaryRole) ||
-          isCashier(user.summaryFunction, user.voluntaryRole)) && (
+          isRegisters(user.summaryFunction, user.voluntaryRole)) && (
           <h2>Função</h2>
         )}
       <ul className={styles.home}>
@@ -48,9 +48,9 @@ function Hub() {
           )}
         {activeConfig.enableCard &&
           isUserLogged(user) &&
-          isCashier(user.summaryFunction, user.voluntaryRole) && (
+          isRegisters(user.summaryFunction, user.voluntaryRole) && (
             <li className={styles.liCashier}>
-              <Link className={styles.links} to="/workspace/cashier">
+              <Link className={styles.links} to="/workspace/registers">
                 Caixa
               </Link>
             </li>
@@ -65,7 +65,7 @@ function Hub() {
           )}
         {isUserLogged(user) &&
           !isSeller(user.summaryFunction, user.voluntaryRole) &&
-          !isCashier(user.summaryFunction, user.voluntaryRole) && (
+          !isRegisters(user.summaryFunction, user.voluntaryRole) && (
             <li className={styles.liDefault}>
               <h3>Bem vindo</h3>
               <p>

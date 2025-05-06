@@ -31,7 +31,7 @@ import QRcodeView from "@/components/QRcodeView";
 import QRcodeReader from "@/components/QRcodeReader";
 import { cartPacking, takeStandUuid } from "@/utils/cartCompactor";
 
-type FormPurchaseProps = {
+type FormTradeProps = {
   reducer: [
     CreateTrade & { totalQuantity: number } & { error: string },
     React.Dispatch<TradeAction>,
@@ -57,7 +57,7 @@ function FormTrade({
   hide,
   type = "normal",
   isAdmin = false,
-}: FormPurchaseProps) {
+}: FormTradeProps) {
   const [productsRecord, setProductsRecord] = useState<
     Record<string, Omit<SummaryProduct, "uuid">>
   >({});

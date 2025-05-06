@@ -49,7 +49,7 @@ export const initialTradeState: CreateTrade & {
   orderCardId: activeConfig.version === "simple" ? fixedCardID! : "",
   rechargeValue: 0,
   paymentTypeEnum: PaymentType.CASH,
-  cashRegisterUuid: activeConfig.version === "simple" ? fixedCashUuid! : "",
+  registerUuid: activeConfig.version === "simple" ? fixedCashUuid! : "",
   totalQuantity: 0,
   error: "",
 };
@@ -279,7 +279,7 @@ export function tradeReducer(
       if (!regexUuid.test(action.payload)) {
         return state;
       }
-      return { ...state, cashRegisterUuid: action.payload };
+      return { ...state, registerUuid: action.payload };
     }
 
     case "SET_STAND_UUID": {
