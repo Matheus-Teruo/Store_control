@@ -46,22 +46,28 @@ public class ChartService {
   @Autowired
   private ChartValidation validation;
 
-  public ResponsePaymentTypeChart getPaymentTypeTotalCharts() {
+  public List<ResponsePaymentTypeChart> getPaymentTypeTotalCharts() {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerRegister(manager);
 
     List<Recharge> recharges = rechargeRepository.findAllValid();
 
-    BigDecimal totalCash = BigDecimal.ZERO;
-    BigDecimal totalCredit = BigDecimal.ZERO;
-    BigDecimal totalDebit = BigDecimal.ZERO;
+    Map<PaymentType, BigDecimal> totalsByType = new EnumMap<>(PaymentType.class);
     for (Recharge recharge : recharges) {
-      if (recharge.getPaymentTypeEnum() == PaymentType.CASH) totalCash = totalCash.add(recharge.getRechargeValue());
-      if (recharge.getPaymentTypeEnum() == PaymentType.CREDIT) totalCredit = totalCredit.add(recharge.getRechargeValue());
-      if (recharge.getPaymentTypeEnum() == PaymentType.DEBIT) totalDebit = totalDebit.add(recharge.getRechargeValue());
+      PaymentType type = recharge.getPaymentTypeEnum();
+      BigDecimal currentTotal = totalsByType.getOrDefault(type, BigDecimal.ZERO);
+      totalsByType.put(type, currentTotal.add(recharge.getRechargeValue()));
     }
 
-    return new ResponsePaymentTypeChart(totalCash, totalCredit, totalDebit);
+    List<ResponsePaymentTypeChart> result = new ArrayList<>();
+    for (Map.Entry<PaymentType, BigDecimal> entry : totalsByType.entrySet()) {
+      result.add(new ResponsePaymentTypeChart(
+          entry.getKey(),
+          entry.getValue()
+      ));
+    }
+
+    return result;
   }
 
   public List<ResponseRegisterChart> getRechargeCharts() {
