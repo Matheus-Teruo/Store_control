@@ -323,17 +323,17 @@
 			]
 		},
 		{
-			"name": "Chart",
+			"name": "Statistics",
 			"item": [
 				{
-					"name": "Chart Payment Total",
+					"name": "Payment Total",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}charts/registers/payment-type",
+							"raw": "{{hostPath}}statistics/registers/payment-type",
 							"host": [
-								"{{hostPath}}charts"
+								"{{hostPath}}statistics"
 							],
 							"path": [
 								"registers",
@@ -349,9 +349,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}charts/registers/recharges",
+							"raw": "{{hostPath}}statistics/registers/recharges",
 							"host": [
-								"{{hostPath}}charts"
+								"{{hostPath}}statistics"
 							],
 							"path": [
 								"registers",
@@ -362,14 +362,14 @@
 					"response": []
 				},
 				{
-					"name": "Chart Stand",
+					"name": "Stand Total",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}charts/stands",
+							"raw": "{{hostPath}}statistics/stands",
 							"host": [
-								"{{hostPath}}charts"
+								"{{hostPath}}statistics"
 							],
 							"path": [
 								"stands"
@@ -379,14 +379,14 @@
 					"response": []
 				},
 				{
-					"name": "Chart Product",
+					"name": "Product Total",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}charts/stands/products",
+							"raw": "{{hostPath}}statistics/stands/products",
 							"host": [
-								"{{hostPath}}charts"
+								"{{hostPath}}statistics"
 							],
 							"path": [
 								"stands",
@@ -402,9 +402,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}charts/stands/purchases",
+							"raw": "{{hostPath}}statistics/stands/purchases",
 							"host": [
-								"{{hostPath}}charts"
+								"{{hostPath}}statistics"
 							],
 							"path": [
 								"stands",
