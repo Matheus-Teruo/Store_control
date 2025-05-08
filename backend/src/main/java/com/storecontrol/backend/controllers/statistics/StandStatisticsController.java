@@ -15,21 +15,21 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("charts/stands")
+@RequestMapping("statistics/stands")
 public class StandStatisticsController {
 
   @Autowired
   private StatisticsService service;
 
   @GetMapping()
-  public ResponseEntity<List<ResponseStandTotal>> readStandCharts(@RequestParam(required = false) UUID standUuid) {
-    List<ResponseStandTotal> charts = service.getStandsCharts(standUuid);
+  public ResponseEntity<List<ResponseStandTotal>> readStandTotals(@RequestParam(required = false) UUID standUuid) {
+    List<ResponseStandTotal> charts = service.getStandTotals(standUuid);
     return ResponseEntity.ok(charts);
   }
 
   @GetMapping("/products")
-  public ResponseEntity<List<ResponseStandProductTotal>> readProductsCharts(@RequestParam(required = false) UUID standUuid) {
-    List<ResponseStandProductTotal> charts = service.getProductsCharts(standUuid);
+  public ResponseEntity<List<ResponseStandProductTotal>> readProductTotals(@RequestParam(required = false) UUID standUuid) {
+    List<ResponseStandProductTotal> charts = service.getProductTotals(standUuid);
     return ResponseEntity.ok(charts);
   }
 

@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("charts/registers")
+@RequestMapping("statistics/registers")
 public class RechargeStatisticsController {
 
   @Autowired
   private StatisticsService service;
 
   @GetMapping("/payment-type")
-  public ResponseEntity<List<ResponsePaymentTypeTotal>> readPaymentTypeTotalCharts() {
-    List<ResponsePaymentTypeTotal> charts = service.getPaymentTypeTotalCharts();
+  public ResponseEntity<List<ResponsePaymentTypeTotal>> readPaymentTypeTotals() {
+    List<ResponsePaymentTypeTotal> charts = service.getPaymentTypeTotals();
     return ResponseEntity.ok(charts);
   }
 

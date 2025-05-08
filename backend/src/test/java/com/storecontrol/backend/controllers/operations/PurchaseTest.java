@@ -3,6 +3,7 @@ package com.storecontrol.backend.controllers.operations;
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
+import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
@@ -13,10 +14,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.storecontrol.backend.TestDataFactory.*;
@@ -96,14 +99,30 @@ class PurchaseTest extends BaseTest {
         createPurchaseEntity(UUID.randomUUID(), mockCustomer1),
         createPurchaseEntity(UUID.randomUUID(), mockCustomer2)
     );
-    mockPurchases.get(0).setItems(createItemEntity(mockPurchases.get(0)));
-    mockPurchases.get(1).setItems(createItemEntity(mockPurchases.get(1)));
+    Map<UUID, List<Item>> mockItem = Map.of(
+        mockPurchases.get(0).getUuid(), createItemEntity(mockPurchases.get(0)),
+        mockPurchases.get(1).getUuid(), createItemEntity(mockPurchases.get(1))
+    );
+    mockPurchases.get(0).setItems(mockItem.get(mockPurchases.get(0).getUuid()));
+    mockPurchases.get(1).setItems(mockItem.get(mockPurchases.get(0).getUuid()));
+
+    List<UUID> mockUuids = List.of(
+        mockPurchases.get(0).getUuid(),
+        mockPurchases.get(1).getUuid()
+    );
+
+    List<ResponseSummaryPurchase> mockResponse = List.of(
+        new ResponseSummaryPurchase(mockPurchases.get(0)),
+        new ResponseSummaryPurchase(mockPurchases.get(1))
+    );
+
+    Pageable pageable = PageRequest.of(0, 20);
 
     Page<Purchase> mockPage = new PageImpl<>(mockPurchases);
-    Page<ResponseSummaryPurchase> expectedResponse = mockPage
-        .map(ResponseSummaryPurchase::new);
+    Page<ResponseSummaryPurchase> expectedResponse = new PageImpl<>(mockResponse, pageable, mockPage.getTotalElements());
 
     when(service.pagePurchases(any(UUID.class), any(Pageable.class))).thenReturn(mockPage);
+    when(service.takeItensToPurchaseList(mockUuids)).thenReturn(mockItem);
 
     // When & Then
     mockMvc.perform(get("/purchases?standUuid=550e8400-e29b-41d4-a716-446655440000")
@@ -114,6 +133,7 @@ class PurchaseTest extends BaseTest {
 
     // Verify interactions
     verify(service, times(1)).pagePurchases(any(UUID.class), any(Pageable.class));
+    verify(service, times(1)).takeItensToPurchaseList(mockUuids);
     verifyNoMoreInteractions(service);
   }
 
