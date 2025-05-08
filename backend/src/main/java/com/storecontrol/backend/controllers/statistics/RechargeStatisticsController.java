@@ -1,8 +1,8 @@
-package com.storecontrol.backend.controllers.charts;
+package com.storecontrol.backend.controllers.statistics;
 
-import com.storecontrol.backend.models.charts.response.ResponsePaymentTypeChart;
-import com.storecontrol.backend.models.charts.response.ResponseRegisterChart;
-import com.storecontrol.backend.services.charts.ChartService;
+import com.storecontrol.backend.models.statistics.registers.response.ResponsePaymentTypeTotal;
+import com.storecontrol.backend.models.statistics.registers.response.ResponseRegisterChart;
+import com.storecontrol.backend.services.statistics.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("charts/registers")
-public class ChartRegisterController {
+@RequestMapping("statistics/registers")
+public class RechargeStatisticsController {
 
   @Autowired
-  private ChartService service;
+  private StatisticsService service;
 
   @GetMapping("/payment-type")
-  public ResponseEntity<List<ResponsePaymentTypeChart>> readPaymentTypeTotalCharts() {
-    List<ResponsePaymentTypeChart> charts = service.getPaymentTypeTotalCharts();
+  public ResponseEntity<List<ResponsePaymentTypeTotal>> readPaymentTypeTotals() {
+    List<ResponsePaymentTypeTotal> charts = service.getPaymentTypeTotals();
     return ResponseEntity.ok(charts);
   }
 

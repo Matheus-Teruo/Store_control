@@ -1,4 +1,4 @@
-package com.storecontrol.backend.services.charts.validation;
+package com.storecontrol.backend.services.statistics.validation;
 
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Component
-public class ChartValidation {
+public class StatisticsValidation {
   public void checkManagerRegister(Voluntary manager) {
     if (manager.getVoluntaryRole().isNotAdmin()) {
       if (manager.getFunction() instanceof Stand) {
