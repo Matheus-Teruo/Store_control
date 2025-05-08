@@ -16,20 +16,20 @@ export interface ResponsePurchaseChartNode {
   total: number;
 }
 
-export interface ResponseStandTotalChart {
+export interface ResponseStandTotal {
   standUuid: string;
   standName: string;
   totalProductQuantity: number;
   totalAmount: number;
 }
 
-export interface ResponseStandProductTotalChart {
+export interface ResponseStandProductTotal {
   standUuid: string;
   standName: string;
-  productTotalCharts: ResponseProductTotalChart[];
+  productTotal: ResponseProductTotal[];
 }
 
-export interface ResponseProductTotalChart {
+export interface ResponseProductTotal {
   productUuid: string;
   productName: string;
   totalProductQuantity: number;

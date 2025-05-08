@@ -12,7 +12,7 @@ export interface ResponseRechargeChartNode {
   total: number;
 }
 
-export interface ResponsePaymentTypeChart {
+export interface ResponsePaymentTypeTotal {
   paymentType: PaymentType;
   total: number;
 }
