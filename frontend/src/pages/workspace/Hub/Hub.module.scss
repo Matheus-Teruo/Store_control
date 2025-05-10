@@ -72,11 +72,27 @@
     grid-auto-rows: auto;
     gap: 10px;
 
-    .liVolunteers {
+    .liLogPurchases {
+      grid-column: span 2;
+    }
+
+    .liStatisticsRegister {
+      grid-column: 1;
+    }
+
+    .liStatisticsSeller {
+      grid-column: 2;
+    }
+
+    .liStatistics {
       grid-column: span 2;
     }
 
     .liTags {
+      grid-column: span 2;
+    }
+
+    .liVolunteers {
       grid-column: span 2;
     }
 

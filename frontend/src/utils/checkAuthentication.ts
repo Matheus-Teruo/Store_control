@@ -32,7 +32,7 @@ export function isSeller(
   );
 }
 
-export function isRegisters(
+export function isRegister(
   userFunction: SummaryFunction | null | undefined,
   admin?: VoluntaryRole,
 ): userFunction is SummaryFunction {

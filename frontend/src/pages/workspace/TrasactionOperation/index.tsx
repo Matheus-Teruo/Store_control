@@ -1,5 +1,5 @@
 import {
-  isRegisters,
+  isRegister,
   isManeger,
   isUserLogged,
   isUserUnlogged,
@@ -20,7 +20,7 @@ function Transaction() {
     const fetchVoluntary = async () => {
       if (
         isUserLogged(user) &&
-        isRegisters(user.summaryFunction, user.voluntaryRole) &&
+        isRegister(user.summaryFunction, user.voluntaryRole) &&
         isManeger(user)
       ) {
         const response = await getListRegisters();
@@ -29,7 +29,7 @@ function Transaction() {
         }
       } else if (
         isUserUnlogged(user) ||
-        (user && !isRegisters(user.summaryFunction, user.voluntaryRole)) ||
+        (user && !isRegister(user.summaryFunction, user.voluntaryRole)) ||
         isManeger(user)
       ) {
         navigate("/");

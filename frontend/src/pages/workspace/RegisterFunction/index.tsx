@@ -1,7 +1,7 @@
 import PaymentSelect from "@/components/selects/PaymentSelect";
 import {
   hasFunction,
-  isRegisters,
+  isRegister,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
@@ -54,7 +54,7 @@ function RegisterFunction() {
       });
     } else if (
       isUserUnlogged(user) ||
-      (user && !isRegisters(user.summaryFunction, user.voluntaryRole))
+      (user && !isRegister(user.summaryFunction, user.voluntaryRole))
     ) {
       navigate("/");
     }
@@ -62,7 +62,7 @@ function RegisterFunction() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isUserLogged(user) && isRegisters(user.summaryFunction)) {
+    if (isUserLogged(user) && isRegister(user.summaryFunction)) {
       const recharge = await createRecharge({
         rechargeValue: state.rechargeValue,
         paymentTypeEnum: state.paymentTypeEnum!,
