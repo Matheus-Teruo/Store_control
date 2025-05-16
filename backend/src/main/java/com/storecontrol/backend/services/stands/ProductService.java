@@ -74,11 +74,11 @@ public class ProductService {
   }
 
   public List<Product> listProducts(UUID standUuid) {
-    return repository.findAllValidTrueByStandUuid(standUuid);
+    return repository.findAllValidByStandUuid(standUuid);
   }
 
   public Map<UUID, Product> listProductsAsMap(UUID standUuid) {
-    List<Product> products = repository.findAllValidTrueByStandUuid(standUuid);
+    List<Product> products = repository.findAllValidByStandUuid(standUuid);
     return products.stream()
         .collect(Collectors.toMap(Product::getUuid, product -> product));
   }

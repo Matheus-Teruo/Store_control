@@ -12,7 +12,7 @@ public interface FunctionRepository extends JpaRepository<Function, UUID> {
   @Query("SELECT f FROM Function f WHERE f.valid = true AND f.uuid = :uuid")
   Optional<Function> findByUuidValidTrue(UUID uuid);
 
-  @Query("SELECT f FROM Function f WHERE f.valid = true")
+  @Query("SELECT f FROM Function f WHERE f.valid = true ORDER BY f.functionName ASC")
   List<Function> findAllValidTrue();
 
   boolean existsByFunctionName(String functionName);
