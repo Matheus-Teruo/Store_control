@@ -17,7 +17,7 @@ import Volunteers from "./pages/admin/Volunteers";
 import LogHeader from "./components/pagePieces/LogsHeader";
 import TradesLogs from "./pages/analytics/logpages/TradeLogs";
 import PurchaseLogs from "./pages/analytics/logpages/PurchaseLogs";
-import Transactions from "./pages/workspace/Transactions";
+import TransactionLogs from "./pages/analytics/logpages/TransactionLogs";
 import StatisticsHeader from "./components/pagePieces/StatisticsHeader";
 import CustomerStatistics from "./pages/analytics/Statistics/CustomerStatistics";
 import RechargeChart from "./pages/analytics/Statistics/RechargeChart";
@@ -67,7 +67,7 @@ function AppRouter() {
           <Route path="logs" element={<LogHeader />}>
             <Route path="trades" element={<TradesLogs />} />
             <Route path="purchases" element={<PurchaseLogs />} />
-            <Route path="transactions" element={<Transactions />} />
+            <Route path="transactions" element={<TransactionLogs />} />
           </Route>
           <Route path="statistics" element={<StatisticsHeader />}>
             <Route path="customer" element={<CustomerStatistics />} />

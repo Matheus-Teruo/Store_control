@@ -13,6 +13,7 @@ import { CheckSVG, XSVG } from "@/assets/svg";
 import { PaymentStringMetadata } from "@/components/selects/PaymentSelect/paymentMetadata";
 import { isAdmin } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
+import ComponentWrapper from "@/components/ComponentWrapper";
 
 type TradeDetailProps = {
   hide: () => void;
@@ -62,74 +63,76 @@ function TradeDetail({ hide, uuid }: TradeDetailProps) {
 
   return (
     <>
-      <div className={styles.main}>
-        <h3>Detalhes de Venda</h3>
-        <div className={styles.details}>
-          <label>Data</label>
-          <p>{trade?.tradeTimeStamp.replace("T", " ")}</p>
-          <label>Voluntário</label>
-          <p>{trade?.summaryVoluntary.fullname}</p>
-          <label>Recarga</label>
-          <p>R${trade && trade?.rechargeValue.toFixed(2)}</p>
-          <label>Tipo de pagamento</label>
-          <p>{trade && PaymentStringMetadata[trade?.paymentTypeEnum].pt}</p>
-          <label>Items</label>
-          <ul>
-            <li key="header" className={styles.listHeader}>
-              <p>Nome do Produto</p>
-              <p>Quantidade</p>
-              <p>Entregue</p>
-              <p>Total</p>
-            </li>
-            {trade?.items.map((item, index) => (
-              <li
-                key={item.productUuid}
-                className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
-              >
-                <p>{item.productName}</p>
-                <p>{item.quantity}</p>
-                <p>{item.delivered}</p>
-                <p>
-                  R$
-                  {((item.unitPrice - item.discount) * item.quantity).toFixed(
-                    2,
-                  )}
-                </p>
+      <ComponentWrapper>
+        <div className={styles.main}>
+          <h3>Detalhes de Venda</h3>
+          <div className={styles.details}>
+            <label>Data</label>
+            <p>{trade?.tradeTimeStamp.replace("T", " ")}</p>
+            <label>Voluntário</label>
+            <p>{trade?.summaryVoluntary.fullname}</p>
+            <label>Recarga</label>
+            <p>R${trade && trade?.rechargeValue.toFixed(2)}</p>
+            <label>Tipo de pagamento</label>
+            <p>{trade && PaymentStringMetadata[trade?.paymentTypeEnum].pt}</p>
+            <label>Items</label>
+            <ul>
+              <li key="header" className={styles.listHeader}>
+                <p>Nome do Produto</p>
+                <p>Quantidade</p>
+                <p>Entregue</p>
+                <p>Total</p>
               </li>
-            ))}
-          </ul>
-          <div className={styles.footerButtons}>
-            {!confirmDelete ? (
-              <>
-                <div />
-                <Button
-                  onClick={() => setConfirmDelete(true)}
-                  disabled={!isAdmin(user)}
+              {trade?.items.map((item, index) => (
+                <li
+                  key={item.productUuid}
+                  className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
                 >
-                  Excluir
-                </Button>
-              </>
-            ) : (
-              <div className={styles.deleteBody}>
-                <Button
-                  className={styles.buttonCancelDelete}
-                  onClick={() => setConfirmDelete(false)}
-                >
-                  <XSVG size={16} />
-                </Button>
-                <span>Excluir?</span>
-                <Button
-                  className={styles.buttonConfirmDelete}
-                  onClick={handleDeleteSubmit}
-                  loading={waitingFetch === "delete"}
-                >
-                  <CheckSVG size={16} />
-                </Button>
-              </div>
-            )}
+                  <p>{item.productName}</p>
+                  <p>{item.quantity}</p>
+                  <p>{item.delivered}</p>
+                  <p>
+                    R$
+                    {((item.unitPrice - item.discount) * item.quantity).toFixed(
+                      2,
+                    )}
+                  </p>
+                </li>
+              ))}
+            </ul>
+            <div className={styles.footerButtons}>
+              {!confirmDelete ? (
+                <>
+                  <div />
+                  <Button
+                    onClick={() => setConfirmDelete(true)}
+                    disabled={!isAdmin(user)}
+                  >
+                    Excluir
+                  </Button>
+                </>
+              ) : (
+                <div className={styles.deleteBody}>
+                  <Button
+                    className={styles.buttonCancelDelete}
+                    onClick={() => setConfirmDelete(false)}
+                  >
+                    <XSVG size={16} />
+                  </Button>
+                  <span>Excluir?</span>
+                  <Button
+                    className={styles.buttonConfirmDelete}
+                    onClick={handleDeleteSubmit}
+                    loading={waitingFetch === "delete"}
+                  >
+                    <CheckSVG size={16} />
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </ComponentWrapper>
       <GlassBackground onClick={hide} />
     </>
   );
