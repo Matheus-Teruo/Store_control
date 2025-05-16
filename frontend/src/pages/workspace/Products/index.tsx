@@ -40,6 +40,8 @@ function Products() {
           undefined,
           undefined,
           page.number,
+          undefined,
+          "productName,asc",
         );
         if (response) {
           setProducts(response.content);

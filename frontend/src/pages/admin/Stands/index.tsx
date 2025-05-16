@@ -49,7 +49,11 @@ function Stands() {
   }, [getListAssociations]);
 
   const fetchStands = useCallback(async () => {
-    const response = await getStands(page.number);
+    const response = await getStands(
+      page.number,
+      undefined,
+      "functionName,asc",
+    );
     if (response) {
       setStands(response.content);
       pageDispatch({

@@ -67,7 +67,7 @@ const useAssociationService = () => {
     async (
       page?: number,
       size?: number,
-      sort?: "asc" | "desc",
+      sort?: string,
     ): Promise<PaginatedResponse<SummaryAssociation> | null> =>
       safeRequest(() =>
         api

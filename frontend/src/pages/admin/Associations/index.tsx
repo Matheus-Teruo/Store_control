@@ -25,7 +25,11 @@ function Associations() {
   const navigate = useNavigate();
 
   const fetchAssociations = useCallback(async () => {
-    const response = await getAssociations(page.number);
+    const response = await getAssociations(
+      page.number,
+      undefined,
+      "associationName,asc",
+    );
     if (response) {
       setAssociations(response.content);
       pageDispatch({

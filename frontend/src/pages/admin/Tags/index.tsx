@@ -29,7 +29,7 @@ function Tags() {
   const navigate = useNavigate();
 
   const fetchTags = useCallback(async () => {
-    const response = await getTags(page.number);
+    const response = await getTags(page.number, undefined, "tagName,asc");
     if (response) {
       setTags(response.content);
       pageDispatch({

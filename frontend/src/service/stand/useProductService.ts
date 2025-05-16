@@ -66,7 +66,7 @@ const useProductService = () => {
       tagUuid?: string,
       page?: number,
       size?: number,
-      sort?: "asc" | "desc",
+      sort?: string,
     ): Promise<PaginatedResponse<SummaryProduct> | null> =>
       safeRequest(() =>
         api

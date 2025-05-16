@@ -49,7 +49,7 @@ const useTagService = () => {
     async (
       page?: number,
       size?: number,
-      sort?: "asc" | "desc",
+      sort?: string,
     ): Promise<PaginatedResponse<Tag> | null> =>
       safeRequest(() =>
         api
