@@ -17,6 +17,6 @@ public interface StandRepository extends JpaRepository<Stand, UUID> {
   @Query("SELECT s FROM Stand s WHERE s.valid = true")
   Page<Stand> findAllValidTruePage(Pageable pageable);
 
-  @Query("SELECT s FROM Stand s WHERE s.valid = true")
+  @Query("SELECT s FROM Stand s WHERE s.valid = true ORDER BY s.functionName ASC")
   List<Stand> findAllValidTrue();
 }

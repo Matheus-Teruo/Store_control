@@ -16,6 +16,6 @@ public interface CustomerRepository extends JpaRepository<Customer, UUID> {
   @Query("SELECT c FROM Customer c WHERE c.orderCard.id = :card_id ORDER BY c.customerStart DESC LIMIT 1")
   Optional<Customer> findByOrderCardId(String card_id);
 
-  @Query("SELECT c FROM Customer c WHERE c.inUse = true")
+  @Query("SELECT c FROM Customer c WHERE c.inUse = true ORDER BY c.customerStart DESC")
   Page<Customer> findAllActiveTrue(Pageable pageable);
 }

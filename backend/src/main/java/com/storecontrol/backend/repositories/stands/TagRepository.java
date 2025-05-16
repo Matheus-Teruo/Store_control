@@ -11,6 +11,6 @@ import java.util.UUID;
 public interface TagRepository extends JpaRepository<Tag, UUID> {
   boolean existsByTagName(String productName);
 
-  @Query("SELECT t FROM Tag t WHERE t.uuid IN :uuids")
+  @Query("SELECT t FROM Tag t WHERE t.uuid IN :uuids ORDER BY t.tagName ASC")
   List<Tag> findAllByUuidIn(Set<UUID> uuids);
 }

@@ -17,6 +17,6 @@ public interface RegisterRepository extends JpaRepository<Register, UUID> {
   @Query("SELECT r FROM Register r WHERE r.valid = true")
   Page<Register> findAllValidTruePage(Pageable pageable);
 
-  @Query("SELECT r FROM Register r WHERE r.valid = true")
+  @Query("SELECT r FROM Register r WHERE r.valid = true ORDER BY r.functionName ASC")
   List<Register> findAllValidTrue();
 }

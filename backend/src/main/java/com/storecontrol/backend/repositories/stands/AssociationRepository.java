@@ -20,7 +20,7 @@ public interface AssociationRepository extends JpaRepository<Association, UUID> 
   @Query("SELECT a FROM Association a WHERE a.valid = true")
   Page<Association> findAllValidTruePage(Pageable pageable);
 
-  @Query("SELECT a FROM Association a WHERE a.valid = true")
+  @Query("SELECT a FROM Association a WHERE a.valid = true ORDER BY a.associationName ASC")
   List<Association> findAllValidTrue();
 
   boolean existsByAssociationName(String associationName);
