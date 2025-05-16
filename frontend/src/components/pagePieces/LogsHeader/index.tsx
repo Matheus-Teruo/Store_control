@@ -21,9 +21,9 @@ function LogHeader() {
             <ul className={styles.navigate}>
               {!activeConfig.enableToken ? (
                 <li>
-                  <Link to="/logs/trades">
+                  <Link to="/analytics/logs/trades">
                     <h3
-                      className={`${location.pathname === "/logs/trades" && styles.selected}`}
+                      className={`${location.pathname === "/analytics/logs/trades" && styles.selected}`}
                     >
                       Vendas Diretas
                     </h3>
@@ -32,18 +32,18 @@ function LogHeader() {
               ) : (
                 <>
                   <li>
-                    <Link to="/logs/recharges">
+                    <Link to="/analytics/logs/recharges">
                       <h3
-                        className={`${location.pathname === "/logs/recharges" && styles.selected}`}
+                        className={`${location.pathname === "/analytics/logs/recharges" && styles.selected}`}
                       >
                         Recargas
                       </h3>
                     </Link>
                   </li>
                   <li>
-                    <Link to="/logs/purchases">
+                    <Link to="/analytics/logs/purchases">
                       <h3
-                        className={`${location.pathname === "/logs/purchases" && styles.selected}`}
+                        className={`${location.pathname === "/analytics/logs/purchases" && styles.selected}`}
                       >
                         Vendas Tokens
                       </h3>
@@ -53,9 +53,9 @@ function LogHeader() {
               )}
               {activeConfig.enableCard && (
                 <li>
-                  <Link to="/logs/transactions">
+                  <Link to="/analytics/logs/transactions">
                     <h3
-                      className={`${location.pathname === "/logs/transactions" && styles.selected}`}
+                      className={`${location.pathname === "/analytics/logs/transactions" && styles.selected}`}
                     >
                       Transações de Caixa
                     </h3>

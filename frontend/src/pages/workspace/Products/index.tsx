@@ -139,7 +139,7 @@ function Products() {
               Res
             </p>
             <p
-              className={`${styles.productDescription} ${product.description && styles.propNull}`}
+              className={`${styles.productDescription} ${!product.description && styles.propNull}`}
             >
               Des
             </p>

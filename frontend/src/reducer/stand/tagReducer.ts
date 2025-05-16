@@ -1,4 +1,4 @@
-import { regexLeterNumberSpace, regexUuid } from "@/utils/regex";
+import { regexText, regexUuid } from "@/utils/regex";
 import Tag, { CreateTag, UpdateTag } from "@data/stands/Tag";
 
 type TagAction =
@@ -26,7 +26,7 @@ export function tagReducer(
       };
     }
     case "SET_TAG_NAME": {
-      if (!regexLeterNumberSpace.test(action.payload)) {
+      if (!regexText.test(action.payload)) {
         return state;
       }
       return { ...state, tagName: action.payload };
