@@ -4,13 +4,13 @@ import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.enumerate.PaymentType;
-import com.storecontrol.backend.models.operations.Recharge;
-import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
+import com.storecontrol.backend.models.operations.recharges.Recharge;
+import com.storecontrol.backend.models.operations.recharges.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
 import com.storecontrol.backend.services.customers.CustomerService;
 import com.storecontrol.backend.services.operations.validation.RechargeValidation;
-import com.storecontrol.backend.services.registers.CashRegisterService;
+import com.storecontrol.backend.services.registers.RegisterService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class RechargeService {
   private RechargeRepository repository;
 
   @Autowired
-  private CashRegisterService cashRegisterService;
+  private RegisterService registerService;
 
   @Autowired
   private CustomerService customerService;
@@ -41,14 +41,14 @@ public class RechargeService {
   @Transactional
   public Recharge createRecharge(RequestCreateRecharge request) {
     Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterUuid());
+    var register = registerService.safeTakeRegisterByUuid(request.registerUuid());
 
-    validation.checkVoluntaryFunctionMatch(cashRegister, voluntary);
+    validation.checkVoluntaryFunctionMatch(register, voluntary);
 
     var customer = handleChangesOnCustomerByCardId(request);
     customer.getOrderCard().incrementDebit(request.rechargeValue());
 
-    var recharge = new Recharge(request, customer, cashRegister, voluntary);
+    var recharge = new Recharge(request, customer, register, voluntary);
     handleCashTotal(recharge, recharge.getPaymentTypeEnum(), false);
 
     repository.save(recharge);
@@ -85,7 +85,7 @@ public class RechargeService {
     var recharge = safeTakeRechargeByUuid(uuid);
 
     validation.checkDebitRemainderPositive(recharge);
-    validation.checkRechargeBelongsToVoluntary(recharge, voluntary.getUuid());
+    validation.checkRechargeBelongsToVoluntary(recharge, voluntary);
     validation.checkIfLastRechargeOfVoluntary(recharge, voluntary);
 
     recharge.getCustomer().getOrderCard().incrementDebit(recharge.getRechargeValue().negate());
@@ -122,13 +122,13 @@ public class RechargeService {
 
     switch(paymentType) {
       case PaymentType.CASH:
-        recharge.getCashRegister().incrementCash(rechargeValue);
+        recharge.getRegister().incrementCash(rechargeValue);
         break;
       case PaymentType.CREDIT:
-        recharge.getCashRegister().incrementCredit(rechargeValue);
+        recharge.getRegister().incrementCredit(rechargeValue);
         break;
       case PaymentType.DEBIT:
-        recharge.getCashRegister().incrementDebit(rechargeValue);
+        recharge.getRegister().incrementDebit(rechargeValue);
         break;
     }
   }

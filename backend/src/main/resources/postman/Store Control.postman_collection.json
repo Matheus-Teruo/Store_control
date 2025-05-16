@@ -165,10 +165,10 @@
 			]
 		},
 		{
-			"name": "CashRegister",
+			"name": "Register",
 			"item": [
 				{
-					"name": "Create CashRegister",
+					"name": "Create Register",
 					"event": [
 						{
 							"listen": "test",
@@ -177,7 +177,7 @@
 									"const responseBody = pm.response.json();\r",
 									"\r",
 									"if (responseBody && responseBody.uuid) {\r",
-									"    pm.collectionVariables.set(\"cash_register_id\", responseBody.uuid);\r",
+									"    pm.collectionVariables.set(\"register_id\", responseBody.uuid);\r",
 									"    // console.log(\"cash_register ID (UUID) saved as:\", responseBody.uuid);\r",
 									"} else {\r",
 									"    console.error(\"UUID not found in the response body\");\r",
@@ -193,7 +193,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"cashRegisterName\": \"CashRegister\"\r\n}",
+							"raw": "{\r\n    \"registerName\": \"Register\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -210,24 +210,24 @@
 					"response": []
 				},
 				{
-					"name": "Read CashRegister",
+					"name": "Read Register",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}registers/{{cash_register_id}}",
+							"raw": "{{hostPath}}registers/{{register_id}}",
 							"host": [
 								"{{hostPath}}registers"
 							],
 							"path": [
-								"{{cash_register_id}}"
+								"{{register_id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Page CashRegisters",
+					"name": "Page Registers",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -255,7 +255,7 @@
 					"response": []
 				},
 				{
-					"name": "List CashRegisters",
+					"name": "List Registers",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -272,13 +272,13 @@
 					"response": []
 				},
 				{
-					"name": "Update CashRegister",
+					"name": "Update Register",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{cash_register_id}}\",\r\n    \"cashRegisterName\": \"Register 2\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{register_id}}\",\r\n    \"registerName\": \"Register 2\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -295,7 +295,7 @@
 					"response": []
 				},
 				{
-					"name": "Delete CashRegister",
+					"name": "Delete Register",
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -309,12 +309,113 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostPath}}registers/{{cash_register_id}}",
+							"raw": "{{hostPath}}registers/{{register_id}}",
 							"host": [
 								"{{hostPath}}registers"
 							],
 							"path": [
-								"{{cash_register_id}}"
+								"{{register_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Statistics",
+			"item": [
+				{
+					"name": "Payment Total",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}statistics/registers/payment-type",
+							"host": [
+								"{{hostPath}}statistics"
+							],
+							"path": [
+								"registers",
+								"payment-type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Chart Recharges",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}statistics/registers/recharges",
+							"host": [
+								"{{hostPath}}statistics"
+							],
+							"path": [
+								"registers",
+								"recharges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stand Total",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}statistics/stands",
+							"host": [
+								"{{hostPath}}statistics"
+							],
+							"path": [
+								"stands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product Total",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}statistics/stands/products",
+							"host": [
+								"{{hostPath}}statistics"
+							],
+							"path": [
+								"stands",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Chart Purchases",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}statistics/stands/purchases",
+							"host": [
+								"{{hostPath}}statistics"
+							],
+							"path": [
+								"stands",
+								"purchases"
+							],
+							"query": [
+								{
+									"key": "standUuid",
+									"value": null,
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -495,7 +596,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"donationValue\": \"4\",\r\n    \"refundValue\": \"0\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"cashRegisterUuid\": \"{{cash_register_id}}\"\r\n}",
+							"raw": "{\r\n    \"donationValue\": \"4\",\r\n    \"refundValue\": \"0\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"registerUuid\": \"{{register_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1245,23 +1346,43 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}volunteers?page&size&sort",
+							"raw": "{{hostPath}}volunteers",
 							"host": [
 								"{{hostPath}}volunteers"
 							],
 							"query": [
 								{
 									"key": "page",
-									"value": null
+									"value": null,
+									"disabled": true
 								},
 								{
 									"key": "size",
-									"value": null
+									"value": null,
+									"disabled": true
 								},
 								{
 									"key": "sort",
-									"value": null
+									"value": null,
+									"disabled": true
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Volunteers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}volunteers/list",
+							"host": [
+								"{{hostPath}}volunteers"
+							],
+							"path": [
+								"list"
 							]
 						}
 					},
@@ -1297,7 +1418,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"functionUuid\": \"{{cash_register_id}}\" // \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"functionUuid\": \"{{register_id}}\" // \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1526,28 +1647,29 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{hostPath}}purchases?standUuid={{stand_id}}",
+									"raw": "{{hostPath}}purchases",
 									"host": [
 										"{{hostPath}}purchases"
 									],
 									"query": [
 										{
 											"key": "standUuid",
-											"value": "{{stand_id}}"
+											"value": "{{stand_id}}",
+											"disabled": true
 										},
 										{
 											"key": "page",
-											"value": null,
+											"value": "",
 											"disabled": true
 										},
 										{
 											"key": "size",
-											"value": null,
+											"value": "",
 											"disabled": true
 										},
 										{
 											"key": "sort",
-											"value": null,
+											"value": "",
 											"disabled": true
 										}
 									]
@@ -1652,7 +1774,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"cashRegisterUuid\": \"{{cash_register_id}}\"\r\n}",
+									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"registerUuid\": \"{{register_id}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1860,7 +1982,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"amount\": \"7.60\",\r\n    \"transactionTypeEnum\": \"entry\",\r\n    \"cashRegisterUuid\": \"{{cash_register_id}}\"\r\n}",
+									"raw": "{\r\n    \"amount\": \"7.60\",\r\n    \"transactionTypeEnum\": \"entry\",\r\n    \"registerUuid\": \"{{register_id}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1995,7 +2117,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"OrderCardSimple\",\r\n    \"cashRegisterUuid\": \"12345678-abcd-4efa-bcde-f1234567890a\",\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ]\r\n}",
+									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"OrderCardSimple\",\r\n    \"registerUuid\": \"12345678-abcd-4efa-bcde-f1234567890a\",\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2034,26 +2156,30 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{hostPath}}trades?standUuid&page&size&sort",
+									"raw": "{{hostPath}}trades",
 									"host": [
 										"{{hostPath}}trades"
 									],
 									"query": [
 										{
 											"key": "standUuid",
-											"value": null
+											"value": null,
+											"disabled": true
 										},
 										{
 											"key": "page",
-											"value": null
+											"value": null,
+											"disabled": true
 										},
 										{
 											"key": "size",
-											"value": null
+											"value": null,
+											"disabled": true
 										},
 										{
 											"key": "sort",
-											"value": null
+											"value": null,
+											"disabled": true
 										}
 									]
 								}
@@ -2304,7 +2430,7 @@
 			"value": ""
 		},
 		{
-			"key": "cash_register_id",
+			"key": "register_id",
 			"value": ""
 		},
 		{

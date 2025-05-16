@@ -4,10 +4,10 @@ import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.volunteers.User;
 import com.storecontrol.backend.models.volunteers.Voluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
 import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
+import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
 import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
 import com.storecontrol.backend.services.stands.AssociationService;
 import com.storecontrol.backend.services.volunteers.validation.VoluntaryValidation;
@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -70,6 +71,10 @@ public class VoluntaryService {
 
   public Page<Voluntary> pageVolunteers(Pageable pageable) {
     return repository.findAllValidTrue(pageable);
+  }
+
+  public List<Voluntary> listVolunteers() {
+    return repository.findAllValidTrue();
   }
 
   @Transactional

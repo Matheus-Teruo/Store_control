@@ -1,9 +1,9 @@
 package com.storecontrol.backend.models.customers.response;
 
-import com.storecontrol.backend.models.operations.response.ResponseSummaryDonation;
+import com.storecontrol.backend.models.operations.finalization.response.ResponseSummaryDonation;
 import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
-import com.storecontrol.backend.models.operations.response.ResponseSummaryRecharge;
-import com.storecontrol.backend.models.operations.response.ResponseSummaryRefund;
+import com.storecontrol.backend.models.operations.recharges.response.ResponseSummaryRecharge;
+import com.storecontrol.backend.models.operations.finalization.response.ResponseSummaryRefund;
 import com.storecontrol.backend.models.customers.Customer;
 
 import java.util.List;

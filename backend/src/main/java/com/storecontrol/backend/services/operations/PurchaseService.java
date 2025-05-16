@@ -7,6 +7,7 @@ import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
+import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
 import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
@@ -17,6 +18,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -84,11 +86,20 @@ public class PurchaseService {
         );
   }
 
-  public Page<Purchase> pagePurchases( UUID standUuid, Pageable pageable) {
+  public Page<Purchase> pagePurchases(UUID standUuid, Pageable pageable) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkPurchasesBelongsManagerStand(standUuid, manager);
+
     return repository.findAllValidTrue(standUuid, pageable);
   }
+
+  public Map<UUID, List<Item>> takeItensToPurchaseList(List<UUID> purchaseUuids) {
+    List<Item> allItems = repository.findByPurchasesUuid(purchaseUuids);
+
+    return allItems.stream()
+        .collect(Collectors.groupingBy(item -> item.getItemId().getPurchase().getUuid()));
+  }
+
 
   public List<Purchase> listLast3Purchases() {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -113,7 +124,7 @@ public class PurchaseService {
     var purchase = safeTakePurchaseByUuid(uuid);
 
     validation.checkSomeItemWasDelivered(purchase);
-    validation.checkPurchaseBelongsToVoluntary(purchase, voluntary.getUuid());
+    validation.checkPurchaseBelongsToVoluntary(purchase, voluntary);
     validation.checkIfLastPurchaseOfVoluntary(purchase, voluntary);
 
     updateItemsFromItemsChanged(purchase, true);

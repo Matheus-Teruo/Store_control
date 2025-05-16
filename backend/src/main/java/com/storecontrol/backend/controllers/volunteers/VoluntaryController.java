@@ -1,8 +1,8 @@
 package com.storecontrol.backend.controllers.volunteers;
 
-import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
+import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
 import com.storecontrol.backend.models.volunteers.response.ResponseSummaryVoluntary;
 import com.storecontrol.backend.models.volunteers.response.ResponseVoluntary;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;
@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -37,6 +38,14 @@ public class VoluntaryController {
     var volunteers = service.pageVolunteers(pageable);
 
     var response = volunteers.map(ResponseSummaryVoluntary::new);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/list")
+  public ResponseEntity<List<ResponseSummaryVoluntary>> readListAssociations() {
+    var volunteers = service.listVolunteers();
+
+    var response = volunteers.stream().map(ResponseSummaryVoluntary::new).toList();
     return ResponseEntity.ok(response);
   }
 

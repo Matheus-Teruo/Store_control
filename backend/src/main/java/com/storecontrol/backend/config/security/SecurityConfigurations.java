@@ -135,11 +135,21 @@ public class SecurityConfigurations {
 
   private static final String[] AUTHORIZED_GET_ENDPOINTS_MANAGEMENT = {
       "/volunteers",
+      "/volunteers/list",
       "/associations/list",
       "/functions",
       "/purchases",
       "/trades",
+      "/registers/{uuid}",
+      "/registers",
+      "/registers/list",
       "/transactions/last3",
+      "/transactions/{uuid}",
+      "/statistics/registers/payment-type",
+      "/statistics/registers/recharges",
+      "/statistics/stands",
+      "/statistics/stands/products",
+      "/statistics/stands/purchases"
   };
 
   private static final String[] AUTHORIZED_POST_ENDPOINTS_MANAGEMENT = {

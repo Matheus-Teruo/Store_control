@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Entity
 @Table(name = "items")
@@ -19,6 +20,9 @@ public class Item {
 
     @EmbeddedId
     private ItemId itemId;
+
+    @Column(name = "product_uuid", insertable = false, updatable = false)
+    private UUID productUuid;
 
     @Column(nullable = false)
     private int quantity;

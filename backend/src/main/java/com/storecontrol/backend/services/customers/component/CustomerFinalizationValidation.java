@@ -5,8 +5,8 @@ import com.storecontrol.backend.infra.exceptions.InvalidCustomerException;
 import com.storecontrol.backend.infra.exceptions.InvalidOperationException;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.enumerate.PaymentType;
-import com.storecontrol.backend.models.operations.Recharge;
-import com.storecontrol.backend.models.registers.CashRegister;
+import com.storecontrol.backend.models.operations.recharges.Recharge;
+import com.storecontrol.backend.models.registers.Register;
 import com.storecontrol.backend.models.volunteers.Function;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import org.springframework.stereotype.Component;
@@ -42,7 +42,7 @@ public class CustomerFinalizationValidation {
             MessageResolver.getInstance().getMessage("validation.customerFinalization.checkVoluntary.functionNull.message")
         );
       } else {
-        if (!(voluntary.getFunction() instanceof CashRegister)) {
+        if (!(voluntary.getFunction() instanceof Register)) {
           throw new InvalidOperationException(
               MessageResolver.getInstance().getMessage("validation.customerFinalization.checkVoluntary.functionDifferent.error"),
               MessageResolver.getInstance().getMessage("validation.customerFinalization.checkVoluntary.functionDifferent.message")

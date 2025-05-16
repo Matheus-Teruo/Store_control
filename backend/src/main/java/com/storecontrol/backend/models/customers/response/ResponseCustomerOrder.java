@@ -2,9 +2,9 @@ package com.storecontrol.backend.models.customers.response;
 
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.operations.purchases.response.ResponsePurchaseOrder;
-import com.storecontrol.backend.models.operations.response.ResponseDonationOrder;
-import com.storecontrol.backend.models.operations.response.ResponseRechargeOrder;
-import com.storecontrol.backend.models.operations.response.ResponseRefundOrder;
+import com.storecontrol.backend.models.operations.finalization.response.ResponseDonationOrder;
+import com.storecontrol.backend.models.operations.recharges.response.ResponseRechargeOrder;
+import com.storecontrol.backend.models.operations.finalization.response.ResponseRefundOrder;
 
 import java.util.List;
 import java.util.UUID;

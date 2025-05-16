@@ -18,6 +18,9 @@ public interface PurchaseRepository extends JpaRepository<Purchase, UUID> {
   @Query("SELECT p FROM Purchase p WHERE p.valid = true AND (:standUuid is null OR p.standUuid = :standUuid)")
   Page<Purchase> findAllValidTrue(UUID standUuid, Pageable pageable);
 
+  @Query("SELECT p FROM Purchase p JOIN FETCH p.items WHERE p.valid = true AND (:standUuid is null OR p.standUuid = :standUuid)")
+  List<Purchase> findAllValidAndByStandUuid(UUID standUuid);
+
   @Query("SELECT p FROM Purchase p WHERE p.valid = true AND p.voluntary.uuid = :voluntaryUuid ORDER BY p.purchaseTimeStamp DESC limit 3")
   List<Purchase> findLast3ValidTrue(UUID voluntaryUuid);
 

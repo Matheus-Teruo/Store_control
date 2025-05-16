@@ -15,7 +15,8 @@ public record ResponseSummaryTrade(
     PaymentType paymentTypeEnum,
     Boolean onOrder,
     String tradeTimeStamp,
-    Integer totalItems
+    Integer totalItems,
+    UUID voluntaryUuid
 ) {
 
   public ResponseSummaryTrade(TradeView tradeView) {
@@ -27,7 +28,8 @@ public record ResponseSummaryTrade(
         tradeView.isOnOrder(),
         tradeView.getTradeTimeStamp().toString(),
         tradeView.getItems().stream().map(Item::getQuantity)
-            .reduce(0, Integer::sum)
+            .reduce(0, Integer::sum),
+        tradeView.getVoluntaryUuid()
     );
   }
 }

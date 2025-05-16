@@ -1,5 +1,6 @@
 package com.storecontrol.backend.controllers.operations;
 
+import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
 import com.storecontrol.backend.models.operations.purchases.response.ResponsePurchase;
@@ -8,6 +9,7 @@ import com.storecontrol.backend.services.operations.PurchaseService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +52,18 @@ public class PurchaseController {
       Pageable pageable) {
     var purchases = service.pagePurchases(standUuid, pageable);
 
-    var response = purchases.map(ResponseSummaryPurchase::new);
+    List<UUID> purchaseUuids = purchases.getContent().stream()
+      .map(Purchase::getUuid)
+      .toList();
+
+    var items = service.takeItensToPurchaseList(purchaseUuids);
+
+    List<ResponseSummaryPurchase> responseList = purchases.getContent().stream()
+      .map(purchase -> new ResponseSummaryPurchase(purchase, items.get(purchase.getUuid())))
+      .toList();
+
+    var response = new PageImpl<>(responseList, pageable, purchases.getTotalElements());
+
     return ResponseEntity.ok(response);
   }
 
