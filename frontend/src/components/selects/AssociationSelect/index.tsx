@@ -64,7 +64,6 @@ function AssociationSelect({
         onChange={handleChange}
       >
         <option value="" disabled style={{ color: "#656360" }}>
-          {" "}
           -- association --
         </option>
         {listAssociations.map((association) => (

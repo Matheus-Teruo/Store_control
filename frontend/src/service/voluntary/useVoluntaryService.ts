@@ -68,6 +68,14 @@ const useVoluntaryService = () => {
     [api, safeRequest],
   );
 
+  const getListVolunteers = useCallback(
+    async (): Promise<SummaryVoluntary[] | null> =>
+      safeRequest(() =>
+        api.get<SummaryVoluntary[]>("volunteers/list").then((res) => res.data),
+      ),
+    [api, safeRequest],
+  );
+
   const updateVoluntary = useCallback(
     async (voluntary: UpdateVoluntary): Promise<Voluntary | Message | null> =>
       safeRequestWithFeedback(() =>
@@ -103,6 +111,7 @@ const useVoluntaryService = () => {
   return {
     getVoluntary,
     getVolunteers,
+    getListVolunteers,
     updateVoluntary,
     updateVoluntaryFunction,
     updateVoluntaryRole,

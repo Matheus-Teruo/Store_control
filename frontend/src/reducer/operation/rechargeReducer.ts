@@ -12,7 +12,7 @@ export const initialRechargeState: CreateRecharge = {
   rechargeValue: 0,
   paymentTypeEnum: PaymentType.CASH,
   orderCardId: "",
-  cashRegisterUuid: "",
+  registerUuid: "",
 };
 
 export function rechargeReducer(
@@ -39,7 +39,7 @@ export function rechargeReducer(
       if (!regexUuid.test(action.payload)) {
         return state;
       }
-      return { ...state, cashRegisterUuid: action.payload };
+      return { ...state, registerUuid: action.payload };
     }
     case "RESET": {
       return initialRechargeState;

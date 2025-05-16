@@ -1,7 +1,7 @@
 import styles from "./Hub.module.scss";
 import {
   isAdmin,
-  isCashier,
+  isRegister,
   isManeger,
   isSeller,
   isUserLogged,
@@ -24,6 +24,11 @@ function Hub() {
     }
   }, [navigate, user]);
 
+  const shouldShowRechargeLink =
+    (!activeConfig.enableCard && isAdmin(user)) ||
+    (isUserLogged(user) &&
+      isRegister(user.summaryFunction, user.voluntaryRole));
+
   return (
     <div className={styles.background}>
       <Link to="/" className={styles.linkLogo}>
@@ -34,7 +39,7 @@ function Hub() {
       </Link>
       {isUserLogged(user) &&
         (isSeller(user.summaryFunction, user.voluntaryRole) ||
-          isCashier(user.summaryFunction, user.voluntaryRole)) && (
+          isRegister(user.summaryFunction, user.voluntaryRole)) && (
           <h2>Função</h2>
         )}
       <ul className={styles.home}>
@@ -48,9 +53,9 @@ function Hub() {
           )}
         {activeConfig.enableCard &&
           isUserLogged(user) &&
-          isCashier(user.summaryFunction, user.voluntaryRole) && (
+          isRegister(user.summaryFunction, user.voluntaryRole) && (
             <li className={styles.liCashier}>
-              <Link className={styles.links} to="/workspace/cashier">
+              <Link className={styles.links} to="/workspace/registers">
                 Caixa
               </Link>
             </li>
@@ -65,7 +70,7 @@ function Hub() {
           )}
         {isUserLogged(user) &&
           !isSeller(user.summaryFunction, user.voluntaryRole) &&
-          !isCashier(user.summaryFunction, user.voluntaryRole) && (
+          !isRegister(user.summaryFunction, user.voluntaryRole) && (
             <li className={styles.liDefault}>
               <h3>Bem vindo</h3>
               <p>
@@ -83,6 +88,67 @@ function Hub() {
       )}
       {isManeger(user) && (
         <ul className={styles.manager}>
+          <h3>Histórico (Logs)</h3>
+          <li className={styles.liLogPurchases}>
+            <Link className={styles.links} to="/analytics/logs/trades">
+              Vendas Diretas
+            </Link>
+          </li>
+          <h3>Estatísticas</h3>
+          {activeConfig.enableCard && isAdmin(user) && (
+            <li className={styles.liStatistics}>
+              <Link
+                className={styles.links}
+                to="/analytics/statistics/customer"
+              >
+                Consumidor
+              </Link>
+            </li>
+          )}
+          {shouldShowRechargeLink && (
+            <li
+              className={
+                isAdmin(user)
+                  ? styles.liStatisticsRegister
+                  : styles.liStatistics
+              }
+            >
+              <Link
+                className={styles.links}
+                to="/analytics/statistics/recharge"
+              >
+                Caixa
+              </Link>
+            </li>
+          )}
+          {isUserLogged(user) &&
+            isSeller(user.summaryFunction, user.voluntaryRole) && (
+              <>
+                <li
+                  className={
+                    isAdmin(user)
+                      ? styles.liStatisticsSeller
+                      : styles.liStatistics
+                  }
+                >
+                  <Link
+                    className={styles.links}
+                    to="/analytics/statistics/purchase"
+                  >
+                    Venda
+                  </Link>
+                </li>
+                <li className={styles.liStatistics}>
+                  <Link
+                    className={styles.links}
+                    to="/analytics/statistics/product"
+                  >
+                    Total de Produtos
+                  </Link>
+                </li>
+              </>
+            )}
+          <h3>Organização</h3>
           {isAdmin(user) && (
             <li className={styles.liTags}>
               <Link className={styles.links} to="/admin/tags">

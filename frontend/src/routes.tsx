@@ -5,7 +5,7 @@ import User from "./pages/authentication/User";
 import Menu from "./pages/public/Menu";
 import Order from "./pages/public/Order";
 import Hub from "./pages/workspace/Hub";
-import CashierFunction from "./pages/workspace/CashierFunction";
+import RegisterFunction from "./pages/workspace/RegisterFunction";
 import StandFunction from "./pages/workspace/StandFunction";
 import StandFunctionSimple from "./pages/workspace/StandFunctionTrade";
 import Products from "./pages/workspace/Products";
@@ -14,12 +14,18 @@ import Cards from "./pages/admin/Cards";
 import Stands from "./pages/admin/Stands";
 import Tags from "./pages/admin/Tags";
 import Volunteers from "./pages/admin/Volunteers";
-import Purchases from "./pages/analytics/Purchases";
-import Statistics from "./pages/analytics/Statistics";
+import LogHeader from "./components/pagePieces/LogsHeader";
+import TradesLogs from "./pages/analytics/logpages/TradeLogs";
+import PurchaseLogs from "./pages/analytics/logpages/PurchaseLogs";
+import TransactionLogs from "./pages/analytics/logpages/TransactionLogs";
+import StatisticsHeader from "./components/pagePieces/StatisticsHeader";
+import CustomerStatistics from "./pages/analytics/Statistics/CustomerStatistics";
+import RechargeChart from "./pages/analytics/Statistics/RechargeChart";
+import PurchaseChart from "./pages/analytics/Statistics/PurchaseChart";
+import TotalProductsBars from "./pages/analytics/Statistics/TotalProductsBars";
 import AuthPage from "./components/pagePieces/AuthBackground";
 import NotificationManager from "./components/NotificationManager";
 import AdminHeader from "./components/pagePieces/AdminHeader";
-import Transactions from "./pages/analytics/Statistics/Transactions";
 import Transaction from "./pages/workspace/TrasactionOperation";
 import activeConfig from "./config/activeConfig";
 import PublicHeader from "./components/pagePieces/PublicHeader";
@@ -52,16 +58,23 @@ function AppRouter() {
         </Route>
         <Route path="/workspace" element={<WorkspaceHeader />}>
           <Route path="" element={<Hub />} />
-          <Route path="cashiers" element={<CashierFunction />} />
+          <Route path="registers" element={<RegisterFunction />} />
           <Route path="sales" element={salesComponent} />
           <Route path="products" element={<Products />} />
           <Route path="transaction" element={<Transaction />} />
         </Route>
         <Route path="/analytics">
-          <Route path="purchases" element={<Purchases />} />
-          <Route path="statistics" element={<Statistics />} />
-          <Route path="transactions" element={<Transactions />} />
-          {/* TODO: arrumar path depois */}
+          <Route path="logs" element={<LogHeader />}>
+            <Route path="trades" element={<TradesLogs />} />
+            <Route path="purchases" element={<PurchaseLogs />} />
+            <Route path="transactions" element={<TransactionLogs />} />
+          </Route>
+          <Route path="statistics" element={<StatisticsHeader />}>
+            <Route path="customer" element={<CustomerStatistics />} />
+            <Route path="recharge" element={<RechargeChart />} />
+            <Route path="purchase" element={<PurchaseChart />} />
+            <Route path="product" element={<TotalProductsBars />} />
+          </Route>
         </Route>
         <Route path="/admin/tags" element={<Tags />} />
         <Route path="/admin" element={<AdminHeader />}>

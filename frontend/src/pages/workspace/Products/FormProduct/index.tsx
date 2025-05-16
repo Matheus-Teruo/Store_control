@@ -24,6 +24,7 @@ import TextInput from "@/components/utils/TextInput";
 import { CheckSVG, XSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
 import MultTagSelect from "@/components/selects/TagSelect/MultTagSelect";
+import ComponentWrapper from "@/components/ComponentWrapper";
 
 type FormPurchaseProps = {
   type: "create" | "update";
@@ -138,169 +139,178 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
 
   return (
     <>
-      <div className={styles.main}>
-        <h3>{type === "create" ? "Criar Produto" : "Editar Produto"}</h3>
-        {image.path !== "" && (
-          <div
-            className={`${styles.imageFrame} ${image.updated && (initial?.productImg !== state.productImg ? styles.imageUpdated : styles.imageUploaded)}`}
-          >
-            <img src={image.path} alt="Preview" style={{ width: "200px" }} />
-          </div>
-        )}
-        <form
-          onSubmit={type === "create" ? handleCreateSubmit : handleUpdateSubmit}
-        >
-          <label>Nome do produto</label>
-          <Input
-            type="text"
-            id="productName"
-            isRequired
-            value={state.productName}
-            onChange={(e) =>
-              dispatch({ type: "SET_PRODUCT_NAME", payload: e.target.value })
-            }
-            showStatus={touched}
-            message={messageError["productName"]}
-          />
-          <label>Tags (opcional)</label>
-          <MultTagSelect
-            value={state.tagsUuid}
-            onChangeAdd={(e) => dispatch({ type: "ADD_TAG", payload: e })}
-            onChangeDelete={(e) => dispatch({ type: "REMOVE_TAG", payload: e })}
-            showStatus={touched}
-            message={messageError["summary"]}
-          />
-          <label>Resumo (opcional)</label>
-          <Input
-            type="text"
-            id="productSummary"
-            maxLength={255}
-            value={state.summary}
-            onChange={(e) =>
-              dispatch({ type: "SET_SUMMARY", payload: e.target.value })
-            }
-            showStatus={touched}
-            message={messageError["summary"]}
-          />
-          <label>Descrição (opcional)</label>
-          <TextInput
-            id="productDescription"
-            rows={3}
-            placeholder="Descreva, contando caracteristicas, história, ou curiosidades do prato"
-            value={state.description}
-            onChange={(e) =>
-              dispatch({ type: "SET_DESCRIPTION", payload: e.target.value })
-            }
-            showStatus={touched}
-            message={messageError["description"]}
-          />
-          <label>Preço</label>
-          <Input
-            type="number"
-            id="productPrice"
-            isRequired
-            value={state.price.toFixed(2)}
-            onChange={(e) =>
-              dispatch({
-                type: "SET_PRICE",
-                payload: e.target.value,
-              })
-            }
-            showStatus={touched}
-            message={messageError["price"]}
-          />
-          {type === "update" && (
-            <>
-              <label>Desconto</label>
-              <Input
-                type="number"
-                id="productDescount"
-                isRequired
-                value={state.discount!.toFixed(2)}
-                onChange={(e) =>
-                  dispatch({
-                    type: "SET_DISCOUNT",
-                    payload: e.target.value,
-                  })
-                }
-                showStatus={touched}
-                message={messageError["descount"]}
-              />
-            </>
-          )}
-          <label>Estoque</label>
-          <Input
-            type="number"
-            id="productStock"
-            isRequired
-            value={state.stock.toFixed(0)}
-            onChange={(e) =>
-              dispatch({ type: "SET_STOCK", payload: parseInt(e.target.value) })
-            }
-            showStatus={touched}
-            message={messageError["stock"]}
-          />
-          <div className={styles.imageUpload}>
-            <label>Upload de Imagem (opcional)</label>
-            <ImageUpload
-              onChangeImage={(value) =>
-                setImage({
-                  path: value,
-                  updated: true,
-                })
-              }
-              onChange={(value) =>
-                dispatch({ type: "SET_PRODUCT_IMG", payload: value })
-              }
-            />
-          </div>
-          {isUserLogged(user) && isAdmin(user) && (
-            <div className={styles.adminSection}>
-              <p>Modo administrador</p>
-              <label>Selecione o estande para o produto</label>
-              <StandSelect
-                value={state.standUuid}
-                onChange={(value) =>
-                  dispatch({ type: "SET_STAND_UUID", payload: value })
-                }
-                notNull
-                showStatus={touched}
-                message={messageError["standUuid"]}
-              />
+      <ComponentWrapper>
+        <div className={styles.main}>
+          <h3>{type === "create" ? "Criar Produto" : "Editar Produto"}</h3>
+          {image.path !== "" && (
+            <div
+              className={`${styles.imageFrame} ${image.updated && (initial?.productImg !== state.productImg ? styles.imageUpdated : styles.imageUploaded)}`}
+            >
+              <img src={image.path} alt="Preview" style={{ width: "200px" }} />
             </div>
           )}
-          <div className={styles.footerButtons}>
-            {type === "update" && !confirmDelete && (
-              <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
+          <form
+            onSubmit={
+              type === "create" ? handleCreateSubmit : handleUpdateSubmit
+            }
+          >
+            <label>Nome do produto</label>
+            <Input
+              type="text"
+              id="productName"
+              isRequired
+              value={state.productName}
+              onChange={(e) =>
+                dispatch({ type: "SET_PRODUCT_NAME", payload: e.target.value })
+              }
+              showStatus={touched}
+              message={messageError["productName"]}
+            />
+            <label>Tags (opcional)</label>
+            <MultTagSelect
+              value={state.tagsUuid}
+              onChangeAdd={(e) => dispatch({ type: "ADD_TAG", payload: e })}
+              onChangeDelete={(e) =>
+                dispatch({ type: "REMOVE_TAG", payload: e })
+              }
+              showStatus={touched}
+              message={messageError["summary"]}
+            />
+            <label>Resumo (opcional)</label>
+            <Input
+              type="text"
+              id="productSummary"
+              maxLength={255}
+              value={state.summary}
+              onChange={(e) =>
+                dispatch({ type: "SET_SUMMARY", payload: e.target.value })
+              }
+              showStatus={touched}
+              message={messageError["summary"]}
+            />
+            <label>Descrição (opcional)</label>
+            <TextInput
+              id="productDescription"
+              rows={3}
+              placeholder="Descreva, contando caracteristicas, história, ou curiosidades do prato"
+              value={state.description}
+              onChange={(e) =>
+                dispatch({ type: "SET_DESCRIPTION", payload: e.target.value })
+              }
+              showStatus={touched}
+              message={messageError["description"]}
+            />
+            <label>Preço</label>
+            <Input
+              type="number"
+              id="productPrice"
+              isRequired
+              value={state.price.toFixed(2)}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_PRICE",
+                  payload: e.target.value,
+                })
+              }
+              showStatus={touched}
+              message={messageError["price"]}
+            />
+            {type === "update" && (
+              <>
+                <label>Desconto</label>
+                <Input
+                  type="number"
+                  id="productDescount"
+                  isRequired
+                  value={state.discount!.toFixed(2)}
+                  onChange={(e) =>
+                    dispatch({
+                      type: "SET_DISCOUNT",
+                      payload: e.target.value,
+                    })
+                  }
+                  showStatus={touched}
+                  message={messageError["descount"]}
+                />
+              </>
             )}
-            {confirmDelete && (
-              <div className={styles.deleteBody}>
-                <span>Excluir?</span>
-                <Button
-                  className={styles.buttonCancelDelete}
-                  onClick={() => setConfirmDelete(false)}
-                >
-                  <XSVG size={16} />
-                </Button>
-                <Button
-                  className={styles.buttonConfirmDelete}
-                  onClick={handleDeleteSubmit}
-                  loading={waitingFetch === "delete"}
-                >
-                  <CheckSVG size={16} />
-                </Button>
+            <label>Estoque</label>
+            <Input
+              type="number"
+              id="productStock"
+              isRequired
+              value={state.stock.toFixed(0)}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_STOCK",
+                  payload: parseInt(e.target.value),
+                })
+              }
+              showStatus={touched}
+              message={messageError["stock"]}
+            />
+            <div className={styles.imageUpload}>
+              <label>Upload de Imagem (opcional)</label>
+              <ImageUpload
+                onChangeImage={(value) =>
+                  setImage({
+                    path: value,
+                    updated: true,
+                  })
+                }
+                onChange={(value) =>
+                  dispatch({ type: "SET_PRODUCT_IMG", payload: value })
+                }
+              />
+            </div>
+            {isUserLogged(user) && isAdmin(user) && (
+              <div className={styles.adminSection}>
+                <p>Modo administrador</p>
+                <label>Selecione o estande para o produto</label>
+                <StandSelect
+                  value={state.standUuid}
+                  onChange={(value) =>
+                    dispatch({ type: "SET_STAND_UUID", payload: value })
+                  }
+                  notNull
+                  showStatus={touched}
+                  message={messageError["standUuid"]}
+                />
               </div>
             )}
-            <div />
-            <Button
-              type={ButtonHTMLType.Submit}
-              loading={waitingFetch === "create/update"}
-            >
-              {type === "create" ? "Criar" : "Editar"}
-            </Button>
-          </div>
-        </form>
-      </div>
+            <div className={styles.footerButtons}>
+              {type === "update" && !confirmDelete && (
+                <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
+              )}
+              {confirmDelete && (
+                <div className={styles.deleteBody}>
+                  <span>Excluir?</span>
+                  <Button
+                    className={styles.buttonCancelDelete}
+                    onClick={() => setConfirmDelete(false)}
+                  >
+                    <XSVG size={16} />
+                  </Button>
+                  <Button
+                    className={styles.buttonConfirmDelete}
+                    onClick={handleDeleteSubmit}
+                    loading={waitingFetch === "delete"}
+                  >
+                    <CheckSVG size={16} />
+                  </Button>
+                </div>
+              )}
+              <div />
+              <Button
+                type={ButtonHTMLType.Submit}
+                loading={waitingFetch === "create/update"}
+              >
+                {type === "create" ? "Criar" : "Editar"}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </ComponentWrapper>
       <GlassBackground onClick={hide} />
     </>
   );

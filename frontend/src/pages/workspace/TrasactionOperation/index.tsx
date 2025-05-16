@@ -1,18 +1,18 @@
 import {
-  isCashier,
+  isRegister,
   isManeger,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import { SummaryCashRegister } from "@data/registers/CashRegister";
-import useCashRegisterService from "@service/registers/useCashRegisterService";
+import { SummaryRegister } from "@data/registers/Register";
+import useRegisterService from "@service/registers/useRegisterService";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Transaction() {
-  const [registers, setRegisters] = useState<SummaryCashRegister[]>([]);
-  const { getListRegisters } = useCashRegisterService();
+  const [registers, setRegisters] = useState<SummaryRegister[]>([]);
+  const { getListRegisters } = useRegisterService();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
@@ -20,7 +20,7 @@ function Transaction() {
     const fetchVoluntary = async () => {
       if (
         isUserLogged(user) &&
-        isCashier(user.summaryFunction, user.voluntaryRole) &&
+        isRegister(user.summaryFunction, user.voluntaryRole) &&
         isManeger(user)
       ) {
         const response = await getListRegisters();
@@ -29,7 +29,7 @@ function Transaction() {
         }
       } else if (
         isUserUnlogged(user) ||
-        (user && !isCashier(user.summaryFunction, user.voluntaryRole)) ||
+        (user && !isRegister(user.summaryFunction, user.voluntaryRole)) ||
         isManeger(user)
       ) {
         navigate("/");
@@ -42,7 +42,7 @@ function Transaction() {
     <div>
       <ul>
         {registers.map((register) => (
-          <li key={register.uuid}>{register.cashRegister}</li>
+          <li key={register.uuid}>{register.registerName}</li>
         ))}
       </ul>
     </div>

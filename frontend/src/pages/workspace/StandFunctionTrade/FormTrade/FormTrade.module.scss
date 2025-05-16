@@ -1,17 +1,15 @@
 @use "@styles/variables" as *;
 
 .main {
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   width: 80vw;
+  height: fit-content;
   max-width: 1200px;
-  min-height: 50vh;
   z-index: 100;
-  position: fixed;
+  position: relative;
   background-color: $color-gray-100;
   padding: 10px;
   border-radius: $border-radius;
+  pointer-events: auto;
   display: flex;
   flex-direction: column;
   align-items: center;

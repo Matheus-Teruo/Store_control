@@ -30,8 +30,9 @@ import { createQRcodeImage } from "@/utils/createQRcode";
 import QRcodeView from "@/components/QRcodeView";
 import QRcodeReader from "@/components/QRcodeReader";
 import { cartPacking, takeStandUuid } from "@/utils/cartCompactor";
+import ComponentWrapper from "@/components/ComponentWrapper";
 
-type FormPurchaseProps = {
+type FormTradeProps = {
   reducer: [
     CreateTrade & { totalQuantity: number } & { error: string },
     React.Dispatch<TradeAction>,
@@ -57,7 +58,7 @@ function FormTrade({
   hide,
   type = "normal",
   isAdmin = false,
-}: FormPurchaseProps) {
+}: FormTradeProps) {
   const [productsRecord, setProductsRecord] = useState<
     Record<string, Omit<SummaryProduct, "uuid">>
   >({});
@@ -169,141 +170,143 @@ function FormTrade({
 
   return (
     <>
-      <div className={styles.main}>
-        <h3>Carrinho</h3>
-        <form onSubmit={handleSubmit}>
-          <ul className={styles.itemList}>
-            {state.items.length !== 0
-              ? state.items.map((item) => {
-                  const product =
-                    Object.keys(productsRecord).length !== 0
-                      ? productsRecord[item.productUuid]
-                      : emptyProduct;
-                  return (
-                    <li
-                      key={item.productUuid}
-                      className={`${product.stock <= item.quantity && styles.OutOfStock}`}
-                    >
-                      <p>{product.productName}</p>
-                      <Button
-                        onClick={() =>
-                          dispatch({
-                            type: "REMOVE_ITEM",
-                            payload: item.productUuid,
-                          })
-                        }
+      <ComponentWrapper>
+        <div className={styles.main}>
+          <h3>Carrinho</h3>
+          <form onSubmit={handleSubmit}>
+            <ul className={styles.itemList}>
+              {state.items.length !== 0
+                ? state.items.map((item) => {
+                    const product =
+                      Object.keys(productsRecord).length !== 0
+                        ? productsRecord[item.productUuid]
+                        : emptyProduct;
+                    return (
+                      <li
+                        key={item.productUuid}
+                        className={`${product.stock <= item.quantity && styles.OutOfStock}`}
                       >
-                        <TrashSVG size={16} />
+                        <p>{product.productName}</p>
+                        <Button
+                          onClick={() =>
+                            dispatch({
+                              type: "REMOVE_ITEM",
+                              payload: item.productUuid,
+                            })
+                          }
+                        >
+                          <TrashSVG size={16} />
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            dispatch({
+                              type: "DECREASE_ITEM",
+                              payload: item.productUuid,
+                            })
+                          }
+                        >
+                          <MinusSVG size={16} />
+                        </Button>
+                        <Input
+                          id={`product-${item.productUuid}`}
+                          type="number"
+                          value={item.quantity.toFixed(0)}
+                          onChange={(e) =>
+                            dispatch({
+                              type: "ON_CHANGE_ITEM",
+                              payload: {
+                                uuid: item.productUuid,
+                                quantity: parseInt(e.target.value),
+                                stock: product.stock,
+                              },
+                            })
+                          }
+                        />
+                        <Button
+                          onClick={() =>
+                            dispatch({
+                              type: "ADD_ITEM",
+                              payload: { uuid: item.productUuid, ...product },
+                            })
+                          }
+                        >
+                          <PlusSVG size={16} />
+                        </Button>
+                        <p className={styles.itemPrice}>
+                          R$
+                          {(
+                            (item.unitPrice - item.discount) *
+                            item.quantity
+                          ).toFixed(2)}
+                        </p>
+                      </li>
+                    );
+                  })
+                : type === "normal" && (
+                    <div className={styles.scanner}>
+                      <Button onClick={() => setQrcodeReader(true)}>
+                        <p>Ler Qrcode</p>
+                        <QRcodeScanSVG />
                       </Button>
-                      <Button
-                        onClick={() =>
-                          dispatch({
-                            type: "DECREASE_ITEM",
-                            payload: item.productUuid,
-                          })
-                        }
-                      >
-                        <MinusSVG size={16} />
-                      </Button>
-                      <Input
-                        id={`product-${item.productUuid}`}
-                        type="number"
-                        value={item.quantity.toFixed(0)}
-                        onChange={(e) =>
-                          dispatch({
-                            type: "ON_CHANGE_ITEM",
-                            payload: {
-                              uuid: item.productUuid,
-                              quantity: parseInt(e.target.value),
-                              stock: product.stock,
-                            },
-                          })
-                        }
-                      />
-                      <Button
-                        onClick={() =>
-                          dispatch({
-                            type: "ADD_ITEM",
-                            payload: { uuid: item.productUuid, ...product },
-                          })
-                        }
-                      >
-                        <PlusSVG size={16} />
-                      </Button>
-                      <p className={styles.itemPrice}>
-                        R$
-                        {(
-                          (item.unitPrice - item.discount) *
-                          item.quantity
-                        ).toFixed(2)}
-                      </p>
-                    </li>
-                  );
+                    </div>
+                  )}
+            </ul>
+            <li key={"Total"} className={styles.totalList}>
+              <p>Total</p>
+              <p />
+              <p />
+              <p className={styles.itemQuantity}>{state.totalQuantity}</p>
+              <p />
+              <p className={styles.itemPrice}>
+                R$
+                {state.rechargeValue.toFixed(2)}
+              </p>
+            </li>
+            <PaymentSelect
+              payment={state.paymentTypeEnum}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_RECHARGE_TYPE",
+                  payload: e.target.value as PaymentType,
                 })
-              : type === "normal" && (
-                  <div className={styles.scanner}>
-                    <Button onClick={() => setQrcodeReader(true)}>
-                      <p>Ler Qrcode</p>
-                      <QRcodeScanSVG />
-                    </Button>
-                  </div>
-                )}
-          </ul>
-          <li key={"Total"} className={styles.totalList}>
-            <p>Total</p>
-            <p />
-            <p />
-            <p className={styles.itemQuantity}>{state.totalQuantity}</p>
-            <p />
-            <p className={styles.itemPrice}>
-              R$
-              {state.rechargeValue.toFixed(2)}
-            </p>
-          </li>
-          <PaymentSelect
-            payment={state.paymentTypeEnum}
-            onChange={(e) =>
-              dispatch({
-                type: "SET_RECHARGE_TYPE",
-                payload: e.target.value as PaymentType,
-              })
-            }
-          />
-          {type === "pre" && (
-            <p className={styles.communication}>
-              Este carrinho é apenas uma pré ordem, para fazer o pedido pode
-              gerar o QR code e apresentar para o caixa e fazer o pagamento
-            </p>
-          )}
-          {confirmFinalization ? (
-            <div className={styles.finalizationConfirmation}>
-              <Button
-                onClick={() => setConfirmFinalization(false)}
-                className={styles.finalizationButton}
-              >
-                <XSVG />
-              </Button>
-              <p>{type === "normal" ? "Finalizar" : "Gerar"}</p>
-              <Button
-                className={styles.finalizationButton}
-                type={ButtonHTMLType.Submit}
-                loading={waitingFetch}
-              >
-                <CheckSVG />
-              </Button>
-            </div>
-          ) : (
-            <div className={styles.finalization}>
-              <Button
-                onClick={() => setConfirmFinalization(true)}
-                className={styles.finalizationButton}
-              >
-                <p>{type === "normal" ? "Finalizar" : "Gerar QRcode"}</p>
-              </Button>
-            </div>
-          )}
-        </form>
-      </div>
+              }
+            />
+            {type === "pre" && (
+              <p className={styles.communication}>
+                Este carrinho é apenas uma pré ordem, para fazer o pedido pode
+                gerar o QR code e apresentar para o caixa e fazer o pagamento
+              </p>
+            )}
+            {confirmFinalization ? (
+              <div className={styles.finalizationConfirmation}>
+                <Button
+                  onClick={() => setConfirmFinalization(false)}
+                  className={styles.finalizationButton}
+                >
+                  <XSVG />
+                </Button>
+                <p>{type === "normal" ? "Finalizar" : "Gerar"}</p>
+                <Button
+                  className={styles.finalizationButton}
+                  type={ButtonHTMLType.Submit}
+                  loading={waitingFetch}
+                >
+                  <CheckSVG />
+                </Button>
+              </div>
+            ) : (
+              <div className={styles.finalization}>
+                <Button
+                  onClick={() => setConfirmFinalization(true)}
+                  className={styles.finalizationButton}
+                >
+                  <p>{type === "normal" ? "Finalizar" : "Gerar QRcode"}</p>
+                </Button>
+              </div>
+            )}
+          </form>
+        </div>
+      </ComponentWrapper>
       <GlassBackground onClick={() => hide()} />
       {qrcode && (
         <QRcodeView

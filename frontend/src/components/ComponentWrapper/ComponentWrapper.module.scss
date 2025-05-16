@@ -1,0 +1,19 @@
+.mainWrapper {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 40px 0;
+  overflow-y: auto;
+  background: none;
+  pointer-events: none;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

@@ -1,14 +1,14 @@
 import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
-import CashRegister, {
-  CreateCashRegister,
-  SummaryCashRegister,
-  UpdateCashRegister,
-} from "@data/registers/CashRegister";
+import Register, {
+  CreateRegister,
+  SummaryRegister,
+  UpdateRegister,
+} from "@data/registers/Register";
 import { PaginatedResponse } from "@service/PagesType";
 import { useCallback } from "react";
 
-const useCashRegisterService = () => {
+const useRegisterService = () => {
   const api = useAxios();
   const handleApiError = useApiError();
 
@@ -25,19 +25,17 @@ const useCashRegisterService = () => {
   );
 
   const createRegister = useCallback(
-    async (register: CreateCashRegister): Promise<CashRegister | null> =>
+    async (register: CreateRegister): Promise<Register | null> =>
       safeRequest(() =>
-        api.post<CashRegister>("registers", register).then((res) => res.data),
+        api.post<Register>("registers", register).then((res) => res.data),
       ),
     [api, safeRequest],
   );
 
   const getRegister = useCallback(
-    async (registerUuid: string): Promise<CashRegister | null> =>
+    async (registerUuid: string): Promise<Register | null> =>
       safeRequest(() =>
-        api
-          .get<CashRegister>(`registers/${registerUuid}`)
-          .then((res) => res.data),
+        api.get<Register>(`registers/${registerUuid}`).then((res) => res.data),
       ),
     [api, safeRequest],
   );
@@ -47,11 +45,11 @@ const useCashRegisterService = () => {
       page?: number,
       size?: number,
       sort?: "asc" | "desc",
-    ): Promise<PaginatedResponse<SummaryCashRegister> | null> =>
+    ): Promise<PaginatedResponse<SummaryRegister> | null> =>
       safeRequest(() =>
         api
           .get<
-            PaginatedResponse<SummaryCashRegister>
+            PaginatedResponse<SummaryRegister>
           >("registers", { params: { page, size, sort } })
           .then((res) => res.data),
       ),
@@ -59,19 +57,17 @@ const useCashRegisterService = () => {
   );
 
   const getListRegisters = useCallback(
-    async (): Promise<SummaryCashRegister[] | null> =>
+    async (): Promise<SummaryRegister[] | null> =>
       safeRequest(() =>
-        api
-          .get<SummaryCashRegister[]>("registers/list")
-          .then((res) => res.data),
+        api.get<SummaryRegister[]>("registers/list").then((res) => res.data),
       ),
     [api, safeRequest],
   );
 
   const updateRegister = useCallback(
-    async (register: UpdateCashRegister): Promise<CashRegister | null> =>
+    async (register: UpdateRegister): Promise<Register | null> =>
       safeRequest(() =>
-        api.put<CashRegister>("registers", register).then((res) => res.data),
+        api.put<Register>("registers", register).then((res) => res.data),
       ),
     [api, safeRequest],
   );
@@ -93,4 +89,4 @@ const useCashRegisterService = () => {
   };
 };
 
-export default useCashRegisterService;
+export default useRegisterService;

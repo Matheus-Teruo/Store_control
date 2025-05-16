@@ -5,12 +5,8 @@ import { useEffect, useReducer, useState } from "react";
 import ShowLastPurchase from "./ShowLastTrade";
 import { formReducer, initialFormState } from "@reducer/formReducer";
 import GlassBackground from "@/components/GlassBackground";
-
-const PaymentRoleMetadata: Record<string, { label: string }> = {
-  CASH: { label: "Dinheiro" },
-  DEBIT: { label: "Débito" },
-  CREDIT: { label: "Crédito" },
-};
+import { PaymentStringMetadata } from "@/components/selects/PaymentSelect/paymentMetadata";
+import ComponentWrapper from "@/components/ComponentWrapper";
 
 function LastTradeList({ setShow }: { setShow: () => void }) {
   const [trades, setTrades] = useState<SummaryTrade[]>([]);
@@ -28,36 +24,38 @@ function LastTradeList({ setShow }: { setShow: () => void }) {
 
   return (
     <>
-      <div className={styles.body}>
-        <h3>Últimas vendas</h3>
-        <ul className={styles.mainList}>
-          <li key={"Header"} className={styles.header}>
-            <p>Quantidade</p>
-            <p>Total</p>
-            <p>Pagamento</p>
-          </li>
-          {trades.map((trade, index) => (
-            <li
-              key={trade.uuid}
-              onClick={() => {
-                setDeletable(index === 0);
-                dispatch({ type: "SET_UPDATE", payload: trade.uuid });
-              }}
-            >
-              <p>{trade.totalItems}</p>
-              <p>R${trade.rechargeValue}</p>
-              <p>{PaymentRoleMetadata[trade.paymentTypeEnum].label}</p>
+      <ComponentWrapper>
+        <div className={styles.body}>
+          <h3>Últimas vendas</h3>
+          <ul className={styles.mainList}>
+            <li key={"Header"} className={styles.header}>
+              <p>Quantidade</p>
+              <p>Pagamento</p>
+              <p>Total</p>
             </li>
-          ))}
-        </ul>
-        {state.show && (
-          <ShowLastPurchase
-            uuid={state.uuid}
-            deletable={deletable}
-            setShow={setShow}
-          />
-        )}
-      </div>
+            {trades.map((trade, index) => (
+              <li
+                key={trade.uuid}
+                onClick={() => {
+                  setDeletable(index === 0);
+                  dispatch({ type: "SET_UPDATE", payload: trade.uuid });
+                }}
+              >
+                <p>{trade.totalItems}</p>
+                <p>{PaymentStringMetadata[trade.paymentTypeEnum].pt}</p>
+                <p>R${trade.rechargeValue.toFixed(2)}</p>
+              </li>
+            ))}
+          </ul>
+          {state.show && (
+            <ShowLastPurchase
+              uuid={state.uuid}
+              deletable={deletable}
+              setShow={setShow}
+            />
+          )}
+        </div>
+      </ComponentWrapper>
       <GlassBackground onClick={setShow} />
     </>
   );
