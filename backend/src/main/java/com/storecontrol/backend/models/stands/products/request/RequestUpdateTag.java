@@ -11,7 +11,7 @@ public record RequestUpdateTag(
     UUID uuid,
 
     @Size(min = 3, message = "{request.validation.updateProductTag.tagName.size}")
-    @Pattern(regexp = "^[\\p{L}\\p{N}]*$", message = "{request.validation.updateProductTag.tagName.pattern}")
+    @Pattern(regexp = "^[\\p{L}\\p{N} /:;,.!()?\\-]*$", message = "{request.validation.updateProductTag.tagName.pattern}")
     String tagName,
 
     @Pattern(regexp = "^#([A-Fa-f0-9]{6})$", message = "{request.validation.updateProductTag.color.pattern}")

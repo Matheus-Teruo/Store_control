@@ -11,17 +11,17 @@ public record RequestUpdateProduct(
     UUID uuid,
 
     @Size(min = 3, message = "{request.validation.updateProduct.productName.size}")
-    @Pattern(regexp = "^[\\p{L}\\p{N} ]*$", message = "{request.validation.updateProduct.productName.pattern}")
+    @Pattern(regexp = "^[\\p{L}\\p{N} /:;,.!()?\\-]*$", message = "{request.validation.updateProduct.productName.pattern}")
     String productName,
 
     Set<UUID> tagsUuid,
 
     @Size(min=3, max = 255, message = "{request.validation.updateProduct.summary.size}")
-    @Pattern(regexp = "^[\\p{L}\\p{N} ,.!()?]*$", message = "{request.validation.updateProduct.summary.pattern}")
+    @Pattern(regexp = "^[\\p{L}\\p{N} /:;,.!()?\\-]*$", message = "{request.validation.updateProduct.summary.pattern}")
     String summary,
 
     @Size(min = 30, message = "{request.validation.updateProduct.description.size}")
-    @Pattern(regexp = "^[\\p{L}\\p{N} ,.!()?]*$", message = "{request.validation.updateProduct.description.pattern}")
+    @Pattern(regexp = "^[\\p{L}\\p{N} /:;,.!()?\\-]*$", message = "{request.validation.updateProduct.description.pattern}")
     String description,
 
     @PositiveOrZero(message = "{request.validation.updateProduct.price.positiveOrZero}")
