@@ -49,7 +49,11 @@ function Stands() {
   }, [getListAssociations]);
 
   const fetchStands = useCallback(async () => {
-    const response = await getStands(page.number);
+    const response = await getStands(
+      page.number,
+      undefined,
+      "functionName,asc",
+    );
     if (response) {
       setStands(response.content);
       pageDispatch({
@@ -111,7 +115,12 @@ function Stands() {
           </Button>
         </li>
       </ul>
-      <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
+      <PageSelect
+        className={styles.pageFooter}
+        value={page.number}
+        max={page.max}
+        dispatch={pageDispatch}
+      />
       {formState.show && (
         <FormStand
           type={formState.type}

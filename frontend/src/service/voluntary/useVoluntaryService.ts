@@ -56,7 +56,7 @@ const useVoluntaryService = () => {
     async (
       page?: number,
       size?: number,
-      sort?: "asc" | "desc",
+      sort?: string,
     ): Promise<PaginatedResponse<SummaryVoluntary> | null> =>
       safeRequest(() =>
         api

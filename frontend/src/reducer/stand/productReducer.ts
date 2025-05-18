@@ -1,4 +1,4 @@
-import { regexLeterNumberSpace, regexText, regexUuid } from "@/utils/regex";
+import { regexText, regexUuid } from "@/utils/regex";
 import Product, { CreateProduct, UpdateProduct } from "@data/stands/Product";
 
 type ProductAction =
@@ -52,7 +52,7 @@ export function productReducer(
       };
     }
     case "SET_PRODUCT_NAME": {
-      if (!regexLeterNumberSpace.test(action.payload)) {
+      if (!regexText.test(action.payload)) {
         return state;
       }
       return { ...state, productName: action.payload };

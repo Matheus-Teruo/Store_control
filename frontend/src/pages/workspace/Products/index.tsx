@@ -40,6 +40,8 @@ function Products() {
           undefined,
           undefined,
           page.number,
+          undefined,
+          "productName,asc",
         );
         if (response) {
           setProducts(response.content);
@@ -139,7 +141,7 @@ function Products() {
               Res
             </p>
             <p
-              className={`${styles.productDescription} ${product.description && styles.propNull}`}
+              className={`${styles.productDescription} ${!product.description && styles.propNull}`}
             >
               Des
             </p>
@@ -169,7 +171,7 @@ function Products() {
         ))}
       </ul>
       <PageSelect
-        className={styles.pageComponent}
+        className={styles.pageFooter}
         value={page.number}
         max={page.max}
         dispatch={pageDispatch}

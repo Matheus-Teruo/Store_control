@@ -61,7 +61,7 @@ const useStandService = () => {
     async (
       page?: number,
       size?: number,
-      sort?: "asc" | "desc",
+      sort?: string,
     ): Promise<PaginatedResponse<SummaryStand> | null> =>
       safeRequest(() =>
         api

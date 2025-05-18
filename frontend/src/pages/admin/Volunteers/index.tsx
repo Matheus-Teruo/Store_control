@@ -56,7 +56,11 @@ function Volunteers() {
   const navigate = useNavigate();
 
   const fetchVolunteers = useCallback(async () => {
-    const response = await getVolunteers();
+    const response = await getVolunteers(
+      page.number,
+      undefined,
+      "fullname,asc",
+    );
     if (response) {
       setVolunteers(response.content);
       pageDispatch({
@@ -64,7 +68,7 @@ function Volunteers() {
         payload: response.page.totalPages,
       });
     }
-  }, [getVolunteers]);
+  }, [page.number, getVolunteers]);
 
   useEffect(() => {
     if (isUserLogged(user) && isManeger(user)) {
@@ -147,7 +151,12 @@ function Volunteers() {
           );
         })}
       </ul>
-      <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
+      <PageSelect
+        className={styles.pageFooter}
+        value={page.number}
+        max={page.max}
+        dispatch={pageDispatch}
+      />
       {formState.show && (
         <FormVoluntary
           hide={handleFormShow}

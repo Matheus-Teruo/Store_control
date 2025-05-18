@@ -41,6 +41,7 @@
   }
 
   .main {
+    flex: 1;
     padding: 6px 0;
     max-width: calc(1280px);
     width: 100%;
@@ -113,6 +114,14 @@
           font-size: 0.875rem;
         }
       }
+    }
+  }
+
+  .pageFooter {
+    padding: 4px 0;
+
+    button {
+      background-color: $color-secundary-1;
     }
   }
 }
