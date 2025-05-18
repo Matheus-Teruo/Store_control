@@ -227,7 +227,11 @@ function Menu() {
         })}
         <div
           ref={sentinelRef}
-          style={{ width: "100%", height: 1, backgroundColor: "white" }}
+          style={{
+            width: "100%",
+            height: 1,
+            marginBottom: "2px",
+          }}
         />
       </ul>
       {showCart && (
