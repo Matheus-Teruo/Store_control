@@ -31,6 +31,7 @@ import QRcodeView from "@/components/QRcodeView";
 import QRcodeReader from "@/components/QRcodeReader";
 import { cartPacking, takeStandUuid } from "@/utils/cartCompactor";
 import ComponentWrapper from "@/components/ComponentWrapper";
+import activeConfig from "@/config/activeConfig";
 
 type FormTradeProps = {
   reducer: [
@@ -262,65 +263,73 @@ function FormTrade({
                 {state.rechargeValue.toFixed(2)}
               </p>
             </li>
-            <PaymentSelect
-              payment={state.paymentTypeEnum}
-              onChange={(e) =>
-                dispatch({
-                  type: "SET_RECHARGE_TYPE",
-                  payload: e.target.value as PaymentType,
-                })
-              }
-            />
+            {activeConfig.enableCard && (
+              <PaymentSelect
+                payment={state.paymentTypeEnum}
+                onChange={(e) =>
+                  dispatch({
+                    type: "SET_RECHARGE_TYPE",
+                    payload: e.target.value as PaymentType,
+                  })
+                }
+              />
+            )}
             {type === "pre" && (
               <p className={styles.communication}>
-                Este carrinho é apenas uma pré ordem, para fazer o pedido pode
-                gerar o QR code e apresentar para o caixa e fazer o pagamento
+                Este carrinho é apenas uma calculadora. Dirija-se ao caixa para
+                comprar fichas.
+                {/* Este carrinho é apenas uma pré ordem, para fazer o pedido pode
+                gerar o QR code e apresentar para o caixa e fazer o pagamento */}
               </p>
             )}
-            {confirmFinalization ? (
-              <div className={styles.finalizationConfirmation}>
-                <Button
-                  onClick={() => setConfirmFinalization(false)}
-                  className={styles.finalizationButton}
-                >
-                  <XSVG />
-                </Button>
-                <p>{type === "normal" ? "Finalizar" : "Gerar"}</p>
-                <Button
-                  className={styles.finalizationButton}
-                  type={ButtonHTMLType.Submit}
-                  loading={waitingFetch}
-                >
-                  <CheckSVG />
-                </Button>
-              </div>
-            ) : (
-              <div className={styles.finalization}>
-                <Button
-                  onClick={() => setConfirmFinalization(true)}
-                  className={styles.finalizationButton}
-                >
-                  <p>{type === "normal" ? "Finalizar" : "Gerar QRcode"}</p>
-                </Button>
-              </div>
-            )}
+            {activeConfig.enableCard &&
+              (confirmFinalization ? (
+                <div className={styles.finalizationConfirmation}>
+                  <Button
+                    onClick={() => setConfirmFinalization(false)}
+                    className={styles.finalizationButton}
+                  >
+                    <XSVG />
+                  </Button>
+                  <p>{type === "normal" ? "Finalizar" : "Gerar"}</p>
+                  <Button
+                    className={styles.finalizationButton}
+                    type={ButtonHTMLType.Submit}
+                    loading={waitingFetch}
+                  >
+                    <CheckSVG />
+                  </Button>
+                </div>
+              ) : (
+                <div className={styles.finalization}>
+                  <Button
+                    onClick={() => setConfirmFinalization(true)}
+                    className={styles.finalizationButton}
+                    disabled={true}
+                  >
+                    <p>{type === "normal" ? "Finalizar" : "Gerar QRcode"}</p>
+                  </Button>
+                </div>
+              ))}
           </form>
         </div>
       </ComponentWrapper>
       <GlassBackground onClick={() => hide()} />
-      {qrcode && (
-        <QRcodeView
-          code={qrcode}
-          showCode={qrcode !== "" && qrcode !== "fail"}
-          setShowCode={handleCode}
-        />
-      )}
-      {qrcodeReader && (
-        <QRcodeReader
-          onChange={handleCodeReader}
-          setClose={() => setQrcodeReader(false)}
-        />
-      )}
+      {qrcode &&
+        activeConfig.enableCard && ( // Para festa Junina esse recurso não sera usado
+          <QRcodeView
+            code={qrcode}
+            showCode={qrcode !== "" && qrcode !== "fail"}
+            setShowCode={handleCode}
+          />
+        )}
+      {qrcodeReader &&
+        activeConfig.enableCard && ( // Para festa Junina esse recurso não sera usado
+          <QRcodeReader
+            onChange={handleCodeReader}
+            setClose={() => setQrcodeReader(false)}
+          />
+        )}
     </>
   );
 }
