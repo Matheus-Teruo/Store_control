@@ -15,7 +15,7 @@ export const initialPageState: PageState = {
 export function pageReducer(state: PageState, action: PageAction): PageState {
   switch (action.type) {
     case "SET_PAGE_NUMBER": {
-      if (action.payload < 0 || action.payload > state.max) {
+      if (action.payload < 0 || action.payload >= state.max) {
         return state;
       }
       return { ...state, number: action.payload };

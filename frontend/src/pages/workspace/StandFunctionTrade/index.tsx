@@ -53,7 +53,13 @@ function StandFunctionSimple() {
           undefined,
           page.number,
         );
-        if (response) setProducts(response.content);
+        if (response) {
+          setProducts(response.content);
+          pageDispatch({
+            type: "SET_PAGE_MAX",
+            payload: response.page.totalPages,
+          });
+        }
       }
     },
     [user, page.number, selectedStand, getProducts],
@@ -173,7 +179,12 @@ function StandFunctionSimple() {
           );
         })}
       </ul>
-      <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
+      <PageSelect
+        className={styles.pageFooter}
+        value={page.number}
+        max={page.max}
+        dispatch={pageDispatch}
+      />
       {showCart && (
         <FormTrade
           reducer={[state, dispatch]}

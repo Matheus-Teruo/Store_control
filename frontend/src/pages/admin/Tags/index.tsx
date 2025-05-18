@@ -113,6 +113,7 @@ function Tags() {
           ))}
         </ul>
         <PageSelect
+          className={styles.pageFooter}
           value={page.number}
           max={page.max}
           dispatch={pageDispatch}

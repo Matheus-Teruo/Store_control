@@ -151,7 +151,12 @@ function Volunteers() {
           );
         })}
       </ul>
-      <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
+      <PageSelect
+        className={styles.pageFooter}
+        value={page.number}
+        max={page.max}
+        dispatch={pageDispatch}
+      />
       {formState.show && (
         <FormVoluntary
           hide={handleFormShow}

@@ -171,7 +171,7 @@ function Products() {
         ))}
       </ul>
       <PageSelect
-        className={styles.pageComponent}
+        className={styles.pageFooter}
         value={page.number}
         max={page.max}
         dispatch={pageDispatch}

@@ -87,7 +87,12 @@ function Associations() {
           </Button>
         </li>
       </ul>
-      <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
+      <PageSelect
+        className={styles.pageFooter}
+        value={page.number}
+        max={page.max}
+        dispatch={pageDispatch}
+      />
       {formState.show && (
         <FormAssociation
           type={formState.type}

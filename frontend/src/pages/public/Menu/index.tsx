@@ -5,19 +5,26 @@ import SearchFilter from "./SearchFilter";
 import { SummaryProduct } from "@data/stands/Product";
 import useProductService from "@service/stand/useProductService";
 import PublicDropDrown from "./PublicDropDrown";
-import { ImageSVG } from "@/assets/svg";
+import { ImageSVG, ShoppingCartSVG } from "@/assets/svg";
 import {
   initialTradeState,
   tradeReducer,
 } from "@reducer/operation/tradeReducer";
 import FormTrade from "@/pages/workspace/StandFunctionTrade/FormTrade";
 import SingleTagSelect from "@/components/selects/TagSelect/SingleTagSelect";
+import { initialPageState, pageReducer } from "@reducer/pageReducer";
+import calculateLayout from "@/utils/calcAmountItemOnScreen";
+import PageSelect from "@/components/selects/PageSelect";
+import ItemDetails from "./ItemDetails";
+import Button from "@/components/utils/Button";
 
 type ViewType = "List" | "Items";
 
 function Menu() {
   const [toggleView, setToggleView] = useState<ViewType>("Items");
   const [state, dispatch] = useReducer(tradeReducer, initialTradeState);
+  const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
+  const [selectedItem, setSelectedItem] = useState<string>("");
   const [showCart, setShowCart] = useState<boolean>(false);
   const [showSearch, setShowSearch] = useState<boolean>(false);
   const [selectedTag, setSelectedTag] = useState<string | undefined>();
@@ -31,14 +38,20 @@ function Menu() {
         state.standUuid,
         filter.toLowerCase(),
         selectedTag,
-        undefined,
+        page.number,
+        calculateLayout(window.innerWidth, window.innerHeight),
+        "productName,asc",
       );
       if (response) {
+        pageDispatch({
+          type: "SET_PAGE_MAX",
+          payload: response.page.totalPages,
+        });
         setProducts(response.content);
       }
     };
     fetchProducts();
-  }, [filter, state.standUuid, selectedTag, getProducts]);
+  }, [page.number, filter, state.standUuid, selectedTag, getProducts]);
 
   const handleToggleView = (value: ViewType) => {
     setToggleView(value);
@@ -46,12 +59,14 @@ function Menu() {
 
   const handlerSelectStand = (value: string | undefined) => {
     dispatch({ type: "SET_STAND_UUID", payload: value });
+    pageDispatch({ type: "SET_PAGE_NUMBER", payload: 0 });
   };
 
   const handleShowSearch = () => {
     setShowSearch((value) => {
       if (value) {
         setFilter("");
+        pageDispatch({ type: "SET_PAGE_NUMBER", payload: 0 });
         setSelectedTag(undefined);
       }
       return !value;
@@ -60,6 +75,16 @@ function Menu() {
 
   const handleShowCart = () => {
     setShowCart((value) => !value);
+  };
+
+  const handleTag = (value: string | undefined) => {
+    pageDispatch({ type: "SET_PAGE_NUMBER", payload: 0 });
+    setSelectedTag(value);
+  };
+
+  const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
+    pageDispatch({ type: "SET_PAGE_NUMBER", payload: 0 });
+    setFilter(event.target.value);
   };
 
   return (
@@ -78,15 +103,9 @@ function Menu() {
             <>
               <div className={styles.tagSelection}>
                 <p>Tag:</p>
-                <SingleTagSelect
-                  value={selectedTag}
-                  onChange={(value) => setSelectedTag(value)}
-                />
+                <SingleTagSelect value={selectedTag} onChange={handleTag} />
               </div>
-              <SearchFilter
-                value={filter}
-                onChange={(event) => setFilter(event.target.value)}
-              />
+              <SearchFilter value={filter} onChange={handleFilter} />
             </>
           )}
           <StandOptionsFilter
@@ -102,12 +121,7 @@ function Menu() {
             state.items.find((item) => item.productUuid === product.uuid)
               ?.quantity ?? null;
           return (
-            <li
-              key={product.uuid}
-              onClick={() =>
-                dispatch({ type: "ADD_ITEM", payload: { ...product } })
-              }
-            >
+            <li key={product.uuid}>
               <div
                 className={`${styles.cartQuantity} ${quantity === product.stock && styles.itemOver}`}
               >
@@ -116,6 +130,7 @@ function Menu() {
               </div>
               <div
                 className={`${styles.frame} ${product.stock === 0 && styles.frameEmpty}`}
+                onClick={() => setSelectedItem(product.uuid)}
               >
                 {product.productImg ? (
                   <img src={product.productImg} className={styles.imageFrame} />
@@ -123,34 +138,57 @@ function Menu() {
                   <ImageSVG />
                 )}
               </div>
-              <div className={styles.tag}>
-                <p
-                  className={`${styles.name} ${product.stock === 0 && styles.empty}`}
+              <div className={styles.itemFooter}>
+                <div
+                  className={styles.itemLabel}
+                  onClick={() => setSelectedItem(product.uuid)}
                 >
-                  {product.productName}
-                </p>
-                <p className={styles.summary}>{product.summary}</p>
-                <div className={styles.priceing}>
-                  <p className={`${product.stock === 0 && styles.empty}`}>
-                    R${(product.price - product.discount).toFixed(2)}
+                  <p
+                    className={`${styles.name} ${product.stock === 0 && styles.empty}`}
+                  >
+                    {product.productName}
                   </p>
-                  <p>
-                    {product.discount !== 0 && (
-                      <s>R${product.price.toFixed(2)}</s>
-                    )}
-                  </p>
+                  <p className={styles.summary}>{product.summary}</p>
+                  <div className={styles.priceing}>
+                    <p className={`${product.stock === 0 && styles.empty}`}>
+                      R${(product.price - product.discount).toFixed(2)}
+                    </p>
+                    <p>
+                      {product.discount !== 0 && (
+                        <s>R${product.price.toFixed(2)}</s>
+                      )}
+                    </p>
+                  </div>
                 </div>
+                <Button
+                  className={styles.cartButton}
+                  onClick={() =>
+                    dispatch({ type: "ADD_ITEM", payload: { ...product } })
+                  }
+                >
+                  <p>Adicionar ao carrinho</p>
+                  <ShoppingCartSVG size={12} />
+                </Button>
               </div>
             </li>
           );
         })}
       </ul>
+      <PageSelect
+        className={styles.pageFooter}
+        value={page.number}
+        max={page.max}
+        dispatch={pageDispatch}
+      />
       {showCart && (
         <FormTrade
           reducer={[state, dispatch]}
           hide={handleShowCart}
           type="pre"
         />
+      )}
+      {selectedItem !== "" && (
+        <ItemDetails uuid={selectedItem} hide={() => setSelectedItem("")} />
       )}
     </div>
   );
