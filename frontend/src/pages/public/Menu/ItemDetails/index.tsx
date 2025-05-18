@@ -82,14 +82,14 @@ function ItemDetails({ uuid, hide }: ItemDetailsProps) {
                   </>
                 )}
                 <label>Preço</label>
-                <p className={styles.fieldParagraph}>
-                  R${(product.price - product.discount).toFixed(2)}
-                </p>
-                <p>
-                  {product.discount !== 0 && (
-                    <s>R${product.price.toFixed(2)}</s>
-                  )}
-                </p>
+                <div className={styles.fieldPrice}>
+                  <p>R${(product.price - product.discount).toFixed(2)}</p>
+                  <p>
+                    {product.discount !== 0 && (
+                      <s>R${product.price.toFixed(2)}</s>
+                    )}
+                  </p>
+                </div>
                 {product.stock < 5 && (
                   <>
                     <label>status</label>
