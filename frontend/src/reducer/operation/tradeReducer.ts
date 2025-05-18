@@ -38,11 +38,15 @@ export type TradeAction =
   | { type: "SET_STAND_UUID"; payload: string | undefined }
   | { type: "SET_ORDER_CARD_ID"; payload: string }
   | { type: "CLEAR_ERROR" }
+  | { type: "SET_MODE"; payload: "menu" | "stand" }
   | { type: "RESET" };
 
 export const initialTradeState: CreateTrade & {
   totalQuantity: number;
-} & { error: string } = {
+  error: string;
+  mode: "menu" | "stand";
+  standList: string[];
+} = {
   onOrder: activeConfig.version === "order",
   standUuid: "",
   items: [],
@@ -52,6 +56,8 @@ export const initialTradeState: CreateTrade & {
   registerUuid: activeConfig.version === "simple" ? fixedCashUuid! : "",
   totalQuantity: 0,
   error: "",
+  mode: "menu",
+  standList: [],
 };
 
 function findProductIndex(items: CreateItem[], productUuid: string): number {
@@ -99,9 +105,19 @@ function calculateTotals(items: CreateItem[]): {
 }
 
 export function tradeReducer(
-  state: CreateTrade & { totalQuantity: number } & { error: string },
+  state: CreateTrade & {
+    totalQuantity: number;
+    error: string;
+    mode: "menu" | "stand";
+    standList: string[];
+  },
   action: TradeAction,
-): CreateTrade & { totalQuantity: number } & { error: string } {
+): CreateTrade & {
+  totalQuantity: number;
+  error: string;
+  mode: "menu" | "stand";
+  standList: string[];
+} {
   switch (action.type) {
     case "SET_CART": {
       const object: CreateTrade & { totalQuantity: number } = JSON.parse(
@@ -153,12 +169,22 @@ export function tradeReducer(
       const productIndex = findProductIndex(state.items, newProduct.uuid);
 
       let updatedItems;
+      const updatedList = state.standList;
       if (productIndex === -1) {
         const newItem = createNewItem(newProduct);
-        if (state.standUuid !== newProduct.standUuid) {
+        if (
+          state.mode === "stand" &&
+          state.standUuid !== newProduct.standUuid
+        ) {
           newStandUuid = newProduct.standUuid;
           updatedItems = [newItem];
         } else {
+          if (
+            state.mode === "menu" &&
+            !state.standList.includes(newProduct.standUuid)
+          ) {
+            updatedList.push(newProduct.standUuid);
+          }
           updatedItems = [...state.items, newItem];
         }
       } else {
@@ -178,6 +204,7 @@ export function tradeReducer(
         items: updatedItems,
         ...total,
         standUuid: newStandUuid,
+        standList: updatedList,
       };
     }
 
@@ -284,15 +311,23 @@ export function tradeReducer(
 
     case "SET_STAND_UUID": {
       if (action.payload === undefined) {
-        const totals = calculateTotals([]);
-        return { ...state, standUuid: "", items: [], ...totals };
+        if (state.mode === "stand") {
+          const totals = calculateTotals([]);
+          return { ...state, standUuid: "", items: [], ...totals };
+        } else {
+          return { ...state, standUuid: "" };
+        }
       }
       if (!regexUuid.test(action.payload)) {
         return state;
       }
       if (state.standUuid !== action.payload) {
-        const totals = calculateTotals([]);
-        return { ...state, standUuid: action.payload, items: [], ...totals };
+        if (state.mode === "stand") {
+          const totals = calculateTotals([]);
+          return { ...state, standUuid: action.payload, items: [], ...totals };
+        } else {
+          return { ...state, standUuid: action.payload };
+        }
       } else {
         return { ...state, standUuid: action.payload };
       }
@@ -307,6 +342,9 @@ export function tradeReducer(
     case "CLEAR_ERROR":
       return { ...state, error: "" };
 
+    case "SET_MODE":
+      return { ...state, mode: action.payload };
+
     case "RESET":
       return initialTradeState;
 
@@ -316,11 +354,18 @@ export function tradeReducer(
 }
 
 export const createTradePayload = (
-  state: CreateTrade & { totalQuantity: number } & { error: string },
+  state: CreateTrade & {
+    totalQuantity: number;
+    error: string;
+    mode: "menu" | "stand";
+    standList: string[];
+  },
 ): CreateTrade => {
   const {
     totalQuantity: _totalQuantity,
     error: _error,
+    mode: _mode,
+    standList: _standList,
     items,
     ...rest
   } = state;

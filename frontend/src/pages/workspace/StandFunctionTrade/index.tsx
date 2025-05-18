@@ -59,6 +59,7 @@ function StandFunctionSimple() {
             type: "SET_PAGE_MAX",
             payload: response.page.totalPages,
           });
+          dispatch({ type: "SET_MODE", payload: "stand" });
         }
       }
     },
@@ -113,7 +114,9 @@ function StandFunctionSimple() {
                 <FilterSVG size={16} />
                 <StandSelect
                   value={selectedStand}
-                  onChange={(value) => setSelectedStand(value)}
+                  onChange={(value) =>
+                    dispatch({ type: "SET_STAND_UUID", payload: value })
+                  }
                 />
               </div>
             </div>

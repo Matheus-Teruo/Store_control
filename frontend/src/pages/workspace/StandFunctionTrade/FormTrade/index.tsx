@@ -31,11 +31,15 @@ import QRcodeView from "@/components/QRcodeView";
 import QRcodeReader from "@/components/QRcodeReader";
 import { cartPacking, takeStandUuid } from "@/utils/cartCompactor";
 import ComponentWrapper from "@/components/ComponentWrapper";
-import activeConfig from "@/config/activeConfig";
 
 type FormTradeProps = {
   reducer: [
-    CreateTrade & { totalQuantity: number } & { error: string },
+    CreateTrade & {
+      totalQuantity: number;
+      error: string;
+      mode: "menu" | "stand";
+      standList: string[];
+    },
     React.Dispatch<TradeAction>,
   ];
   hide: () => void;
@@ -75,7 +79,25 @@ function FormTrade({
 
   useEffect(() => {
     const fetchProducts = async () => {
-      if (state.standUuid) {
+      if (type === "pre") {
+        const newMap: Record<string, Omit<SummaryProduct, "uuid">> = {};
+        for (const stand of state.standList) {
+          const products = await getListProducts(stand);
+          if (products) {
+            const productsObject = products.reduce(
+              (acc, product) => {
+                const { uuid, ...rest } = product;
+                acc[uuid] = rest;
+                return acc;
+              },
+              {} as Record<string, Omit<SummaryProduct, "uuid">>,
+            );
+            Object.assign(newMap, productsObject);
+          }
+        }
+
+        setProductsRecord(newMap);
+      } else if (state.standUuid) {
         const products = await getListProducts(state.standUuid);
         if (products) {
           const productsObject = products.reduce(
@@ -92,7 +114,7 @@ function FormTrade({
     };
 
     fetchProducts();
-  }, [getListProducts, state.standUuid]);
+  }, [getListProducts, state.standUuid, state.standList, type]);
 
   useEffect(() => {
     if (state.error !== "") {
@@ -263,7 +285,7 @@ function FormTrade({
                 {state.rechargeValue.toFixed(2)}
               </p>
             </li>
-            {activeConfig.enableCard && (
+            {type === "normal" && (
               <PaymentSelect
                 payment={state.paymentTypeEnum}
                 onChange={(e) =>
@@ -282,7 +304,7 @@ function FormTrade({
                 gerar o QR code e apresentar para o caixa e fazer o pagamento */}
               </p>
             )}
-            {activeConfig.enableCard &&
+            {(type === "normal" || state.standList.length === 1) &&
               (confirmFinalization ? (
                 <div className={styles.finalizationConfirmation}>
                   <Button
@@ -305,7 +327,6 @@ function FormTrade({
                   <Button
                     onClick={() => setConfirmFinalization(true)}
                     className={styles.finalizationButton}
-                    disabled={true}
                   >
                     <p>{type === "normal" ? "Finalizar" : "Gerar QRcode"}</p>
                   </Button>
@@ -315,21 +336,19 @@ function FormTrade({
         </div>
       </ComponentWrapper>
       <GlassBackground onClick={() => hide()} />
-      {qrcode &&
-        activeConfig.enableCard && ( // Para festa Junina esse recurso não sera usado
-          <QRcodeView
-            code={qrcode}
-            showCode={qrcode !== "" && qrcode !== "fail"}
-            setShowCode={handleCode}
-          />
-        )}
-      {qrcodeReader &&
-        activeConfig.enableCard && ( // Para festa Junina esse recurso não sera usado
-          <QRcodeReader
-            onChange={handleCodeReader}
-            setClose={() => setQrcodeReader(false)}
-          />
-        )}
+      {qrcode && (
+        <QRcodeView
+          code={qrcode}
+          showCode={qrcode !== "" && qrcode !== "fail"}
+          setShowCode={handleCode}
+        />
+      )}
+      {qrcodeReader && (
+        <QRcodeReader
+          onChange={handleCodeReader}
+          setClose={() => setQrcodeReader(false)}
+        />
+      )}
     </>
   );
 }
