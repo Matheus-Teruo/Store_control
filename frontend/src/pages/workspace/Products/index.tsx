@@ -170,12 +170,7 @@ function Products() {
           </li>
         ))}
       </ul>
-      <PageSelect
-        className={styles.pageFooter}
-        value={page.number}
-        max={page.max}
-        dispatch={pageDispatch}
-      />
+      <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
       {formState.show && (
         <FormProduct
           type={formState.type}

@@ -25,5 +25,5 @@ export default function calculateLayout(width: number, height: number): number {
     itemsInColumn = Math.floor((height - 86) / itemHeight);
   }
 
-  return itemsInRow * itemsInColumn;
+  return itemsInRow * (itemsInColumn + 1);
 }

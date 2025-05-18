@@ -1,5 +1,5 @@
 import styles from "./Menu.module.scss";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import StandOptionsFilter from "@/components/selects/StandSelect";
 import SearchFilter from "./SearchFilter";
 import { SummaryProduct } from "@data/stands/Product";
@@ -14,7 +14,6 @@ import FormTrade from "@/pages/workspace/StandFunctionTrade/FormTrade";
 import SingleTagSelect from "@/components/selects/TagSelect/SingleTagSelect";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import calculateLayout from "@/utils/calcAmountItemOnScreen";
-import PageSelect from "@/components/selects/PageSelect";
 import ItemDetails from "./ItemDetails";
 import Button from "@/components/utils/Button";
 
@@ -30,6 +29,8 @@ function Menu() {
   const [selectedTag, setSelectedTag] = useState<string | undefined>();
   const [filter, setFilter] = useState<string>("");
   const [products, setProducts] = useState<SummaryProduct[]>([]);
+  const [productPages, setProductPages] = useState<number>(-1);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
   const { getProducts } = useProductService();
 
   useEffect(() => {
@@ -47,11 +48,54 @@ function Menu() {
           type: "SET_PAGE_MAX",
           payload: response.page.totalPages,
         });
-        setProducts(response.content);
+        setProductPages(page.number);
+        setProducts((prev) => {
+          const existingIds = new Set(prev.map((p) => p.uuid));
+          const uniqueNewProducts = response.content.filter(
+            (p) => !existingIds.has(p.uuid),
+          );
+          return [...prev, ...uniqueNewProducts];
+        });
       }
     };
-    fetchProducts();
-  }, [page.number, filter, state.standUuid, selectedTag, getProducts]);
+    if (page.number > productPages) {
+      fetchProducts();
+    }
+  }, [
+    page.number,
+    filter,
+    state.standUuid,
+    selectedTag,
+    productPages,
+    getProducts,
+  ]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting) {
+          pageDispatch({ type: "INCREMENT_PAGE" });
+        }
+      },
+      {
+        root: null,
+        rootMargin: "0px",
+        threshold: 1.0,
+      },
+    );
+
+    const current = sentinelRef.current;
+    if (current) {
+      observer.observe(current);
+    }
+
+    return () => {
+      if (current) {
+        observer.unobserve(current);
+      }
+    };
+  }, []);
 
   const handleToggleView = (value: ViewType) => {
     setToggleView(value);
@@ -60,6 +104,8 @@ function Menu() {
   const handlerSelectStand = (value: string | undefined) => {
     dispatch({ type: "SET_STAND_UUID", payload: value });
     pageDispatch({ type: "SET_PAGE_NUMBER", payload: 0 });
+    setProductPages(-1);
+    setProducts([]);
   };
 
   const handleShowSearch = () => {
@@ -67,6 +113,8 @@ function Menu() {
       if (value) {
         setFilter("");
         pageDispatch({ type: "SET_PAGE_NUMBER", payload: 0 });
+        setProductPages(-1);
+        setProducts([]);
         setSelectedTag(undefined);
       }
       return !value;
@@ -79,11 +127,15 @@ function Menu() {
 
   const handleTag = (value: string | undefined) => {
     pageDispatch({ type: "SET_PAGE_NUMBER", payload: 0 });
+    setProductPages(-1);
+    setProducts([]);
     setSelectedTag(value);
   };
 
   const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
     pageDispatch({ type: "SET_PAGE_NUMBER", payload: 0 });
+    setProductPages(-1);
+    setProducts([]);
     setFilter(event.target.value);
   };
 
@@ -173,13 +225,11 @@ function Menu() {
             </li>
           );
         })}
+        <div
+          ref={sentinelRef}
+          style={{ width: "100%", height: 1, backgroundColor: "white" }}
+        />
       </ul>
-      <PageSelect
-        className={styles.pageFooter}
-        value={page.number}
-        max={page.max}
-        dispatch={pageDispatch}
-      />
       {showCart && (
         <FormTrade
           reducer={[state, dispatch]}

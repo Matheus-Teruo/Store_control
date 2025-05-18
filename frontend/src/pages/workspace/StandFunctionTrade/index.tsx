@@ -182,12 +182,7 @@ function StandFunctionSimple() {
           );
         })}
       </ul>
-      <PageSelect
-        className={styles.pageFooter}
-        value={page.number}
-        max={page.max}
-        dispatch={pageDispatch}
-      />
+      <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
       {showCart && (
         <FormTrade
           reducer={[state, dispatch]}
