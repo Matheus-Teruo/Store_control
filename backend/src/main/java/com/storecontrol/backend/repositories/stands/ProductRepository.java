@@ -21,7 +21,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
   List<Product> findAllValidAndByStandUuid(UUID standUuid);
 
   @Query("""
-    SELECT p FROM Product p
+    SELECT DISTINCT p FROM Product p
     LEFT JOIN p.tags t
     WHERE (:tagUuid is null OR t.uuid = :tagUuid)
     AND p.valid = true
