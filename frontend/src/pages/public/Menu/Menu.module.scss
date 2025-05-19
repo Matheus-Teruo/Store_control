@@ -104,23 +104,20 @@
       position: relative;
       margin: 10px;
       width: calc((100vw - 40px) / 2);
-      height: calc(((100vw - 40px) / 2) + 41px);
+      height: calc(((100vw - 40px) / 2) + 21px);
+      // height: calc(((100vw - 40px) / 2) + 41px);
 
       display: flex;
       flex-direction: column;
       background-color: $color-gray-000;
 
       @media (min-width: $mobile_sm) {
-        height: 213px;
+        height: 192px; //213px;
         width: 170px;
       }
 
       .frame {
         height: calc((100vw - 40px) / 2);
-
-        @media (min-width: $mobile_sm) {
-          height: 187px;
-        }
       }
 
       .imageFrame {
