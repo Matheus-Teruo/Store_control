@@ -333,13 +333,23 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}statistics/registers/payment-type",
+							"raw": "{{hostPath}}statistics/registers/payment-type?startTime=2025-05-19T12:00:00&endTime=2025-05-20T12:00:00",
 							"host": [
 								"{{hostPath}}statistics"
 							],
 							"path": [
 								"registers",
 								"payment-type"
+							],
+							"query": [
+								{
+									"key": "startTime",
+									"value": "2025-05-19T12:00:00"
+								},
+								{
+									"key": "endTime",
+									"value": "2025-05-20T12:00:00"
+								}
 							]
 						}
 					},
@@ -351,13 +361,23 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}statistics/registers/recharges",
+							"raw": "{{hostPath}}statistics/registers/recharges?startTime=2025-05-19T12:00:00&endTime=2025-05-20T12:00:00",
 							"host": [
 								"{{hostPath}}statistics"
 							],
 							"path": [
 								"registers",
 								"recharges"
+							],
+							"query": [
+								{
+									"key": "startTime",
+									"value": "2025-05-19T12:00:00"
+								},
+								{
+									"key": "endTime",
+									"value": "2025-05-20T12:00:00"
+								}
 							]
 						}
 					},
@@ -369,12 +389,27 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}statistics/stands",
+							"raw": "{{hostPath}}statistics/stands?startTime=2025-05-19T12:00:00&endTime=2025-05-20T12:00:00",
 							"host": [
 								"{{hostPath}}statistics"
 							],
 							"path": [
 								"stands"
+							],
+							"query": [
+								{
+									"key": "standUuid",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "startTime",
+									"value": "2025-05-19T12:00:00"
+								},
+								{
+									"key": "endTime",
+									"value": "2025-05-20T12:00:00"
+								}
 							]
 						}
 					},
@@ -386,13 +421,28 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}statistics/stands/products",
+							"raw": "{{hostPath}}statistics/stands/products?startTime=2025-05-19T12:00:00&endTime=2025-05-20T12:00:00",
 							"host": [
 								"{{hostPath}}statistics"
 							],
 							"path": [
 								"stands",
 								"products"
+							],
+							"query": [
+								{
+									"key": "standUuid",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "startTime",
+									"value": "2025-05-19T12:00:00"
+								},
+								{
+									"key": "endTime",
+									"value": "2025-05-20T12:00:00"
+								}
 							]
 						}
 					},
@@ -404,7 +454,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}statistics/stands/purchases",
+							"raw": "{{hostPath}}statistics/stands/purchases?startTime=2025-05-19T12:00:00&endTime=2025-05-20T12:00:00",
 							"host": [
 								"{{hostPath}}statistics"
 							],
@@ -415,8 +465,16 @@
 							"query": [
 								{
 									"key": "standUuid",
-									"value": null,
+									"value": "",
 									"disabled": true
+								},
+								{
+									"key": "startTime",
+									"value": "2025-05-19T12:00:00"
+								},
+								{
+									"key": "endTime",
+									"value": "2025-05-20T12:00:00"
 								}
 							]
 						}

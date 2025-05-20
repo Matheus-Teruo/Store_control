@@ -51,11 +51,11 @@ public class StatisticsService {
   @Autowired
   private StatisticsValidation validation;
 
-  public List<ResponsePaymentTypeTotal> getPaymentTypeTotals() {
+  public List<ResponsePaymentTypeTotal> getPaymentTypeTotals(LocalDateTime startTime, LocalDateTime endTime) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerRegister(manager);
 
-    List<Recharge> recharges = rechargeRepository.findAllValid();
+    List<Recharge> recharges = rechargeRepository.findAllValid(startTime, endTime);
 
     Map<PaymentType, BigDecimal> totalsByType = new TreeMap<>(Comparator.comparing(Enum::name));
     for (Recharge recharge : recharges) {
@@ -72,12 +72,12 @@ public class StatisticsService {
     return result;
   }
 
-  public List<ResponseRegisterChart> getRechargeCharts() {
+  public List<ResponseRegisterChart> getRechargeCharts(LocalDateTime startTime, LocalDateTime endTime) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerRegister(manager);
 
     List<Register> registers = registerService.listRegisters();
-    List<Recharge> recharges = rechargeRepository.findAllValid();
+    List<Recharge> recharges = rechargeRepository.findAllValid(startTime, endTime);
 
     Map<UUID, Register> registerMap = registers.stream()
         .collect(Collectors.toMap(Register::getUuid, Function.identity()));
@@ -105,12 +105,16 @@ public class StatisticsService {
         .toList();
   }
 
-  public List<ResponseStandTotal> getStandTotals(UUID standUuid) {
+  public List<ResponseStandTotal> getStandTotals(
+      UUID standUuid,
+      LocalDateTime startTime,
+      LocalDateTime endTime
+  ) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerStand(manager, standUuid);
 
     List<Stand> stands = standService.listStands();
-    List<Purchase> purchases = purchaseRepository.findAllValidAndByStandUuid(standUuid);
+    List<Purchase> purchases = purchaseRepository.findAllValidAndByStandUuid(standUuid, startTime, endTime);
 
     Map<UUID, Stand> standMap = stands.stream()
         .collect(Collectors.toMap(Stand::getUuid, Function.identity()));
@@ -139,12 +143,16 @@ public class StatisticsService {
         .toList();
   }
 
-  public List<ResponseStandProductTotal> getProductTotals(UUID standUuid) {
+  public List<ResponseStandProductTotal> getProductTotals(
+      UUID standUuid,
+      LocalDateTime startTime,
+      LocalDateTime endTime
+  ) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerStand(manager, standUuid);
 
     List<Stand> stands = standService.listStands();
-    List<Purchase> purchases = purchaseRepository.findAllValidAndByStandUuid(standUuid);
+    List<Purchase> purchases = purchaseRepository.findAllValidAndByStandUuid(standUuid, startTime, endTime);
     List<Product> products = productRepository.findAllValidAndByStandUuid(standUuid);
 
     Map<UUID, Stand> standMap = stands.stream()
@@ -187,12 +195,16 @@ public class StatisticsService {
         .toList();
   }
 
-  public List<ResponseStandChart> getPurchaseCharts(UUID standUuid) {
+  public List<ResponseStandChart> getPurchaseCharts(
+      UUID standUuid,
+      LocalDateTime startTime,
+      LocalDateTime endTime
+  ) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerStand(manager, standUuid);
 
     List<Stand> stands = standService.listStands();
-    List<Purchase> purchases = purchaseRepository.findAllValidAndByStandUuid(standUuid);
+    List<Purchase> purchases = purchaseRepository.findAllValidAndByStandUuid(standUuid, startTime, endTime);
     List<Product> products = productRepository.findAllValidAndByStandUuid(standUuid);
 
     Map<UUID, Stand> standMap = stands.stream()
