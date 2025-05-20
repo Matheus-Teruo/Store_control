@@ -57,7 +57,7 @@ public class StatisticsService {
 
     List<Recharge> recharges = rechargeRepository.findAllValid();
 
-    Map<PaymentType, BigDecimal> totalsByType = new EnumMap<>(PaymentType.class);
+    Map<PaymentType, BigDecimal> totalsByType = new TreeMap<>(Comparator.comparing(Enum::name));
     for (Recharge recharge : recharges) {
       PaymentType type = recharge.getPaymentTypeEnum();
       BigDecimal currentTotal = totalsByType.getOrDefault(type, BigDecimal.ZERO);
@@ -66,10 +66,7 @@ public class StatisticsService {
 
     List<ResponsePaymentTypeTotal> result = new ArrayList<>();
     for (Map.Entry<PaymentType, BigDecimal> entry : totalsByType.entrySet()) {
-      result.add(new ResponsePaymentTypeTotal(
-          entry.getKey(),
-          entry.getValue()
-      ));
+      result.add(new ResponsePaymentTypeTotal(entry.getKey(), entry.getValue()));
     }
 
     return result;
@@ -103,7 +100,8 @@ public class StatisticsService {
     }
 
     return groupedRegisters.values().stream()
-        .map(RegisterGroup::toChartDto)
+        .sorted(Comparator.comparing(RegisterGroup::getRegisterName, String.CASE_INSENSITIVE_ORDER))
+        .map(RegisterGroup::toRegisterChart)
         .toList();
   }
 
@@ -136,6 +134,7 @@ public class StatisticsService {
     }
 
     return standGroups.values().stream()
+        .sorted(Comparator.comparing(StandGroup::getStandName, String.CASE_INSENSITIVE_ORDER))
         .map(StandGroup::toStandTotal)
         .toList();
   }
@@ -154,8 +153,6 @@ public class StatisticsService {
     Map<UUID, Product> productMap = products.stream()
         .collect(Collectors.toMap(Product::getUuid, Function.identity()));
 
-    Map<UUID, Map<UUID, ResponseProductTotal>> standProductTotals = new HashMap<>();
-
     Map<UUID, StandGroup> standGroups = new HashMap<>();
 
     for (Purchase purchase : purchases) {
@@ -173,15 +170,17 @@ public class StatisticsService {
         Product product = productMap.get(productUuid);
         if (product == null || !item.isValid()) continue;
 
-        standGroup.addItem(item, product, null); // timestamp é irrelevante aqui
+        standGroup.addItem(item, product, null);
       }
     }
 
     return standGroups.values().stream()
+        .sorted(Comparator.comparing(StandGroup::getStandName, String.CASE_INSENSITIVE_ORDER))
         .map(group -> new ResponseStandProductTotal(
             group.getStandUuid(),
             group.getStandName(),
             group.getProductGroups().values().stream()
+                .sorted(Comparator.comparing(ProductGroup::getProductName, String.CASE_INSENSITIVE_ORDER))
                 .map(ProductGroup::toProductTotal)
                 .toList()
         ))
@@ -226,6 +225,7 @@ public class StatisticsService {
     }
 
     return standGroups.values().stream()
+        .sorted(Comparator.comparing(StandGroup::getStandName, String.CASE_INSENSITIVE_ORDER))
         .map(StandGroup::toStandChart)
         .toList();
   }

@@ -1,6 +1,8 @@
 package com.storecontrol.backend.repositories.stands;
 
 import com.storecontrol.backend.models.stands.products.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,4 +15,10 @@ public interface TagRepository extends JpaRepository<Tag, UUID> {
 
   @Query("SELECT t FROM Tag t WHERE t.uuid IN :uuids ORDER BY t.tagName ASC")
   List<Tag> findAllByUuidIn(Set<UUID> uuids);
+
+  @Query("SELECT t FROM Tag t ORDER BY t.tagName ASC")
+  Page<Tag> findAllOrdered(Pageable pageable);
+
+  @Query("SELECT t FROM Tag t ORDER BY t.tagName ASC")
+  List<Tag> findAllOrdered();
 }

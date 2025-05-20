@@ -37,11 +37,11 @@ public class TagService {
   }
 
   public Page<Tag> pageTags(Pageable pageable) {
-    return repository.findAll(pageable);
+    return repository.findAllOrdered(pageable);
   }
 
   public List<Tag> listTags() {
-    return repository.findAll();
+    return repository.findAllOrdered();
   }
 
   public List<Tag> listSelectedTags(Set<UUID> tagsUuid) {

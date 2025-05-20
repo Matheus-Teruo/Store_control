@@ -9,10 +9,7 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 public class StandGroup {
@@ -61,6 +58,7 @@ public class StandGroup {
 
   public ResponseStandChart toStandChart() {
     List<ResponseProductChart> productCharts = productGroups.values().stream()
+        .sorted(Comparator.comparing(ProductGroup::getProductName, String.CASE_INSENSITIVE_ORDER))
         .map(ProductGroup::toProductChart)
         .toList();
 
