@@ -130,6 +130,9 @@ public class RechargeService {
       case PaymentType.DEBIT:
         recharge.getRegister().incrementDebit(rechargeValue);
         break;
+      case PaymentType.PIX:
+        recharge.getRegister().incrementPix(rechargeValue);
+        break;
     }
   }
 }

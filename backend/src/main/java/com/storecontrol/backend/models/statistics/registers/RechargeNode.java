@@ -9,11 +9,11 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-public class RechargeGroup {
+public class RechargeNode {
   private final LocalDateTime time;
   private final Map<PaymentType, BigDecimal> totals = new EnumMap<>(PaymentType.class);
 
-  public RechargeGroup(LocalDateTime time) {
+  public RechargeNode(LocalDateTime time) {
     this.time = time;
   }
 

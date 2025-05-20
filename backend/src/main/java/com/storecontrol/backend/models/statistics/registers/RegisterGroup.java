@@ -3,6 +3,7 @@ package com.storecontrol.backend.models.statistics.registers;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import com.storecontrol.backend.models.statistics.registers.response.ResponseRechargeChartNode;
 import com.storecontrol.backend.models.statistics.registers.response.ResponseRegisterChart;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,10 +13,11 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
+@Getter
 public class RegisterGroup {
   private final UUID registerUuid;
   private final String registerName;
-  private final Map<LocalDateTime, RechargeGroup> groupedRecharges = new TreeMap<>();
+  private final Map<LocalDateTime, RechargeNode> groupedRecharges = new TreeMap<>();
 
   public RegisterGroup(UUID uuid, String name) {
     this.registerUuid = uuid;
@@ -24,11 +26,11 @@ public class RegisterGroup {
 
   public void addRecharge(LocalDateTime timestamp, PaymentType type, BigDecimal value) {
     LocalDateTime truncated = truncateTo5Minutes(timestamp);
-    RechargeGroup group = groupedRecharges.computeIfAbsent(truncated, RechargeGroup::new);
+    RechargeNode group = groupedRecharges.computeIfAbsent(truncated, RechargeNode::new);
     group.add(type, value);
   }
 
-  public ResponseRegisterChart toChartDto() {
+  public ResponseRegisterChart toRegisterChart() {
     List<ResponseRechargeChartNode> nodes = groupedRecharges.values().stream()
         .flatMap(g -> g.toChartNodes().stream())
         .toList();

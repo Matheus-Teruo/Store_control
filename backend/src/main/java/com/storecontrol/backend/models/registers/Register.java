@@ -33,6 +33,9 @@ public class Register extends Function {
   @Column(name = "debit_total", nullable = false)
   private BigDecimal debitTotal;
 
+  @Column(name = "pix_total", nullable = false)
+  private BigDecimal pixTotal;
+
   @OneToMany(mappedBy = "register")
   private List<Transaction> transactions;
 
@@ -50,6 +53,7 @@ public class Register extends Function {
     this.cashTotal = BigDecimal.ZERO;
     this.creditTotal = BigDecimal.ZERO;
     this.debitTotal = BigDecimal.ZERO;
+    this.pixTotal = BigDecimal.ZERO;
   }
 
   public Register(RequestCreateRegister request) {
@@ -57,6 +61,7 @@ public class Register extends Function {
     this.cashTotal = BigDecimal.ZERO;
     this.creditTotal = BigDecimal.ZERO;
     this.debitTotal = BigDecimal.ZERO;
+    this.pixTotal = BigDecimal.ZERO;
   }
 
   public void updateRegister(RequestUpdateRegister request) {
@@ -75,5 +80,9 @@ public class Register extends Function {
 
   public void incrementDebit(BigDecimal value) {
     this.debitTotal = debitTotal.add(value);
+  }
+
+  public void incrementPix(BigDecimal value) {
+    this.pixTotal = pixTotal.add(value);
   }
 }
