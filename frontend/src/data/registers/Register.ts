@@ -1,9 +1,10 @@
 export default interface Register {
   uuid: string;
-  readonlyegisterName: string;
+  registerName: string;
   cashTotal: number;
   creditTotal: number;
   debitTotal: number;
+  pixTotal: number;
 }
 
 export interface SummaryRegister {

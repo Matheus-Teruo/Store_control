@@ -36,4 +36,5 @@ export enum PaymentType {
   CREDIT = "credit",
   DEBIT = "debit",
   CASH = "cash",
+  PIX = "pix",
 }
