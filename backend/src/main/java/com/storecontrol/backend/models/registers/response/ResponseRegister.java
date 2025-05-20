@@ -10,7 +10,8 @@ public record ResponseRegister(
     String registerName,
     BigDecimal cashTotal,
     BigDecimal creditTotal,
-    BigDecimal debitTotal
+    BigDecimal debitTotal,
+    BigDecimal pixTotal
 ) {
 
   public ResponseRegister(Register register) {
@@ -18,7 +19,8 @@ public record ResponseRegister(
         register.getFunctionName(),
         register.getCashTotal(),
         register.getCreditTotal(),
-        register.getDebitTotal()
+        register.getDebitTotal(),
+        register.getPixTotal()
     );
   }
 }
