@@ -41,7 +41,7 @@ const useTradeService = () => {
       standUuid?: string,
       page?: number,
       size?: number,
-      sort?: "asc" | "desc",
+      sort?: string,
     ): Promise<PaginatedResponse<SummaryTrade> | null> =>
       safeRequest(() =>
         api

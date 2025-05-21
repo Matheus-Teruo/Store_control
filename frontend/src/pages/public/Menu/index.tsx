@@ -153,14 +153,15 @@ function Menu() {
           />
           {showSearch && (
             <>
+              <SearchFilter value={filter} onChange={handleFilter} />
               <div className={styles.tagSelection}>
                 <p>Tag:</p>
                 <SingleTagSelect value={selectedTag} onChange={handleTag} />
               </div>
-              <SearchFilter value={filter} onChange={handleFilter} />
             </>
           )}
           <StandOptionsFilter
+            className={styles.standSelect}
             value={state.standUuid}
             onChange={(value) => handlerSelectStand(value)}
             mode="radio"

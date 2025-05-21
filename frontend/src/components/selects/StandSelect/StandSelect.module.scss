@@ -63,7 +63,7 @@
   }
 
   .selected {
-    background-color: $color-secundary-2;
+    background-color: $color-secundary-3;
     box-shadow: none;
     box-shadow: $color-shadow-1 0 2px 4px inset;
   }
@@ -74,6 +74,7 @@
     padding: 3px 12px;
     margin: 0 3px;
     border-radius: $border-radius;
+    background-color: $color-secundary-1;
     box-shadow: $color-shadow-1 0 2px 4px;
 
     span {
@@ -85,6 +86,7 @@
   }
 
   input {
+    display: none;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;

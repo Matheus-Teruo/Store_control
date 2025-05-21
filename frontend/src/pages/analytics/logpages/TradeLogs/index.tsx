@@ -56,6 +56,8 @@ function TradeLogs() {
         const response = await getTrades(
           modeAmin ? undefined : user.summaryFunction?.uuid,
           page.number,
+          undefined,
+          "tradeTimeStamp,asc",
         );
         if (response) {
           setTrades(response.content);

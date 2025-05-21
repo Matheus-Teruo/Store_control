@@ -10,7 +10,7 @@
   border-radius: $border-radius;
   box-sizing: border-box;
   box-shadow: $color-shadow-2 0 1px 4px inset;
-  background-color: $color-secundary-1;
+  background-color: $color-secundary-2;
   scrollbar-width: none;
   -ms-overflow-style: none;
 
@@ -41,6 +41,7 @@
   }
 
   input {
+    display: none;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
