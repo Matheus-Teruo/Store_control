@@ -30,8 +30,8 @@ import Transaction from "./pages/workspace/TrasactionOperation";
 import activeConfig from "./config/activeConfig";
 import PublicHeader from "./components/pagePieces/PublicHeader";
 import WorkspaceHeader from "./components/pagePieces/WorkspaceHeader";
-import Public from "./pages/public";
 import NotFound from "./pages/NotFound";
+import Home from "./pages/public/Home";
 
 function AppRouter() {
   let salesComponent;
@@ -45,8 +45,7 @@ function AppRouter() {
     <Router>
       <NotificationManager />
       <Routes>
-        <Route path="/" element={<Public />} />
-        <Route path="/about" element={<Public />} />
+        <Route path="/" element={<Home />} />
         <Route path="/" element={<PublicHeader />}>
           <Route path="/menu" element={<Menu />} />
           <Route path="/card/:cardID" element={<Order />} />

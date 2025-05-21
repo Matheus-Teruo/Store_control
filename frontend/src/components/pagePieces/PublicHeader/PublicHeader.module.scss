@@ -4,7 +4,7 @@
   display: flex;
   justify-content: center;
   width: 100%;
-  background-color: $color-secundary-1;
+  background-color: $color-secundary-3;
 
   .linkLogo {
     display: flex;
@@ -30,10 +30,6 @@
       li {
         display: flex;
         align-items: center;
-
-        .selected {
-          text-decoration: underline;
-        }
       }
     }
   }

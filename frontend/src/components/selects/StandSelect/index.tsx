@@ -11,6 +11,7 @@ interface StandSelectProps {
   notNull?: boolean;
   showStatus?: boolean;
   message?: string;
+  className?: string;
 }
 
 function StandSelect({
@@ -20,6 +21,7 @@ function StandSelect({
   notNull = false,
   showStatus = false,
   message = "",
+  className = "",
 }: StandSelectProps) {
   const [listStands, setListStands] = useState<SummaryStand[]>([]);
   const [status, setStatus] = useState<InputStatus>(InputStatus.Untouched);
@@ -83,7 +85,7 @@ function StandSelect({
           )}
         </div>
       ) : (
-        <ul className={styles.checkBackground}>
+        <ul className={`${styles.checkBackground} ${className}`}>
           {listStands.map((stand) => (
             <label
               key={stand.uuid}
