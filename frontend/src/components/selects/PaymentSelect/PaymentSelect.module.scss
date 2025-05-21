@@ -3,10 +3,17 @@
 .radio {
   display: flex;
   align-items: center;
+  overflow-x: auto;
   justify-content: space-between;
   width: 100%;
   padding: 12px 3px;
   box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  .container::-webkit-scrollbar {
+    display: none;
+  }
 
   .selected {
     background-color: $color-primary-2;
