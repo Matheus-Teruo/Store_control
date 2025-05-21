@@ -88,12 +88,8 @@ public class Product {
         if (request.productName() != null) {
             this.productName = request.productName();
         }
-        if (request.summary() != null) {
-            this.summary = request.summary();
-        }
-        if (request.description() != null) {
-            this.description = request.description();
-        }
+        this.summary = request.summary();
+        this.description = request.description();
         if (request.price() != null) {
             this.price = request.price();
         }
