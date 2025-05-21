@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,20 +23,32 @@ public class StandStatisticsController {
   private StatisticsService service;
 
   @GetMapping()
-  public ResponseEntity<List<ResponseStandTotal>> readStandTotals(@RequestParam(required = false) UUID standUuid) {
-    List<ResponseStandTotal> charts = service.getStandTotals(standUuid);
+  public ResponseEntity<List<ResponseStandTotal>> readStandTotals(
+      @RequestParam(required = false) UUID standUuid,
+      @RequestParam LocalDateTime startTime,
+      @RequestParam LocalDateTime endTime
+  ) {
+    List<ResponseStandTotal> charts = service.getStandTotals(standUuid, startTime, endTime);
     return ResponseEntity.ok(charts);
   }
 
   @GetMapping("/products")
-  public ResponseEntity<List<ResponseStandProductTotal>> readProductTotals(@RequestParam(required = false) UUID standUuid) {
-    List<ResponseStandProductTotal> charts = service.getProductTotals(standUuid);
+  public ResponseEntity<List<ResponseStandProductTotal>> readProductTotals(
+      @RequestParam(required = false) UUID standUuid,
+      @RequestParam LocalDateTime startTime,
+      @RequestParam LocalDateTime endTime
+  ) {
+    List<ResponseStandProductTotal> charts = service.getProductTotals(standUuid, startTime, endTime);
     return ResponseEntity.ok(charts);
   }
 
   @GetMapping("/purchases")
-  public ResponseEntity<List<ResponseStandChart>> readPurchaseCharts(@RequestParam(required = false) UUID standUuid) {
-    List<ResponseStandChart> charts = service.getPurchaseCharts(standUuid);
+  public ResponseEntity<List<ResponseStandChart>> readPurchaseCharts(
+      @RequestParam(required = false) UUID standUuid,
+      @RequestParam LocalDateTime startTime,
+      @RequestParam LocalDateTime endTime
+  ) {
+    List<ResponseStandChart> charts = service.getPurchaseCharts(standUuid, startTime, endTime);
     return ResponseEntity.ok(charts);
   }
 }

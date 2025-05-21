@@ -5,12 +5,14 @@ import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.models.statistics.stands.response.ResponseProductChart;
 import com.storecontrol.backend.models.statistics.stands.response.ResponseProductTotal;
 import com.storecontrol.backend.models.statistics.stands.response.ResponsePurchaseChartNode;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+@Getter
 public class ProductGroup {
   private final UUID productUuid;
   private final String productName;
@@ -52,13 +54,9 @@ public class ProductGroup {
   }
 
   public ResponseProductChart toProductChart() {
-    List<ResponsePurchaseChartNode> nodes = timeGroupedData.entrySet().stream()
-        .map(entry -> new ResponsePurchaseChartNode(
-            entry.getKey(),
-            entry.getValue().getQuantity(),
-            entry.getValue().getTotal()
-        ))
-        .toList(); // já está ordenado por LocalDateTime (graças ao TreeMap)
+    List<ResponsePurchaseChartNode> nodes = timeGroupedData.values().stream()
+        .map(PurchaseNode::toChartNodes)
+        .toList();
 
     return new ResponseProductChart(productUuid, productName, nodes);
   }

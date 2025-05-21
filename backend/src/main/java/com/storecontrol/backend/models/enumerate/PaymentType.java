@@ -3,7 +3,8 @@ package com.storecontrol.backend.models.enumerate;
 public enum PaymentType {
     CREDIT("credit"),
     DEBIT("debit"),
-    CASH("cash");
+    CASH("cash"),
+    PIX("pix");
 
     private final String paymentTypeLower;
 

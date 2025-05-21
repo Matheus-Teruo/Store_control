@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,8 +19,14 @@ public interface PurchaseRepository extends JpaRepository<Purchase, UUID> {
   @Query("SELECT p FROM Purchase p WHERE p.valid = true AND (:standUuid is null OR p.standUuid = :standUuid)")
   Page<Purchase> findAllValidTrue(UUID standUuid, Pageable pageable);
 
-  @Query("SELECT p FROM Purchase p JOIN FETCH p.items WHERE p.valid = true AND (:standUuid is null OR p.standUuid = :standUuid)")
-  List<Purchase> findAllValidAndByStandUuid(UUID standUuid);
+  @Query("""
+      SELECT p FROM Purchase p
+      JOIN FETCH p.items
+      WHERE p.valid = true
+      AND (:standUuid is null OR p.standUuid = :standUuid)
+      AND p.purchaseTimeStamp BETWEEN :startTime AND :endTime
+      """)
+  List<Purchase> findAllValidAndByStandUuid(UUID standUuid, LocalDateTime startTime, LocalDateTime endTime);
 
   @Query("SELECT p FROM Purchase p WHERE p.valid = true AND p.voluntary.uuid = :voluntaryUuid ORDER BY p.purchaseTimeStamp DESC limit 3")
   List<Purchase> findLast3ValidTrue(UUID voluntaryUuid);
