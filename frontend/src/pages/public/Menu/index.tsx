@@ -6,6 +6,7 @@ import { SummaryProduct } from "@data/stands/Product";
 import useProductService from "@service/stand/useProductService";
 import PublicDropDrown from "./PublicDropDrown";
 import { ImageSVG } from "@/assets/svg";
+import backgroundJunino from "@/assets/image/bandeiras_festa_junina.png";
 import {
   initialTradeState,
   tradeReducer,
@@ -168,7 +169,10 @@ function Menu() {
           />
         </div>
       </div>
-      <ul className={`${toggleView === "Items" ? styles.items : styles.list}`}>
+      <ul
+        className={`${toggleView === "Items" ? styles.items : styles.list}`}
+        style={{ backgroundImage: `url(${backgroundJunino})` }}
+      >
         {products.map((product) => {
           const quantity =
             state.items.find((item) => item.productUuid === product.uuid)

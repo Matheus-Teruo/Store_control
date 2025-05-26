@@ -81,6 +81,11 @@
     text-decoration: line-through;
   }
 
+  ul {
+    background-repeat: repeat-x;
+    background-size: 100vw auto;
+  }
+
   .items {
     display: flex;
     flex-wrap: wrap;
