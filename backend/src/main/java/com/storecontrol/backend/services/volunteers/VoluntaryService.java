@@ -118,7 +118,10 @@ public class VoluntaryService {
 
   @Transactional
   public void deleteVoluntary(UUID uuid) {
+    Voluntary admin = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     var voluntary = safeTakeVoluntaryByUuid(uuid);
+    validation.checkIfAdmin(admin);
+    validation.checkRootCantBeDeleted(voluntary);
 
     voluntary.deleteVoluntary();
   }
