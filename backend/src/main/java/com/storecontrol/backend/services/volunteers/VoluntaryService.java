@@ -118,7 +118,7 @@ public class VoluntaryService {
   @Transactional
   public Voluntary updatePassword(RequestPasswordVoluntary request) {
     Voluntary admin = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    validation.checkIfRoot(admin);
+    validation.checkOnlyRootCanChangePassword(admin);
     var voluntary = safeTakeVoluntaryByUuid(request.uuid());
 
     voluntary.updatePassword(passwordEncoder.encode(NEW_PASSWORD));
