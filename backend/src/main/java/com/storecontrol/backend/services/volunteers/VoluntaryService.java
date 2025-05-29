@@ -4,10 +4,7 @@ import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.volunteers.User;
 import com.storecontrol.backend.models.volunteers.Voluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
-import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
-import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
+import com.storecontrol.backend.models.volunteers.request.*;
 import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
 import com.storecontrol.backend.services.stands.AssociationService;
 import com.storecontrol.backend.services.volunteers.validation.VoluntaryValidation;
@@ -25,6 +22,8 @@ import java.util.UUID;
 
 @Service
 public class VoluntaryService {
+
+  private static final String NEW_PASSWORD = "ChangeMe123";
 
   @Autowired
   private VoluntaryValidation validation;
@@ -117,8 +116,20 @@ public class VoluntaryService {
   }
 
   @Transactional
+  public Voluntary updatePassword(RequestPasswordVoluntary request) {
+    Voluntary admin = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    validation.checkOnlyRootCanChangePassword(admin);
+    var voluntary = safeTakeVoluntaryByUuid(request.uuid());
+
+    voluntary.updatePassword(passwordEncoder.encode(NEW_PASSWORD));
+
+    return voluntary;
+  }
+
+  @Transactional
   public void deleteVoluntary(UUID uuid) {
     var voluntary = safeTakeVoluntaryByUuid(uuid);
+    validation.checkRootCantBeDeleted(voluntary);
 
     voluntary.deleteVoluntary();
   }
