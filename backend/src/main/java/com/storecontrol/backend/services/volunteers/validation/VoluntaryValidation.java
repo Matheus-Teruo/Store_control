@@ -170,14 +170,27 @@ public class VoluntaryValidation {
     }
   }
 
-  public void checkRootCantChangeRole(Voluntary voluntary) {
-    if (voluntary.getFullname().equals("Root User")) {
+  public void checkRootCantChangeRole(Voluntary admin) {
+    if (admin.getFullname().equals("Root User")) {
       throw new InvalidDatabaseInsertionException(
           MessageResolver.getInstance().getMessage("validation.voluntary.checkRootRole.invalidChangeRole.error"),
           MessageResolver.getInstance().getMessage("validation.voluntary.checkRootRole.invalidChangeRole.message"),
           Map.of(
               MessageResolver.getInstance().getMessage("validation.voluntary.checkRootRole.invalidChangeRole.field"),
-              "null"
+              admin.getFullname()
+          )
+      );
+    }
+  }
+
+  public void checkIfRoot(Voluntary admin) {
+    if (admin.getFullname().equals("Root User")) {
+      throw new InvalidDatabaseInsertionException(
+          MessageResolver.getInstance().getMessage("validation.voluntary.checkAdmin.invalidChangePassword.error"),
+          MessageResolver.getInstance().getMessage("validation.voluntary.checkAdmin.invalidChangePassword.message"),
+          Map.of(
+              MessageResolver.getInstance().getMessage("validation.voluntary.checkAdmin.invalidChangePassword.field"),
+              admin.getFullname()
           )
       );
     }

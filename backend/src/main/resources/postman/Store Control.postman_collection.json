@@ -399,7 +399,7 @@
 							"query": [
 								{
 									"key": "standUuid",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
@@ -432,7 +432,7 @@
 							"query": [
 								{
 									"key": "standUuid",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
@@ -1554,6 +1554,32 @@
 							],
 							"path": [
 								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Password",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}volunteers/forgot-password",
+							"host": [
+								"{{hostPath}}volunteers"
+							],
+							"path": [
+								"forgot-password"
 							]
 						}
 					},
