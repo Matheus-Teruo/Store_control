@@ -7,7 +7,6 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -25,8 +24,7 @@ public class RegisterGroup {
   }
 
   public void addRecharge(LocalDateTime timestamp, PaymentType type, BigDecimal value) {
-    LocalDateTime truncated = truncateTo5Minutes(timestamp);
-    RechargeNode group = groupedRecharges.computeIfAbsent(truncated, RechargeNode::new);
+    RechargeNode group = groupedRecharges.computeIfAbsent(timestamp, RechargeNode::new);
     group.add(type, value);
   }
 
@@ -36,10 +34,5 @@ public class RegisterGroup {
         .toList();
 
     return new ResponseRegisterChart(registerUuid, registerName, nodes);
-  }
-
-  private LocalDateTime truncateTo5Minutes(LocalDateTime dateTime) {
-    return dateTime.truncatedTo(ChronoUnit.MINUTES)
-        .withMinute((dateTime.getMinute() / 5) * 5);
   }
 }
