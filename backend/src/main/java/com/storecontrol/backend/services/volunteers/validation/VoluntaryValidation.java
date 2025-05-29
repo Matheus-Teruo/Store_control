@@ -196,19 +196,6 @@ public class VoluntaryValidation {
     }
   }
 
-  public void checkIfAdmin(Voluntary admin) {
-    if (admin.getVoluntaryRole().isNotAdmin()) {
-      throw new InvalidDatabaseInsertionException(
-          MessageResolver.getInstance().getMessage("validation.voluntary.checkAdmin.invalidAdminToDelete.error"),
-          MessageResolver.getInstance().getMessage("validation.voluntary.checkAdmin.invalidAdminToDelete.message"),
-          Map.of(
-              MessageResolver.getInstance().getMessage("validation.voluntary.checkAdmin.invalidAdminToDelete.field"),
-              admin.getFullname()
-          )
-      );
-    }
-  }
-
   public void checkRootCantBeDeleted(Voluntary voluntary) {
     if (voluntary.getFullname().equals("Root User")) {
       throw new InvalidDatabaseInsertionException(
