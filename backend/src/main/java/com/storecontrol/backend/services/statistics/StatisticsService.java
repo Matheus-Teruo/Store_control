@@ -86,9 +86,9 @@ public class StatisticsService {
 
     for (Recharge recharge : recharges) {
       UUID registerUuid = recharge.getRegisterUuid();
-      LocalDateTime timestamp = recharge.getRechargeTimeStamp();
+      LocalDateTime timestamp = truncateTo15Minutes(recharge.getRechargeTimeStamp());
 
-      if (registerUuid == null || timestamp == null) continue;
+      if (registerUuid == null) continue;
 
       Register register = registerMap.get(registerUuid);
       if (register == null) continue;
@@ -231,7 +231,7 @@ public class StatisticsService {
         Product product = productMap.get(item.getProductUuid());
         if (product == null) continue;
 
-        LocalDateTime timestamp = truncateTo5Minutes(purchase.getPurchaseTimeStamp());
+        LocalDateTime timestamp = truncateTo15Minutes(purchase.getPurchaseTimeStamp());
         standGroup.addItem(item, product, timestamp);
       }
     }
@@ -243,7 +243,7 @@ public class StatisticsService {
   }
 
 
-  private LocalDateTime truncateTo5Minutes(LocalDateTime timestamp) {
+  private LocalDateTime truncateTo15Minutes(LocalDateTime timestamp) {
     int minute = timestamp.getMinute();
     int minutesGroup = (minute / 15) * 15;
     return timestamp.withMinute(minutesGroup).withSecond(0).withNano(0);
