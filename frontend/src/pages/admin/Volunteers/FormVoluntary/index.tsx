@@ -18,22 +18,36 @@ import FunctionSelect from "../../../../components/selects/FunctionSelect";
 import RoleSelect from "../../../../components/selects/RoleSelect";
 import { VoluntaryRole } from "@data/volunteers/Voluntary";
 import GlassBackground from "@/components/GlassBackground";
+import { CheckSVG, XSVG } from "@/assets/svg";
+import { VoluntaryRoleMetadata } from "@/components/selects/RoleSelect/voluntaryRoleMetadata";
 
 type FormVoluntaryProps = {
   hide: () => void;
   uuid?: string;
   association?: string;
+  isAdminPermition?: boolean;
 };
 
-function FormVoluntary({ hide, uuid, association }: FormVoluntaryProps) {
+function FormVoluntary({
+  hide,
+  uuid,
+  association,
+  isAdminPermition = false,
+}: FormVoluntaryProps) {
   const [state, dispatch] = useReducer(voluntaryReducer, initialVoluntaryState);
-  const [waitingFetch, setWaitingFetch] = useState<"function" | "role" | "">(
-    "",
-  );
+  const [waitingFetch, setWaitingFetch] = useState<
+    "function" | "role" | "forgotPassword" | "delete" | ""
+  >("");
+  const [confirm, setConfirm] = useState<"forgotPassword" | "delete" | "">("");
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
-  const { getVoluntary, updateVoluntaryFunction, updateVoluntaryRole } =
-    useVoluntaryService();
+  const {
+    getVoluntary,
+    updateVoluntaryFunction,
+    updateVoluntaryRole,
+    updatePassword,
+    deleteVoluntary,
+  } = useVoluntaryService();
 
   useEffect(() => {
     const fetchVoluntary = async () => {
@@ -94,9 +108,47 @@ function FormVoluntary({ hide, uuid, association }: FormVoluntaryProps) {
     setWaitingFetch("");
   };
 
+  const handleForgotPasswordSubmit = async () => {
+    if (uuid) {
+      setWaitingFetch("delete");
+      const voluntary = await updatePassword(state.uuid);
+      if (voluntary && !isMessage(voluntary)) {
+        addNotification({
+          title: "Updated Password Success",
+          message: `Updated password to username: ${voluntary.username}`,
+          type: MessageType.OK,
+        });
+        dispatch({ type: "RESET" });
+        hide();
+      } else if (voluntary) {
+        const message = voluntary;
+        if (message.invalidFields) setMessageError(message.invalidFields);
+      }
+      setConfirm("");
+    }
+    setWaitingFetch("");
+  };
+
+  const handleDeleteSubmit = async () => {
+    if (uuid) {
+      setWaitingFetch("delete");
+      await deleteVoluntary(state.uuid);
+      addNotification({
+        title: "Delete Voluntary Success",
+        message: `Delete voluntary ${state.fullname}`,
+        type: MessageType.OK,
+      });
+      dispatch({ type: "RESET" });
+      setConfirm("");
+      hide();
+    }
+    setWaitingFetch("");
+  };
+
   return (
     <>
       <div className={styles.main}>
+        <h3>Voluntário</h3>
         <label>Nome completo</label>
         <p>{state.fullname}</p>
         <label>Associação</label>
@@ -121,27 +173,83 @@ function FormVoluntary({ hide, uuid, association }: FormVoluntaryProps) {
             Editar
           </Button>
         </form>
-        <form onSubmit={handleUpdateRoleSubmit}>
-          <div className={styles.field}>
+        {isAdminPermition ? (
+          <form onSubmit={handleUpdateRoleSubmit}>
+            <div className={styles.field}>
+              <label>Permissão</label>
+              <RoleSelect
+                value={state.voluntaryRole}
+                onChange={(e) =>
+                  dispatch({
+                    type: "SET_ROLE",
+                    payload: e.target.value as VoluntaryRole,
+                  })
+                }
+                message={messageError["voluntaryRole"]}
+              />
+            </div>
+            <Button
+              type={ButtonHTMLType.Submit}
+              loading={waitingFetch === "role"}
+            >
+              Editar
+            </Button>
+          </form>
+        ) : (
+          <>
             <label>Permissão</label>
-            <RoleSelect
-              value={state.voluntaryRole}
-              onChange={(e) =>
-                dispatch({
-                  type: "SET_ROLE",
-                  payload: e.target.value as VoluntaryRole,
-                })
-              }
-              message={messageError["voluntaryRole"]}
-            />
-          </div>
-          <Button
-            type={ButtonHTMLType.Submit}
-            loading={waitingFetch === "role"}
-          >
-            Editar
-          </Button>
-        </form>
+            <p>{VoluntaryRoleMetadata[state.voluntaryRole].label}</p>
+          </>
+        )}
+        <div className={styles.buttonsOptions}>
+          {isAdminPermition &&
+            (confirm === "forgotPassword" ? (
+              <>
+                <Button onClick={() => setConfirm("")}>
+                  <XSVG size={16} />
+                </Button>
+                <span>Mudar senha?</span>
+                <Button
+                  onClick={handleForgotPasswordSubmit}
+                  loading={waitingFetch === "delete"}
+                >
+                  <CheckSVG size={16} />
+                </Button>
+              </>
+            ) : confirm === "delete" ? (
+              <>
+                <Button
+                  className={styles.buttonCancel}
+                  onClick={() => setConfirm("")}
+                >
+                  <XSVG size={16} />
+                </Button>
+                <span>Excluir?</span>
+                <Button
+                  className={styles.buttonConfirm}
+                  onClick={handleDeleteSubmit}
+                  loading={waitingFetch === "delete"}
+                >
+                  <CheckSVG size={16} />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  loading={waitingFetch === "delete"}
+                  onClick={() => setConfirm("delete")}
+                >
+                  Deletar Voluntário
+                </Button>
+                <Button
+                  loading={waitingFetch === "forgotPassword"}
+                  onClick={() => setConfirm("forgotPassword")}
+                >
+                  Mudar Senha
+                </Button>
+              </>
+            ))}
+        </div>
       </div>
       <GlassBackground onClick={hide} />
     </>

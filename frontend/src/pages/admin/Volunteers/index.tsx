@@ -1,6 +1,7 @@
 import styles from "./Volunteers.module.scss";
 import PageSelect from "@/components/selects/PageSelect";
 import {
+  isAdmin,
   isManeger,
   isUserLogged,
   isUserUnlogged,
@@ -157,6 +158,7 @@ function Volunteers() {
           hide={handleFormShow}
           uuid={formState.uuid}
           association={association}
+          isAdminPermition={isAdmin(user)}
         />
       )}
     </div>

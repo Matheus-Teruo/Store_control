@@ -108,6 +108,26 @@ const useVoluntaryService = () => {
     [api, safeRequestWithFeedback],
   );
 
+  const updatePassword = useCallback(
+    async (voluntaryUuid: string): Promise<Voluntary | Message | null> =>
+      safeRequestWithFeedback(() =>
+        api
+          .put<Voluntary>("/volunteers/forgot-password", {
+            uuid: voluntaryUuid,
+          })
+          .then((res) => res.data),
+      ),
+    [api, safeRequestWithFeedback],
+  );
+
+  const deleteVoluntary = useCallback(
+    async (voluntaryUuid: string): Promise<void | Message | null> =>
+      safeRequestWithFeedback(() =>
+        api.delete<void>(`volunteers/${voluntaryUuid}`).then((res) => res.data),
+      ),
+    [api, safeRequestWithFeedback],
+  );
+
   return {
     getVoluntary,
     getVolunteers,
@@ -115,6 +135,8 @@ const useVoluntaryService = () => {
     updateVoluntary,
     updateVoluntaryFunction,
     updateVoluntaryRole,
+    updatePassword,
+    deleteVoluntary,
   };
 };
 
