@@ -1,17 +1,12 @@
 import styles from "./RoleSelect.module.scss";
 import { VoluntaryRole } from "@data/volunteers/Voluntary";
+import { VoluntaryRoleMetadata } from "./voluntaryRoleMetadata";
 
 interface RoleSelectProps {
   value: VoluntaryRole;
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   message?: string;
 }
-
-const VoluntaryRoleMetadata: Record<VoluntaryRole, { label: string }> = {
-  [VoluntaryRole.VOLUNTARY]: { label: "Voluntario" },
-  [VoluntaryRole.MANAGEMENT]: { label: "Gerente" },
-  [VoluntaryRole.ADMIN]: { label: "Administrador" },
-};
 
 function RoleSelect({ value, onChange, message = "" }: RoleSelectProps) {
   return (

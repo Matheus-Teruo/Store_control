@@ -14,6 +14,10 @@
   display: flex;
   flex-direction: column;
 
+  h3 {
+    text-align: center;
+  }
+
   label {
     font-size: 0.75rem;
     padding: 0 6px;
@@ -48,6 +52,34 @@
       margin-bottom: 4px;
       padding: 4px 10px;
       background-color: $color-secundary-1;
+    }
+  }
+
+  .buttonsOptions {
+    padding: 12px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    span {
+      color: $color-primary-5;
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+
+    button {
+      margin-bottom: 4px;
+      padding: 4px 10px;
+      background-color: $color-secundary-1;
+    }
+
+    .buttonCancel {
+      color: $color-font-2;
+    }
+
+    .buttonConfirm {
+      background-color: $color-primary-2;
+      color: $color-font-1;
     }
   }
 }
