@@ -245,7 +245,7 @@ public class StatisticsService {
 
   private LocalDateTime truncateTo5Minutes(LocalDateTime timestamp) {
     int minute = timestamp.getMinute();
-    int minutesGroup = (minute / 5) * 5;
+    int minutesGroup = (minute / 15) * 15;
     return timestamp.withMinute(minutesGroup).withSecond(0).withNano(0);
   }
 
