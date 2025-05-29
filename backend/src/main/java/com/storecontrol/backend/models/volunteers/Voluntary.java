@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 @Entity
@@ -92,8 +93,25 @@ public class Voluntary implements UserDetails {
     this.voluntaryRole = VoluntaryRole.fromString(request.voluntaryRole());
   }
 
+  public void updatePassword(String password){
+    this.user.updatePassword(password);
+  }
+
   public void deleteVoluntary() {
+    this.fullname = this.fullname + "_deleted_" + generateRandomString();
     this.valid = false;
+  }
+
+  private String generateRandomString() {
+    String chars = "abcdefghijklmnopqrstuvwxyz";
+    StringBuilder sb = new StringBuilder();
+    Random random = new Random();
+
+    for (int i = 0; i < 3; i++) {
+      sb.append(chars.charAt(random.nextInt(chars.length())));
+    }
+
+    return sb.toString();
   }
 
   @Override

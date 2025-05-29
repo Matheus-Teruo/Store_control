@@ -1,5 +1,6 @@
 package com.storecontrol.backend.controllers.volunteers;
 
+import com.storecontrol.backend.models.volunteers.request.RequestPasswordVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntaryFunction;
 import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
@@ -68,6 +69,13 @@ public class VoluntaryController {
   @PutMapping("/role")
   public ResponseEntity<ResponseVoluntary> updateVoluntaryRole(@RequestBody @Valid RequestVoluntaryRole request) {
     var response = new ResponseVoluntary(service.updateVoluntaryRole(request));
+
+    return ResponseEntity.ok(response);
+  }
+
+  @PutMapping("/forgot-password")
+  public ResponseEntity<ResponseVoluntary> updatePassword(@RequestBody @Valid RequestPasswordVoluntary request) {
+    var response = new ResponseVoluntary(service.updatePassword(request));
 
     return ResponseEntity.ok(response);
   }
