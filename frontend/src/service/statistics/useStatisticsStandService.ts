@@ -23,11 +23,19 @@ const useStatisticsStandService = () => {
   );
 
   const getStandTotals = useCallback(
-    async (standUuid: string): Promise<ResponseStandTotal[] | null> =>
+    async (
+      startTime: string,
+      endTime: string,
+      standUuid?: string,
+    ): Promise<ResponseStandTotal[] | null> =>
       safeRequest(() =>
         api
           .get<ResponseStandTotal[]>(`statistics/stands`, {
-            params: { standUuid: standUuid != "" ? standUuid : undefined },
+            params: {
+              standUuid: standUuid != "" ? standUuid : undefined,
+              startTime: startTime,
+              endTime: endTime,
+            },
           })
           .then((res) => res.data),
       ),
@@ -35,11 +43,19 @@ const useStatisticsStandService = () => {
   );
 
   const getProductTotals = useCallback(
-    async (standUuid: string): Promise<ResponseStandProductTotal[] | null> =>
+    async (
+      startTime: string,
+      endTime: string,
+      standUuid?: string,
+    ): Promise<ResponseStandProductTotal[] | null> =>
       safeRequest(() =>
         api
           .get<ResponseStandProductTotal[]>(`statistics/stands/products`, {
-            params: { standUuid: standUuid != "" ? standUuid : undefined },
+            params: {
+              standUuid: standUuid != "" ? standUuid : undefined,
+              startTime: startTime,
+              endTime: endTime,
+            },
           })
           .then((res) => res.data),
       ),
@@ -47,11 +63,19 @@ const useStatisticsStandService = () => {
   );
 
   const getPurchaseCharts = useCallback(
-    async (standUuid: string): Promise<ResponseStandChart[] | null> =>
+    async (
+      startTime: string,
+      endTime: string,
+      standUuid?: string,
+    ): Promise<ResponseStandChart[] | null> =>
       safeRequest(() =>
         api
           .get<ResponseStandChart[]>(`statistics/stands/purchases`, {
-            params: { standUuid: standUuid != "" ? standUuid : undefined },
+            params: {
+              standUuid: standUuid != "" ? standUuid : undefined,
+              startTime: startTime,
+              endTime: endTime,
+            },
           })
           .then((res) => res.data),
       ),
