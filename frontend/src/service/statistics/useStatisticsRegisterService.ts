@@ -21,20 +21,39 @@ const useStatisticsRegisterService = () => {
     [handleApiError],
   );
   const getPaymentTypeTotals = useCallback(
-    async (): Promise<ResponsePaymentTypeTotal[] | null> =>
+    async (
+      startTime: string,
+      endTime: string,
+    ): Promise<ResponsePaymentTypeTotal[] | null> =>
       safeRequest(() =>
         api
-          .get<ResponsePaymentTypeTotal[]>(`statistics/register/payment-type`)
+          .get<ResponsePaymentTypeTotal[]>(
+            `statistics/registers/payment-type`,
+            {
+              params: {
+                startTime: startTime,
+                endTime: endTime,
+              },
+            },
+          )
           .then((res) => res.data),
       ),
     [api, safeRequest],
   );
 
   const getRechargeCharts = useCallback(
-    async (): Promise<ResponseRegisterChart[] | null> =>
+    async (
+      startTime: string,
+      endTime: string,
+    ): Promise<ResponseRegisterChart[] | null> =>
       safeRequest(() =>
         api
-          .get<ResponseRegisterChart[]>(`statistics/register/recharges`)
+          .get<ResponseRegisterChart[]>(`statistics/registers/recharges`, {
+            params: {
+              startTime: startTime,
+              endTime: endTime,
+            },
+          })
           .then((res) => res.data),
       ),
     [api, safeRequest],

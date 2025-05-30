@@ -1,0 +1,18 @@
+@use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
+
+.select {
+  border: none;
+  width: 200px;
+  height: 32px;
+  font-size: 1rem;
+  border-radius: $border-radius;
+  padding: 0 6px;
+  background-color: $color-gray-000;
+
+  @media (max-width: $mobile) {
+    width: 100px;
+    font-size: 0.875rem;
+    padding: 3px 6px;
+  }
+}
