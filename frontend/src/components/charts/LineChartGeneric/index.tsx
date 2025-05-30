@@ -20,11 +20,8 @@ function LineChartGeneric({ data, modeLabel }: LineChartGenericProps) {
           format: "%Y-%m-%dT%H:%M:%S",
           precision: "minute",
         }}
-        curve="monotoneX"
         xFormat="time:%Y-%m-%d %H:%M"
-        pointLabel="id"
-        pointLabelYOffset={-15}
-        yScale={{ type: "linear", stacked: false }}
+        yScale={{ type: "linear", stacked: false, reverse: false }}
         axisBottom={{
           format: "%H:%M",
           tickValues: "every 15 minutes",
@@ -36,8 +33,14 @@ function LineChartGeneric({ data, modeLabel }: LineChartGenericProps) {
           legendOffset: -40,
         }}
         margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
-        pointSize={8}
+        pointSize={10}
+        pointColor={{ theme: "background" }}
+        pointBorderWidth={2}
+        pointBorderColor={{ from: "seriesColor", modifiers: [] }}
+        pointLabelYOffset={-12}
+        enableTouchCrosshair={true}
         useMesh
+        colors={{ scheme: "category10" }}
         legends={[
           {
             anchor: "bottom-right",

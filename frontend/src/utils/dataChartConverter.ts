@@ -1,9 +1,13 @@
 import ResponseRegisterChart from "@data/statistics/registerChart";
-import ResponseStandChart from "@data/statistics/standChart";
+import ResponseStandChart, {
+  ResponseStandProductTotal,
+  ResponseStandTotal,
+} from "@data/statistics/standChart";
 import { format, parseISO, addMinutes, isBefore, isEqual } from "date-fns";
 
 type Point = { x: string; y: number };
 type Series = { id: string; data: Point[] };
+type SimpleBar = { id: string; value: number };
 
 const toDatetimeLocal = (date: Date): string =>
   format(date, "yyyy-MM-dd'T'HH:mm:ss");
@@ -112,4 +116,41 @@ export function groupStandData(
   }
 
   return chartData;
+}
+
+export function totalProductData(
+  data: ResponseStandProductTotal[],
+  mode: "quantity" | "total",
+): SimpleBar[] {
+  const productMap: Record<string, { name: string; value: number }> = {};
+
+  data.forEach((stand) => {
+    stand.productTotal.forEach((product) => {
+      if (!productMap[product.productUuid]) {
+        productMap[product.productUuid] = {
+          name: product.productName,
+          value: 0,
+        };
+      }
+      productMap[product.productUuid].value +=
+        mode === "quantity"
+          ? product.totalProductQuantity
+          : product.totalAmount;
+    });
+  });
+
+  return Object.values(productMap).map((p) => ({
+    id: p.name,
+    value: p.value,
+  }));
+}
+
+export function totalStandData(
+  data: ResponseStandTotal[],
+  mode: "quantity" | "total",
+): SimpleBar[] {
+  return data.map((stand) => ({
+    id: stand.standName,
+    value: mode === "quantity" ? stand.totalProductQuantity : stand.totalAmount,
+  }));
 }

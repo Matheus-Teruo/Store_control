@@ -7,10 +7,11 @@ import {
   isManeger,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
+import { totalProductData, totalStandData } from "@/utils/dataChartConverter";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import {
   ResponseStandProductTotal,
-  // ResponseStandTotal,
+  ResponseStandTotal,
 } from "@data/statistics/standChart";
 import {
   convertToString,
@@ -22,7 +23,7 @@ import { useCallback, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function TotalProductsBars() {
-  // const [standTotals, setStandTotals] = useState<ResponseStandTotal[]>([]);
+  const [standTotals, setStandTotals] = useState<ResponseStandTotal[]>([]);
   const [productTotals, setProductTotals] = useState<
     ResponseStandProductTotal[]
   >([]);
@@ -32,30 +33,32 @@ function TotalProductsBars() {
   );
   const [mode, setMode] = useState<"total" | "quantity">("total");
   const [stand, setStand] = useState<string | undefined>(undefined);
-  const { getProductTotals } = useStatisticsStandService();
+  const { getProductTotals, getStandTotals } = useStatisticsStandService();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
   const fetchTotals = useCallback(
     async (modeAmin: boolean) => {
       if (isManeger(user)) {
-        // const standTotalResponse = await getStandTotals(
-        //   modeAmin ? stand : user.summaryFunction?.uuid,
-        // );
+        const standTotalResponse = await getStandTotals(
+          convertToString(date.startTime),
+          convertToString(date.endTime),
+          modeAmin ? stand : user.summaryFunction?.uuid,
+        );
         const productTotalResponse = await getProductTotals(
           convertToString(date.startTime),
           convertToString(date.endTime),
           modeAmin ? stand : user.summaryFunction?.uuid,
         );
-        // if (standTotalResponse) {
-        //   setStandTotals(standTotalResponse);
-        // }
+        if (standTotalResponse) {
+          setStandTotals(standTotalResponse);
+        }
         if (productTotalResponse) {
           setProductTotals(productTotalResponse);
         }
       }
     },
-    [user, date, stand, getProductTotals],
+    [user, date, stand, getStandTotals, getProductTotals],
   );
 
   useEffect(() => {
@@ -123,8 +126,11 @@ function TotalProductsBars() {
           )}
         </div>
       </div>
-      {/* <BarChartGeneric group="stand" mode={mode} data={standTotals} /> */}
-      <BarChartGeneric group="product" mode={mode} data={productTotals} />
+      <BarChartGeneric
+        mode={mode}
+        data={totalProductData(productTotals, mode)}
+      />
+      <BarChartGeneric mode={mode} data={totalStandData(standTotals, mode)} />
     </div>
   );
 }
