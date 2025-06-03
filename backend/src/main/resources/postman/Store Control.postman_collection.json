@@ -1203,7 +1203,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"productName\": \"productExample\",\r\n    \"tagsUuid\": [{{tag_id}}],\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"productName\": \"productExampleCombo\",\r\n    \"tagsUuid\": [], // [{{tag_id}}],\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"comboProducts\": [{\"includedProductUuid\": \"{{product_id2}}\", \"quantity\": 1}],\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1304,7 +1304,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{product_id}}\",\r\n    \"productName\": \"ExampleproductName\",\r\n    \"tagsUuid\": [{{tag_id}}],\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"price\": \"2.00\",\r\n    \"discount\": \"0.00\",\r\n    \"stock\": null,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{product_id}}\",\r\n    \"productName\": \"productName10\",\r\n    \"tagsUuid\": [], // [{{tag_id}}],\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"comboProducts\": [],\r\n    \"price\": \"2.00\",\r\n    \"discount\": \"0.00\",\r\n    \"stock\": null,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

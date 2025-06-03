@@ -2,7 +2,6 @@ package com.storecontrol.backend.models.operations.purchases;
 
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
-import com.storecontrol.backend.models.operations.trades.TradeView;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,8 +38,8 @@ public class Item {
     private boolean valid;
 
 
-    public Item(RequestCreateItem request, ItemId ItemId) {
-        this.itemId = ItemId;
+    public Item(RequestCreateItem request, ItemId itemId) {
+        this.itemId = itemId;
         this.quantity = request.quantity();
         this.delivered = request.delivered();
         this.unitPrice = request.unitPrice();

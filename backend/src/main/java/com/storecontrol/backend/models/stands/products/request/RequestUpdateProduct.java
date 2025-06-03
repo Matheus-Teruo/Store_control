@@ -3,6 +3,7 @@ package com.storecontrol.backend.models.stands.products.request;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,6 +25,9 @@ public record RequestUpdateProduct(
     @Pattern(regexp = "^[\\p{L}\\p{N} /:;,.!()?\\-]*$", message = "{request.validation.updateProduct.description.pattern}")
     String description,
 
+    @NotNull(message = "{request.validation.updateProduct.comboProducts.notnull}")
+    List<RequestCreateProductCombo> comboProducts,
+
     @PositiveOrZero(message = "{request.validation.updateProduct.price.positiveOrZero}")
     @Digits(integer = 5, fraction = 2, message = "{request.validation.updateProduct.price.digits}")
     BigDecimal price,
@@ -37,6 +41,7 @@ public record RequestUpdateProduct(
 
     String productImg,
 
+    @NotNull(message = "{request.validation.updateProduct.standUuid.notnull}")
     UUID standUuid
 ) {
 }
