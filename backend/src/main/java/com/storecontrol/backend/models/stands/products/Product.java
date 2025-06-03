@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -33,13 +34,22 @@ public class Product {
     private String description;
 
     @Column(nullable = false)
+    private boolean combo;
+
+    @Setter
+    @OneToMany(mappedBy = "productComboId.comboProduct", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductCombo> comboProducts;
+
+    @OneToMany(mappedBy = "productComboId.includedProduct", orphanRemoval = true)
+    private List<ProductCombo> usedInCombos;
+
+    @Column(nullable = false)
     private BigDecimal price;
 
     @Column(nullable = false)
     private BigDecimal discount;
 
-    @Column(nullable = false)
-    private int stock;
+    private Integer stock;
 
     @ManyToMany
     @JoinTable(
@@ -73,6 +83,7 @@ public class Product {
         if (request.description() != null) {
             this.description = request.description();
         }
+        this.combo = !request.comboProducts().isEmpty();
         this.price = request.price();
         this.discount = BigDecimal.ZERO;
         this.stock = request.stock();
@@ -96,9 +107,7 @@ public class Product {
         if (request.discount() != null) {
             this.discount = request.discount();
         }
-        if (request.stock() != null) {
-            this.stock = request.stock();
-        }
+        this.stock = request.stock();
         if (request.productImg() != null) {
             this.productImg = request.productImg();
         }
@@ -120,12 +129,18 @@ public class Product {
             .forEach(this.tags::add);
     }
 
+    public void updateProductsCombo(List<ProductCombo> newProductCombos) {
+        this.comboProducts.clear();
+        this.comboProducts.addAll(newProductCombos);
+        this.combo = !newProductCombos.isEmpty();
+    }
+
     public void updateProduct(Stand stand) {
         this.stand = stand;
     }
 
-    public void decreaseStock(Integer stock) {
-        this.stock = this.stock - stock;
+    public void decreaseStock(Integer quantity) {
+        this.stock = this.stock - quantity;
     }
 
     public void deleteProduct() {

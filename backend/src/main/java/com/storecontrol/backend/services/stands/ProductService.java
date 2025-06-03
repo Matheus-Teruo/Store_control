@@ -3,6 +3,7 @@ package com.storecontrol.backend.services.stands;
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.stands.products.Product;
+import com.storecontrol.backend.models.stands.products.ProductCombo;
 import com.storecontrol.backend.models.stands.products.Tag;
 import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
@@ -35,6 +36,9 @@ public class ProductService {
   private StandService standService;
 
   @Autowired
+  private ProductComboService productComboService;
+
+  @Autowired
   private TagService tagService;
 
   @Transactional
@@ -44,6 +48,8 @@ public class ProductService {
     validation.checkProductBelongsManagerStand(request.standUuid(), manager);
     var stand = standService.safeTakeStandByUuid(request.standUuid());
     var product = new Product(request, stand);
+    var productCombos = productComboService.createCombo(request.comboProducts(), product, listProductsAsMap(request.standUuid()));
+    product.setComboProducts(productCombos);
 
     if (request.tagsUuid() != null) {
       var tags = tagService.listSelectedTags(request.tagsUuid());
@@ -93,6 +99,11 @@ public class ProductService {
     if (request.tagsUuid() != null) {
       List<Tag> newTags = tagService.listSelectedTags(request.tagsUuid());
       product.updateTags(request.tagsUuid(), newTags);
+    }
+
+    if (request.comboProducts() != null) {
+      List<ProductCombo> newProductCombos = productComboService.updateCombo(request.comboProducts(), product, listProductsAsMap(product.getStandUuid()));
+      product.updateProductsCombo(newProductCombos);
     }
 
     product.updateProduct(request);

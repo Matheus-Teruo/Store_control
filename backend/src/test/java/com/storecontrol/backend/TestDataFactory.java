@@ -28,11 +28,9 @@ import com.storecontrol.backend.models.registers.request.RequestUpdateRegister;
 import com.storecontrol.backend.models.stands.Association;
 import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.stands.products.Product;
+import com.storecontrol.backend.models.stands.products.ProductCombo;
 import com.storecontrol.backend.models.stands.products.Tag;
-import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
-import com.storecontrol.backend.models.stands.products.request.RequestCreateTag;
-import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
-import com.storecontrol.backend.models.stands.products.request.RequestUpdateTag;
+import com.storecontrol.backend.models.stands.products.request.*;
 import com.storecontrol.backend.models.stands.request.RequestCreateAssociation;
 import com.storecontrol.backend.models.stands.request.RequestCreateStand;
 import com.storecontrol.backend.models.stands.request.RequestUpdateAssociation;
@@ -219,22 +217,16 @@ public class TestDataFactory {
   }
 
   public static RequestCreateTrade createRequestCreateTrade(Recharge recharge, Purchase purchase, OrderCard orderCard) {
-    List<RequestCreateItem> requestCreateItems = List.of(
-        new RequestCreateItem(
-            purchase.getItems().get(0).getItemId().getProduct().getUuid(),
-            purchase.getItems().get(0).getQuantity(),
-            purchase.getItems().get(0).getDelivered(),
-            purchase.getItems().get(0).getUnitPrice(),
-            purchase.getItems().get(0).getDiscount()
-        ),
-        new RequestCreateItem(
-            purchase.getItems().get(1).getItemId().getProduct().getUuid(),
-            purchase.getItems().get(1).getQuantity(),
-            purchase.getItems().get(1).getDelivered(),
-            purchase.getItems().get(1).getUnitPrice(),
-            purchase.getItems().get(1).getDiscount()
-        )
-    );
+    List<RequestCreateItem> requestCreateItems = new ArrayList<>();
+    for (Item item : purchase.getItems()) {
+      requestCreateItems.add(new RequestCreateItem(
+          item.getItemId().getProduct().getUuid(),
+          item.getQuantity(),
+          item.getDelivered(),
+          item.getUnitPrice(),
+          item.getDiscount()
+      ));
+    }
     return new RequestCreateTrade(
         recharge.getRechargeValue(),
         recharge.getPaymentTypeEnum().toString(),
@@ -337,6 +329,9 @@ public class TestDataFactory {
         nameOnlyLettersSpaceAndNumbers(),
         nameOnlyLettersSpaceAndNumbers(),
         textOnlyLettersSpaceAndNumbers(),
+        false,
+        new ArrayList<>(),
+        new ArrayList<>(),
         BigDecimal.TEN,
         BigDecimal.ZERO,
         1000,
@@ -350,11 +345,20 @@ public class TestDataFactory {
   }
 
   public static RequestCreateProduct createRequestCreateProduct(Product product) {
+    List<RequestCreateProductCombo> requestCreateItems = new ArrayList<>();
+    for (ProductCombo productCombo : product.getComboProducts()) {
+      requestCreateItems.add(
+          new RequestCreateProductCombo(
+              productCombo.getIncludedProductUuid(),
+              productCombo.getQuantity()
+          ));
+    }
     return new RequestCreateProduct(
         product.getProductName(),
         null,
         product.getSummary(),
         product.getDescription(),
+        requestCreateItems,
         product.getPrice(),
         product.getStock(),
         product.getProductImg(),
@@ -369,6 +373,7 @@ public class TestDataFactory {
         null,
         nameOnlyLettersSpaceAndNumbers(),
         textOnlyLettersSpaceAndNumbers(),
+        new ArrayList<>(),
         BigDecimal.TEN,
         BigDecimal.TWO,
         1000,

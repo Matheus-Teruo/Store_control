@@ -31,4 +31,15 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
   Page<Product> findAllValidTruePage(String name, UUID tagUuid, UUID standUuid, Pageable pageable);
 
   boolean existsByProductName(String productName);
+
+//  @Query("SELECT pc FROM ProductCombo pc WHERE pc.productComboId.comboProduct.uuid = :productUuid")
+//  List<ProductCombo> findByComboProductUuid(UUID productUuid);
+
+//  @Modifying
+//  @Query("""
+//    DELETE FROM ProductCombo pc
+//    WHERE pc.productComboId.comboProduct.uuid = :comboProductUuid
+//    AND pc.productComboId.includedProduct.uuid NOT IN :includedProductUuids
+//""")
+//  void deleteRemovedCombos(UUID comboProductUuid, Set<UUID> stillIncluded);
 }
