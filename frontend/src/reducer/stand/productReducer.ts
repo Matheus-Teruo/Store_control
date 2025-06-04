@@ -1,5 +1,15 @@
 import { regexText, regexUuid } from "@/utils/regex";
 import Product, { CreateProduct, UpdateProduct } from "@data/stands/Product";
+import ProductCombo, { CreateProductCombo } from "@data/stands/ProductCombo";
+
+function convertComboResponseToCreate(
+  productCombos: ProductCombo[],
+): CreateProductCombo[] {
+  return productCombos.map((productCombo) => ({
+    includedProductUuid: productCombo.includedProduct,
+    quantity: productCombo.quantity,
+  }));
+}
 
 type ProductAction =
   | { type: "SET_PRODUCT"; payload: Product }
@@ -11,6 +21,7 @@ type ProductAction =
   | { type: "SET_PRICE"; payload: string }
   | { type: "SET_DISCOUNT"; payload: string }
   | { type: "SET_STOCK"; payload: number }
+  | { type: "TOGGLE_NULLABLE_STOCK"; payload: boolean }
   | { type: "SET_PRODUCT_IMG"; payload: string }
   | { type: "SET_STAND_UUID"; payload: string | undefined }
   | { type: "RESET" };
@@ -21,6 +32,7 @@ export const initialProductState: CreateProduct & UpdateProduct = {
   tagsUuid: [],
   summary: "",
   description: "",
+  comboProducts: [],
   price: 0,
   discount: 0,
   stock: 0,
@@ -41,6 +53,9 @@ export function productReducer(
         summary: action.payload.summary !== null ? action.payload.summary : "",
         description:
           action.payload.description !== null ? action.payload.description : "",
+        comboProducts: convertComboResponseToCreate(
+          action.payload.productCombos,
+        ),
         price: action.payload.price,
         discount: action.payload.discount,
         stock: action.payload.stock,
@@ -106,6 +121,8 @@ export function productReducer(
         ...state,
         stock: Number.isNaN(action.payload) ? 0 : action.payload,
       };
+    case "TOGGLE_NULLABLE_STOCK":
+      return { ...state, stock: action.payload ? null : 0 };
     case "SET_PRODUCT_IMG":
       return { ...state, productImg: action.payload };
     case "SET_STAND_UUID":

@@ -154,7 +154,7 @@ function Products() {
             <p
               className={`${styles.productStock} ${product.stock === 0 && styles.stockNull}`}
             >
-              {product.stock}
+              {product.stock !== null ? product.stock : "Não controlado"}
             </p>
             <div className={styles.productEdit}>
               <Button

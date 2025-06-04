@@ -1,3 +1,4 @@
+import ProductCombo, { CreateProductCombo } from "./ProductCombo";
 import Stand from "./Stand";
 import Tag from "./Tag";
 
@@ -7,10 +8,11 @@ export default interface Product {
   tags: Tag[];
   summary: string;
   description: string;
+  productCombos: ProductCombo[];
   price: number;
   discount: number;
-  stock: number;
-  productImg?: string | null;
+  stock: number | null;
+  productImg: string | null;
   stand: Stand;
 }
 
@@ -35,8 +37,9 @@ export interface CreateProduct {
   tagsUuid: string[];
   summary?: string;
   description?: string;
+  comboProducts: CreateProductCombo[];
   price: number;
-  stock: number;
+  stock: number | null;
   productImg?: string | null;
   standUuid: string;
 }
@@ -47,9 +50,10 @@ export interface UpdateProduct {
   tagsUuid?: string[];
   summary?: string;
   description?: string;
+  comboProducts: CreateProductCombo[];
   price?: number;
   discount?: number;
-  stock?: number;
+  stock: number | null;
   productImg?: string | null;
   standUuid?: string;
 }

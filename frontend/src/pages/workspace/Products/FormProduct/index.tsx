@@ -154,7 +154,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
               type === "create" ? handleCreateSubmit : handleUpdateSubmit
             }
           >
-            <label>Nome do produto</label>
+            <label className={styles.inputLabel}>Nome do produto</label>
             <Input
               type="text"
               id="productName"
@@ -166,7 +166,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
               showStatus={touched}
               message={messageError["productName"]}
             />
-            <label>Tags (opcional)</label>
+            <label className={styles.inputLabel}>Tags (opcional)</label>
             <MultTagSelect
               value={state.tagsUuid}
               onChangeAdd={(e) => dispatch({ type: "ADD_TAG", payload: e })}
@@ -176,7 +176,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
               showStatus={touched}
               message={messageError["summary"]}
             />
-            <label>Resumo (opcional)</label>
+            <label className={styles.inputLabel}>Resumo (opcional)</label>
             <Input
               type="text"
               id="productSummary"
@@ -188,7 +188,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
               showStatus={touched}
               message={messageError["summary"]}
             />
-            <label>Descrição (opcional)</label>
+            <label className={styles.inputLabel}>Descrição (opcional)</label>
             <TextInput
               id="productDescription"
               rows={3}
@@ -200,7 +200,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
               showStatus={touched}
               message={messageError["description"]}
             />
-            <label>Preço</label>
+            <label className={styles.inputLabel}>Preço</label>
             <Input
               type="number"
               id="productPrice"
@@ -217,7 +217,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             />
             {type === "update" && (
               <>
-                <label>Desconto</label>
+                <label className={styles.inputLabel}>Desconto</label>
                 <Input
                   type="number"
                   id="productDescount"
@@ -234,23 +234,49 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
                 />
               </>
             )}
-            <label>Estoque</label>
+            <label className={styles.inputLabel}>Estoque</label>
             <Input
-              type="number"
+              type={`${state.stock ? "number" : "text"}`}
               id="productStock"
               isRequired
-              value={state.stock.toFixed(0)}
+              value={
+                state.stock !== null ? state.stock.toFixed(0) : "não controlado"
+              }
               onChange={(e) =>
                 dispatch({
                   type: "SET_STOCK",
                   payload: parseInt(e.target.value),
                 })
               }
+              disabled={state.stock === null}
               showStatus={touched}
               message={messageError["stock"]}
             />
+            <div className={styles.checkboxStock}>
+              <label
+                htmlFor="nullableStock"
+                className={`${state.stock === null && styles.checkboxStockNull}`}
+              >
+                <p>Não controlar estoque</p>
+                <input
+                  className="check"
+                  type="checkbox"
+                  id="nullableStock"
+                  name="nullableStock"
+                  checked={state.stock === null}
+                  onChange={(event) =>
+                    dispatch({
+                      type: "TOGGLE_NULLABLE_STOCK",
+                      payload: event.target.checked,
+                    })
+                  }
+                />
+              </label>
+            </div>
             <div className={styles.imageUpload}>
-              <label>Upload de Imagem (opcional)</label>
+              <label className={styles.inputLabel}>
+                Upload de Imagem (opcional)
+              </label>
               <ImageUpload
                 onChangeImage={(value) =>
                   setImage({
@@ -266,7 +292,9 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             {isUserLogged(user) && isAdmin(user) && (
               <div className={styles.adminSection}>
                 <p>Modo administrador</p>
-                <label>Selecione o estande para o produto</label>
+                <label className={styles.inputLabel}>
+                  Selecione o estande para o produto
+                </label>
                 <StandSelect
                   value={state.standUuid}
                   onChange={(value) =>
