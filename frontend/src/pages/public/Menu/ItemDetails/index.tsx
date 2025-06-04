@@ -90,7 +90,7 @@ function ItemDetails({ uuid, hide }: ItemDetailsProps) {
                     )}
                   </p>
                 </div>
-                {product.stock < 5 && (
+                {product.stock !== null && product.stock < 5 && (
                   <>
                     <label>status</label>
                     {product.stock === 0 && (

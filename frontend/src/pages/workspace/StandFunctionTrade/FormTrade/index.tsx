@@ -207,7 +207,7 @@ function FormTrade({
                     return (
                       <li
                         key={item.productUuid}
-                        className={`${product.stock <= item.quantity && styles.OutOfStock}`}
+                        className={`${product.stock !== null && product.stock <= item.quantity && styles.OutOfStock}`}
                       >
                         <p>{product.productName}</p>
                         <Button

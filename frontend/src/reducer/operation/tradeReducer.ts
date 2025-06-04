@@ -191,7 +191,7 @@ export function tradeReducer(
         updatedItems = updateItemInList(state.items, productIndex, (item) =>
           updateQuantity(
             item,
-            item.quantity < newProduct.stock
+            newProduct.stock === null || item.quantity < newProduct.stock
               ? item.quantity + 1
               : item.quantity,
           ),
@@ -209,7 +209,11 @@ export function tradeReducer(
     }
 
     case "ON_CHANGE_ITEM": {
-      if (action.payload.quantity > action.payload.stock) return state;
+      if (
+        action.payload.stock !== null &&
+        action.payload.quantity > action.payload.stock
+      )
+        return state;
 
       const productIndex = findProductIndex(state.items, action.payload.uuid);
       const updatedItems = updateItemInList(
