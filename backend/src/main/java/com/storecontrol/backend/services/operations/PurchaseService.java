@@ -7,8 +7,8 @@ import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
-import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
 import com.storecontrol.backend.models.stands.products.Product;
+import com.storecontrol.backend.models.stands.products.ProductCombo;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.services.customers.CustomerService;
@@ -18,7 +18,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -65,7 +64,7 @@ public class PurchaseService {
     var items = itemService.createItems(request, purchase, standUuid);
     purchase.setItems(items);
 
-    updateItemsFromItemsChanged(purchase, false);
+    updateItemsFromItemsChanged(purchase, productMap, false);
     updateCustomerDebit(purchase, false);
 
     repository.save(purchase);
@@ -123,22 +122,33 @@ public class PurchaseService {
     Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     var purchase = safeTakePurchaseByUuid(uuid);
 
+    Map<UUID, Product> productMap = productService.listProductsAsMap(purchase.getStandUuid());
+
     validation.checkSomeItemWasDelivered(purchase);
     validation.checkPurchaseBelongsToVoluntary(purchase, voluntary);
     validation.checkIfLastPurchaseOfVoluntary(purchase, voluntary);
 
-    updateItemsFromItemsChanged(purchase, true);
+    updateItemsFromItemsChanged(purchase, productMap, true);
     updateCustomerDebit(purchase, true);
 
     purchase.deletePurchase();
   }
 
-  private void updateItemsFromItemsChanged(Purchase purchase, Boolean isReversal) {
+  private void updateItemsFromItemsChanged(Purchase purchase, Map<UUID, Product> productMap, Boolean isReversal) {
     for (Item item : purchase.getItems()) {
       var product = item.getItemId().getProduct();
       int adjustmentFactor = isReversal ? -1 : 1;
 
-      product.decreaseStock(adjustmentFactor * item.getQuantity());
+      if (product.isCombo()) {
+        for (ProductCombo productCombo : product.getComboProducts()) {
+          var comboProduct = productMap.get(productCombo.getIncludedProductUuid());
+          comboProduct.decreaseStock(adjustmentFactor * item.getQuantity() * productCombo.getQuantity());
+        }
+      }
+
+      if (product.getStock() != null) {
+        product.decreaseStock(adjustmentFactor * item.getQuantity());
+      }
     }
   }
 

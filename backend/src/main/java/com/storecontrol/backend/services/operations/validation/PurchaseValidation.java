@@ -11,7 +11,7 @@ import com.storecontrol.backend.models.operations.purchases.request.RequestCreat
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import com.storecontrol.backend.models.stands.products.Product;
-import com.storecontrol.backend.models.stands.Stand;
+import com.storecontrol.backend.models.stands.products.ProductCombo;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,11 +154,27 @@ public class PurchaseValidation {
     for (RequestCreateItem requestCreateItem : request.items()) {
       var product = productMap.get(requestCreateItem.productUuid());
 
-      if (product.getStock() < requestCreateItem.quantity()) {
-        throw new InvalidOperationException(
-            MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.error"),
-            MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.message")
-        );
+      if (product.getStock() != null) {
+        if (product.getStock() < requestCreateItem.quantity()) {
+          throw new InvalidOperationException(
+              MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.error"),
+              MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.message")
+          );
+        }
+      }
+      if (product.isCombo()) {
+        for (ProductCombo productCombo : product.getComboProducts()){
+          var ProductOfCombo = productMap.get(productCombo.getIncludedProductUuid());
+
+          if (ProductOfCombo.getStock() != null) {
+            if (ProductOfCombo.getStock() < (requestCreateItem.quantity() * productCombo.getQuantity())) {
+              throw new InvalidOperationException(
+                  MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.error"),
+                  MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.message")
+              );
+            }
+          }
+        }
       }
     }
   }
