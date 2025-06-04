@@ -51,6 +51,7 @@ const emptyProduct: Omit<SummaryProduct, "uuid"> = {
   productName: "productName",
   summary: "",
   description: false,
+  combo: false,
   price: 0,
   discount: 0,
   stock: 0,

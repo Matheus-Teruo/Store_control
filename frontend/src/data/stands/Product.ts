@@ -8,6 +8,7 @@ export default interface Product {
   tags: Tag[];
   summary: string;
   description: string;
+  combo: boolean;
   productCombos: ProductCombo[];
   price: number;
   discount: number;
@@ -24,7 +25,8 @@ export interface SummaryProduct {
   uuid: string;
   productName: string;
   summary: string;
-  description?: boolean;
+  description: boolean;
+  combo: boolean;
   price: number;
   discount: number;
   stock: number;

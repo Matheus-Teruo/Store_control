@@ -1,0 +1,71 @@
+@use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
+
+.base {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 2px 0;
+  box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  .container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .selectedProducts {
+    padding: 2px;
+    background-color: $color-gray-000;
+    border-radius: $border-radius;
+    margin-bottom: 4px;
+
+    p {
+      justify-items: center;
+    }
+
+    .listProductCombos {
+      box-sizing: border-box;
+      display: grid;
+      grid-template-columns: 1fr 20px 30px 20px;
+      grid-auto-flow: row;
+      gap: 2px;
+      margin: 3px 0;
+      padding: 2px 6px;
+      border-radius: $border-radius;
+      background-color: $color-primary-1;
+      font-size: 0.875rem;
+
+      button {
+        background-color: $color-primary-2;
+        display: flex;
+        justify-content: center;
+      }
+
+      .productQuantity {
+        text-align: center;
+      }
+    }
+  }
+
+  .select {
+    border: none;
+    width: 200px;
+    height: 32px;
+    font-size: 1rem;
+    border-radius: $border-radius;
+    padding: 0 6px;
+    background-color: $color-gray-000;
+
+    @media (max-width: $mobile) {
+      font-size: 0.875rem;
+      padding: 3px 6px;
+    }
+  }
+
+  input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+}

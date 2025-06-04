@@ -22,6 +22,8 @@ type ProductAction =
   | { type: "SET_DISCOUNT"; payload: string }
   | { type: "SET_STOCK"; payload: number }
   | { type: "TOGGLE_NULLABLE_STOCK"; payload: boolean }
+  | { type: "ADD_PRODUCT_COMBO"; payload: string }
+  | { type: "REMOVE_PRODUCT_COMBO"; payload: string }
   | { type: "SET_PRODUCT_IMG"; payload: string }
   | { type: "SET_STAND_UUID"; payload: string | undefined }
   | { type: "RESET" };
@@ -123,6 +125,64 @@ export function productReducer(
       };
     case "TOGGLE_NULLABLE_STOCK":
       return { ...state, stock: action.payload ? null : 0 };
+    case "ADD_PRODUCT_COMBO":
+      if (action.payload) {
+        const existingIndex = state.comboProducts.findIndex(
+          (product) => product.includedProductUuid === action.payload,
+        );
+
+        if (existingIndex !== -1) {
+          const updatedProducts = [...state.comboProducts];
+          updatedProducts[existingIndex] = {
+            ...updatedProducts[existingIndex],
+            quantity: updatedProducts[existingIndex].quantity + 1,
+          };
+          return {
+            ...state,
+            comboProducts: updatedProducts,
+          };
+        }
+
+        return {
+          ...state,
+          comboProducts: [
+            ...state.comboProducts,
+            { includedProductUuid: action.payload, quantity: 1 },
+          ],
+        };
+      }
+      return state;
+    case "REMOVE_PRODUCT_COMBO":
+      if (action.payload) {
+        const existingIndex = state.comboProducts.findIndex(
+          (product) => product.includedProductUuid === action.payload,
+        );
+
+        if (existingIndex !== -1) {
+          const existingProduct = state.comboProducts[existingIndex];
+
+          if (existingProduct.quantity > 1) {
+            const updatedProducts = [...state.comboProducts];
+            updatedProducts[existingIndex] = {
+              ...updatedProducts[existingIndex],
+              quantity: existingProduct.quantity - 1,
+            };
+            return {
+              ...state,
+              comboProducts: updatedProducts,
+            };
+          } // else
+
+          return {
+            ...state,
+            comboProducts: state.comboProducts.filter(
+              (product) => product.includedProductUuid !== action.payload,
+            ),
+          };
+        }
+        return state;
+      }
+      return state;
     case "SET_PRODUCT_IMG":
       return { ...state, productImg: action.payload };
     case "SET_STAND_UUID":

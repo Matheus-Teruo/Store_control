@@ -107,7 +107,7 @@ function Products() {
           </Button>
         </div>
       </div>
-      <li key={"header"} className={styles.listHeader}>
+      <li key={"header"} className={`${styles.listHeader} ${styles.list}`}>
         <p className={styles.productFrame}>Img</p>
         <p className={styles.productName}>Produto</p>
         <p className={styles.productsSummary}>Resumo</p>
@@ -121,7 +121,7 @@ function Products() {
         {products.map((product, index) => (
           <li
             key={product.uuid}
-            className={`${styles.listProducts} ${index % 2 === 0 ? styles.itemPair : styles.itemOdd}
+            className={`${styles.list} ${styles.listProducts} ${index % 2 === 0 ? styles.itemPair : styles.itemOdd}
             ${product.stock === 0 && styles.itemNull}`}
           >
             <div className={styles.productFrame}>

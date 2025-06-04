@@ -25,6 +25,7 @@ import { CheckSVG, XSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
 import MultTagSelect from "@/components/selects/TagSelect/MultTagSelect";
 import ComponentWrapper from "@/components/ComponentWrapper";
+import ProductCombosSelect from "@/components/selects/ProductCombosSelect";
 
 type FormPurchaseProps = {
   type: "create" | "update";
@@ -273,6 +274,20 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
                 />
               </label>
             </div>
+            <label className={styles.inputLabel}>Combo</label>
+            <ProductCombosSelect
+              value={state.comboProducts}
+              onChangeAdd={(e) =>
+                dispatch({ type: "ADD_PRODUCT_COMBO", payload: e })
+              }
+              onChangeRemove={(e) =>
+                dispatch({ type: "REMOVE_PRODUCT_COMBO", payload: e })
+              }
+              productUuid={state.uuid}
+              standUuid={state.standUuid}
+              showStatus={touched}
+              message={messageError["summary"]}
+            />
             <div className={styles.imageUpload}>
               <label className={styles.inputLabel}>
                 Upload de Imagem (opcional)
