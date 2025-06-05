@@ -1,3 +1,4 @@
+import ProductCombo, { CreateProductCombo } from "./ProductCombo";
 import Stand from "./Stand";
 import Tag from "./Tag";
 
@@ -7,10 +8,12 @@ export default interface Product {
   tags: Tag[];
   summary: string;
   description: string;
+  combo: boolean;
+  includedProductsCombo: ProductCombo[];
   price: number;
   discount: number;
-  stock: number;
-  productImg?: string | null;
+  stock: number | null;
+  productImg: string | null;
   stand: Stand;
 }
 
@@ -22,7 +25,8 @@ export interface SummaryProduct {
   uuid: string;
   productName: string;
   summary: string;
-  description?: boolean;
+  description: boolean;
+  combo: boolean;
   price: number;
   discount: number;
   stock: number;
@@ -35,8 +39,9 @@ export interface CreateProduct {
   tagsUuid: string[];
   summary?: string;
   description?: string;
+  includedProductsCombo: CreateProductCombo[];
   price: number;
-  stock: number;
+  stock: number | null;
   productImg?: string | null;
   standUuid: string;
 }
@@ -47,9 +52,10 @@ export interface UpdateProduct {
   tagsUuid?: string[];
   summary?: string;
   description?: string;
+  includedProductsCombo: CreateProductCombo[];
   price?: number;
   discount?: number;
-  stock?: number;
+  stock: number | null;
   productImg?: string | null;
   standUuid?: string;
 }

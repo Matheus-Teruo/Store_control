@@ -62,10 +62,14 @@
   }
 
   .listHeader {
-    background-color: $color-primary-2;
+    display: grid;
+    grid-template-columns: 0.5fr 3fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-auto-flow: row;
+    gap: 2px;
     width: 100%;
     max-width: 1280px;
     padding: 2px 8px;
+    background-color: $color-primary-2;
     box-sizing: border-box;
 
     p {
@@ -136,7 +140,7 @@
     }
   }
 
-  li {
+  .list {
     display: grid;
     grid-template-columns: 0.5fr 3fr 1fr 1fr 1fr 1fr 1fr 1fr;
     grid-auto-flow: row;

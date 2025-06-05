@@ -10,6 +10,7 @@ interface ProductInputProps {
   placeholder?: string;
   maxLength?: number;
   isRequired?: boolean;
+  disabled?: boolean;
   showStatus?: boolean;
   message?: string;
 }
@@ -22,6 +23,7 @@ function ProductInput({
   placeholder = "",
   maxLength,
   isRequired = false,
+  disabled = false,
   showStatus = false,
   message = "",
 }: ProductInputProps) {
@@ -61,6 +63,7 @@ function ProductInput({
         inputMode={type === "number" ? "numeric" : undefined}
         pattern={type === "number" ? "\\d*" : undefined}
         required={isRequired}
+        disabled={disabled}
         maxLength={maxLength}
       />
       {status !== InputStatus.Untouched && message && (

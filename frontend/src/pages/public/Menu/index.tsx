@@ -176,10 +176,12 @@ function Menu() {
           return (
             <li key={product.uuid}>
               <div
-                className={`${styles.cartQuantity} ${quantity === product.stock && styles.itemOver}`}
+                className={`${styles.cartQuantity} ${product.stock !== null && quantity === product.stock && styles.itemOver}`}
               >
                 {quantity && <span>{quantity}</span>}
-                {quantity === product.stock && <p>acabou '-'</p>}
+                {product.stock !== null && quantity === product.stock && (
+                  <p>acabou '-'</p>
+                )}
               </div>
               <div
                 className={`${styles.frame} ${product.stock === 0 && styles.frameEmpty}`}

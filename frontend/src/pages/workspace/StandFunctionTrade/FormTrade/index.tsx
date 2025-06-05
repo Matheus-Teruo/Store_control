@@ -51,6 +51,7 @@ const emptyProduct: Omit<SummaryProduct, "uuid"> = {
   productName: "productName",
   summary: "",
   description: false,
+  combo: false,
   price: 0,
   discount: 0,
   stock: 0,
@@ -207,7 +208,7 @@ function FormTrade({
                     return (
                       <li
                         key={item.productUuid}
-                        className={`${product.stock <= item.quantity && styles.OutOfStock}`}
+                        className={`${product.stock !== null && product.stock <= item.quantity && styles.OutOfStock}`}
                       >
                         <p>{product.productName}</p>
                         <Button
