@@ -42,6 +42,8 @@ function StandFunction() {
           undefined,
           undefined,
           page.number,
+          undefined,
+          "productName,asc",
         );
         if (response) setProducts(response.content);
       } else if (
