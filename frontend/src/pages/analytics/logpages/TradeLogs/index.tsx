@@ -105,7 +105,8 @@ function TradeLogs() {
             key={trade.uuid}
             className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
           >
-            <p>{trade.tradeTimeStamp.replace("T", " ")}</p>
+            <p>{new Date(trade.tradeTimeStamp + "Z").toLocaleString()}</p>
+            {/* TODO: AJUSTAR HORÁRIO DEPOIS DO EVENTO */}
             <p>{volunteersRecord[trade.voluntaryUuid].fullname}</p>
             <p>{trade.totalItems}</p>
             <p>{PaymentStringMetadata[trade.paymentTypeEnum].pt}</p>
