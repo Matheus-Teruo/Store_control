@@ -4,6 +4,7 @@ import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.models.stands.products.request.RequestCreateProductCombo;
+import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.stands.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,20 @@ public class ProductValidation {
             )
         );
       }
+    }
+  }
+
+  public void checkComboIsNotIncludedInOtherCombo(RequestUpdateProduct requestUpdateProduct) {
+    if (!requestUpdateProduct.includedProductsCombo().isEmpty() &&
+          repository.existsByIncludedProductUuid(requestUpdateProduct.uuid())) {
+      throw new InvalidDatabaseInsertionException(
+          MessageResolver.getInstance().getMessage("validation.product.checkProduct.invalidProductCombo.error"),
+          MessageResolver.getInstance().getMessage("validation.product.checkProduct.invalidProductCombo.message"),
+          Map.of(
+              MessageResolver.getInstance().getMessage("validation.product.checkProduct.invalidProductCombo.field"),
+              requestUpdateProduct.uuid().toString()
+          )
+      );
     }
   }
 }
