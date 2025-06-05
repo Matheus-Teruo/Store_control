@@ -350,7 +350,7 @@ export function tradeReducer(
       return { ...state, mode: action.payload };
 
     case "RESET":
-      return initialTradeState;
+      return { ...initialTradeState, standUuid: state.standUuid };
 
     default:
       throw new Error("Ação desconhecida no reducer");
