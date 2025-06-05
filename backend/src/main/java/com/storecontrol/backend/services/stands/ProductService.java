@@ -46,9 +46,13 @@ public class ProductService {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkNameDuplication(request.productName());
     validation.checkProductBelongsManagerStand(request.standUuid(), manager);
+    Map<UUID, Product> productMap = listProductsAsMap(request.standUuid());
+    validation.checkProductIncludedOnComboBelongsStand(request.includedProductsCombo(), productMap);
+    validation.checkProductIncludedOnComboIsNotACombo(request.includedProductsCombo(), productMap);
+
     var stand = standService.safeTakeStandByUuid(request.standUuid());
     var product = new Product(request, stand);
-    var productCombos = productComboService.createCombo(request.includedProductsCombo(), product, listProductsAsMap(request.standUuid()));
+    var productCombos = productComboService.createCombo(request.includedProductsCombo(), product, productMap);
     product.setComboProducts(productCombos);
 
     if (request.tagsUuid() != null) {
@@ -96,14 +100,18 @@ public class ProductService {
     validation.checkProductBelongsManagerStand(request.standUuid(), manager);
     var product = safeTakeProductByUuid(request.uuid());
 
+    if (request.includedProductsCombo() != null) {
+      Map<UUID, Product> productMap = listProductsAsMap(request.standUuid());
+      validation.checkProductIncludedOnComboBelongsStand(request.includedProductsCombo(), productMap);
+      validation.checkProductIncludedOnComboIsNotACombo(request.includedProductsCombo(), productMap);
+
+      List<ProductCombo> newProductCombos = productComboService.updateCombo(request.includedProductsCombo(), product, productMap);
+      product.updateProductsCombo(newProductCombos);
+    }
+
     if (request.tagsUuid() != null) {
       List<Tag> newTags = tagService.listSelectedTags(request.tagsUuid());
       product.updateTags(request.tagsUuid(), newTags);
-    }
-
-    if (request.includedProductsCombo() != null) {
-      List<ProductCombo> newProductCombos = productComboService.updateCombo(request.includedProductsCombo(), product, listProductsAsMap(product.getStandUuid()));
-      product.updateProductsCombo(newProductCombos);
     }
 
     product.updateProduct(request);
