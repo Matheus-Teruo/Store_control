@@ -1,7 +1,7 @@
 import styles from "./ProductCombosSelect.module.scss";
 import { useEffect, useState } from "react";
 import { InputStatus } from "@/components/utils/InputStatus";
-import { PlusSVG, XSVG } from "@/assets/svg";
+import { MinusSVG, PlusSVG } from "@/assets/svg";
 import Button from "@/components/utils/Button";
 import useProductService from "@service/stand/useProductService";
 import { SummaryProduct } from "@data/stands/Product";
@@ -106,7 +106,7 @@ function ProductCombosSelect({
             <li key={product.uuid} className={styles.listProductCombos}>
               <p>{product.productName}</p>
               <Button onClick={() => handleDelete(product.uuid)}>
-                <XSVG size={16} />
+                <MinusSVG size={16} />
               </Button>
               <p className={styles.productQuantity}>{product.quantity}</p>
               <Button

@@ -9,7 +9,7 @@ export default interface Product {
   summary: string;
   description: string;
   combo: boolean;
-  productCombos: ProductCombo[];
+  includedProductsCombo: ProductCombo[];
   price: number;
   discount: number;
   stock: number | null;
@@ -39,7 +39,7 @@ export interface CreateProduct {
   tagsUuid: string[];
   summary?: string;
   description?: string;
-  comboProducts: CreateProductCombo[];
+  includedProductsCombo: CreateProductCombo[];
   price: number;
   stock: number | null;
   productImg?: string | null;
@@ -52,7 +52,7 @@ export interface UpdateProduct {
   tagsUuid?: string[];
   summary?: string;
   description?: string;
-  comboProducts: CreateProductCombo[];
+  includedProductsCombo: CreateProductCombo[];
   price?: number;
   discount?: number;
   stock: number | null;

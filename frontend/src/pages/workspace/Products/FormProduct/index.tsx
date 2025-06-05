@@ -276,7 +276,7 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
             </div>
             <label className={styles.inputLabel}>Combo</label>
             <ProductCombosSelect
-              value={state.comboProducts}
+              value={state.includedProductsCombo}
               onChangeAdd={(e) =>
                 dispatch({ type: "ADD_PRODUCT_COMBO", payload: e })
               }

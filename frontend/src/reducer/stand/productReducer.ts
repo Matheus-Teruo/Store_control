@@ -3,9 +3,9 @@ import Product, { CreateProduct, UpdateProduct } from "@data/stands/Product";
 import ProductCombo, { CreateProductCombo } from "@data/stands/ProductCombo";
 
 function convertComboResponseToCreate(
-  productCombos: ProductCombo[],
+  includedProductsCombo: ProductCombo[],
 ): CreateProductCombo[] {
-  return productCombos.map((productCombo) => ({
+  return includedProductsCombo.map((productCombo) => ({
     includedProductUuid: productCombo.includedProduct,
     quantity: productCombo.quantity,
   }));
@@ -34,7 +34,7 @@ export const initialProductState: CreateProduct & UpdateProduct = {
   tagsUuid: [],
   summary: "",
   description: "",
-  comboProducts: [],
+  includedProductsCombo: [],
   price: 0,
   discount: 0,
   stock: 0,
@@ -55,8 +55,8 @@ export function productReducer(
         summary: action.payload.summary !== null ? action.payload.summary : "",
         description:
           action.payload.description !== null ? action.payload.description : "",
-        comboProducts: convertComboResponseToCreate(
-          action.payload.productCombos,
+        includedProductsCombo: convertComboResponseToCreate(
+          action.payload.includedProductsCombo,
         ),
         price: action.payload.price,
         discount: action.payload.discount,
@@ -127,26 +127,26 @@ export function productReducer(
       return { ...state, stock: action.payload ? null : 0 };
     case "ADD_PRODUCT_COMBO":
       if (action.payload) {
-        const existingIndex = state.comboProducts.findIndex(
+        const existingIndex = state.includedProductsCombo.findIndex(
           (product) => product.includedProductUuid === action.payload,
         );
 
         if (existingIndex !== -1) {
-          const updatedProducts = [...state.comboProducts];
+          const updatedProducts = [...state.includedProductsCombo];
           updatedProducts[existingIndex] = {
             ...updatedProducts[existingIndex],
             quantity: updatedProducts[existingIndex].quantity + 1,
           };
           return {
             ...state,
-            comboProducts: updatedProducts,
+            includedProductsCombo: updatedProducts,
           };
         }
 
         return {
           ...state,
-          comboProducts: [
-            ...state.comboProducts,
+          includedProductsCombo: [
+            ...state.includedProductsCombo,
             { includedProductUuid: action.payload, quantity: 1 },
           ],
         };
@@ -154,28 +154,28 @@ export function productReducer(
       return state;
     case "REMOVE_PRODUCT_COMBO":
       if (action.payload) {
-        const existingIndex = state.comboProducts.findIndex(
+        const existingIndex = state.includedProductsCombo.findIndex(
           (product) => product.includedProductUuid === action.payload,
         );
 
         if (existingIndex !== -1) {
-          const existingProduct = state.comboProducts[existingIndex];
+          const existingProduct = state.includedProductsCombo[existingIndex];
 
           if (existingProduct.quantity > 1) {
-            const updatedProducts = [...state.comboProducts];
+            const updatedProducts = [...state.includedProductsCombo];
             updatedProducts[existingIndex] = {
               ...updatedProducts[existingIndex],
               quantity: existingProduct.quantity - 1,
             };
             return {
               ...state,
-              comboProducts: updatedProducts,
+              includedProductsCombo: updatedProducts,
             };
           } // else
 
           return {
             ...state,
-            comboProducts: state.comboProducts.filter(
+            includedProductsCombo: state.includedProductsCombo.filter(
               (product) => product.includedProductUuid !== action.payload,
             ),
           };
@@ -190,7 +190,11 @@ export function productReducer(
         if (!regexUuid.test(action.payload)) {
           return state;
         }
-        return { ...state, standUuid: action.payload };
+        return {
+          ...state,
+          standUuid: action.payload,
+          includedProductsCombo: [],
+        };
       }
       return state;
     case "RESET":
