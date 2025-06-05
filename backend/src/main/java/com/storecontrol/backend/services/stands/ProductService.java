@@ -104,6 +104,7 @@ public class ProductService {
       Map<UUID, Product> productMap = listProductsAsMap(request.standUuid());
       validation.checkProductIncludedOnComboBelongsStand(request.includedProductsCombo(), productMap);
       validation.checkProductIncludedOnComboIsNotACombo(request.includedProductsCombo(), productMap);
+      validation.checkComboIsNotIncludedInOtherCombo(request);
 
       List<ProductCombo> newProductCombos = productComboService.updateCombo(request.includedProductsCombo(), product, productMap);
       product.updateProductsCombo(newProductCombos);
