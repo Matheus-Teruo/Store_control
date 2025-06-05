@@ -24,7 +24,7 @@ public record RequestCreateProduct(
     String description,
 
     @NotNull(message = "{request.validation.createProduct.comboProducts.notnull}")
-    List<RequestCreateProductCombo> comboProducts,
+    List<RequestCreateProductCombo> includedProductsCombo,
 
     @NotNull(message = "{request.validation.createProduct.price.notnull}")
     @PositiveOrZero(message = "{request.validation.createProduct.price.positiveOrZero}")
