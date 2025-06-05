@@ -48,7 +48,7 @@ public class ProductService {
     validation.checkProductBelongsManagerStand(request.standUuid(), manager);
     var stand = standService.safeTakeStandByUuid(request.standUuid());
     var product = new Product(request, stand);
-    var productCombos = productComboService.createCombo(request.comboProducts(), product, listProductsAsMap(request.standUuid()));
+    var productCombos = productComboService.createCombo(request.includedProductsCombo(), product, listProductsAsMap(request.standUuid()));
     product.setComboProducts(productCombos);
 
     if (request.tagsUuid() != null) {
@@ -101,8 +101,8 @@ public class ProductService {
       product.updateTags(request.tagsUuid(), newTags);
     }
 
-    if (request.comboProducts() != null) {
-      List<ProductCombo> newProductCombos = productComboService.updateCombo(request.comboProducts(), product, listProductsAsMap(product.getStandUuid()));
+    if (request.includedProductsCombo() != null) {
+      List<ProductCombo> newProductCombos = productComboService.updateCombo(request.includedProductsCombo(), product, listProductsAsMap(product.getStandUuid()));
       product.updateProductsCombo(newProductCombos);
     }
 

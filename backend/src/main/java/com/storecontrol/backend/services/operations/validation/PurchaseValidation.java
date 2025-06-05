@@ -151,30 +151,34 @@ public class PurchaseValidation {
   }
 
   public void checkInsufficientProductStockValidity(RequestCreatePurchase request, Map<UUID, Product> productMap) {
+    Map<UUID, Integer> requiredQuantities = new HashMap<>();
+
     for (RequestCreateItem requestCreateItem : request.items()) {
       var product = productMap.get(requestCreateItem.productUuid());
 
-      if (product.getStock() != null) {
-        if (product.getStock() < requestCreateItem.quantity()) {
-          throw new InvalidOperationException(
-              MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.error"),
-              MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.message")
-          );
+      requiredQuantities.merge(product.getUuid(), requestCreateItem.quantity(), Integer::sum);
+
+      if (product.isCombo()) {
+        for (ProductCombo productCombo : product.getComboProducts()) {
+          UUID includedUuid = productCombo.getIncludedProductUuid();
+          int includedQuantity = requestCreateItem.quantity() * productCombo.getQuantity();
+          requiredQuantities.merge(includedUuid, includedQuantity, Integer::sum);
         }
       }
-      if (product.isCombo()) {
-        for (ProductCombo productCombo : product.getComboProducts()){
-          var ProductOfCombo = productMap.get(productCombo.getIncludedProductUuid());
+    }
 
-          if (ProductOfCombo.getStock() != null) {
-            if (ProductOfCombo.getStock() < (requestCreateItem.quantity() * productCombo.getQuantity())) {
-              throw new InvalidOperationException(
-                  MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.error"),
-                  MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.message")
-              );
-            }
-          }
-        }
+    for (Map.Entry<UUID, Integer> entry : requiredQuantities.entrySet()) {
+      UUID productUuid = entry.getKey();
+      int totalRequired = entry.getValue();
+
+      Product product = productMap.get(productUuid);
+      Integer stock = product != null ? product.getStock() : null;
+
+      if (stock != null && stock < totalRequired) {
+        throw new InvalidOperationException(
+            MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.error"),
+            MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.message")
+        );
       }
     }
   }

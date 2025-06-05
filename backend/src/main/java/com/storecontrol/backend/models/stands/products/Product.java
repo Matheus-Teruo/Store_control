@@ -83,7 +83,7 @@ public class Product {
         if (request.description() != null) {
             this.description = request.description();
         }
-        this.combo = !request.comboProducts().isEmpty();
+        this.combo = !request.includedProductsCombo().isEmpty();
         this.price = request.price();
         this.discount = BigDecimal.ZERO;
         this.stock = request.stock();

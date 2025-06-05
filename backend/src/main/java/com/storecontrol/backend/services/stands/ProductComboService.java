@@ -45,13 +45,10 @@ public class ProductComboService {
         .stream()
         .collect(Collectors.toMap(ProductCombo::getIncludedProductUuid, productCombo -> productCombo));
 
-//    Set<UUID> incomingIds = new HashSet<>();
-
     List<ProductCombo> newProductCombos = new ArrayList<>();
 
     for (RequestCreateProductCombo requestCreateProductCombo : requestProductCombos) {
       UUID productUuid = requestCreateProductCombo.includedProductUuid();
-//      incomingIds.add(productUuid);
 
       if (existingComboMap.containsKey(productUuid)) {
         ProductCombo existing = existingComboMap.get(productUuid);
@@ -66,8 +63,6 @@ public class ProductComboService {
         newProductCombos.add(newProductCombo);
       }
     }
-
-//    repository.deleteRemovedCombos(product.getUuid(), incomingIds);
 
     return newProductCombos;
   }

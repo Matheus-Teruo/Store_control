@@ -26,7 +26,7 @@ public record RequestUpdateProduct(
     String description,
 
     @NotNull(message = "{request.validation.updateProduct.comboProducts.notnull}")
-    List<RequestCreateProductCombo> comboProducts,
+    List<RequestCreateProductCombo> includedProductsCombo,
 
     @PositiveOrZero(message = "{request.validation.updateProduct.price.positiveOrZero}")
     @Digits(integer = 5, fraction = 2, message = "{request.validation.updateProduct.price.digits}")

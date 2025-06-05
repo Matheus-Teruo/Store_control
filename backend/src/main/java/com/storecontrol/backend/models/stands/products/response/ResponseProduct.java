@@ -14,7 +14,7 @@ public record ResponseProduct(
     String summary,
     String description,
     Boolean combo,
-    List<ResponseProductCombo> productCombos,
+    List<ResponseProductCombo> includedProductsCombo,
     BigDecimal price,
     BigDecimal discount,
     Integer stock,
