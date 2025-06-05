@@ -3,6 +3,7 @@ package com.storecontrol.backend.services.stands;
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.stands.products.Product;
+import com.storecontrol.backend.models.stands.products.ProductCombo;
 import com.storecontrol.backend.models.stands.products.Tag;
 import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
@@ -35,6 +36,9 @@ public class ProductService {
   private StandService standService;
 
   @Autowired
+  private ProductComboService productComboService;
+
+  @Autowired
   private TagService tagService;
 
   @Transactional
@@ -42,8 +46,14 @@ public class ProductService {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkNameDuplication(request.productName());
     validation.checkProductBelongsManagerStand(request.standUuid(), manager);
+    Map<UUID, Product> productMap = listProductsAsMap(request.standUuid());
+    validation.checkProductIncludedOnComboBelongsStand(request.includedProductsCombo(), productMap);
+    validation.checkProductIncludedOnComboIsNotACombo(request.includedProductsCombo(), productMap);
+
     var stand = standService.safeTakeStandByUuid(request.standUuid());
     var product = new Product(request, stand);
+    var productCombos = productComboService.createCombo(request.includedProductsCombo(), product, productMap);
+    product.setComboProducts(productCombos);
 
     if (request.tagsUuid() != null) {
       var tags = tagService.listSelectedTags(request.tagsUuid());
@@ -89,6 +99,16 @@ public class ProductService {
     validation.checkNameDuplication(request.productName());
     validation.checkProductBelongsManagerStand(request.standUuid(), manager);
     var product = safeTakeProductByUuid(request.uuid());
+
+    if (request.includedProductsCombo() != null) {
+      Map<UUID, Product> productMap = listProductsAsMap(request.standUuid());
+      validation.checkProductIncludedOnComboBelongsStand(request.includedProductsCombo(), productMap);
+      validation.checkProductIncludedOnComboIsNotACombo(request.includedProductsCombo(), productMap);
+      validation.checkComboIsNotIncludedInOtherCombo(request);
+
+      List<ProductCombo> newProductCombos = productComboService.updateCombo(request.includedProductsCombo(), product, productMap);
+      product.updateProductsCombo(newProductCombos);
+    }
 
     if (request.tagsUuid() != null) {
       List<Tag> newTags = tagService.listSelectedTags(request.tagsUuid());

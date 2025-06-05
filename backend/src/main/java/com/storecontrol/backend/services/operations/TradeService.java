@@ -11,6 +11,8 @@ import com.storecontrol.backend.models.operations.purchases.request.RequestCreat
 import com.storecontrol.backend.models.operations.recharges.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.trades.Trade;
 import com.storecontrol.backend.models.operations.trades.TradeView;
+import com.storecontrol.backend.models.stands.products.Product;
+import com.storecontrol.backend.models.stands.products.ProductCombo;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
@@ -102,7 +104,7 @@ public class TradeService {
     var items = itemService.createItems(purchaseRequest, purchase, standUuid);
     purchase.setItems(items);
 
-    updateItemsFromItemsChanged(purchase, false);
+    updateItemsFromItemsChanged(purchase, productMap, false);
 
     purchaseRepository.save(purchase);
 
@@ -186,6 +188,7 @@ public class TradeService {
       recharge = customer.getRecharges().getFirst();
     }
 
+    var productMap = productService.listProductsAsMap(purchase.getStandUuid());
     validation.checkIfLastTrade(recharge, purchase, trade);
     if (!fixedCardId.equals(cardId)) purchaseValidation.checkSomeItemWasDelivered(purchase);
     purchaseValidation.checkPurchaseBelongsToVoluntary(purchase, voluntary);
@@ -193,7 +196,7 @@ public class TradeService {
     rechargeValidation.checkRechargeBelongsToVoluntary(recharge, voluntary);
     rechargeValidation.checkIfLastRechargeOfVoluntary(recharge, voluntary);
 
-    updateItemsFromItemsChanged(purchase, true);
+    updateItemsFromItemsChanged(purchase, productMap,true);
 
     purchase.deletePurchase();
 
@@ -241,12 +244,21 @@ public class TradeService {
     }
   }
 
-  private void updateItemsFromItemsChanged(Purchase purchase, Boolean isReversal) {
+  private void updateItemsFromItemsChanged(Purchase purchase, Map<UUID, Product> productMap, Boolean isReversal) {
     for (Item item : purchase.getItems()) {
       var product = item.getItemId().getProduct();
       int adjustmentFactor = isReversal ? -1 : 1;
 
-      product.decreaseStock(adjustmentFactor * item.getQuantity());
+      if (product.isCombo()) {
+        for (ProductCombo productCombo : product.getComboProducts()) {
+          var comboProduct = productMap.get(productCombo.getIncludedProductUuid());
+          comboProduct.decreaseStock(adjustmentFactor * item.getQuantity() * productCombo.getQuantity());
+        }
+      }
+
+      if (product.getStock() != null) {
+        product.decreaseStock(adjustmentFactor * item.getQuantity());
+      }
     }
   }
 

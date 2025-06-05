@@ -31,4 +31,8 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
   Page<Product> findAllValidTruePage(String name, UUID tagUuid, UUID standUuid, Pageable pageable);
 
   boolean existsByProductName(String productName);
+
+  @Query("SELECT CASE WHEN COUNT(pc) > 0 THEN true ELSE false END " +
+      "FROM ProductCombo pc WHERE pc.productComboId.includedProduct.uuid = :includedProductUuid")
+  boolean existsByIncludedProductUuid(UUID includedProductUuid);;
 }
