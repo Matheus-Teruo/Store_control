@@ -57,6 +57,10 @@ public class RegisterService {
     return repository.findAllValidTrue();
   }
 
+  public List<Register> listAllRegisters() {
+    return repository.findAll();
+  }
+
   @Transactional
   public Register updateRegister(RequestUpdateRegister request) {
     validation.checkNameDuplication(request.registerName());

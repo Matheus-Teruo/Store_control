@@ -125,6 +125,31 @@ class StandTest extends BaseTest {
   }
 
   @Test
+  void testReadListAllStandsSuccess() throws Exception {
+    // Given
+    List<Stand> mockStands = List.of(
+        createStandEntity(UUID.randomUUID()),
+        createStandEntity(UUID.randomUUID())
+    );
+    List<ResponseSummaryStand> expectedResponse = mockStands.stream()
+        .map(ResponseSummaryStand::new)
+        .toList();
+
+    when(service.listAllStands()).thenReturn(mockStands);
+
+    // When & Then
+    mockMvc.perform(get("/stands/list-all")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(content().json(toJson(expectedResponse)));
+
+    // Verify interactions
+    verify(service, times(1)).listAllStands();
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
   void testUpdateStandSuccess() throws Exception {
     // Given
     Stand mockStand = createStandEntity(UUID.randomUUID());

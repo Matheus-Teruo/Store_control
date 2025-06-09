@@ -61,6 +61,14 @@ public class RegisterController {
     return ResponseEntity.ok(response);
   }
 
+  @GetMapping("/list-all")
+  public ResponseEntity<List<ResponseSummaryRegister>> readAllRegisters() {
+    var registers = service.listAllRegisters();
+
+    var response = registers.stream().map(ResponseSummaryRegister::new).toList();
+    return ResponseEntity.ok(response);
+  }
+
   @PutMapping
   public ResponseEntity<ResponseRegister> updateRegister(@RequestBody @Valid RequestUpdateRegister request) {
     var response = new ResponseRegister(service.updateRegister(request));

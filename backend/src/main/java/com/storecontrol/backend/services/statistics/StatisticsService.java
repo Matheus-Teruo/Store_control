@@ -12,13 +12,15 @@ import com.storecontrol.backend.models.statistics.registers.response.ResponsePay
 import com.storecontrol.backend.models.statistics.registers.response.ResponseRegisterChart;
 import com.storecontrol.backend.models.statistics.stands.ProductGroup;
 import com.storecontrol.backend.models.statistics.stands.StandGroup;
-import com.storecontrol.backend.models.statistics.stands.response.*;
+import com.storecontrol.backend.models.statistics.stands.response.ResponseStandChart;
+import com.storecontrol.backend.models.statistics.stands.response.ResponseStandProductTotal;
+import com.storecontrol.backend.models.statistics.stands.response.ResponseStandTotal;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
+import com.storecontrol.backend.repositories.resgisters.RegisterRepository;
 import com.storecontrol.backend.repositories.stands.ProductRepository;
-import com.storecontrol.backend.services.registers.RegisterService;
-import com.storecontrol.backend.services.stands.StandService;
+import com.storecontrol.backend.repositories.stands.StandRepository;
 import com.storecontrol.backend.services.statistics.validation.StatisticsValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,10 +42,10 @@ public class StatisticsService {
   private PurchaseRepository purchaseRepository;
 
   @Autowired
-  private RegisterService registerService;
+  private RegisterRepository registerRepository;
 
   @Autowired
-  private StandService standService;
+  private StandRepository standRepository;
 
   @Autowired
   private ProductRepository productRepository;
@@ -76,7 +78,7 @@ public class StatisticsService {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerRegister(manager);
 
-    List<Register> registers = registerService.listRegisters();
+    List<Register> registers = registerRepository.findAll();
     List<Recharge> recharges = rechargeRepository.findAllValid(startTime, endTime);
 
     Map<UUID, Register> registerMap = registers.stream()
@@ -113,7 +115,7 @@ public class StatisticsService {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerStand(manager, standUuid);
 
-    List<Stand> stands = standService.listStands();
+    List<Stand> stands = standRepository.findAll();
     List<Purchase> purchases = purchaseRepository.findAllValidAndByStandUuid(standUuid, startTime, endTime);
 
     Map<UUID, Stand> standMap = stands.stream()
@@ -151,9 +153,9 @@ public class StatisticsService {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerStand(manager, standUuid);
 
-    List<Stand> stands = standService.listStands();
+    List<Stand> stands = standRepository.findAll();
     List<Purchase> purchases = purchaseRepository.findAllValidAndByStandUuid(standUuid, startTime, endTime);
-    List<Product> products = productRepository.findAllValidAndByStandUuid(standUuid);
+    List<Product> products = productRepository.findAllByStandUuid(standUuid);
 
     Map<UUID, Stand> standMap = stands.stream()
         .collect(Collectors.toMap(Stand::getUuid, Function.identity()));
@@ -203,9 +205,9 @@ public class StatisticsService {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkManagerStand(manager, standUuid);
 
-    List<Stand> stands = standService.listStands();
+    List<Stand> stands = standRepository.findAll();
     List<Purchase> purchases = purchaseRepository.findAllValidAndByStandUuid(standUuid, startTime, endTime);
-    List<Product> products = productRepository.findAllValidAndByStandUuid(standUuid);
+    List<Product> products = productRepository.findAllByStandUuid(standUuid);
 
     Map<UUID, Stand> standMap = stands.stream()
         .collect(Collectors.toMap(Stand::getUuid, Function.identity()));

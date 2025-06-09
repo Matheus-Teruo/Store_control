@@ -61,6 +61,14 @@ public class StandController {
     return ResponseEntity.ok(response);
   }
 
+  @GetMapping("/list-all")
+  public ResponseEntity<List<ResponseSummaryStand>> readAllListStands() {
+    var stands = service.listAllStands();
+
+    var response = stands.stream().map(ResponseSummaryStand::new).toList();
+    return ResponseEntity.ok(response);
+  }
+
   @PutMapping
   public ResponseEntity<ResponseStand> updateStand(@RequestBody @Valid RequestUpdateStand request) {
     var response = new ResponseStand(service.updateStand(request));
