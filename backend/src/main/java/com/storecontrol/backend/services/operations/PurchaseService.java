@@ -142,7 +142,9 @@ public class PurchaseService {
       if (product.isCombo()) {
         for (ProductCombo productCombo : product.getComboProducts()) {
           var comboProduct = productMap.get(productCombo.getIncludedProductUuid());
-          comboProduct.decreaseStock(adjustmentFactor * item.getQuantity() * productCombo.getQuantity());
+          if (comboProduct.getStock() != null) {
+            comboProduct.decreaseStock(adjustmentFactor * item.getQuantity() * productCombo.getQuantity());
+          }
         }
       }
 
