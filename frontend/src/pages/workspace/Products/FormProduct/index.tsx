@@ -20,8 +20,12 @@ import { useEffect, useReducer, useState } from "react";
 import ImageUpload from "./ImageUpload";
 import Product from "@data/stands/Product";
 import Input from "@/components/utils/ProductInput";
+import TextInput from "@/components/utils/TextInput";
 import { CheckSVG, XSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
+import MultTagSelect from "@/components/selects/TagSelect/MultTagSelect";
+import ComponentWrapper from "@/components/ComponentWrapper";
+import ProductCombosSelect from "@/components/selects/ProductCombosSelect";
 
 type FormPurchaseProps = {
   type: "create" | "update";
@@ -32,8 +36,15 @@ type FormPurchaseProps = {
 function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
   const [state, dispatch] = useReducer(productReducer, initialProductState);
   const [initial, setInitial] = useState<Product>();
-  const [image, setImage] = useState<string>("");
+  const [image, setImage] = useState<{ path: string; updated: boolean }>({
+    path: "",
+    updated: false,
+  });
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+  const [waitingFetch, setWaitingFetch] = useState<
+    "create/update" | "delete" | ""
+  >("");
+  const [touched, setTouched] = useState<boolean>(false);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const { getProduct, createProduct, updateProduct, deleteProduct } =
@@ -55,9 +66,13 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
         const product = await getProduct(uuid);
         if (product) {
           dispatch({ type: "SET_PRODUCT", payload: product });
+          setImage({
+            path: product.productImg ? product.productImg : "",
+            updated: false,
+          });
           setInitial(product);
         }
-      } else if (uuid === undefined) {
+      } else if (type === "update" && uuid === undefined) {
         console.error("uuid need to be defined when type is update");
       }
     };
@@ -67,6 +82,8 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setWaitingFetch("create/update");
+    setTouched(false);
     const product = await createProduct(createProductPayload(state));
     if (product && !isMessage(product)) {
       addNotification({
@@ -80,11 +97,15 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
       const message = product;
       if (message.invalidFields) setMessageError(message.invalidFields);
     }
+    setTouched(true);
+    setWaitingFetch("");
   };
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (initial) {
+      setWaitingFetch("create/update");
+      setTouched(false);
       const product = await updateProduct(updateProductPayload(state, initial));
       if (product && !isMessage(product)) {
         addNotification({
@@ -99,9 +120,12 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
         if (message.invalidFields) setMessageError(message.invalidFields);
       }
     }
+    setTouched(true);
+    setWaitingFetch("");
   };
 
   const handleDeleteSubmit = async () => {
+    setWaitingFetch("create/update");
     await deleteProduct(state.uuid);
     addNotification({
       title: "Delete Product Success",
@@ -111,141 +135,225 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
     dispatch({ type: "RESET" });
     setConfirmDelete(false);
     hide();
+    setWaitingFetch("");
   };
 
   return (
     <>
-      <div className={styles.main}>
-        <h3>{type === "create" ? "Criar Produto" : "Editar Produto"}</h3>
-        {image && <img src={image} alt="Preview" style={{ width: "200px" }} />}
-        <form
-          onSubmit={type === "create" ? handleCreateSubmit : handleUpdateSubmit}
-        >
-          <label>Nome do produto</label>
-          <Input
-            type="text"
-            id="productName"
-            isRequired
-            value={state.productName}
-            onChange={(e) =>
-              dispatch({ type: "SET_PRODUCT_NAME", payload: e.target.value })
-            }
-            message={messageError["productName"]}
-          />
-          <label>Resumo</label>
-          <Input
-            type="text"
-            id="productSummary"
-            maxLength={255}
-            placeholder="Máximo de 255 caracteres"
-            value={state.summary}
-            onChange={(e) =>
-              dispatch({ type: "SET_SUMMARY", payload: e.target.value })
-            }
-            message={messageError["summary"]}
-          />
-          <label>Descrição</label>
-          <textarea
-            value={state.description}
-            onChange={(e) =>
-              dispatch({ type: "SET_DESCRIPTION", payload: e.target.value })
-            }
-            rows={3}
-            placeholder="Descreva, contando caracteristicas, história, ou curiosidades do prato"
-          />
-          <label>Preço</label>
-          <Input
-            type="number"
-            id="productPrice"
-            isRequired
-            value={state.price.toFixed(2)}
-            onChange={(e) =>
-              dispatch({
-                type: "SET_PRICE",
-                payload: parseFloat(e.target.value),
-              })
-            }
-            message={messageError["price"]}
-          />
-          {type === "update" && (
-            <>
-              <label>Desconto</label>
-              <Input
-                type="number"
-                id="productDescount"
-                isRequired
-                value={state.discount!.toFixed(2)}
-                onChange={(e) =>
-                  dispatch({
-                    type: "SET_DISCOUNT",
-                    payload: parseFloat(e.target.value),
-                  })
-                }
-                message={messageError["descount"]}
-              />
-            </>
-          )}
-          <label>Estoque</label>
-          <Input
-            type="number"
-            id="productStock"
-            isRequired
-            value={state.stock}
-            onChange={(e) =>
-              dispatch({ type: "SET_STOCK", payload: parseInt(e.target.value) })
-            }
-            message={messageError["stock"]}
-          />
-          <div className={styles.imageUpload}>
-            <label>Upload de Imagem</label>
-            <ImageUpload
-              onChangeImage={setImage}
-              onChange={(value) =>
-                dispatch({ type: "SET_PRODUCT_IMG", payload: value })
-              }
-            />
-          </div>
-          {isUserLogged(user) && isAdmin(user) && (
-            <div className={styles.adminSection}>
-              <p>Modo administrador</p>
-              <label>Selecione o estande para o produto</label>
-              <StandSelect
-                value={state.standUuid}
-                onChange={(value) =>
-                  dispatch({ type: "SET_STAND_UUID", payload: value })
-                }
-                disabled
-              />
+      <ComponentWrapper>
+        <div className={styles.main}>
+          <h3>{type === "create" ? "Criar Produto" : "Editar Produto"}</h3>
+          {image.path !== "" && (
+            <div
+              className={`${styles.imageFrame} ${image.updated && (initial?.productImg !== state.productImg ? styles.imageUpdated : styles.imageUploaded)}`}
+            >
+              <img src={image.path} alt="Preview" style={{ width: "200px" }} />
             </div>
           )}
-          <div className={styles.footerButtons}>
-            {type === "update" && !confirmDelete && (
-              <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
+          <form
+            onSubmit={
+              type === "create" ? handleCreateSubmit : handleUpdateSubmit
+            }
+          >
+            <label className={styles.inputLabel}>Nome do produto</label>
+            <Input
+              type="text"
+              id="productName"
+              isRequired
+              value={state.productName}
+              onChange={(e) =>
+                dispatch({ type: "SET_PRODUCT_NAME", payload: e.target.value })
+              }
+              showStatus={touched}
+              message={messageError["productName"]}
+            />
+            <label className={styles.inputLabel}>Tags (opcional)</label>
+            <MultTagSelect
+              value={state.tagsUuid}
+              onChangeAdd={(e) => dispatch({ type: "ADD_TAG", payload: e })}
+              onChangeDelete={(e) =>
+                dispatch({ type: "REMOVE_TAG", payload: e })
+              }
+              showStatus={touched}
+              message={messageError["summary"]}
+            />
+            <label className={styles.inputLabel}>Resumo (opcional)</label>
+            <Input
+              type="text"
+              id="productSummary"
+              maxLength={255}
+              value={state.summary}
+              onChange={(e) =>
+                dispatch({ type: "SET_SUMMARY", payload: e.target.value })
+              }
+              showStatus={touched}
+              message={messageError["summary"]}
+            />
+            <label className={styles.inputLabel}>Descrição (opcional)</label>
+            <TextInput
+              id="productDescription"
+              rows={3}
+              placeholder="Descreva, contando caracteristicas, história, ou curiosidades do prato"
+              value={state.description}
+              onChange={(e) =>
+                dispatch({ type: "SET_DESCRIPTION", payload: e.target.value })
+              }
+              showStatus={touched}
+              message={messageError["description"]}
+            />
+            <label className={styles.inputLabel}>Preço</label>
+            <Input
+              type="number"
+              id="productPrice"
+              isRequired
+              value={state.price.toFixed(2)}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_PRICE",
+                  payload: e.target.value,
+                })
+              }
+              showStatus={touched}
+              message={messageError["price"]}
+            />
+            {type === "update" && (
+              <>
+                <label className={styles.inputLabel}>Desconto</label>
+                <Input
+                  type="number"
+                  id="productDescount"
+                  isRequired
+                  value={state.discount!.toFixed(2)}
+                  onChange={(e) =>
+                    dispatch({
+                      type: "SET_DISCOUNT",
+                      payload: e.target.value,
+                    })
+                  }
+                  showStatus={touched}
+                  message={messageError["descount"]}
+                />
+              </>
             )}
-            {confirmDelete && (
-              <div className={styles.deleteBody}>
-                <span>Excluir?</span>
-                <Button
-                  className={styles.buttonCancelDelete}
-                  onClick={() => setConfirmDelete(false)}
-                >
-                  <XSVG size={16} />
-                </Button>
-                <Button
-                  className={styles.buttonConfirmDelete}
-                  onClick={handleDeleteSubmit}
-                >
-                  <CheckSVG size={16} />
-                </Button>
+            <label className={styles.inputLabel}>Estoque</label>
+            <Input
+              type={`${state.stock ? "number" : "text"}`}
+              id="productStock"
+              isRequired
+              value={
+                state.stock !== null ? state.stock.toFixed(0) : "não controlado"
+              }
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_STOCK",
+                  payload: parseInt(e.target.value),
+                })
+              }
+              disabled={state.stock === null}
+              showStatus={touched}
+              message={messageError["stock"]}
+            />
+            <div className={styles.checkboxStock}>
+              <label
+                htmlFor="nullableStock"
+                className={`${state.stock === null && styles.checkboxStockNull}`}
+              >
+                <p>Não controlar estoque</p>
+                <input
+                  className="check"
+                  type="checkbox"
+                  id="nullableStock"
+                  name="nullableStock"
+                  checked={state.stock === null}
+                  onChange={(event) =>
+                    dispatch({
+                      type: "TOGGLE_NULLABLE_STOCK",
+                      payload: event.target.checked,
+                    })
+                  }
+                />
+              </label>
+            </div>
+            <label className={styles.inputLabel}>Combo</label>
+            <ProductCombosSelect
+              value={state.includedProductsCombo}
+              onChangeAdd={(e) =>
+                dispatch({ type: "ADD_PRODUCT_COMBO", payload: e })
+              }
+              onChangeRemove={(e) =>
+                dispatch({ type: "REMOVE_PRODUCT_COMBO", payload: e })
+              }
+              productUuid={state.uuid}
+              standUuid={state.standUuid}
+              showStatus={touched}
+              message={messageError["summary"]}
+            />
+            <div className={styles.imageUpload}>
+              <label className={styles.inputLabel}>
+                Upload de Imagem (opcional)
+              </label>
+              <ImageUpload
+                onChangeImage={(value) =>
+                  setImage({
+                    path: value,
+                    updated: true,
+                  })
+                }
+                onChange={(value) =>
+                  dispatch({ type: "SET_PRODUCT_IMG", payload: value })
+                }
+              />
+            </div>
+            {isUserLogged(user) && isAdmin(user) && (
+              <div className={styles.adminSection}>
+                <p>Modo administrador</p>
+                <label className={styles.inputLabel}>
+                  Selecione o estande para o produto
+                </label>
+                <StandSelect
+                  value={state.standUuid}
+                  onChange={(value) =>
+                    dispatch({ type: "SET_STAND_UUID", payload: value })
+                  }
+                  notNull
+                  showStatus={touched}
+                  message={messageError["standUuid"]}
+                />
               </div>
             )}
-            <div />
-            <Button type={ButtonHTMLType.Submit}>
-              {type === "create" ? "Criar" : "Editar"}
-            </Button>
-          </div>
-        </form>
-      </div>
+            <div className={styles.footerButtons}>
+              {type === "update" && !confirmDelete && (
+                <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
+              )}
+              {confirmDelete && (
+                <div className={styles.deleteBody}>
+                  <span>Excluir?</span>
+                  <Button
+                    className={styles.buttonCancelDelete}
+                    onClick={() => setConfirmDelete(false)}
+                  >
+                    <XSVG size={16} />
+                  </Button>
+                  <Button
+                    className={styles.buttonConfirmDelete}
+                    onClick={handleDeleteSubmit}
+                    loading={waitingFetch === "delete"}
+                  >
+                    <CheckSVG size={16} />
+                  </Button>
+                </div>
+              )}
+              <div />
+              <Button
+                type={ButtonHTMLType.Submit}
+                loading={waitingFetch === "create/update"}
+              >
+                {type === "create" ? "Criar" : "Editar"}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </ComponentWrapper>
       <GlassBackground onClick={hide} />
     </>
   );

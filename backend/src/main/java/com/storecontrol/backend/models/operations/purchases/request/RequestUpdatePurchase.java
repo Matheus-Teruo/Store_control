@@ -11,6 +11,6 @@ public record RequestUpdatePurchase(
 
     Boolean onOrder,
 
-    List<RequestUpdateItem> updateItems
+    List<RequestUpdateItem> items
 ) {
 }

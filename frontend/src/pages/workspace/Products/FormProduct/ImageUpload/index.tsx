@@ -14,15 +14,18 @@ function ImageUpload({ onChangeImage, onChange }: StandSelectProps) {
   const [imageSrc, setImageSrc] = useState<string>("");
   const [imageData, setImageData] = useState<File | null>(null);
   const [showCrop, setShowCrop] = useState<boolean>(false);
+  const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
   const hiddenFileInput = useRef<HTMLInputElement | null>(null);
   const { uploadImage } = useProductService();
 
   const uploadCroppedImage = async () => {
     if (!imageData) return;
+    setWaitingFetch(true);
     const response = await uploadImage(imageData);
     if (response) {
       onChange(response?.url);
     }
+    setWaitingFetch(false);
   };
 
   function handleClick() {
@@ -63,7 +66,11 @@ function ImageUpload({ onChangeImage, onChange }: StandSelectProps) {
         <CropSVG size={16} />
         <p>Cortar</p>
       </Button>
-      <Button onClick={uploadCroppedImage} disabled={imageSrc ? false : true}>
+      <Button
+        onClick={uploadCroppedImage}
+        disabled={imageSrc ? false : true}
+        loading={waitingFetch}
+      >
         <UploadSVG size={16} />
         <p>Upload</p>
       </Button>

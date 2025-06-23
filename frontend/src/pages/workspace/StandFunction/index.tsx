@@ -14,7 +14,7 @@ import {
 import useProductService from "@service/stand/useProductService";
 import { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import OrderCard from "../CashierFunction/OrderCard";
+import OrderCard from "../RegisterFunction/OrderCard";
 import { VoluntaryRole } from "@data/volunteers/Voluntary";
 import FormPurchase from "./FormPurchase";
 import Button from "@/components/utils/Button";
@@ -36,11 +36,14 @@ function StandFunction() {
         isSeller(user.summaryFunction, user.voluntaryRole)
       ) {
         const response = await getProducts(
-          undefined,
           user.voluntaryRole === VoluntaryRole.ADMIN
             ? undefined
             : user.summaryFunction.uuid,
+          undefined,
+          undefined,
           page.number,
+          undefined,
+          "productName,asc",
         );
         if (response) setProducts(response.content);
       } else if (

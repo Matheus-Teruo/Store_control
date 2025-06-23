@@ -3,9 +3,12 @@ import {
   useLanguageContext,
 } from "@context/LanguageContext/useLanguageContext";
 
-const LanguageMetadata: Record<LanguageEnum, { label: string }> = {
-  [LanguageEnum.PORTUGUESE]: { label: "Português" },
-  [LanguageEnum.ENGLISH]: { label: "English" },
+const LanguageMetadata: Record<
+  LanguageEnum,
+  { label: string; acronym: string }
+> = {
+  [LanguageEnum.PORTUGUESE]: { label: "Português", acronym: "pt" },
+  [LanguageEnum.ENGLISH]: { label: "English", acronym: "en" },
 };
 
 function LanguageSelect() {

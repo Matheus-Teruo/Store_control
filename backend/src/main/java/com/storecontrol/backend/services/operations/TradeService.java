@@ -1,84 +1,110 @@
 package com.storecontrol.backend.services.operations;
 
+import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.enumerate.PaymentType;
-import com.storecontrol.backend.models.operations.Recharge;
+import com.storecontrol.backend.models.operations.recharges.Recharge;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
-import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
-import com.storecontrol.backend.models.operations.response.ResponseTrade;
+import com.storecontrol.backend.models.operations.recharges.request.RequestCreateRecharge;
+import com.storecontrol.backend.models.operations.trades.Trade;
+import com.storecontrol.backend.models.operations.trades.TradeView;
+import com.storecontrol.backend.models.stands.products.Product;
+import com.storecontrol.backend.models.stands.products.ProductCombo;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
+import com.storecontrol.backend.repositories.operations.TradeRepository;
+import com.storecontrol.backend.repositories.operations.TradeViewRepository;
 import com.storecontrol.backend.services.customers.CustomerService;
 import com.storecontrol.backend.services.operations.validation.PurchaseValidation;
+import com.storecontrol.backend.services.operations.validation.RechargeValidation;
 import com.storecontrol.backend.services.operations.validation.TradeValidation;
-import com.storecontrol.backend.services.registers.CashRegisterService;
+import com.storecontrol.backend.services.registers.RegisterService;
 import com.storecontrol.backend.services.stands.ProductService;
-import com.storecontrol.backend.services.volunteers.VoluntaryService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 public class TradeService {
 
   @Autowired
-  PurchaseValidation purchaseValidation;
+  private RechargeValidation rechargeValidation;
 
   @Autowired
-  TradeValidation validation;
+  private PurchaseValidation purchaseValidation;
 
   @Autowired
-  RechargeRepository rechargeRepository;
+  private TradeValidation validation;
 
   @Autowired
-  PurchaseRepository purchaseRepository;
+  private TradeRepository repository;
 
   @Autowired
-  ProductService productService;
+  private TradeViewRepository repositoryView;
 
   @Autowired
-  VoluntaryService voluntaryService;
+  private RechargeRepository rechargeRepository;
 
   @Autowired
-  CustomerService customerService;
+  private PurchaseRepository purchaseRepository;
 
   @Autowired
-  CashRegisterService cashRegisterService;
+  private ProductService productService;
 
   @Autowired
-  ItemService itemService;
+  private CustomerService customerService;
+
+  @Autowired
+  private RegisterService registerService;
+
+  @Autowired
+  private ItemService itemService;
+
+  @Value("${spring.flyway.placeholders.CARD_ID}")
+  private String fixedCardId;
 
   @Transactional
-  public ResponseTrade createTrade(RequestCreateRecharge rechargeRequest, RequestCreatePurchase purchaseRequest, UUID userUuid) {
-    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
-    purchaseValidation.checkVoluntaryFunctionMatch(voluntary);
+  public TradeView createTrade(RequestCreateRecharge rechargeRequest, RequestCreatePurchase purchaseRequest) {
+    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    purchaseValidation.checkVoluntaryFunctionMatch(purchaseRequest.standUuid(), voluntary);
 
-    var productMap = productService.listProductsAsMap();
+    var productMap = productService.listProductsAsMap(purchaseRequest.standUuid());
+    purchaseValidation.checkStandFromItems(voluntary, purchaseRequest.items(), productMap);
     purchaseValidation.checkItemPriceAndDiscountMatch(purchaseRequest, voluntary, productMap);
     purchaseValidation.checkPurchaseHaveItems(purchaseRequest);
     purchaseValidation.checkInsufficientProductStockValidity(purchaseRequest, productMap);
     validation.checkRechargeMatchTotalPrice(rechargeRequest, purchaseRequest);
 
-    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(rechargeRequest.cashRegisterUuid());
+    var register = registerService.safeTakeRegisterByUuid(rechargeRequest.registerUuid());
 
     var customer = handleChangesOnCustomerByCardId(rechargeRequest, purchaseRequest.onOrder());
 
-    var recharge = new Recharge(rechargeRequest, customer, cashRegister, voluntary);
+    var recharge = new Recharge(rechargeRequest, customer, register, voluntary);
     handleCashTotal(recharge, recharge.getPaymentTypeEnum(), false);
 
     rechargeRepository.save(recharge);
 
-    var purchase = new Purchase(purchaseRequest, customer, voluntary);
-    var items = itemService.createItems(purchaseRequest, purchase);
+    UUID standUuid = productMap.get(purchaseRequest.items().getFirst().productUuid()).getStandUuid();
+    var purchase = new Purchase(purchaseRequest, standUuid, customer, voluntary);
+    var items = itemService.createItems(purchaseRequest, purchase, standUuid);
     purchase.setItems(items);
 
-    updateItemsFromItemsChanged(purchase, false);
+    updateItemsFromItemsChanged(purchase, productMap, false);
 
     purchaseRepository.save(purchase);
 
@@ -86,7 +112,101 @@ public class TradeService {
       customerService.finalizeCustomer(customer);
     }
 
-    return new ResponseTrade(recharge, purchase);
+    Trade trade = new Trade(recharge.getUuid(), purchase.getUuid());
+
+    repository.save(trade);
+
+    return new TradeView(trade, recharge, purchase);
+  }
+
+  public TradeView takeTradeByUuid(UUID uuid) {
+    var trade = repositoryView.findByUuidValidTrue(uuid)
+        .orElseThrow(EntityNotFoundException::new);
+
+    var items = itemService.listItems(trade.getPurchaseUuid());
+    trade.setItems(items);
+
+    return trade;
+  }
+
+  public Page<TradeView> pageTrades(UUID standUuid, Pageable pageable) {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    purchaseValidation.checkPurchasesBelongsManagerStand(standUuid, manager);
+
+    var trades = repositoryView.findTradesValid(standUuid, pageable);
+    List<UUID> purchasesUUid = trades.stream().map(TradeView::getPurchaseUuid).toList();
+
+    Map<UUID, List<Item>> itemMap = itemService.listItemsFromMultiPurchase(purchasesUUid);
+    trades.forEach(tradeView -> {
+      List<Item> items = itemMap.getOrDefault(tradeView.getPurchaseUuid(), new ArrayList<>());
+      tradeView.setItems(items);
+    });
+
+    return trades;
+  }
+
+  public List<TradeView> listLast3Trades() {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    var trades = repositoryView.findLast3ValidTrue(manager.getUuid());
+
+    List<UUID> purchasesUUid = trades.stream().map(TradeView::getPurchaseUuid).toList();
+
+    Map<UUID, List<Item>> itemMap = itemService.listItemsFromMultiPurchase(purchasesUUid);
+    trades.forEach(tradeView -> {
+      List<Item> items = itemMap.getOrDefault(tradeView.getPurchaseUuid(), new ArrayList<>());
+      tradeView.setItems(items);
+    });
+
+    return trades;
+  }
+
+  @Transactional
+  public void deleteTrade(String cardId, UUID uuid) {
+    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    var trade = repository.findByUuidValidTrue(uuid)
+        .orElseThrow(EntityNotFoundException::new);
+
+    Customer customer;
+    Purchase purchase;
+    Recharge recharge;
+    if (fixedCardId.equals(cardId)) {
+      purchase = purchaseRepository.findByUuidValidTrue(trade.getPurchaseUuid())
+          .orElseThrow(() -> new InvalidDatabaseQueryException(
+              MessageResolver.getInstance().getMessage("service.exception.purchase.get.validation.error"),
+              MessageResolver.getInstance().getMessage("service.exception.purchase.get.validation.message"),
+              uuid.toString())
+          );
+      recharge = rechargeRepository.findByUuidValidTrue(trade.getRechargeUuid())
+          .orElseThrow(() -> new InvalidDatabaseQueryException(
+              MessageResolver.getInstance().getMessage("service.exception.recharge.get.validation.error"),
+              MessageResolver.getInstance().getMessage("service.exception.recharge.get.validation.message"),
+              uuid.toString())
+          );
+    } else {
+      customer = customerService.takeActiveCustomerByCardId(cardId);
+      purchase = customer.getPurchases().getFirst();
+      recharge = customer.getRecharges().getFirst();
+    }
+
+    var productMap = productService.listProductsAsMap(purchase.getStandUuid());
+    validation.checkIfLastTrade(recharge, purchase, trade);
+    if (!fixedCardId.equals(cardId)) purchaseValidation.checkSomeItemWasDelivered(purchase);
+    purchaseValidation.checkPurchaseBelongsToVoluntary(purchase, voluntary);
+    purchaseValidation.checkIfLastPurchaseOfVoluntary(purchase, voluntary);
+    rechargeValidation.checkRechargeBelongsToVoluntary(recharge, voluntary);
+    rechargeValidation.checkIfLastRechargeOfVoluntary(recharge, voluntary);
+
+    updateItemsFromItemsChanged(purchase, productMap,true);
+
+    purchase.deletePurchase();
+
+    handleCashTotal(recharge, recharge.getPaymentTypeEnum(), true);
+
+    recharge.deleteRecharge();
+
+    trade.deleteTrade();
+
+    handleFilterFinalizeCustomer(recharge.getCustomer());
   }
 
   private Customer handleChangesOnCustomerByCardId(RequestCreateRecharge request, boolean onOrder) {
@@ -110,23 +230,45 @@ public class TradeService {
 
     switch(paymentType) {
       case PaymentType.CASH:
-        recharge.getCashRegister().incrementCash(rechargeValue);
+        recharge.getRegister().incrementCash(rechargeValue);
         break;
       case PaymentType.CREDIT:
-        recharge.getCashRegister().incrementCredit(rechargeValue);
+        recharge.getRegister().incrementCredit(rechargeValue);
         break;
       case PaymentType.DEBIT:
-        recharge.getCashRegister().incrementDebit(rechargeValue);
+        recharge.getRegister().incrementDebit(rechargeValue);
+        break;
+      case PaymentType.PIX:
+        recharge.getRegister().incrementPix(rechargeValue);
         break;
     }
   }
 
-  private void updateItemsFromItemsChanged(Purchase purchase, Boolean isReversal) {
+  private void updateItemsFromItemsChanged(Purchase purchase, Map<UUID, Product> productMap, Boolean isReversal) {
     for (Item item : purchase.getItems()) {
       var product = item.getItemId().getProduct();
       int adjustmentFactor = isReversal ? -1 : 1;
 
-      product.decreaseStock(adjustmentFactor * item.getQuantity());
+      if (product.isCombo()) {
+        for (ProductCombo productCombo : product.getComboProducts()) {
+          var comboProduct = productMap.get(productCombo.getIncludedProductUuid());
+          comboProduct.decreaseStock(adjustmentFactor * item.getQuantity() * productCombo.getQuantity());
+        }
+      }
+
+      if (product.getStock() != null) {
+        product.decreaseStock(adjustmentFactor * item.getQuantity());
+      }
+    }
+  }
+
+  private void handleFilterFinalizeCustomer(Customer customer) {
+    var recharges = customer.getRecharges().stream()
+        .filter(Recharge::isValid)
+        .toList();
+
+    if (recharges.isEmpty()) {
+      customerService.finalizeCustomer(customer);
     }
   }
 }

@@ -1,9 +1,9 @@
 package com.storecontrol.backend.models.customers;
 
-import com.storecontrol.backend.models.operations.Donation;
+import com.storecontrol.backend.models.operations.finalization.Donation;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
-import com.storecontrol.backend.models.operations.Recharge;
-import com.storecontrol.backend.models.operations.Refund;
+import com.storecontrol.backend.models.operations.recharges.Recharge;
+import com.storecontrol.backend.models.operations.finalization.Refund;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

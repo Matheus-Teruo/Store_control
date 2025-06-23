@@ -3,10 +3,10 @@ package com.storecontrol.backend.controllers.operations;
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
-import com.storecontrol.backend.models.operations.Recharge;
-import com.storecontrol.backend.models.operations.request.RequestCreateRecharge;
-import com.storecontrol.backend.models.operations.response.ResponseRecharge;
-import com.storecontrol.backend.models.operations.response.ResponseSummaryRecharge;
+import com.storecontrol.backend.models.operations.recharges.Recharge;
+import com.storecontrol.backend.models.operations.recharges.request.RequestCreateRecharge;
+import com.storecontrol.backend.models.operations.recharges.response.ResponseRecharge;
+import com.storecontrol.backend.models.operations.recharges.response.ResponseSummaryRecharge;
 import com.storecontrol.backend.services.operations.RechargeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RechargeTest extends BaseTest {
 
   @MockBean
-  RechargeService service;
+  private RechargeService service;
 
   @Test
   void testCreateRechargeSuccess() throws Exception {
@@ -40,20 +40,19 @@ class RechargeTest extends BaseTest {
     RequestCreateRecharge requestRecharge = createRequestCreateRecharge(mockRecharge);
     ResponseRecharge expectedResponse = new ResponseRecharge(mockRecharge);
 
-    when(service.createRecharge(requestRecharge, mockRecharge.getVoluntary().getUuid())).thenReturn(mockRecharge);
+    when(service.createRecharge(requestRecharge)).thenReturn(mockRecharge);
 
     // When & Then
     mockMvc.perform(post("/recharges")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(requestRecharge))
-            .requestAttr("UserUuid", mockRecharge.getVoluntary().getUuid()))
+            .content(toJson(requestRecharge)))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location",
             containsString("/recharges/" + mockRecharge.getUuid().toString())))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).createRecharge(requestRecharge, mockRecharge.getVoluntary().getUuid());
+    verify(service, times(1)).createRecharge(requestRecharge);
     verifyNoMoreInteractions(service);
   }
 
@@ -116,7 +115,6 @@ class RechargeTest extends BaseTest {
   @Test
   void testReadLast3RechargesSuccess() throws Exception {
     // Given
-    UUID userUuid = UUID.randomUUID();
     String cardId1 = "order_card12345";
     OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
     Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
@@ -131,18 +129,17 @@ class RechargeTest extends BaseTest {
         .map(ResponseSummaryRecharge::new)
         .toList();
 
-    when(service.listLast3Purchases(userUuid)).thenReturn(mockRecharges);
+    when(service.listLast3Purchases()).thenReturn(mockRecharges);
 
     // When & Then
     mockMvc.perform(get("/recharges/last3")
-            .requestAttr("UserUuid", userUuid)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(3))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listLast3Purchases(userUuid);
+    verify(service, times(1)).listLast3Purchases();
     verifyNoMoreInteractions(service);
   }
 
@@ -155,16 +152,15 @@ class RechargeTest extends BaseTest {
 
     Recharge mockRecharge = createRechargeEntity(UUID.randomUUID(), mockCustomer, false);
 
-    doNothing().when(service).deleteRecharge(mockRecharge.getUuid(), mockRecharge.getVoluntary().getUuid());
+    doNothing().when(service).deleteRecharge(mockRecharge.getUuid());
 
     // When & Then
     mockMvc.perform(delete("/recharges/{uuid}", mockRecharge.getUuid())
-            .contentType(MediaType.APPLICATION_JSON)
-            .requestAttr("UserUuid", mockRecharge.getVoluntary().getUuid()))
+            .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());
 
     // Verify interactions
-    verify(service, times(1)).deleteRecharge(mockRecharge.getUuid(), mockRecharge.getVoluntary().getUuid());
+    verify(service, times(1)).deleteRecharge(mockRecharge.getUuid());
     verifyNoMoreInteractions(service);
   }
 }

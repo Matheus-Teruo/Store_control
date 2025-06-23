@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 @Entity
@@ -51,16 +52,29 @@ public class Association {
         if (request.principalName() != null) {
             this.principalName = request.principalName();
         }
-        if (request.principalName() != null) {
+        if (request.associationKey() != null) {
             this.associationKey = request.associationKey();
         }
     }
 
     public void deleteAssociation() {
+        this.associationName = this.associationName + "_deleted_" + generateRandomString();
         this.valid = false;
 
         for (Stand stand : stands) {
             stand.deleteFunction();
         }
+    }
+
+    private String generateRandomString() {
+        String chars = "abcdefghijklmnopqrstuvwxyz";
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 3; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+
+        return sb.toString();
     }
 }

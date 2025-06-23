@@ -2,7 +2,7 @@
 
 .background {
   background-color: $color-secundary-1;
-  width: 100vw;
+  width: 100%;
   min-height: calc(100vh - $hub-header-height);
   display: flex;
   flex-direction: column;
@@ -46,6 +46,17 @@
         box-sizing: border-box;
       }
     }
+
+    .liDefault {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      p {
+        text-align: center;
+      }
+    }
   }
 
   .home {
@@ -60,6 +71,26 @@
     grid-template-columns: 1fr 1fr;
     grid-auto-rows: auto;
     gap: 10px;
+
+    .liLogPurchases {
+      grid-column: span 2;
+    }
+
+    .liStatisticsRegister {
+      grid-column: 1;
+    }
+
+    .liStatisticsSeller {
+      grid-column: 2;
+    }
+
+    .liStatistics {
+      grid-column: span 2;
+    }
+
+    .liTags {
+      grid-column: span 2;
+    }
 
     .liVolunteers {
       grid-column: span 2;

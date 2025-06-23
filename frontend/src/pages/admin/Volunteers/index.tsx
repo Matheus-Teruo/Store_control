@@ -2,6 +2,7 @@ import styles from "./Volunteers.module.scss";
 import PageSelect from "@/components/selects/PageSelect";
 import {
   isAdmin,
+  isManeger,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
@@ -56,7 +57,11 @@ function Volunteers() {
   const navigate = useNavigate();
 
   const fetchVolunteers = useCallback(async () => {
-    const response = await getVolunteers();
+    const response = await getVolunteers(
+      page.number,
+      undefined,
+      "fullname,asc",
+    );
     if (response) {
       setVolunteers(response.content);
       pageDispatch({
@@ -64,10 +69,10 @@ function Volunteers() {
         payload: response.page.totalPages,
       });
     }
-  }, [getVolunteers]);
+  }, [page.number, getVolunteers]);
 
   useEffect(() => {
-    if (isUserLogged(user) && isAdmin(user)) {
+    if (isUserLogged(user) && isManeger(user)) {
       fetchVolunteers();
     } else if (isUserUnlogged(user)) {
       navigate("/");
@@ -153,6 +158,7 @@ function Volunteers() {
           hide={handleFormShow}
           uuid={formState.uuid}
           association={association}
+          isAdminPermition={isAdmin(user)}
         />
       )}
     </div>

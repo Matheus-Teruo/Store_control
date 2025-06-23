@@ -19,12 +19,16 @@ public class User {
     private String password;
 
 
-    public void updateUser(String username, String password) {
+    public void updateUser(String username, String password, boolean passwordFlag) {
         if (username != null) {
             this.username = username;
         }
-        if (password != null) {
+        if (passwordFlag) {
             this.password = password;
         }
+    }
+
+    public void updatePassword(String password){
+        this.password = password;
     }
 }

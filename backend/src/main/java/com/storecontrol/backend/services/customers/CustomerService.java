@@ -20,13 +20,13 @@ import java.util.UUID;
 public class CustomerService {
 
   @Autowired
-  CustomerFilter filter;
+  private CustomerFilter filter;
 
   @Autowired
-  CustomerRepository repository;
+  private CustomerRepository repository;
 
   @Autowired
-  OrderCardService orderCardService;
+  private OrderCardService orderCardService;
 
   @Transactional
   public Customer initializeCustomer(String cardId) {

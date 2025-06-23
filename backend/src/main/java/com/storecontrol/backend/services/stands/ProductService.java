@@ -2,9 +2,12 @@ package com.storecontrol.backend.services.stands;
 
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
-import com.storecontrol.backend.models.stands.Product;
-import com.storecontrol.backend.models.stands.request.RequestCreateProduct;
-import com.storecontrol.backend.models.stands.request.RequestUpdateProduct;
+import com.storecontrol.backend.models.stands.products.Product;
+import com.storecontrol.backend.models.stands.products.ProductCombo;
+import com.storecontrol.backend.models.stands.products.Tag;
+import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
+import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.stands.ProductRepository;
 import com.storecontrol.backend.services.stands.validation.ProductValidation;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,6 +15,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,20 +27,39 @@ import java.util.stream.Collectors;
 public class ProductService {
 
   @Autowired
-  ProductValidation validation;
+  private ProductValidation validation;
 
   @Autowired
-  ProductRepository repository;
+  private ProductRepository repository;
 
   @Autowired
-  StandService standService;
+  private StandService standService;
+
+  @Autowired
+  private ProductComboService productComboService;
+
+  @Autowired
+  private TagService tagService;
 
   @Transactional
-  public Product createProduct(RequestCreateProduct request, UUID userUuid) {
+  public Product createProduct(RequestCreateProduct request) {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkNameDuplication(request.productName());
-    validation.checkProductBelongsManagerStand(request.standUuid() ,userUuid);
+    validation.checkProductBelongsManagerStand(request.standUuid(), manager);
+    Map<UUID, Product> productMap = listProductsAsMap(request.standUuid());
+    validation.checkProductIncludedOnComboBelongsStand(request.includedProductsCombo(), productMap);
+    validation.checkProductIncludedOnComboIsNotACombo(request.includedProductsCombo(), productMap);
+
     var stand = standService.safeTakeStandByUuid(request.standUuid());
     var product = new Product(request, stand);
+    var productCombos = productComboService.createCombo(request.includedProductsCombo(), product, productMap);
+    product.setComboProducts(productCombos);
+
+    if (request.tagsUuid() != null) {
+      var tags = tagService.listSelectedTags(request.tagsUuid());
+      product.createTags(tags);
+    }
+
     repository.save(product);
 
     return product;
@@ -56,25 +79,41 @@ public class ProductService {
         );
   }
 
-  public Page<Product> pageProducts(String productName, UUID standUuid, Pageable pageable) {
-    return repository.findAllValidTruePage(productName, standUuid, pageable);
+  public Page<Product> pageProducts(String productName, UUID tagUuid, UUID standUuid, Pageable pageable) {
+    return repository.findAllValidTruePage(productName, tagUuid, standUuid, pageable);
   }
 
-  public List<Product> listProducts() {
-    return repository.findAllValidTrue();
+  public List<Product> listProducts(UUID standUuid) {
+    return repository.findAllValidByStandUuid(standUuid);
   }
 
-  public Map<UUID, Product> listProductsAsMap() {
-    List<Product> products = repository.findAllValidTrue();
+  public Map<UUID, Product> listProductsAsMap(UUID standUuid) {
+    List<Product> products = repository.findAllValidByStandUuid(standUuid);
     return products.stream()
         .collect(Collectors.toMap(Product::getUuid, product -> product));
   }
 
   @Transactional
-  public Product updateProduct(RequestUpdateProduct request, UUID userUuid) {
+  public Product updateProduct(RequestUpdateProduct request) {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkNameDuplication(request.productName());
-    validation.checkProductBelongsManagerStand(request.standUuid() ,userUuid);
+    validation.checkProductBelongsManagerStand(request.standUuid(), manager);
     var product = safeTakeProductByUuid(request.uuid());
+
+    if (request.includedProductsCombo() != null) {
+      Map<UUID, Product> productMap = listProductsAsMap(request.standUuid());
+      validation.checkProductIncludedOnComboBelongsStand(request.includedProductsCombo(), productMap);
+      validation.checkProductIncludedOnComboIsNotACombo(request.includedProductsCombo(), productMap);
+      validation.checkComboIsNotIncludedInOtherCombo(request);
+
+      List<ProductCombo> newProductCombos = productComboService.updateCombo(request.includedProductsCombo(), product, productMap);
+      product.updateProductsCombo(newProductCombos);
+    }
+
+    if (request.tagsUuid() != null) {
+      List<Tag> newTags = tagService.listSelectedTags(request.tagsUuid());
+      product.updateTags(request.tagsUuid(), newTags);
+    }
 
     product.updateProduct(request);
     updateStandFromProduct(request.standUuid(), product);
@@ -84,7 +123,9 @@ public class ProductService {
 
   @Transactional
   public void deleteProduct(UUID uuid) {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     var product = safeTakeProductByUuid(uuid);
+    validation.checkProductBelongsManagerStand(product.getStandUuid(), manager);
 
     product.deleteProduct();
   }

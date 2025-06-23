@@ -1,14 +1,13 @@
 package com.storecontrol.backend.models.volunteers;
 
 import com.storecontrol.backend.models.enumerate.VoluntaryRole;
-import com.storecontrol.backend.models.operations.Donation;
-import com.storecontrol.backend.models.operations.Recharge;
-import com.storecontrol.backend.models.operations.Refund;
+import com.storecontrol.backend.models.operations.finalization.Donation;
+import com.storecontrol.backend.models.operations.recharges.Recharge;
+import com.storecontrol.backend.models.operations.finalization.Refund;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
-import com.storecontrol.backend.models.stands.Association;
-import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
 import com.storecontrol.backend.models.volunteers.request.RequestSignupVoluntary;
 import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary;
+import com.storecontrol.backend.models.volunteers.request.RequestVoluntaryRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 @Entity
@@ -76,16 +76,16 @@ public class Voluntary implements UserDetails {
     this.valid = true;
   }
 
-  public void updateVoluntary(RequestUpdateVoluntary request, String password) {
-    if (request.username() != null || request.password() != null) {
-      this.user.updateUser(request.username(), password);
+  public void updateVoluntary(RequestUpdateVoluntary request, String password, boolean passwordFlag) {
+    if (request.username() != null || passwordFlag) {
+      this.user.updateUser(request.username(), password, passwordFlag);
     }
     if (request.fullname() != null) {
       this.fullname = request.fullname();
     }
   }
 
-  public void updateVoluntary(Function function){
+  public void updateVoluntaryFunction(Function function){
     this.function = function;
   }
 
@@ -93,8 +93,25 @@ public class Voluntary implements UserDetails {
     this.voluntaryRole = VoluntaryRole.fromString(request.voluntaryRole());
   }
 
+  public void updatePassword(String password){
+    this.user.updatePassword(password);
+  }
+
   public void deleteVoluntary() {
+    this.fullname = this.fullname + "_deleted_" + generateRandomString();
     this.valid = false;
+  }
+
+  private String generateRandomString() {
+    String chars = "abcdefghijklmnopqrstuvwxyz";
+    StringBuilder sb = new StringBuilder();
+    Random random = new Random();
+
+    for (int i = 0; i < 3; i++) {
+      sb.append(chars.charAt(random.nextInt(chars.length())));
+    }
+
+    return sb.toString();
   }
 
   @Override

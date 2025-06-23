@@ -1,6 +1,7 @@
 @use "@styles/variables" as *;
 
 .inputGroup {
+  position: relative;
   height: 32px;
   display: flex;
   align-items: center;
@@ -18,20 +19,22 @@
   }
 
   &.unfocOK {
-    border-color: $color-font-2;
-    transition: border-color 0.2s;
+    border-color: $color-accepted;
+    transition: border-color 0.4s;
 
     input {
-      color: $color-font-2;
+      color: $color-accepted;
+      transition: color 0.4s;
     }
   }
 
   &.unfocNO {
-    border-color: $color-font-1;
-    transition: border-color 0.2s;
+    border-color: $color-unaccepted;
+    transition: border-color 0.4s;
 
     input {
-      color: $color-font-1;
+      color: $color-unaccepted;
+      transition: color 0.4s;
     }
   }
 

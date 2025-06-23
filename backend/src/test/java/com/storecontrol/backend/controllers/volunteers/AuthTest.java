@@ -15,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.UUID;
 
@@ -28,13 +30,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AuthTest extends BaseTest {
 
   @MockBean
-  VoluntaryService service;
+  private VoluntaryService service;
 
   @MockBean
-  AuthenticationManager manager;
+  private AuthenticationManager manager;
 
   @MockBean
-  TokenServiceConfig tokenService;
+  private TokenServiceConfig tokenService;
 
   @Test
   void testSignUpSuccess() throws Exception {
@@ -103,27 +105,28 @@ class AuthTest extends BaseTest {
   @Test
   void testUserCheckSuccess() throws Exception {
     // Given
-    String mockJwt = "mocked-jwt-token";
     UUID mockUserUuid = UUID.randomUUID();
 
     Voluntary mockVoluntary = createVoluntaryEntity(mockUserUuid);
     ResponseUser expectedResponse = new ResponseUser(mockVoluntary);
+    Authentication authentication = new UsernamePasswordAuthenticationToken(
+        mockVoluntary,
+        null,
+        mockVoluntary.getAuthorities()
+    );
 
-    Cookie authCookie = new Cookie("auth", mockJwt);
-
-    when(tokenService.recoverVoluntaryUuid(mockJwt)).thenReturn(mockUserUuid);
-    when(service.safeTakeVoluntaryByUuid(mockUserUuid)).thenReturn(mockVoluntary);
+    SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+    securityContext.setAuthentication(authentication);
+    SecurityContextHolder.setContext(securityContext);
 
     // When & Then
-    mockMvc.perform(get("/user/check")
-            .cookie(authCookie))
+    mockMvc.perform(get("/user/check"))
         .andExpect(status().isOk())
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(tokenService, times(1)).recoverVoluntaryUuid(mockJwt);
-    verify(service, times(1)).safeTakeVoluntaryByUuid(mockUserUuid);
     verifyNoMoreInteractions(tokenService);
+    verifyNoMoreInteractions(manager);
     verifyNoMoreInteractions(service);
   }
 

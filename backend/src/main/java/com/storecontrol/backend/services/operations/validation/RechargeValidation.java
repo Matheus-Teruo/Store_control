@@ -2,7 +2,7 @@ package com.storecontrol.backend.services.operations.validation;
 
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidOperationException;
-import com.storecontrol.backend.models.operations.Recharge;
+import com.storecontrol.backend.models.operations.recharges.Recharge;
 import com.storecontrol.backend.models.volunteers.Function;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
@@ -10,13 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Component
 public class RechargeValidation {
 
   @Autowired
-  RechargeRepository repository;
+  private RechargeRepository repository;
 
   public void checkVoluntaryFunctionMatch(Function function, Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {
@@ -48,8 +47,8 @@ public class RechargeValidation {
     }
   }
 
-  public void checkRechargeBelongsToVoluntary(Recharge recharge, UUID userUuid) {
-    if (recharge.getVoluntary().getVoluntaryRole().isNotAdmin() && !recharge.getVoluntary().getUuid().equals(userUuid)) {
+  public void checkRechargeBelongsToVoluntary(Recharge recharge, Voluntary voluntary) {
+    if (voluntary.getVoluntaryRole().isNotAdmin() && !recharge.getVoluntaryUuid().equals(voluntary.getUuid())) {
       throw new InvalidOperationException(
           MessageResolver.getInstance().getMessage("validation.recharge.checkVoluntary.notOwner.error"),
           MessageResolver.getInstance().getMessage("validation.recharge.checkVoluntary.notOwner.message")

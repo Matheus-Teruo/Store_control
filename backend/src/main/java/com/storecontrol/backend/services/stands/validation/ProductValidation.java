@@ -2,12 +2,15 @@ package com.storecontrol.backend.services.stands.validation;
 
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
-import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
+import com.storecontrol.backend.models.stands.products.Product;
+import com.storecontrol.backend.models.stands.products.request.RequestCreateProductCombo;
+import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.stands.ProductRepository;
-import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -15,10 +18,7 @@ import java.util.UUID;
 public class ProductValidation {
 
   @Autowired
-  ProductRepository repository;
-
-  @Autowired
-  VoluntaryRepository voluntaryRepository;
+  private ProductRepository repository;
 
   public void checkNameDuplication(String productName) {
     if (repository.existsByProductName(productName)) {
@@ -33,13 +33,7 @@ public class ProductValidation {
     }
   }
 
-  public void checkProductBelongsManagerStand(UUID standUuid,UUID userUuid) {
-    var manager = voluntaryRepository.findByUuidValidTrue(userUuid)
-        .orElseThrow(() -> new InvalidDatabaseQueryException(
-        MessageResolver.getInstance().getMessage("service.exception.product.get.validation.error"),
-        MessageResolver.getInstance().getMessage("service.exception.product.get.validation.message"),
-        userUuid.toString())
-    );
+  public void checkProductBelongsManagerStand(UUID standUuid, Voluntary manager) {
     if (manager.getVoluntaryRole().isNotAdmin()) {
       if (!manager.getFunction().getUuid().equals(standUuid)) {
         throw new InvalidDatabaseInsertionException(
@@ -47,10 +41,58 @@ public class ProductValidation {
             MessageResolver.getInstance().getMessage("validation.product.checkManageFunction.invalidStand.message"),
             Map.of(
                 MessageResolver.getInstance().getMessage("validation.product.checkManageFunction.invalidStand.field"),
-                userUuid.toString()
+                manager.getUuid().toString()
             )
         );
       }
+    }
+  }
+
+  public void checkProductIncludedOnComboBelongsStand(List<RequestCreateProductCombo> includedProductsCombo, Map<UUID, Product> productMap) {
+    for (RequestCreateProductCombo includedProduct : includedProductsCombo) {
+      UUID uuid = includedProduct.includedProductUuid();
+
+      if (!productMap.containsKey(uuid)) {
+        throw new InvalidDatabaseInsertionException(
+            MessageResolver.getInstance().getMessage("validation.product.checkCombo.invalidProductStand.error"),
+            MessageResolver.getInstance().getMessage("validation.product.checkCombo.invalidProductStand.message"),
+            Map.of(
+                MessageResolver.getInstance().getMessage("validation.product.checkCombo.invalidProductStand.field"),
+                uuid.toString()
+            )
+        );
+      }
+    }
+  }
+
+  public void checkProductIncludedOnComboIsNotACombo(List<RequestCreateProductCombo> includedProductsCombo, Map<UUID, Product> productMap) {
+    for (RequestCreateProductCombo includedProduct : includedProductsCombo) {
+      UUID uuid = includedProduct.includedProductUuid();
+
+      if (productMap.get(uuid).isCombo()) {
+        throw new InvalidDatabaseInsertionException(
+            MessageResolver.getInstance().getMessage("validation.product.checkCombo.invalidProductCombo.error"),
+            MessageResolver.getInstance().getMessage("validation.product.checkCombo.invalidProductCombo.message"),
+            Map.of(
+                MessageResolver.getInstance().getMessage("validation.product.checkCombo.invalidProductCombo.field"),
+                uuid.toString()
+            )
+        );
+      }
+    }
+  }
+
+  public void checkComboIsNotIncludedInOtherCombo(RequestUpdateProduct requestUpdateProduct) {
+    if (!requestUpdateProduct.includedProductsCombo().isEmpty() &&
+          repository.existsByIncludedProductUuid(requestUpdateProduct.uuid())) {
+      throw new InvalidDatabaseInsertionException(
+          MessageResolver.getInstance().getMessage("validation.product.checkProduct.invalidProductCombo.error"),
+          MessageResolver.getInstance().getMessage("validation.product.checkProduct.invalidProductCombo.message"),
+          Map.of(
+              MessageResolver.getInstance().getMessage("validation.product.checkProduct.invalidProductCombo.field"),
+              requestUpdateProduct.uuid().toString()
+          )
+      );
     }
   }
 }

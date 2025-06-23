@@ -10,12 +10,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CustomerRepository extends JpaRepository<Customer, UUID> {
-  @Query("select c from Customer c where c.inUse = true and c.orderCard.id = :card_id")
+  @Query("SELECT c FROM Customer c WHERE c.inUse = true AND c.orderCard.id = :card_id")
   Optional<Customer> findByOrderCardIdActiveTrue(String card_id);
 
-  @Query("select c from Customer c where c.orderCard.id = :card_id order by c.customerStart desc LIMIT 1")
+  @Query("SELECT c FROM Customer c WHERE c.orderCard.id = :card_id ORDER BY c.customerStart DESC LIMIT 1")
   Optional<Customer> findByOrderCardId(String card_id);
 
-  @Query("select c from Customer c where c.inUse = true")
+  @Query("SELECT c FROM Customer c WHERE c.inUse = true ORDER BY c.customerStart DESC")
   Page<Customer> findAllActiveTrue(Pageable pageable);
 }

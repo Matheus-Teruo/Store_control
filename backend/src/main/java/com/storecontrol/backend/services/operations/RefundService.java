@@ -2,8 +2,8 @@ package com.storecontrol.backend.services.operations;
 
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
 import com.storecontrol.backend.models.customers.Customer;
-import com.storecontrol.backend.models.operations.Refund;
-import com.storecontrol.backend.models.registers.CashRegister;
+import com.storecontrol.backend.models.operations.finalization.Refund;
+import com.storecontrol.backend.models.registers.Register;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.RefundRepository;
 import com.storecontrol.backend.services.customers.component.CustomerFinalizationValidation;
@@ -22,18 +22,18 @@ import java.util.UUID;
 public class RefundService {
 
   @Autowired
-  RefundValidation validation;
+  private RefundValidation validation;
 
   @Autowired
-  RefundRepository repository;
+  private RefundRepository repository;
 
   @Autowired
-  CustomerFinalizationValidation finalizationValidation;
+  private CustomerFinalizationValidation finalizationValidation;
 
   @Transactional
   public void createRefund(RequestCustomerFinalization request,
                            Customer customer,
-                           CashRegister cashRegister,
+                           Register register,
                            Voluntary voluntary) {
     var refundValue = request.refundValue();
 
@@ -41,8 +41,8 @@ public class RefundService {
     finalizationValidation.checkRefundValueValid(refundValue, customer);
 
     customer.getOrderCard().incrementDebit(refundValue.negate());
-    cashRegister.incrementCash(refundValue.negate());
-    var refund = new Refund(request, customer, cashRegister, voluntary);
+    register.incrementCash(refundValue.negate());
+    var refund = new Refund(request, customer, register, voluntary);
     customer.setRefunds(List.of(refund));
 
     repository.save(refund);
@@ -61,7 +61,7 @@ public class RefundService {
   public void deleteRefund(Customer customer) {
     var refund = customer.getRefunds().getFirst();
     customer.getOrderCard().incrementDebit(refund.getRefundValue());
-    refund.getCashRegister().incrementCash(refund.getRefundValue());
+    refund.getRegister().incrementCash(refund.getRefundValue());
 
     refund.deleteRefund();
   }

@@ -6,7 +6,7 @@ export default interface Transaction {
   amount: number;
   transactionTypeEnum: TransactionType;
   transactionTimeStamp: string; // TODO: data
-  summaryCashRegister: SummaryCustomer;
+  summaryRegister: SummaryCustomer;
   summaryVoluntary: SummaryVoluntary;
 }
 
@@ -21,7 +21,7 @@ export interface SummaryTransaction {
 export interface CreateTransaction {
   amount: number;
   transactionTypeEnum: TransactionType;
-  cashRegisterUuid: string;
+  registerUuid: string;
 }
 
 export enum TransactionType {

@@ -5,6 +5,7 @@ CREATE TABLE associations (
     uuid BINARY(16) PRIMARY KEY,
     association_name VARCHAR(255) UNIQUE NOT NULL,
     principal_name VARCHAR(255) NOT NULL,
+    association_key VARCHAR(255) UNIQUE NOT NULL,
     valid TINYINT NOT NULL
 );
 
@@ -81,6 +82,7 @@ CREATE TABLE purchases (
     uuid BINARY(16) PRIMARY KEY,
     on_order BOOLEAN NOT NULL,
     purchase_time_stamp TIMESTAMP NOT NULL,
+    stand_uuid BINARY(16) NOT NULL,
     customer_uuid BINARY(16) NOT NULL,
     voluntary_uuid BINARY(16) NOT NULL,
     valid TINYINT NOT NULL
@@ -115,6 +117,29 @@ CREATE TABLE stands (
     association_uuid BINARY(16) NOT NULL
 );
 
+-- Table for tags
+CREATE TABLE tags (
+    uuid BINARY(16) PRIMARY KEY,
+    tag_name VARCHAR(255) UNIQUE NOT NULL,
+    color CHAR(7)
+);
+
+-- Table for tag_product
+CREATE TABLE tag_product (
+    tag_uuid BINARY(16),
+    product_uuid BINARY(16),
+    PRIMARY KEY (tag_uuid, product_uuid)
+);
+
+-- Table for trades
+CREATE TABLE trades (
+    uuid BINARY(16) PRIMARY KEY,
+    recharge_uuid BINARY(16) NOT NULL,
+    purchase_uuid BINARY(16) NOT NULL,
+    trade_time_stamp TIMESTAMP NOT NULL,
+    valid TINYINT NOT NULL
+);
+
 -- Table for transactions
 CREATE TABLE transactions (
     uuid BINARY(16) PRIMARY KEY,
@@ -133,6 +158,7 @@ CREATE TABLE volunteers (
     password VARCHAR(255) NOT NULL,
     fullname VARCHAR(255) UNIQUE NOT NULL,
     function_uuid BINARY(16),
+    related_association_uuid BINARY(16) DEFAULT NULL,
     voluntary_role ENUM('ROLE_USER', 'ROLE_MANAGEMENT', 'ROLE_ADMIN') NOT NULL,
     valid TINYINT NOT NULL
 );

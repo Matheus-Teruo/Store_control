@@ -35,5 +35,5 @@ export interface CustomerFinalization {
   donationValue: string;
   refundValue: number;
   orderCardId: string;
-  cashRegisterUuid: string;
+  registerUuid: string;
 }

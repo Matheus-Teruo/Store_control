@@ -11,16 +11,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface AssociationRepository extends JpaRepository<Association, UUID> {
-  @Query("select a from Association a where a.valid = true and a.uuid = :uuid")
+  @Query("SELECT a FROM Association a WHERE a.valid = true AND a.uuid = :uuid")
   Optional<Association> findByUuidValidTrue(UUID uuid);
 
-  @Query("select a.uuid from Association a where a.valid = true and a.associationKey = :associationKey")
+  @Query("SELECT a.uuid FROM Association a WHERE a.valid = true AND a.associationKey = :associationKey")
   Optional<UUID> findByKeyValidTrue(String associationKey);
 
-  @Query("select a from Association a where a.valid = true")
+  @Query("SELECT a FROM Association a WHERE a.valid = true")
   Page<Association> findAllValidTruePage(Pageable pageable);
 
-  @Query("select a from Association a where a.valid = true")
+  @Query("SELECT a FROM Association a WHERE a.valid = true ORDER BY a.associationName ASC")
   List<Association> findAllValidTrue();
 
   boolean existsByAssociationName(String associationName);

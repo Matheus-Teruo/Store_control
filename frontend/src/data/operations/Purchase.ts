@@ -5,6 +5,7 @@ import Item, { CreateItem, UpdateItem } from "./Item";
 export default interface Purchase {
   uuid: string;
   onOrder: boolean;
+  standUuid: string;
   purchaseTimeStamp: string; // TODO: data
   items: Item[];
   summaryCustomer: SummaryCustomer;
@@ -25,12 +26,14 @@ export interface SummaryPurchase {
 export interface PurchaseOrder {
   uuid: string;
   onOrder: boolean;
+  standUuid: string;
   purchaseTimeStamp: string; // TODO: data
   items: Item[];
 }
 
 export interface CreatePurchase {
   onOrder: boolean;
+  standUuid: string;
   items: CreateItem[];
   orderCardId: string;
 }

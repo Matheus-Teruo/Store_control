@@ -1,7 +1,7 @@
 import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
-import Customer from "@data/customers/Customer";
-import Trade, { CreateTrade } from "@data/operations/Trade";
+import Trade, { CreateTrade, SummaryTrade } from "@data/operations/Trade";
+import { PaginatedResponse } from "@service/PagesType";
 import { useCallback } from "react";
 
 const useTradeService = () => {
@@ -28,15 +28,49 @@ const useTradeService = () => {
     [api, safeRequest],
   );
 
-  const deleteTrade = useCallback(
-    async (cardId: string): Promise<Customer | null> =>
+  const getTrade = useCallback(
+    async (tradeUUid: string): Promise<Trade | null> =>
       safeRequest(() =>
-        api.delete<Customer>(`trades/${cardId}`).then((res) => res.data),
+        api.get<Trade>(`trades/${tradeUUid}`).then((res) => res.data),
       ),
     [api, safeRequest],
   );
 
-  return { createTrade, deleteTrade };
+  const getTrades = useCallback(
+    async (
+      standUuid?: string,
+      page?: number,
+      size?: number,
+      sort?: string,
+    ): Promise<PaginatedResponse<SummaryTrade> | null> =>
+      safeRequest(() =>
+        api
+          .get<
+            PaginatedResponse<SummaryTrade>
+          >("trades", { params: { standUuid, page, size, sort } })
+          .then((res) => res.data),
+      ),
+    [api, safeRequest],
+  );
+
+  const getLast3Trades = useCallback(
+    async (): Promise<SummaryTrade[] | null> =>
+      safeRequest(() =>
+        api.get<SummaryTrade[]>("trades/last3").then((res) => res.data),
+      ),
+    [api, safeRequest],
+  );
+
+  const deleteTrade = useCallback(
+    async (cardId: string, tradeUuid: string): Promise<void> => {
+      await safeRequest(() =>
+        api.delete<void>(`trades/${cardId}/${tradeUuid}`),
+      );
+    },
+    [api, safeRequest],
+  );
+
+  return { createTrade, getTrade, getTrades, getLast3Trades, deleteTrade };
 };
 
 export default useTradeService;

@@ -1,7 +1,7 @@
 package com.storecontrol.backend.controllers.operations;
 
-import com.storecontrol.backend.models.operations.response.ResponseRefund;
-import com.storecontrol.backend.models.operations.response.ResponseSummaryRefund;
+import com.storecontrol.backend.models.operations.finalization.response.ResponseRefund;
+import com.storecontrol.backend.models.operations.finalization.response.ResponseSummaryRefund;
 import com.storecontrol.backend.services.operations.RefundService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.util.UUID;
 public class RefundController {
 
   @Autowired
-  RefundService service;
+  private RefundService service;
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseRefund> readRefund(@PathVariable @Valid UUID uuid) {

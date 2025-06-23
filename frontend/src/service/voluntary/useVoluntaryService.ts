@@ -56,7 +56,7 @@ const useVoluntaryService = () => {
     async (
       page?: number,
       size?: number,
-      sort?: "asc" | "desc",
+      sort?: string,
     ): Promise<PaginatedResponse<SummaryVoluntary> | null> =>
       safeRequest(() =>
         api
@@ -64,6 +64,14 @@ const useVoluntaryService = () => {
             params: { page, size, sort },
           })
           .then((res) => res.data),
+      ),
+    [api, safeRequest],
+  );
+
+  const getListVolunteers = useCallback(
+    async (): Promise<SummaryVoluntary[] | null> =>
+      safeRequest(() =>
+        api.get<SummaryVoluntary[]>("volunteers/list").then((res) => res.data),
       ),
     [api, safeRequest],
   );
@@ -100,12 +108,35 @@ const useVoluntaryService = () => {
     [api, safeRequestWithFeedback],
   );
 
+  const updatePassword = useCallback(
+    async (voluntaryUuid: string): Promise<Voluntary | Message | null> =>
+      safeRequestWithFeedback(() =>
+        api
+          .put<Voluntary>("/volunteers/forgot-password", {
+            uuid: voluntaryUuid,
+          })
+          .then((res) => res.data),
+      ),
+    [api, safeRequestWithFeedback],
+  );
+
+  const deleteVoluntary = useCallback(
+    async (voluntaryUuid: string): Promise<void | Message | null> =>
+      safeRequestWithFeedback(() =>
+        api.delete<void>(`volunteers/${voluntaryUuid}`).then((res) => res.data),
+      ),
+    [api, safeRequestWithFeedback],
+  );
+
   return {
     getVoluntary,
     getVolunteers,
+    getListVolunteers,
     updateVoluntary,
     updateVoluntaryFunction,
     updateVoluntaryRole,
+    updatePassword,
+    deleteVoluntary,
   };
 };
 

@@ -5,55 +5,52 @@ import com.storecontrol.backend.infra.exceptions.InvalidCustomerException;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.services.customers.component.CustomerFinalizationValidation;
 import com.storecontrol.backend.services.operations.DonationService;
 import com.storecontrol.backend.services.operations.RefundService;
-import com.storecontrol.backend.services.registers.CashRegisterService;
-import com.storecontrol.backend.services.volunteers.VoluntaryService;
+import com.storecontrol.backend.services.registers.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Component
 public class CustomerFinalizationHandler {
 
   @Autowired
-  CustomerFinalizationValidation validation;
+  private CustomerFinalizationValidation validation;
 
   @Autowired
-  CustomerService customerService;
+  private CustomerService customerService;
 
   @Autowired
-  CashRegisterService cashRegisterService;
+  private RegisterService registerService;
 
   @Autowired
-  VoluntaryService voluntaryService;
+  private RefundService refundService;
 
   @Autowired
-  RefundService refundService;
+  private DonationService donationService;
 
-  @Autowired
-  DonationService donationService;
-
-  public Customer finalizeCustomer(RequestCustomerFinalization request, UUID userUuid) {
-    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
-    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterUuid());
+  public Customer finalizeCustomer(RequestCustomerFinalization request) {
+    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    var register = registerService.safeTakeRegisterByUuid(request.registerUuid());
     var customer = customerService.takeActiveFilteredCustomerByCardId(request.orderCardId());
     var remainingDebit = customer.getOrderCard().getDebit();
 
-    validation.checkVoluntaryFunctionMatch(cashRegister, voluntary);
+    validation.checkVoluntaryFunctionMatch(register, voluntary);
 
     if (remainingDebit.compareTo(BigDecimal.ZERO) > 0) {
       if (request.refundValue()
           .add(request.donationValue())
           .compareTo(remainingDebit) == 0) {
         if (request.refundValue().compareTo(BigDecimal.ZERO) > 0) {
-          refundService.createRefund(request, customer, cashRegister, voluntary);
+          refundService.createRefund(request, customer, register, voluntary);
         }
         if (request.donationValue().compareTo(BigDecimal.ZERO) > 0) {
-          donationService.createDonation(request, customer, cashRegister, voluntary);
+          donationService.createDonation(request, customer, register, voluntary);
         }
       } else {
         throw new InvalidCustomerException(
@@ -67,11 +64,13 @@ public class CustomerFinalizationHandler {
     return customer;
   }
 
-  public Customer undoFinalizeCustomer(RequestOrderCard request, UUID userUuid) {
+  public Customer undoFinalizeCustomer(RequestOrderCard request, boolean fromRegister) {
     var customer = customerService.takeLastActiveFilteredCustomerByCardId(request.cardId());
-    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
 
-    validation.checkVoluntaryFunctionType(voluntary);
+    if (fromRegister) {
+      Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      validation.checkVoluntaryFunctionType(voluntary);
+    }
 
     if (!customer.isInUse()) {
       if (!customer.getDonations().isEmpty()) {

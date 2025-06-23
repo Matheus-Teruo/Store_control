@@ -29,11 +29,12 @@ export interface CreateRecharge {
   rechargeValue: number;
   paymentTypeEnum: PaymentType;
   orderCardId: string;
-  cashRegisterUuid: string;
+  registerUuid: string;
 }
 
 export enum PaymentType {
   CREDIT = "credit",
   DEBIT = "debit",
   CASH = "cash",
+  PIX = "pix",
 }

@@ -3,8 +3,8 @@ package com.storecontrol.backend.services.operations.validation;
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidOperationException;
 import com.storecontrol.backend.models.enumerate.TransactionType;
-import com.storecontrol.backend.models.operations.Transaction;
-import com.storecontrol.backend.models.registers.CashRegister;
+import com.storecontrol.backend.models.operations.transactions.Transaction;
+import com.storecontrol.backend.models.registers.Register;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,20 +12,19 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.UUID;
 
 @Component
 public class TransactionValidation {
 
   @Autowired
-  TransactionRepository repository;
+  private TransactionRepository repository;
 
   public void checkCashAvailableToTransaction(
       BigDecimal amount,
       String transactionTypeEnum,
-      CashRegister cashRegister,
+      Register register,
       Boolean isDelete) {
-    var cashTotal = cashRegister.getCashTotal();
+    var cashTotal = register.getCashTotal();
     var transactionType = TransactionType.fromString(transactionTypeEnum);
     boolean aux = isDelete ? transactionType == TransactionType.ENTRY : transactionType == TransactionType.EXIT;
     if (aux && amount.compareTo(cashTotal) > 0) {
@@ -44,7 +43,7 @@ public class TransactionValidation {
             MessageResolver.getInstance().getMessage("validation.transaction.checkVoluntary.functionNull.message")
         );
       } else {
-        if (!(voluntary.getFunction() instanceof CashRegister)) {
+        if (!(voluntary.getFunction() instanceof Register)) {
           throw new InvalidOperationException(
               MessageResolver.getInstance().getMessage("validation.transaction.checkVoluntary.functionDifferent.error"),
               MessageResolver.getInstance().getMessage("validation.transaction.checkVoluntary.functionDifferent.message")
@@ -54,8 +53,8 @@ public class TransactionValidation {
     }
   }
 
-  public void checkTransactionBelongsToVoluntary(Transaction transaction, UUID userUuid) {
-    if (transaction.getVoluntary().getVoluntaryRole().isNotAdmin() && !transaction.getVoluntary().getUuid().equals(userUuid)) {
+  public void checkTransactionBelongsToVoluntary(Transaction transaction, Voluntary manager) {
+    if (manager.getVoluntaryRole().isNotAdmin() && !transaction.getVoluntaryUuid().equals(manager.getUuid())) {
       throw new InvalidOperationException(
           MessageResolver.getInstance().getMessage("validation.transaction.checkVoluntary.notOwner.error"),
           MessageResolver.getInstance().getMessage("validation.transaction.checkVoluntary.notOwner.message")

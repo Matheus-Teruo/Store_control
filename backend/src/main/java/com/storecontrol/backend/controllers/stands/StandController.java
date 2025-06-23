@@ -22,7 +22,7 @@ import java.util.UUID;
 public class StandController {
 
   @Autowired
-  StandService service;
+  private StandService service;
 
   @PostMapping
   public ResponseEntity<ResponseStand> createStand(@RequestBody @Valid RequestCreateStand request) {

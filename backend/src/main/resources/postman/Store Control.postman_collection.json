@@ -74,7 +74,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}associations?page&size&sort",
+							"raw": "{{hostPath}}associations?page&size&sort=associationName,asc",
 							"host": [
 								"{{hostPath}}associations"
 							],
@@ -89,7 +89,7 @@
 								},
 								{
 									"key": "sort",
-									"value": null
+									"value": "associationName,asc"
 								}
 							]
 						}
@@ -165,10 +165,10 @@
 			]
 		},
 		{
-			"name": "CashRegister",
+			"name": "Register",
 			"item": [
 				{
-					"name": "Create CashRegister",
+					"name": "Create Register",
 					"event": [
 						{
 							"listen": "test",
@@ -177,7 +177,7 @@
 									"const responseBody = pm.response.json();\r",
 									"\r",
 									"if (responseBody && responseBody.uuid) {\r",
-									"    pm.collectionVariables.set(\"cash_register_id\", responseBody.uuid);\r",
+									"    pm.collectionVariables.set(\"register_id\", responseBody.uuid);\r",
 									"    // console.log(\"cash_register ID (UUID) saved as:\", responseBody.uuid);\r",
 									"} else {\r",
 									"    console.error(\"UUID not found in the response body\");\r",
@@ -193,7 +193,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"cashRegisterName\": \"CashRegister\"\r\n}",
+							"raw": "{\r\n    \"registerName\": \"Register\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -210,44 +210,46 @@
 					"response": []
 				},
 				{
-					"name": "Read CashRegister",
+					"name": "Read Register",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}registers/{{cash_register_id}}",
+							"raw": "{{hostPath}}registers/{{register_id}}",
 							"host": [
 								"{{hostPath}}registers"
 							],
 							"path": [
-								"{{cash_register_id}}"
+								"{{register_id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Page CashRegisters",
+					"name": "Page Registers",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}registers?page&size&sort",
+							"raw": "{{hostPath}}registers?sort=functionName,asc",
 							"host": [
 								"{{hostPath}}registers"
 							],
 							"query": [
 								{
 									"key": "page",
-									"value": null
+									"value": null,
+									"disabled": true
 								},
 								{
 									"key": "size",
-									"value": null
+									"value": null,
+									"disabled": true
 								},
 								{
 									"key": "sort",
-									"value": null
+									"value": "functionName,asc"
 								}
 							]
 						}
@@ -255,7 +257,7 @@
 					"response": []
 				},
 				{
-					"name": "List CashRegisters",
+					"name": "List Registers",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -272,13 +274,13 @@
 					"response": []
 				},
 				{
-					"name": "Update CashRegister",
+					"name": "Update Register",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{cash_register_id}}\",\r\n    \"cashRegisterName\": \"Register 2\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{register_id}}\",\r\n    \"registerName\": \"Register 2\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -295,7 +297,7 @@
 					"response": []
 				},
 				{
-					"name": "Delete CashRegister",
+					"name": "Delete Register",
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -309,12 +311,171 @@
 							}
 						},
 						"url": {
-							"raw": "{{hostPath}}registers/{{cash_register_id}}",
+							"raw": "{{hostPath}}registers/{{register_id}}",
 							"host": [
 								"{{hostPath}}registers"
 							],
 							"path": [
-								"{{cash_register_id}}"
+								"{{register_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Statistics",
+			"item": [
+				{
+					"name": "Payment Total",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}statistics/registers/payment-type?startTime=2025-05-19T12:00:00&endTime=2025-05-20T12:00:00",
+							"host": [
+								"{{hostPath}}statistics"
+							],
+							"path": [
+								"registers",
+								"payment-type"
+							],
+							"query": [
+								{
+									"key": "startTime",
+									"value": "2025-05-19T12:00:00"
+								},
+								{
+									"key": "endTime",
+									"value": "2025-05-20T12:00:00"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Chart Recharges",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}statistics/registers/recharges?startTime=2025-05-19T12:00:00&endTime=2025-05-20T12:00:00",
+							"host": [
+								"{{hostPath}}statistics"
+							],
+							"path": [
+								"registers",
+								"recharges"
+							],
+							"query": [
+								{
+									"key": "startTime",
+									"value": "2025-05-19T12:00:00"
+								},
+								{
+									"key": "endTime",
+									"value": "2025-05-20T12:00:00"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stand Total",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}statistics/stands?startTime=2025-05-19T12:00:00&endTime=2025-05-20T12:00:00",
+							"host": [
+								"{{hostPath}}statistics"
+							],
+							"path": [
+								"stands"
+							],
+							"query": [
+								{
+									"key": "standUuid",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "startTime",
+									"value": "2025-05-19T12:00:00"
+								},
+								{
+									"key": "endTime",
+									"value": "2025-05-20T12:00:00"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product Total",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}statistics/stands/products?startTime=2025-05-19T12:00:00&endTime=2025-05-20T12:00:00",
+							"host": [
+								"{{hostPath}}statistics"
+							],
+							"path": [
+								"stands",
+								"products"
+							],
+							"query": [
+								{
+									"key": "standUuid",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "startTime",
+									"value": "2025-05-19T12:00:00"
+								},
+								{
+									"key": "endTime",
+									"value": "2025-05-20T12:00:00"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Chart Purchases",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}statistics/stands/purchases?startTime=2025-05-19T12:00:00&endTime=2025-05-20T12:00:00",
+							"host": [
+								"{{hostPath}}statistics"
+							],
+							"path": [
+								"stands",
+								"purchases"
+							],
+							"query": [
+								{
+									"key": "standUuid",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "startTime",
+									"value": "2025-05-19T12:00:00"
+								},
+								{
+									"key": "endTime",
+									"value": "2025-05-20T12:00:00"
+								}
 							]
 						}
 					},
@@ -495,7 +656,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"donationValue\": \"4\",\r\n    \"refundValue\": \"0\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"cashRegisterUuid\": \"{{cash_register_id}}\"\r\n}",
+							"raw": "{\r\n    \"donationValue\": \"4\",\r\n    \"refundValue\": \"0\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"registerUuid\": \"{{register_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -610,22 +771,24 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}cards?page&size&sort",
+							"raw": "{{hostPath}}cards?sort=id,asc",
 							"host": [
 								"{{hostPath}}cards"
 							],
 							"query": [
 								{
 									"key": "page",
-									"value": null
+									"value": null,
+									"disabled": true
 								},
 								{
 									"key": "size",
-									"value": null
+									"value": null,
+									"disabled": true
 								},
 								{
 									"key": "sort",
-									"value": null
+									"value": "id,asc"
 								}
 							]
 						}
@@ -667,7 +830,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}cards/active?page&size&sort",
+							"raw": "{{hostPath}}cards/active?sort=id,asc",
 							"host": [
 								"{{hostPath}}cards"
 							],
@@ -677,15 +840,17 @@
 							"query": [
 								{
 									"key": "page",
-									"value": null
+									"value": null,
+									"disabled": true
 								},
 								{
 									"key": "size",
-									"value": null
+									"value": null,
+									"disabled": true
 								},
 								{
 									"key": "sort",
-									"value": null
+									"value": "id,asc"
 								}
 							]
 						}
@@ -774,22 +939,24 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}stands?page&size&sort",
+							"raw": "{{hostPath}}stands?sort=functionName,asc",
 							"host": [
 								"{{hostPath}}stands"
 							],
 							"query": [
 								{
 									"key": "page",
-									"value": null
+									"value": null,
+									"disabled": true
 								},
 								{
 									"key": "size",
-									"value": null
+									"value": null,
+									"disabled": true
 								},
 								{
 									"key": "sort",
-									"value": null
+									"value": "functionName,asc"
 								}
 							]
 						}
@@ -868,6 +1035,140 @@
 			"name": "Product",
 			"item": [
 				{
+					"name": "Tag",
+					"item": [
+						{
+							"name": "Create Tag",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseBody = pm.response.json();\r",
+											"\r",
+											"if (responseBody && responseBody.uuid) {\r",
+											"    pm.collectionVariables.set(\"tag_id\", responseBody.uuid);\r",
+											"    // console.log(\"stand ID (UUID) saved as:\", responseBody.uuid);\r",
+											"} else {\r",
+											"    console.error(\"UUID not found in the response body\");\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"tagName\": \"doce\",\r\n    \"color\": \"#ED3962\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}tags",
+									"host": [
+										"{{hostPath}}tags"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Page Tags",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}tags?sort=tagName,asc",
+									"host": [
+										"{{hostPath}}tags"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "size",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "tagName,asc"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Tags",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}tags/list",
+									"host": [
+										"{{hostPath}}tags"
+									],
+									"path": [
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Tag",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"uuid\": \"{{tag_id}}\",\r\n    \"tagName\": \"doce\",\r\n    \"color\": \"#ED3962\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{hostPath}}tags",
+									"host": [
+										"{{hostPath}}tags"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Tag",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}tags/{{tag_id}}",
+									"host": [
+										"{{hostPath}}tags"
+									],
+									"path": [
+										"{{tag_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "Create Product",
 					"event": [
 						{
@@ -902,7 +1203,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"productName\": \"productExample\",\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"productName\": \"productExampleCombo\",\r\n    \"tagsUuid\": [], // [{{tag_id}}],\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"includedProductsCombo\": [{\"includedProductUuid\": \"{{product_id2}}\", \"quantity\": 1}],\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -941,18 +1242,24 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}products?productName=&page=0",
+							"raw": "{{hostPath}}products?page=0&size=10&sort=productName,asc",
 							"host": [
 								"{{hostPath}}products"
 							],
 							"query": [
 								{
 									"key": "productName",
-									"value": ""
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "tagUuid",
+									"value": "",
+									"disabled": true
 								},
 								{
 									"key": "standUuid",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
@@ -961,13 +1268,11 @@
 								},
 								{
 									"key": "size",
-									"value": null,
-									"disabled": true
+									"value": "10"
 								},
 								{
 									"key": "sort",
-									"value": null,
-									"disabled": true
+									"value": "productName,asc"
 								}
 							]
 						}
@@ -980,12 +1285,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}products/list",
+							"raw": "{{hostPath}}products/list/{{stand_id}}",
 							"host": [
 								"{{hostPath}}products"
 							],
 							"path": [
-								"list"
+								"list",
+								"{{stand_id}}"
 							]
 						}
 					},
@@ -998,7 +1304,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{product_id}}\",\r\n    \"productName\": \"ExampleproductName\",\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"price\": \"2.00\",\r\n    \"discount\": \"0.00\",\r\n    \"stock\": null,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{product_id}}\",\r\n    \"productName\": null,\r\n    \"tagsUuid\": [], // [{{tag_id}}],\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"includedProductsCombo\": [{\"includedProductUuid\": \"{{product_id2}}\", \"quantity\": 1}],\r\n    \"price\": \"2.00\",\r\n    \"discount\": \"0.00\",\r\n    \"stock\": null,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1137,23 +1443,42 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{hostPath}}volunteers?page&size&sort",
+							"raw": "{{hostPath}}volunteers?sort=fullname,asc",
 							"host": [
 								"{{hostPath}}volunteers"
 							],
 							"query": [
 								{
 									"key": "page",
-									"value": null
+									"value": "",
+									"disabled": true
 								},
 								{
 									"key": "size",
-									"value": null
+									"value": "",
+									"disabled": true
 								},
 								{
 									"key": "sort",
-									"value": null
+									"value": "fullname,asc"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Volunteers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hostPath}}volunteers/list",
+							"host": [
+								"{{hostPath}}volunteers"
+							],
+							"path": [
+								"list"
 							]
 						}
 					},
@@ -1166,7 +1491,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"username\": \"UsernameStand\",\r\n    \"password\": null ,\r\n    \"salt\": null,\r\n    \"fullname\": \"Full Name Stand\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"username\": null,\r\n    \"password\": null,\r\n    \"fullname\": \"Full Name Register\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1189,7 +1514,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"functionUuid\": \"{{cash_register_id}}\" // \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\",\r\n    \"functionUuid\": \"{{register_id}}\" // \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1229,6 +1554,32 @@
 							],
 							"path": [
 								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Password",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uuid\": \"{{voluntary_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{hostPath}}volunteers/forgot-password",
+							"host": [
+								"{{hostPath}}volunteers"
+							],
+							"path": [
+								"forgot-password"
 							]
 						}
 					},
@@ -1292,7 +1643,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"const donations = pm.response.json();\r",
+											"const donations = pm.response.json().content;\r",
 											"\r",
 											"if (Array.isArray(donations) && donations.length > 0) {\r",
 											"    const randomIndex = Math.floor(Math.random() * donations.length);\r",
@@ -1418,22 +1769,30 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{hostPath}}purchases?page&size&sort",
+									"raw": "{{hostPath}}purchases",
 									"host": [
 										"{{hostPath}}purchases"
 									],
 									"query": [
 										{
+											"key": "standUuid",
+											"value": "{{stand_id}}",
+											"disabled": true
+										},
+										{
 											"key": "page",
-											"value": null
+											"value": "",
+											"disabled": true
 										},
 										{
 											"key": "size",
-											"value": null
+											"value": "",
+											"disabled": true
 										},
 										{
 											"key": "sort",
-											"value": null
+											"value": "",
+											"disabled": true
 										}
 									]
 								}
@@ -1537,7 +1896,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"cashRegisterUuid\": \"{{cash_register_id}}\"\r\n}",
+									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"registerUuid\": \"{{register_id}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1670,7 +2029,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"const refunds = pm.response.json();\r",
+											"const refunds = pm.response.json().content;\r",
 											"\r",
 											"if (Array.isArray(refunds) && refunds.length > 0) {\r",
 											"    const randomIndex = Math.floor(Math.random() * refunds.length);\r",
@@ -1745,7 +2104,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"amount\": \"7.60\",\r\n    \"transactionTypeEnum\": \"entry\",\r\n    \"cashRegisterUuid\": \"{{cash_register_id}}\"\r\n}",
+									"raw": "{\r\n    \"amount\": \"7.60\",\r\n    \"transactionTypeEnum\": \"entry\",\r\n    \"registerUuid\": \"{{register_id}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1856,12 +2215,31 @@
 					"item": [
 						{
 							"name": "Create Trade",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseBody = pm.response.json();\r",
+											"\r",
+											"if (responseBody && responseBody.uuid) {\r",
+											"    pm.collectionVariables.set(\"trade_id\", responseBody.uuid);\r",
+											"    // console.log(\"Trade ID (UUID) saved as:\", responseBody.uuid);\r",
+											"} else {\r",
+											"    console.error(\"UUID not found in the response body\");\r",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"OrderCardSimple\",\r\n    \"cashRegisterUuid\": \"12345678-abcd-4efa-bcde-f1234567890a\",\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ]\r\n}",
+									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"OrderCardSimple\",\r\n    \"registerUuid\": \"12345678-abcd-4efa-bcde-f1234567890a\",\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1872,6 +2250,94 @@
 									"raw": "{{hostPath}}trades",
 									"host": [
 										"{{hostPath}}trades"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Trade",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}trades/{{trade_id}}",
+									"host": [
+										"{{hostPath}}trades"
+									],
+									"path": [
+										"{{trade_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Page Trades",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}trades",
+									"host": [
+										"{{hostPath}}trades"
+									],
+									"query": [
+										{
+											"key": "standUuid",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "size",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Trades Last 3",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}trades/last3",
+									"host": [
+										"{{hostPath}}trades"
+									],
+									"path": [
+										"last3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Trade",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{hostPath}}trades/{{card_id}}/{{trade_id}}",
+									"host": [
+										"{{hostPath}}trades"
+									],
+									"path": [
+										"{{card_id}}",
+										"{{trade_id}}"
 									]
 								}
 							},
@@ -1936,7 +2402,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"UsernameCashier\",\r\n    \"password\": \"PasswordExample\"\r\n}",
+							"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2024,6 +2490,16 @@
 			"type": "string"
 		},
 		{
+			"key": "username",
+			"value": "UsernameCashier",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "PasswordExample",
+			"type": "string"
+		},
+		{
 			"key": "association_id",
 			"value": "",
 			"type": "string"
@@ -2076,11 +2552,20 @@
 			"value": ""
 		},
 		{
-			"key": "cash_register_id",
+			"key": "register_id",
 			"value": ""
 		},
 		{
 			"key": "transaction_id",
+			"value": ""
+		},
+		{
+			"key": "trade_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "tag_id",
 			"value": ""
 		}
 	]

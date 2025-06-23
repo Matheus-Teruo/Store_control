@@ -1,5 +1,6 @@
 package com.storecontrol.backend.controllers.operations;
 
+import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
 import com.storecontrol.backend.models.operations.purchases.response.ResponsePurchase;
@@ -8,6 +9,7 @@ import com.storecontrol.backend.services.operations.PurchaseService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,14 +24,11 @@ import java.util.UUID;
 public class PurchaseController {
 
   @Autowired
-  PurchaseService service;
+  private PurchaseService service;
 
   @PostMapping
-  public ResponseEntity<ResponsePurchase> createPurchase(
-      @RequestBody @Valid RequestCreatePurchase request,
-      @RequestAttribute("UserUuid") UUID userUuid
-  ) {
-    var purchase = service.createPurchase(request, userUuid);
+  public ResponseEntity<ResponsePurchase> createPurchase(@RequestBody @Valid RequestCreatePurchase request) {
+    var purchase = service.createPurchase(request);
 
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequest()
@@ -48,16 +47,29 @@ public class PurchaseController {
   }
 
   @GetMapping
-  public ResponseEntity<Page<ResponseSummaryPurchase>> readPurchases(Pageable pageable) {
-    var purchases = service.pagePurchases(pageable);
+  public ResponseEntity<Page<ResponseSummaryPurchase>> readPurchases(
+      @RequestParam(required = false) UUID standUuid,
+      Pageable pageable) {
+    var purchases = service.pagePurchases(standUuid, pageable);
 
-    var response = purchases.map(ResponseSummaryPurchase::new);
+    List<UUID> purchaseUuids = purchases.getContent().stream()
+      .map(Purchase::getUuid)
+      .toList();
+
+    var items = service.takeItensToPurchaseList(purchaseUuids);
+
+    List<ResponseSummaryPurchase> responseList = purchases.getContent().stream()
+      .map(purchase -> new ResponseSummaryPurchase(purchase, items.get(purchase.getUuid())))
+      .toList();
+
+    var response = new PageImpl<>(responseList, pageable, purchases.getTotalElements());
+
     return ResponseEntity.ok(response);
   }
 
   @GetMapping("/last3")
-  public ResponseEntity<List<ResponseSummaryPurchase>> readLast3Purchases(@RequestAttribute("UserUuid") UUID userUuid) {
-    var purchases = service.listLast3Purchases(userUuid);
+  public ResponseEntity<List<ResponseSummaryPurchase>> readLast3Purchases() {
+    var purchases = service.listLast3Purchases();
 
     var response = purchases.stream().map(ResponseSummaryPurchase::new).toList();
     return ResponseEntity.ok(response);
@@ -71,11 +83,8 @@ public class PurchaseController {
   }
 
   @DeleteMapping("/{uuid}")
-  public ResponseEntity<Void> deletePurchase(
-      @PathVariable @Valid UUID uuid,
-      @RequestAttribute("UserUuid") UUID userUuid
-  ) {
-    service.deletePurchase(uuid, userUuid);
+  public ResponseEntity<Void> deletePurchase(@PathVariable @Valid UUID uuid) {
+    service.deletePurchase(uuid);
 
     return ResponseEntity.noContent().build();
   }

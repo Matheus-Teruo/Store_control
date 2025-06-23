@@ -22,7 +22,7 @@ import java.util.UUID;
 public class AssociationController {
 
   @Autowired
-  AssociationService service;
+  private AssociationService service;
 
   @PostMapping
   public ResponseEntity<ResponseAssociation> createAssociation(@RequestBody @Valid RequestCreateAssociation request) {

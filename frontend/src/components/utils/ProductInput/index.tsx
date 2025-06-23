@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import styles from "./ProductInput.module.scss";
-import { InputStatus } from "./InputStatus";
+import { InputStatus } from "../InputStatus";
 
 interface ProductInputProps {
   value: string | number | undefined;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  exposeSetStatus?: (setStatus: (status: InputStatus) => void) => void;
   id: string;
   type?: string;
   placeholder?: string;
   maxLength?: number;
   isRequired?: boolean;
+  disabled?: boolean;
+  showStatus?: boolean;
   message?: string;
 }
 
@@ -18,20 +19,25 @@ function ProductInput({
   value,
   onChange,
   id,
-  exposeSetStatus,
   type = "text",
   placeholder = "",
   maxLength,
   isRequired = false,
+  disabled = false,
+  showStatus = false,
   message = "",
 }: ProductInputProps) {
   const [status, setStatus] = useState<InputStatus>(InputStatus.Untouched);
 
   useEffect(() => {
-    if (exposeSetStatus) {
-      exposeSetStatus(setStatus);
+    if (showStatus) {
+      if (message === "") {
+        setStatus(InputStatus.Accepted);
+      } else {
+        setStatus(InputStatus.Rejected);
+      }
     }
-  }, [exposeSetStatus]);
+  }, [showStatus, message]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event);
@@ -54,10 +60,15 @@ function ProductInput({
         id={id}
         name={id}
         type={type}
+        inputMode={type === "number" ? "numeric" : undefined}
+        pattern={type === "number" ? "\\d*" : undefined}
         required={isRequired}
+        disabled={disabled}
         maxLength={maxLength}
       />
-      {message && <span className={styles.messageError}>{message}</span>}
+      {status !== InputStatus.Untouched && message && (
+        <span className={styles.messageError}>{message}</span>
+      )}
       {/* <ul>
         {status === InputStatus.Rejected &&
           messages.map((message) => <li>{message}</li>)}

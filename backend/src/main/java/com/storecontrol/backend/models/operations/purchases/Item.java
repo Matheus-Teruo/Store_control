@@ -2,15 +2,13 @@ package com.storecontrol.backend.models.operations.purchases;
 
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Entity
 @Table(name = "items")
@@ -21,6 +19,9 @@ public class Item {
 
     @EmbeddedId
     private ItemId itemId;
+
+    @Column(name = "product_uuid", insertable = false, updatable = false)
+    private UUID productUuid;
 
     @Column(nullable = false)
     private int quantity;
@@ -37,8 +38,8 @@ public class Item {
     private boolean valid;
 
 
-    public Item(RequestCreateItem request, ItemId ItemId) {
-        this.itemId = ItemId;
+    public Item(RequestCreateItem request, ItemId itemId) {
+        this.itemId = itemId;
         this.quantity = request.quantity();
         this.delivered = request.delivered();
         this.unitPrice = request.unitPrice();

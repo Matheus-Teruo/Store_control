@@ -1,7 +1,15 @@
 import styles from "./GlassBackground.module.scss";
 
-function GlassBackground({ onClick }: { onClick: () => void }) {
-  return <div className={styles.background} onClick={onClick} />;
+function GlassBackground({
+  onClick,
+  className,
+}: {
+  onClick: () => void;
+  className?: string;
+}) {
+  return (
+    <div className={`${styles.background} ${className}`} onClick={onClick} />
+  );
 }
 
 export default GlassBackground;

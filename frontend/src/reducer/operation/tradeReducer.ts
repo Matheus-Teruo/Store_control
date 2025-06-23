@@ -2,6 +2,7 @@ import activeConfig, {
   fixedCardID,
   fixedCashUuid,
 } from "@/config/activeConfig";
+import { cartUnpacking } from "@/utils/cartCompactor";
 import { regexUuid } from "@/utils/regex";
 import { CreateItem } from "@data/operations/Item";
 import { PaymentType } from "@data/operations/Recharge";
@@ -9,6 +10,13 @@ import { CreateTrade } from "@data/operations/Trade";
 import { SummaryProduct } from "@data/stands/Product";
 
 export type TradeAction =
+  | {
+      type: "SET_CART";
+      payload: {
+        cart: string;
+        products: Record<string, Omit<SummaryProduct, "uuid">>;
+      };
+    }
   | { type: "SET_ON_ORDER"; payload: boolean }
   | { type: "SET_RECHARGE_TYPE"; payload: PaymentType }
   | { type: "ADD_ITEM"; payload: SummaryProduct }
@@ -27,19 +35,29 @@ export type TradeAction =
   | { type: "DECREASE_DELIVERED_ITEM"; payload: string }
   | { type: "REMOVE_DELIVERED_ITEM"; payload: string }
   | { type: "SET_CASH_REGISTER_UUID"; payload: string }
+  | { type: "SET_STAND_UUID"; payload: string | undefined }
   | { type: "SET_ORDER_CARD_ID"; payload: string }
+  | { type: "CLEAR_ERROR" }
+  | { type: "SET_MODE"; payload: "menu" | "stand" }
   | { type: "RESET" };
 
 export const initialTradeState: CreateTrade & {
   totalQuantity: number;
+  error: string;
+  mode: "menu" | "stand";
+  standList: string[];
 } = {
   onOrder: activeConfig.version === "order",
+  standUuid: "",
   items: [],
   orderCardId: activeConfig.version === "simple" ? fixedCardID! : "",
   rechargeValue: 0,
   paymentTypeEnum: PaymentType.CASH,
-  cashRegisterUuid: activeConfig.version === "simple" ? fixedCashUuid! : "",
+  registerUuid: activeConfig.version === "simple" ? fixedCashUuid! : "",
   totalQuantity: 0,
+  error: "",
+  mode: "menu",
+  standList: [],
 };
 
 function findProductIndex(items: CreateItem[], productUuid: string): number {
@@ -87,10 +105,56 @@ function calculateTotals(items: CreateItem[]): {
 }
 
 export function tradeReducer(
-  state: CreateTrade & { totalQuantity: number },
+  state: CreateTrade & {
+    totalQuantity: number;
+    error: string;
+    mode: "menu" | "stand";
+    standList: string[];
+  },
   action: TradeAction,
-): CreateTrade & { totalQuantity: number } {
+): CreateTrade & {
+  totalQuantity: number;
+  error: string;
+  mode: "menu" | "stand";
+  standList: string[];
+} {
   switch (action.type) {
+    case "SET_CART": {
+      const object: CreateTrade & { totalQuantity: number } = JSON.parse(
+        cartUnpacking(action.payload.cart, action.payload.products),
+      );
+
+      for (const item of object.items) {
+        if (!action.payload.products[item.productUuid]) {
+          return { ...state, error: "Um produto não encontrado." };
+        }
+        if (item.quantity > action.payload.products[item.productUuid].stock) {
+          return {
+            ...state,
+            error: `Estoque insuficiente para ${action.payload.products[item.productUuid].productName}.`,
+          };
+        }
+        if (
+          item.unitPrice !== action.payload.products[item.productUuid].price
+        ) {
+          return {
+            ...state,
+            error: `Preço incorreto para ${action.payload.products[item.productUuid].productName}.`,
+          };
+        }
+      }
+
+      return {
+        ...state,
+        standUuid: object.standUuid,
+        paymentTypeEnum: object.paymentTypeEnum,
+        items: object.items,
+        orderCardId: object.orderCardId,
+        rechargeValue: object.rechargeValue,
+        totalQuantity: object.totalQuantity,
+      };
+    }
+
     case "SET_ON_ORDER":
       return { ...state, onOrder: action.payload };
 
@@ -99,31 +163,57 @@ export function tradeReducer(
 
     case "ADD_ITEM": {
       const newProduct = action.payload;
+      let newStandUuid = state.standUuid;
       if (newProduct.stock === 0) return state;
 
       const productIndex = findProductIndex(state.items, newProduct.uuid);
 
       let updatedItems;
+      const updatedList = state.standList;
       if (productIndex === -1) {
         const newItem = createNewItem(newProduct);
-        updatedItems = [...state.items, newItem];
+        if (
+          state.mode === "stand" &&
+          state.standUuid !== newProduct.standUuid
+        ) {
+          newStandUuid = newProduct.standUuid;
+          updatedItems = [newItem];
+        } else {
+          if (
+            state.mode === "menu" &&
+            !state.standList.includes(newProduct.standUuid)
+          ) {
+            updatedList.push(newProduct.standUuid);
+          }
+          updatedItems = [...state.items, newItem];
+        }
       } else {
         updatedItems = updateItemInList(state.items, productIndex, (item) =>
           updateQuantity(
             item,
-            item.quantity < newProduct.stock
+            newProduct.stock === null || item.quantity < newProduct.stock
               ? item.quantity + 1
               : item.quantity,
           ),
         );
       }
 
-      const totals = calculateTotals(updatedItems);
-      return { ...state, items: updatedItems, ...totals };
+      const total = calculateTotals(updatedItems);
+      return {
+        ...state,
+        items: updatedItems,
+        ...total,
+        standUuid: newStandUuid,
+        standList: updatedList,
+      };
     }
 
     case "ON_CHANGE_ITEM": {
-      if (action.payload.quantity > action.payload.stock) return state;
+      if (
+        action.payload.stock !== null &&
+        action.payload.quantity > action.payload.stock
+      )
+        return state;
 
       const productIndex = findProductIndex(state.items, action.payload.uuid);
       const updatedItems = updateItemInList(
@@ -220,7 +310,31 @@ export function tradeReducer(
       if (!regexUuid.test(action.payload)) {
         return state;
       }
-      return { ...state, cashRegisterUuid: action.payload };
+      return { ...state, registerUuid: action.payload };
+    }
+
+    case "SET_STAND_UUID": {
+      if (action.payload === undefined) {
+        if (state.mode === "stand") {
+          const totals = calculateTotals([]);
+          return { ...state, standUuid: "", items: [], ...totals };
+        } else {
+          return { ...state, standUuid: "" };
+        }
+      }
+      if (!regexUuid.test(action.payload)) {
+        return state;
+      }
+      if (state.standUuid !== action.payload) {
+        if (state.mode === "stand") {
+          const totals = calculateTotals([]);
+          return { ...state, standUuid: action.payload, items: [], ...totals };
+        } else {
+          return { ...state, standUuid: action.payload };
+        }
+      } else {
+        return { ...state, standUuid: action.payload };
+      }
     }
 
     case "SET_ORDER_CARD_ID":
@@ -229,8 +343,14 @@ export function tradeReducer(
       }
       return { ...state, orderCardId: action.payload };
 
+    case "CLEAR_ERROR":
+      return { ...state, error: "" };
+
+    case "SET_MODE":
+      return { ...state, mode: action.payload };
+
     case "RESET":
-      return initialTradeState;
+      return { ...initialTradeState, standUuid: state.standUuid };
 
     default:
       throw new Error("Ação desconhecida no reducer");
@@ -238,9 +358,21 @@ export function tradeReducer(
 }
 
 export const createTradePayload = (
-  state: CreateTrade & { totalQuantity: number },
+  state: CreateTrade & {
+    totalQuantity: number;
+    error: string;
+    mode: "menu" | "stand";
+    standList: string[];
+  },
 ): CreateTrade => {
-  const { totalQuantity: _totalQuantity, items, ...rest } = state;
+  const {
+    totalQuantity: _totalQuantity,
+    error: _error,
+    mode: _mode,
+    standList: _standList,
+    items,
+    ...rest
+  } = state;
   const validItems = items.filter((item) => item.quantity !== 0);
   return { items: validItems, ...rest };
 };

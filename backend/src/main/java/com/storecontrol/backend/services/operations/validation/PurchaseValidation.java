@@ -1,6 +1,7 @@
 package com.storecontrol.backend.services.operations.validation;
 
 import com.storecontrol.backend.config.language.MessageResolver;
+import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.infra.exceptions.InvalidOperationException;
 import com.storecontrol.backend.models.customers.Customer;
@@ -9,27 +10,24 @@ import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
-import com.storecontrol.backend.models.stands.Product;
-import com.storecontrol.backend.models.stands.Stand;
+import com.storecontrol.backend.models.stands.products.Product;
+import com.storecontrol.backend.models.stands.products.ProductCombo;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 public class PurchaseValidation {
 
   @Autowired
-  PurchaseRepository repository;
+  private PurchaseRepository repository;
 
-  public void checkVoluntaryFunctionMatch(Voluntary voluntary) {
+  public void checkVoluntaryFunctionMatch(UUID standUuid, Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {
       if ((voluntary.getFunction() == null)) {
         throw new InvalidOperationException(
@@ -37,10 +35,41 @@ public class PurchaseValidation {
             MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.functionNull.message")
         );
       } else {
-        if (!(voluntary.getFunction() instanceof Stand)) {
+        if (!(voluntary.getFunction().getUuid().equals(standUuid))) {
           throw new InvalidOperationException(
               MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.functionDifferent.error"),
               MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.functionDifferent.message")
+          );
+        }
+      }
+    }
+  }
+
+  public void checkStandFromItems(Voluntary voluntary, List<RequestCreateItem> items, Map<UUID, Product> productMap) {
+    Set<UUID> standUuidSet = items.stream()
+        .map(item ->
+          {Product product = productMap.get(item.productUuid());
+          if (product == null) {
+            throw new InvalidOperationException(
+                MessageResolver.getInstance().getMessage("validation.purchase.checkItems.differentStand.error"),
+                MessageResolver.getInstance().getMessage("validation.purchase.checkItems.differentStand.message")
+            );
+          }
+          return product.getStandUuid();})
+        .collect(Collectors.toSet());
+    if (standUuidSet.size() != 1) {
+      throw new InvalidOperationException(
+          MessageResolver.getInstance().getMessage("validation.purchase.checkItems.differentStand.error"),
+          MessageResolver.getInstance().getMessage("validation.purchase.checkItems.differentStand.message")
+      );
+
+    } else {
+      UUID standUuid = standUuidSet.iterator().next();
+      if (!standUuid.equals(voluntary.getFunction().getUuid())) {
+        if (voluntary.getVoluntaryRole().isNotAdmin()) {
+          throw new InvalidOperationException(
+              MessageResolver.getInstance().getMessage("validation.purchase.checkItems.userNotMatch.error"),
+              MessageResolver.getInstance().getMessage("validation.purchase.checkItems.userNotMatch.message")
           );
         }
       }
@@ -122,13 +151,48 @@ public class PurchaseValidation {
   }
 
   public void checkInsufficientProductStockValidity(RequestCreatePurchase request, Map<UUID, Product> productMap) {
+    Map<UUID, Integer> requiredQuantities = new HashMap<>();
+
     for (RequestCreateItem requestCreateItem : request.items()) {
       var product = productMap.get(requestCreateItem.productUuid());
 
-      if (product.getStock() < requestCreateItem.quantity()) {
+      requiredQuantities.merge(product.getUuid(), requestCreateItem.quantity(), Integer::sum);
+
+      if (product.isCombo()) {
+        for (ProductCombo productCombo : product.getComboProducts()) {
+          UUID includedUuid = productCombo.getIncludedProductUuid();
+          int includedQuantity = requestCreateItem.quantity() * productCombo.getQuantity();
+          requiredQuantities.merge(includedUuid, includedQuantity, Integer::sum);
+        }
+      }
+    }
+
+    for (Map.Entry<UUID, Integer> entry : requiredQuantities.entrySet()) {
+      UUID productUuid = entry.getKey();
+      int totalRequired = entry.getValue();
+
+      Product product = productMap.get(productUuid);
+      Integer stock = product != null ? product.getStock() : null;
+
+      if (stock != null && stock < totalRequired) {
         throw new InvalidOperationException(
             MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.error"),
             MessageResolver.getInstance().getMessage("validation.purchase.checkProduct.insufficientStock.message")
+        );
+      }
+    }
+  }
+
+  public void checkPurchasesBelongsManagerStand(UUID standUuid, Voluntary manager) {
+    if (manager.getVoluntaryRole().isNotAdmin()) {
+      if (!manager.getFunction().getUuid().equals(standUuid)) {
+        throw new InvalidDatabaseInsertionException(
+            MessageResolver.getInstance().getMessage("validation.purchase.checkManageFunction.invalidStand.error"),
+            MessageResolver.getInstance().getMessage("validation.purchase.checkManageFunction.invalidStand.message"),
+            Map.of(
+                MessageResolver.getInstance().getMessage("validation.purchase.checkManageFunction.invalidStand.field"),
+                manager.getUuid().toString()
+            )
         );
       }
     }
@@ -176,8 +240,8 @@ public class PurchaseValidation {
     }
   }
 
-  public void checkPurchaseBelongsToVoluntary(Purchase purchase, UUID userUuid) {
-    if (purchase.getVoluntary().getVoluntaryRole().isNotAdmin() && !purchase.getVoluntary().getUuid().equals(userUuid)) {
+  public void checkPurchaseBelongsToVoluntary(Purchase purchase, Voluntary voluntary) {
+    if (voluntary.getVoluntaryRole().isNotAdmin() && !purchase.getVoluntaryUuid().equals(voluntary.getUuid())) {
       throw new InvalidOperationException(
           MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.notOwner.error"),
           MessageResolver.getInstance().getMessage("validation.purchase.checkVoluntary.notOwner.message")

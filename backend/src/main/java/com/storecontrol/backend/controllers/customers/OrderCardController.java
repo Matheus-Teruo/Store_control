@@ -19,7 +19,7 @@ import java.net.URI;
 public class OrderCardController {
 
   @Autowired
-  OrderCardService service;
+  private OrderCardService service;
 
   @PostMapping
   public ResponseEntity<ResponseOrderCard> createCard(@RequestBody @Valid RequestOrderCard request) {

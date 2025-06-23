@@ -1,7 +1,7 @@
 package com.storecontrol.backend.controllers.operations;
 
-import com.storecontrol.backend.models.operations.response.ResponseDonation;
-import com.storecontrol.backend.models.operations.response.ResponseSummaryDonation;
+import com.storecontrol.backend.models.operations.finalization.response.ResponseDonation;
+import com.storecontrol.backend.models.operations.finalization.response.ResponseSummaryDonation;
 import com.storecontrol.backend.services.operations.DonationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.util.UUID;
 public class DonationController {
 
   @Autowired
-  DonationService service;
+  private DonationService service;
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseDonation> readDonation(@PathVariable @Valid UUID uuid) {

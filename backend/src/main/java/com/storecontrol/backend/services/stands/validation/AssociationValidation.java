@@ -12,7 +12,7 @@ import java.util.Map;
 public class AssociationValidation {
 
   @Autowired
-  AssociationRepository repository;
+  private AssociationRepository repository;
 
   public void checkNameDuplication(String associationName) {
     if (repository.existsByAssociationName(associationName)) {
@@ -28,7 +28,7 @@ public class AssociationValidation {
 
   }
   public void checkKeyDuplication(String associationKey) {
-    if (repository.existsByAssociationName(associationKey)) {
+    if (repository.existsByAssociationKey(associationKey)) {
       throw new InvalidDatabaseInsertionException(
           MessageResolver.getInstance().getMessage("validation.association.associationKey.nameDuplication.error"),
           MessageResolver.getInstance().getMessage("validation.association.associationKey.nameDuplication.message"),

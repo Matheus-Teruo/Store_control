@@ -5,7 +5,6 @@ type StandAction =
   | { type: "SET_STAND"; payload: Stand }
   | { type: "SET_STAND_NAME"; payload: string }
   | { type: "SET_ASSOCIATION_UUID"; payload: string }
-  | { type: "SET_UUID"; payload: string }
   | { type: "RESET" };
 
 export const initialStandState: CreateStand & UpdateStand = {
@@ -55,10 +54,16 @@ export const createStandPayload = (
 
 export const updateStandPayload = (
   state: CreateStand & Partial<UpdateStand>,
+  initial: Stand,
 ): UpdateStand => {
-  const { uuid, ...rest } = state;
+  const { uuid, standName, ...rest } = state;
   if (!uuid || !regexUuid.test(uuid)) {
     throw new Error("UUID is required to update the stand");
   }
-  return { ...rest, uuid };
+
+  if (standName === initial.standName) {
+    return { ...rest, uuid };
+  }
+
+  return { ...rest, standName, uuid };
 };

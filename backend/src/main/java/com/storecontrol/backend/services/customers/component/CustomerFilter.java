@@ -1,9 +1,9 @@
 package com.storecontrol.backend.services.customers.component;
 
 import com.storecontrol.backend.models.customers.Customer;
-import com.storecontrol.backend.models.operations.Donation;
-import com.storecontrol.backend.models.operations.Recharge;
-import com.storecontrol.backend.models.operations.Refund;
+import com.storecontrol.backend.models.operations.finalization.Donation;
+import com.storecontrol.backend.models.operations.recharges.Recharge;
+import com.storecontrol.backend.models.operations.finalization.Refund;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import org.springframework.stereotype.Component;
 

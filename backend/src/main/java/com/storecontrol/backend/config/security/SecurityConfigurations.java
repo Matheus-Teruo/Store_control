@@ -91,9 +91,10 @@ public class SecurityConfigurations {
 
   private static final String[] AUTHORIZED_GET_ENDPOINTS_ALL = {
       "/products",
-      "/products/list",
+      "/products/list/{standUuid}",
       "/products/{uuid}",
       "/stands/list",
+      "/tags/list",
       "/customers/card/{cardId}"
   };
 
@@ -104,11 +105,11 @@ public class SecurityConfigurations {
 
   private static final String[] AUTHORIZED_GET_ENDPOINTS_LOGGED = {
       "/user/check",
-      "/stands/{uuid}",
       "/purchases/last3",
       "/purchases/{uuid}",
       "/recharges/last3",
       "/recharges/{uuid}",
+      "/trades/{uuid}",
       "/volunteers/{uuid}"
   };
 
@@ -128,14 +129,27 @@ public class SecurityConfigurations {
   private static final String[] AUTHORIZED_DELETE_ENDPOINTS_LOGGED = {
       "/customers/finalize",
       "/purchases",
-      "/recharges"
+      "/recharges",
+      "/trades/{cardId}/{uuid}"
   };
 
   private static final String[] AUTHORIZED_GET_ENDPOINTS_MANAGEMENT = {
       "/volunteers",
+      "/volunteers/list",
+      "/associations/list",
       "/functions",
       "/purchases",
+      "/trades",
+      "/registers/{uuid}",
+      "/registers",
+      "/registers/list",
       "/transactions/last3",
+      "/transactions/{uuid}",
+      "/statistics/registers/payment-type",
+      "/statistics/registers/recharges",
+      "/statistics/stands",
+      "/statistics/stands/products",
+      "/statistics/stands/purchases"
   };
 
   private static final String[] AUTHORIZED_POST_ENDPOINTS_MANAGEMENT = {

@@ -1,7 +1,7 @@
 @use "@styles/variables" as *;
 
 .background {
-  width: 100vw;
+  width: 100%;
   height: $hub-header-height;
   justify-items: center;
   background-color: $color-secundary-3;

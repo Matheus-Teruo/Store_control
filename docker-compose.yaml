@@ -14,7 +14,6 @@ services:
       - private
     depends_on:
       - db
-      - minio
   db:
     image: mysql
     command:
@@ -36,22 +35,6 @@ services:
       - MYSQL_USER=${DATABASE_USER}
       - MYSQL_PASSWORD=${DATABASE_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD_ROOT}
-  minio:
-    image: minio/minio
-    restart: always
-    env_file:
-      - .env
-    environment:
-      - MINIO_ROOT_USER=${AWS_S3_ACCESS_KEY}
-      - MINIO_ROOT_PASSWORD=${AWS_S3_SECRET_KEY}
-    command: server /data --console-address ":9001"
-    ports:
-      - 9000:9000
-      - 9001:9001
-    networks:
-      - public
-    volumes:
-      - minio-data:/data
   frontend:
     build:
       context: ./frontend
@@ -85,4 +68,3 @@ networks:
   private:
 volumes:
   db-data:
-  minio-data:

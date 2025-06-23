@@ -1,16 +1,15 @@
 @use "@styles/variables" as *;
 
 .main {
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   width: 80vw;
+  height: fit-content;
   max-width: 1200px;
   z-index: 100;
-  position: fixed;
+  position: relative;
   background-color: $color-gray-100;
   padding: 10px;
   border-radius: $border-radius;
+  pointer-events: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -19,30 +18,54 @@
     color: $color-gray-900;
   }
 
+  .imageFrame {
+    border: 4px solid transparent;
+    display: flex;
+    align-items: center;
+  }
+
+  .imageUploaded {
+    border-color: #48a6db;
+  }
+
+  .imageUpdated {
+    border-color: #a5d6a7;
+  }
+
   form {
     width: 100%;
     display: flex;
     flex-direction: column;
 
-    label {
+    .inputLabel {
       font-size: 0.75rem;
       padding: 0 6px;
       margin-bottom: -4px;
       z-index: 155;
     }
 
-    textarea {
-      padding: 4px 8px;
-      width: 100%;
-      box-sizing: border-box;
-      background-color: $color-gray-000;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-        "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-        "Helvetica Neue", sans-serif;
-      border-radius: $border-radius;
-      border: none;
-      resize: none;
-      outline: none;
+    .checkboxStock {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin: 6px 0;
+
+      .checkboxStockNull {
+        background-color: $color-secundary-2;
+      }
+
+      label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: $color-secundary-1;
+        padding: 2px 8px;
+        border-radius: $border-radius;
+
+        p {
+          padding-right: 6px;
+        }
+      }
     }
 
     .imageUpload {

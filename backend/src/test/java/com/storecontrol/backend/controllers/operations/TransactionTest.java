@@ -1,10 +1,10 @@
 package com.storecontrol.backend.controllers.operations;
 
 import com.storecontrol.backend.BaseTest;
-import com.storecontrol.backend.models.operations.Transaction;
-import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
-import com.storecontrol.backend.models.operations.response.ResponseSummaryTransaction;
-import com.storecontrol.backend.models.operations.response.ResponseTransaction;
+import com.storecontrol.backend.models.operations.transactions.Transaction;
+import com.storecontrol.backend.models.operations.transactions.request.RequestCreateTransaction;
+import com.storecontrol.backend.models.operations.transactions.response.ResponseSummaryTransaction;
+import com.storecontrol.backend.models.operations.transactions.response.ResponseTransaction;
 import com.storecontrol.backend.services.operations.TransactionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TransactionTest extends BaseTest {
 
   @MockBean
-  TransactionService service;
+  private TransactionService service;
 
   @Test
   void testCreateTransactionSuccess() throws Exception {
@@ -37,20 +37,19 @@ class TransactionTest extends BaseTest {
     RequestCreateTransaction requestTransaction = createRequestCreateTransaction(mockTransaction);
     ResponseTransaction expectedResponse = new ResponseTransaction(mockTransaction);
 
-    when(service.createTransaction(requestTransaction, mockTransaction.getVoluntary().getUuid())).thenReturn(mockTransaction);
+    when(service.createTransaction(requestTransaction)).thenReturn(mockTransaction);
 
     // When & Then
     mockMvc.perform(post("/transactions")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(requestTransaction))
-            .requestAttr("UserUuid", mockTransaction.getVoluntary().getUuid()))
+            .content(toJson(requestTransaction)))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location",
             containsString("/transactions/" + mockTransaction.getUuid().toString())))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).createTransaction(requestTransaction, mockTransaction.getVoluntary().getUuid());
+    verify(service, times(1)).createTransaction(requestTransaction);
     verifyNoMoreInteractions(service);
   }
 
@@ -103,8 +102,6 @@ class TransactionTest extends BaseTest {
   @Test
   void testReadLast3TransactionsSuccess() throws Exception {
     // Given
-    UUID userUuid = UUID.randomUUID();
-
     List<Transaction> mockTransactions = List.of(
         createTransactionEntity(UUID.randomUUID(), false),
         createTransactionEntity(UUID.randomUUID(), false),
@@ -114,18 +111,17 @@ class TransactionTest extends BaseTest {
         .map(ResponseSummaryTransaction::new)
         .toList();
 
-    when(service.listLast3Purchases(userUuid)).thenReturn(mockTransactions);
+    when(service.listLast3Purchases()).thenReturn(mockTransactions);
 
     // When & Then
     mockMvc.perform(get("/transactions/last3")
-            .requestAttr("UserUuid", userUuid)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(3))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).listLast3Purchases(userUuid);
+    verify(service, times(1)).listLast3Purchases();
     verifyNoMoreInteractions(service);
   }
 
@@ -134,16 +130,15 @@ class TransactionTest extends BaseTest {
     // Given
     Transaction mockTransaction = createTransactionEntity(UUID.randomUUID(), false);
 
-    doNothing().when(service).deleteTransaction(mockTransaction.getUuid(), mockTransaction.getVoluntary().getUuid());
+    doNothing().when(service).deleteTransaction(mockTransaction.getUuid());
 
     // When & Then
     mockMvc.perform(delete("/transactions/{uuid}", mockTransaction.getUuid())
-            .contentType(MediaType.APPLICATION_JSON)
-            .requestAttr("UserUuid", mockTransaction.getVoluntary().getUuid()))
+            .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());
 
     // Verify interactions
-    verify(service, times(1)).deleteTransaction(mockTransaction.getUuid(), mockTransaction.getVoluntary().getUuid());
+    verify(service, times(1)).deleteTransaction(mockTransaction.getUuid());
     verifyNoMoreInteractions(service);
   }
 }

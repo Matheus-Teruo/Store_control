@@ -13,7 +13,6 @@ const PagesData: Record<string, { label: string }> = {
 
 function WorkspaceHeader() {
   const location = useLocation();
-  console.log(location.pathname);
 
   return (
     <div>

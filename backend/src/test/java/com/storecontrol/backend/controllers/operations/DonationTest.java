@@ -3,9 +3,9 @@ package com.storecontrol.backend.controllers.operations;
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.OrderCard;
-import com.storecontrol.backend.models.operations.Donation;
-import com.storecontrol.backend.models.operations.response.ResponseDonation;
-import com.storecontrol.backend.models.operations.response.ResponseSummaryDonation;
+import com.storecontrol.backend.models.operations.finalization.Donation;
+import com.storecontrol.backend.models.operations.finalization.response.ResponseDonation;
+import com.storecontrol.backend.models.operations.finalization.response.ResponseSummaryDonation;
 import com.storecontrol.backend.services.operations.DonationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class DonationTest extends BaseTest {
 
   @MockBean
-  DonationService service;
+  private DonationService service;
 
   @Test
   void testReadDonationSuccess() throws Exception {

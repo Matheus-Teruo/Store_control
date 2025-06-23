@@ -2,17 +2,18 @@ package com.storecontrol.backend.services.operations;
 
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
-import com.storecontrol.backend.models.operations.Transaction;
-import com.storecontrol.backend.models.operations.request.RequestCreateTransaction;
+import com.storecontrol.backend.models.operations.transactions.Transaction;
+import com.storecontrol.backend.models.operations.transactions.request.RequestCreateTransaction;
+import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.TransactionRepository;
 import com.storecontrol.backend.services.operations.validation.TransactionValidation;
-import com.storecontrol.backend.services.registers.CashRegisterService;
-import com.storecontrol.backend.services.volunteers.VoluntaryService;
+import com.storecontrol.backend.services.registers.RegisterService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,30 +24,27 @@ import java.util.UUID;
 public class TransactionService {
 
   @Autowired
-  TransactionValidation validation;
+  private TransactionValidation validation;
 
   @Autowired
-  TransactionRepository repository;
+  private TransactionRepository repository;
 
   @Autowired
-  CashRegisterService cashRegisterService;
-
-  @Autowired
-  VoluntaryService voluntaryService;
+  private RegisterService registerService;
 
   @Transactional
-  public Transaction createTransaction(RequestCreateTransaction request, UUID userUuid) {
-    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
-    var cashRegister = cashRegisterService.safeTakeCashRegisterByUuid(request.cashRegisterUuid());
+  public Transaction createTransaction(RequestCreateTransaction request) {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    var register = registerService.safeTakeRegisterByUuid(request.registerUuid());
 
-    validation.checkVoluntaryFunctionType(voluntary);
+    validation.checkVoluntaryFunctionType(manager);
     validation.checkCashAvailableToTransaction(
         request.amount(),
         request.transactionTypeEnum(),
-        cashRegister,
+        register,
         false);
 
-    var transaction = new Transaction(request, cashRegister, voluntary);
+    var transaction = new Transaction(request, register, manager);
     handleCashTotal(transaction, !transaction.getTransactionTypeEnum().isExit());
     repository.save(transaction);
 
@@ -71,22 +69,23 @@ public class TransactionService {
     return repository.findAllValidTrue(pageable);
   }
 
-  public List<Transaction> listLast3Purchases(UUID voluntaryUuid) {
-    return repository.findLast3ValidTrue(voluntaryUuid);
+  public List<Transaction> listLast3Purchases() {
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    return repository.findLast3ValidTrue(manager.getUuid());
   }
 
   @Transactional
-  public void deleteTransaction(UUID uuid, UUID userUuid) {
+  public void deleteTransaction(UUID uuid) {
     var transaction = safeTakeTransactionByUuid(uuid);
-    var voluntary = voluntaryService.safeTakeVoluntaryByUuid(userUuid);
+    Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     validation.checkCashAvailableToTransaction(
         transaction.getAmount(),
         transaction.getTransactionTypeEnum().toString(),
-        transaction.getCashRegister(),
+        transaction.getRegister(),
         true);
-    validation.checkTransactionBelongsToVoluntary(transaction, userUuid);
-    validation.checkIfLastTransactionOfVoluntary(transaction, voluntary);
+    validation.checkTransactionBelongsToVoluntary(transaction, manager);
+    validation.checkIfLastTransactionOfVoluntary(transaction, manager);
 
     handleCashTotal(transaction, transaction.getTransactionTypeEnum().isExit());
 
@@ -97,6 +96,6 @@ public class TransactionService {
 
     BigDecimal adjustmentFactor = isReversal ? BigDecimal.ONE : BigDecimal.ONE.negate();
 
-    transaction.getCashRegister().incrementCash(transaction.getAmount().multiply(adjustmentFactor));
+    transaction.getRegister().incrementCash(transaction.getAmount().multiply(adjustmentFactor));
   }
 }

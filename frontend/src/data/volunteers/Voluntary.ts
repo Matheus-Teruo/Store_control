@@ -25,7 +25,7 @@ export interface UpdateVoluntary {
 
 export interface UpdateVoluntaryFunction {
   uuid: string;
-  functionUuid: string;
+  functionUuid: string | null;
 }
 
 export interface UpdateVoluntaryRole {

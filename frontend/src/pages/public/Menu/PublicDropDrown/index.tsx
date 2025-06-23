@@ -15,23 +15,37 @@ type ViewType = "List" | "Items";
 interface PublicDropDrownProps {
   menuView: ViewType;
   showSearch: boolean;
+  cartSize?: number;
   setTouggleView: (event: ViewType) => void;
   setShowSearch: () => void;
+  setShowCart?: () => void;
 }
 
 function PublicDropDrown({
   menuView,
   showSearch,
+  cartSize = 0,
   setTouggleView,
   setShowSearch,
+  setShowCart,
 }: PublicDropDrownProps) {
   const [show, setShow] = useState<boolean>(false);
+
+  const handleCart = () => {
+    if (setShowCart) {
+      setShowCart();
+    }
+    setShow(false);
+  };
 
   return (
     <div className={styles.toggle}>
       <Button onClick={() => setShow((value) => !value)}>
         <MenuSVG className={`${styles.menuSVG} ${show && styles.active}`} />
       </Button>
+      {cartSize !== 0 && !show && (
+        <span className={styles.cartSizeIndicator}>{cartSize}</span>
+      )}
       {show && (
         <>
           <ul>
@@ -67,8 +81,11 @@ function PublicDropDrown({
               <p>{showSearch ? "Esconder" : "Pesquisar"}</p>
             </li>
             {activeConfig.version !== "tokens" && (
-              <li>
-                <ShoppingCartSVG size={16} className={styles.auxIcon} />
+              <li onClick={() => handleCart()}>
+                <div className={styles.auxIcon}>
+                  <ShoppingCartSVG size={16} />
+                  <p>{cartSize}</p>
+                </div>
                 <p>Carrinho</p>
               </li>
             )}

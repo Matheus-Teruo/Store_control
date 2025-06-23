@@ -11,12 +11,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface StandRepository extends JpaRepository<Stand, UUID> {
-  @Query("select s from Stand s where s.valid = true and s.uuid = :uuid")
+  @Query("SELECT s FROM Stand s WHERE s.valid = true AND s.uuid = :uuid")
   Optional<Stand> findByUuidValidTrue(UUID uuid);
 
-  @Query("select s from Stand s where s.valid = true")
+  @Query("SELECT s FROM Stand s WHERE s.valid = true")
   Page<Stand> findAllValidTruePage(Pageable pageable);
 
-  @Query("select s from Stand s where s.valid = true")
+  @Query("SELECT s FROM Stand s WHERE s.valid = true ORDER BY s.functionName ASC")
   List<Stand> findAllValidTrue();
 }

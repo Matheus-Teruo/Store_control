@@ -3,6 +3,7 @@ import PageSelect from "@/components/selects/PageSelect";
 import {
   isAdmin,
   isSeller,
+  isManeger,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
@@ -35,9 +36,12 @@ function Products() {
         isSeller(user.summaryFunction, user.voluntaryRole)
       ) {
         const response = await getProducts(
-          undefined,
           requestMode ? selectedStand : user.summaryFunction.uuid,
+          undefined,
+          undefined,
           page.number,
+          undefined,
+          "productName,asc",
         );
         if (response) {
           setProducts(response.content);
@@ -52,17 +56,27 @@ function Products() {
   );
 
   useEffect(() => {
-    const admin = isAdmin(user) && user.summaryFunction === null;
-    if (isAdmin(user)) if (!admin) setSelectedStand(user.summaryFunction!.uuid);
-    setModeAdmin(admin);
-    fetchProducts(admin);
-    if (
-      isUserUnlogged(user) ||
-      (user && !isSeller(user.summaryFunction, user.voluntaryRole))
-    ) {
-      navigate("/");
+    if (fetchProducts && user) {
+      const admin = isAdmin(user);
+      if (admin) {
+        setModeAdmin(true);
+        if (user.summaryFunction !== null && !modeAdmin) {
+          setSelectedStand(user.summaryFunction!.uuid);
+          fetchProducts(false);
+        } else {
+          fetchProducts(true);
+        }
+      } else {
+        fetchProducts(false);
+      }
+      if (
+        isUserUnlogged(user) ||
+        (user && !isSeller(user.summaryFunction, user.voluntaryRole))
+      ) {
+        navigate("/");
+      }
     }
-  }, [user, navigate, fetchProducts]);
+  }, [user, navigate, fetchProducts, modeAdmin]);
 
   const handleFormShow = () => {
     formDispach({ type: "SET_FALSE" });
@@ -84,13 +98,16 @@ function Products() {
           ) : (
             <div />
           )}
-          <Button onClick={() => formDispach({ type: "SET_CREATE" })}>
+          <Button
+            onClick={() => formDispach({ type: "SET_CREATE" })}
+            disabled={!isManeger(user)}
+          >
             <PlusSVG size={16} />
             <p>Produto</p>
           </Button>
         </div>
       </div>
-      <li key={"header"} className={styles.listHeader}>
+      <li key={"header"} className={`${styles.listHeader} ${styles.list}`}>
         <p className={styles.productFrame}>Img</p>
         <p className={styles.productName}>Produto</p>
         <p className={styles.productsSummary}>Resumo</p>
@@ -104,19 +121,19 @@ function Products() {
         {products.map((product, index) => (
           <li
             key={product.uuid}
-            className={`${styles.listProducts} ${index % 2 === 0 ? styles.itemPair : styles.itemOdd}
+            className={`${styles.list} ${styles.listProducts} ${index % 2 === 0 ? styles.itemPair : styles.itemOdd}
             ${product.stock === 0 && styles.itemNull}`}
           >
-            {product.productImg ? (
-              <img className={styles.productImage} src={product.productImg} />
-            ) : (
-              <div className={styles.productFrame}>
+            <div className={styles.productFrame}>
+              {product.productImg ? (
+                <img className={styles.productImage} src={product.productImg} />
+              ) : (
                 <ImageSVG
                   size={16}
                   className={`${styles.productIcon} ${styles.propNull}`}
                 />
-              </div>
-            )}
+              )}
+            </div>
             <p className={styles.productName}>{product.productName}</p>
             <p
               className={`${styles.productsSummary} ${product.summary === null && styles.propNull}`}
@@ -124,7 +141,7 @@ function Products() {
               Res
             </p>
             <p
-              className={`${styles.productDescription} ${product.description && styles.propNull}`}
+              className={`${styles.productDescription} ${!product.description && styles.propNull}`}
             >
               Des
             </p>
@@ -137,14 +154,15 @@ function Products() {
             <p
               className={`${styles.productStock} ${product.stock === 0 && styles.stockNull}`}
             >
-              {product.stock}
+              {product.stock !== null ? product.stock : "Não controlado"}
             </p>
-            <div className={styles.productFrame}>
+            <div className={styles.productEdit}>
               <Button
                 className={styles.productEdit}
                 onClick={() =>
                   formDispach({ type: "SET_UPDATE", payload: product.uuid })
                 }
+                disabled={!isManeger(user)}
               >
                 <EditSVG size={16} />
               </Button>
@@ -152,12 +170,7 @@ function Products() {
           </li>
         ))}
       </ul>
-      <PageSelect
-        className={styles.pageComponent}
-        value={page.number}
-        max={page.max}
-        dispatch={pageDispatch}
-      />
+      <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
       {formState.show && (
         <FormProduct
           type={formState.type}

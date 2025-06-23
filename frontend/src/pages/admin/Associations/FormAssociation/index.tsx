@@ -18,6 +18,7 @@ import useAssociationService from "@service/stand/useAssociationService";
 import { useEffect, useReducer, useState } from "react";
 import { CheckSVG, XSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
+import Association from "@data/stands/Association";
 
 type FormAssociationProps = {
   type: "create" | "update";
@@ -30,7 +31,12 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
     associationReducer,
     initialAssociationState,
   );
+  const [initial, setInitial] = useState<Association>();
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+  const [waitingFetch, setWaitingFetch] = useState<
+    "create/update" | "delete" | ""
+  >("");
+  const [touched, setTouched] = useState<boolean>(false);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
   const {
@@ -47,8 +53,9 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
         const association = await getAssociation(uuid);
         if (association) {
           dispatch({ type: "SET_ASSOCIATION", payload: association });
+          setInitial(association);
         }
-      } else if (uuid === undefined) {
+      } else if (type === "update" && uuid === undefined) {
         console.error("uuid need to be defined when type is update");
       }
     };
@@ -58,6 +65,8 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setWaitingFetch("create/update");
+    setTouched(false);
     const association = await createAssociation(
       createAssociationPayload(state),
     );
@@ -73,13 +82,17 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
       const message = association;
       if (message.invalidFields) setMessageError(message.invalidFields);
     }
+    setTouched(true);
+    setWaitingFetch("");
   };
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (uuid) {
+    if (initial) {
+      setWaitingFetch("create/update");
+      setTouched(false);
       const association = await updateAssociation(
-        updateAssociationPayload(state),
+        updateAssociationPayload(state, initial),
       );
       if (association && !isMessage(association)) {
         addNotification({
@@ -94,10 +107,13 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
         if (message.invalidFields) setMessageError(message.invalidFields);
       }
     }
+    setTouched(true);
+    setWaitingFetch("");
   };
 
   const handleDeleteSubmit = async () => {
     if (uuid) {
+      setWaitingFetch("delete");
       await deleteAssociation(state.uuid);
       addNotification({
         title: "Delete Association Success",
@@ -108,6 +124,7 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
       setConfirmDelete(false);
       hide();
     }
+    setWaitingFetch("");
   };
 
   return (
@@ -128,7 +145,9 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
                 payload: e.target.value,
               })
             }
+            showStatus={touched}
             message={messageError["associationName"]}
+            isRequired
           />
           <label>{"Nome do(a) presente"}</label>
           <Input
@@ -138,7 +157,9 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
             onChange={(e) =>
               dispatch({ type: "SET_PRINCIPAL_NAME", payload: e.target.value })
             }
+            showStatus={touched}
             message={messageError["principalName"]}
+            isRequired
           />
           <label>{"Chave da associação"}</label>
           <Input
@@ -148,7 +169,9 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
             onChange={(e) =>
               dispatch({ type: "SET_ASSOCIATION_KEY", payload: e.target.value })
             }
+            showStatus={touched}
             message={messageError["associationKey"]}
+            isRequired
           />
           <div className={styles.footerButtons}>
             {type === "update" && !confirmDelete && (
@@ -166,13 +189,17 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
                 <Button
                   className={styles.buttonConfirmDelete}
                   onClick={handleDeleteSubmit}
+                  loading={waitingFetch === "delete"}
                 >
                   <CheckSVG size={16} />
                 </Button>
               </div>
             )}
             <div />
-            <Button type={ButtonHTMLType.Submit}>
+            <Button
+              type={ButtonHTMLType.Submit}
+              loading={waitingFetch === "create/update"}
+            >
               {type === "create" ? "Criar" : "Editar"}
             </Button>
           </div>
