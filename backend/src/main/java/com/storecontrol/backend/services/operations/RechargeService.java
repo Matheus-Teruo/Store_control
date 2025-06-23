@@ -110,7 +110,7 @@ public class RechargeService {
         .filter(Recharge::isValid)
         .toList();
 
-    if (recharges.isEmpty()) {
+    if (recharges.isEmpty()) {  // TODO: DELETE CUSTOMER
       customerService.finalizeCustomer(customer);
     }
   }
