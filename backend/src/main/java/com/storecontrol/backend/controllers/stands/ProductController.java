@@ -4,8 +4,8 @@ import com.storecontrol.backend.models.stands.products.request.RequestCreateProd
 import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.stands.products.response.ResponseProduct;
 import com.storecontrol.backend.models.stands.products.response.ResponseSummaryProduct;
-import com.storecontrol.backend.services.stands.GCSService;
 import com.storecontrol.backend.services.stands.ProductService;
+import com.storecontrol.backend.services.stands.S3Service;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,7 +29,7 @@ public class ProductController {
   private ProductService service;
 
   @Autowired
-  private GCSService GCSService;
+  S3Service s3Service;
 
   @PostMapping
   public ResponseEntity<ResponseProduct> createProduct(
@@ -87,10 +87,10 @@ public class ProductController {
 
   @PostMapping("/upload-image")
   public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("image") MultipartFile image) throws IOException {
-    var tempFile = GCSService.adjustNameFile(image);
+    var tempFile = s3Service.adjustNameFile(image);
     image.transferTo(tempFile);
 
-    String url = GCSService.uploadFile(tempFile, tempFile.getName());
+    String url = s3Service.uploadFile(tempFile, tempFile.getName());
 
     return ResponseEntity.ok(Map.of("url", url));
   }

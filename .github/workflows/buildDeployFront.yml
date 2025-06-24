@@ -2,13 +2,13 @@ name: Build and Deploy Frontend
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - dev
-    paths-ignore:
-      - "backend/**"
-      - "db/**"
-      - "table_service/**"
+  # push:
+  #   branches:
+  #     - main
+  #   paths-ignore:
+  #     - "backend/**"
+  #     - "db/**"
+  #     - "table_service/**"
 
 jobs:
   build-and-deploy-frontend:
