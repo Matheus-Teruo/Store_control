@@ -1718,7 +1718,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"onOrder\": false,\r\n    \"standUuid\": \"{{stand_id}}\",\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\": -1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ],\r\n    \"orderCardId\": \"{{card_id}}\"\r\n}",
+									"raw": "{\r\n    \"standUuid\": \"{{stand_id}}\",\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\": -1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ],\r\n    \"orderCardId\": \"{{card_id}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1823,7 +1823,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"uuid\": \"{{purchase_id}}\",\r\n    \"onOrder\": false,\r\n    \"requestUpdateItems\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"delivered\": 1}\r\n    ]\r\n}",
+									"raw": "{\r\n    \"uuid\": \"{{purchase_id}}\",\r\n    \"requestUpdateItems\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"delivered\": 1}\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2239,7 +2239,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"rechargeValue\": \"2.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"OrderCardSimple\",\r\n    \"onOrder\": false,\r\n    \"standUuid\": \"{{stand_id}}\",\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\":-1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"3.00\", \"discount\": \"0.00\"}\r\n    ]\r\n}",
+									"raw": "{\r\n    \"rechargeValue\": \"2.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"OrderCardSimple\",\r\n    \"standUuid\": \"{{stand_id}}\",\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\":-1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"3.00\", \"discount\": \"0.00\"}\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"

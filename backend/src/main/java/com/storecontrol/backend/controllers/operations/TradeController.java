@@ -41,7 +41,6 @@ public class TradeController {
     );
 
     var purchaseRequest = new RequestCreatePurchase(
-        request.onOrder(),
         request.standUuid(),
         request.items(),
         request.orderCardId()

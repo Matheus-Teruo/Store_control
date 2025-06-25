@@ -92,7 +92,9 @@ public class TradeService {
 
     var register = registerService.safeTakeRegisterByStandUuid(purchaseRequest.standUuid());
 
-    var customer = handleChangesOnCustomerByCardId(rechargeRequest, purchaseRequest.onOrder());
+    boolean onOrder = purchaseRequest.items().stream().anyMatch(
+        item -> item.delivered() != null && !item.delivered().equals(item.quantity()));
+    var customer = handleChangesOnCustomerByCardId(rechargeRequest, onOrder);
 
     var recharge = new Recharge(rechargeRequest, customer, register, voluntary);
     handleCashTotal(recharge, recharge.getPaymentTypeEnum(), false);
@@ -101,7 +103,7 @@ public class TradeService {
 
     boolean hasReverseQuantity = purchaseRequest.items().stream()
         .anyMatch(item -> item.quantity() < 0);
-    var purchase = new Purchase(purchaseRequest, purchaseRequest.standUuid(), customer, voluntary, hasReverseQuantity);
+    var purchase = new Purchase(onOrder, purchaseRequest.standUuid(), customer, voluntary, hasReverseQuantity);
     var items = itemService.createItems(purchaseRequest, purchase, purchaseRequest.standUuid());
     purchase.setItems(items);
 
@@ -109,7 +111,7 @@ public class TradeService {
 
     purchaseRepository.save(purchase);
 
-    if (!purchaseRequest.onOrder()) {
+    if (!onOrder) {
       customerService.finalizeCustomer(customer, false);
     }
 

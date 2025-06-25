@@ -149,7 +149,6 @@ public class TestDataFactory {
         )
     );
     return new RequestCreatePurchase(
-        purchase.isOnOrder(),
         purchase.getStandUuid(),
         requestCreateItems,
         purchase.getCustomer().getOrderCard().getId()
@@ -169,7 +168,6 @@ public class TestDataFactory {
     );
     return new RequestUpdatePurchase(
         uuid,
-        true,
         requestUpdateItems
     );
   }
@@ -233,7 +231,6 @@ public class TestDataFactory {
         recharge.getRechargeValue(),
         recharge.getPaymentTypeEnum().toString(),
         orderCard.getId(),
-        purchase.isOnOrder(),
         purchase.getStandUuid(),
         requestCreateItems
     );

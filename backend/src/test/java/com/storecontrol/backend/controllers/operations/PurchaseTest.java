@@ -187,7 +187,7 @@ class PurchaseTest extends BaseTest {
 
     RequestUpdatePurchase updateRequest = createRequestUpdatePurchase(UUID.randomUUID(), mockUpdatePurchase);
 
-    mockPurchase.updatePurchase(updateRequest);
+    mockPurchase.updatePurchase(false);
     ResponsePurchase expectedResponse = new ResponsePurchase(mockPurchase);
 
     when(service.updatePurchase(updateRequest)).thenReturn(mockPurchase);
