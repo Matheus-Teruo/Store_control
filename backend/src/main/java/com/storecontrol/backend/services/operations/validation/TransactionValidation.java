@@ -24,7 +24,7 @@ public class TransactionValidation {
       String transactionTypeEnum,
       Register register,
       Boolean isDelete) {
-    var cashTotal = register.getCashTotal();
+    var cashTotal = register.getTotalCash();
     var transactionType = TransactionType.fromString(transactionTypeEnum);
     boolean aux = isDelete ? transactionType == TransactionType.ENTRY : transactionType == TransactionType.EXIT;
     if (aux && amount.compareTo(cashTotal) > 0) {

@@ -6,12 +6,14 @@ import java.util.UUID;
 
 public record ResponseSummaryRegister(
     UUID uuid,
-    String registerName
+    String registerName,
+    UUID standUUid
 ) {
 
   public ResponseSummaryRegister(Register register) {
     this(register.getUuid(),
-        register.getFunctionName()
+        register.getFunctionName(),
+        register.getStandUuid()
     );
   }
 }

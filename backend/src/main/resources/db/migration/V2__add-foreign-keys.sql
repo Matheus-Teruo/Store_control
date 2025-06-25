@@ -1,21 +1,16 @@
 -- V2__add-foreign-keys.sql
 
--- Foreign keys for cash_registers table
-ALTER TABLE cash_registers
-ADD CONSTRAINT fk_cash_registers_function_uuid
-FOREIGN KEY (uuid) REFERENCES functions (uuid);
-
 -- Foreign keys for customers table
 ALTER TABLE customers
-ADD CONSTRAINT fk_customers_order_card_id
-FOREIGN KEY (order_card_id) REFERENCES order_cards (card_id);
+ADD CONSTRAINT fk_customers_card_id
+FOREIGN KEY (card_id) REFERENCES order_cards (card_id);
 
 -- Foreign keys for donations table
 ALTER TABLE donations
 ADD CONSTRAINT fk_donations_customer_uuid
 FOREIGN KEY (customer_uuid) REFERENCES customers (uuid),
-ADD CONSTRAINT fk_donations_cash_register_uuid
-FOREIGN KEY (cash_register_uuid) REFERENCES cash_registers (uuid),
+ADD CONSTRAINT fk_donations_register_uuid
+FOREIGN KEY (register_uuid) REFERENCES registers (uuid),
 ADD CONSTRAINT fk_donations_voluntary_uuid
 FOREIGN KEY (voluntary_uuid) REFERENCES volunteers (uuid);
 
@@ -31,6 +26,13 @@ ALTER TABLE products
 ADD CONSTRAINT fk_products_stand_uuid
 FOREIGN KEY (stand_uuid) REFERENCES stands (uuid);
 
+-- Foreign key for products table
+ALTER TABLE product_combos
+ADD CONSTRAINT fk_product_combo_uuid
+FOREIGN KEY (product_combo_uuid) REFERENCES products (uuid) ON DELETE CASCADE,
+ADD CONSTRAINT fk_product_included_uuid
+FOREIGN KEY (product_included_uuid) REFERENCES products (uuid) ON DELETE CASCADE;
+
 -- Foreign keys for purchases table
 ALTER TABLE purchases
 ADD CONSTRAINT fk_purchases_stand_uuid
@@ -44,8 +46,8 @@ FOREIGN KEY (voluntary_uuid) REFERENCES volunteers (uuid);
 ALTER TABLE recharges
 ADD CONSTRAINT fk_recharges_customer_uuid
 FOREIGN KEY (customer_uuid) REFERENCES customers (uuid),
-ADD CONSTRAINT fk_recharges_cash_register_uuid
-FOREIGN KEY (cash_register_uuid) REFERENCES cash_registers (uuid),
+ADD CONSTRAINT fk_recharges_register_uuid
+FOREIGN KEY (register_uuid) REFERENCES registers (uuid),
 ADD CONSTRAINT fk_recharges_voluntary_uuid
 FOREIGN KEY (voluntary_uuid) REFERENCES volunteers (uuid);
 
@@ -53,10 +55,17 @@ FOREIGN KEY (voluntary_uuid) REFERENCES volunteers (uuid);
 ALTER TABLE refunds
 ADD CONSTRAINT fk_refunds_customer_uuid
 FOREIGN KEY (customer_uuid) REFERENCES customers (uuid),
-ADD CONSTRAINT fk_refunds_cash_register_uuid
-FOREIGN KEY (cash_register_uuid) REFERENCES cash_registers (uuid),
+ADD CONSTRAINT fk_refunds_register_uuid
+FOREIGN KEY (register_uuid) REFERENCES registers (uuid),
 ADD CONSTRAINT fk_refunds_voluntary_uuid
 FOREIGN KEY (voluntary_uuid) REFERENCES volunteers (uuid);
+
+-- Foreign keys for registers table
+ALTER TABLE registers
+ADD CONSTRAINT fk_registers_function_uuid
+FOREIGN KEY (uuid) REFERENCES functions (uuid),
+ADD CONSTRAINT fk_registers_stand_uuid
+FOREIGN KEY (stand_uuid) REFERENCES stands (uuid);
 
 -- Foreign key for stands table
 ALTER TABLE stands
@@ -65,12 +74,12 @@ FOREIGN KEY (uuid) REFERENCES functions (uuid),
 ADD CONSTRAINT fk_stands_association_uuid
 FOREIGN KEY (association_uuid) REFERENCES associations (uuid);
 
--- Foreign keys for tag_product table
-ALTER TABLE tag_product
-ADD CONSTRAINT fk_tag_product_tag_uuid
+-- Foreign keys for tag_products table
+ALTER TABLE tag_products
+ADD CONSTRAINT fk_tag_products_tag_uuid
 FOREIGN KEY (tag_uuid) REFERENCES tags (uuid) ON DELETE CASCADE,
-ADD CONSTRAINT fk_tag_product_product_uuid
-FOREIGN KEY (product_uuid) REFERENCES products (uuid);
+ADD CONSTRAINT fk_tag_products_product_uuid
+FOREIGN KEY (product_uuid) REFERENCES products (uuid) ON DELETE CASCADE;
 
 -- Foreign keys for trades table
 ALTER TABLE trades
@@ -81,8 +90,8 @@ FOREIGN KEY (purchase_uuid) REFERENCES purchases (uuid);
 
 -- Foreign keys for transactions table
 ALTER TABLE transactions
-ADD CONSTRAINT fk_transactions_cash_register_uuid
-FOREIGN KEY (cash_register_uuid) REFERENCES cash_registers (uuid);
+ADD CONSTRAINT fk_transactions_register_uuid
+FOREIGN KEY (register_uuid) REFERENCES registers (uuid);
 
 -- Foreign key for volunteers table
 ALTER TABLE volunteers

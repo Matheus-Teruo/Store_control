@@ -11,7 +11,7 @@ public record ResponsePurchase(
     UUID uuid,
     Boolean onOrder,
     UUID standUuid,
-    String purchaseTimeStamp,
+    String purchaseTimestamp,
     List<ResponseItem> items,
     ResponseSummaryCustomer summaryCustomer,
     ResponseSummaryVoluntary summaryVoluntary
@@ -22,7 +22,7 @@ public record ResponsePurchase(
         purchase.getUuid(),
         purchase.isOnOrder(),
         purchase.getStandUuid(),
-        purchase.getPurchaseTimeStamp().toString(),
+        purchase.getPurchaseTimestamp().toString(),
         purchase.getItems().stream().map(ResponseItem::new).toList(),
         new ResponseSummaryCustomer(purchase.getCustomer()),
         new ResponseSummaryVoluntary(purchase.getVoluntary())

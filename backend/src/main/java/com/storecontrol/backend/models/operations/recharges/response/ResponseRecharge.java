@@ -12,7 +12,7 @@ public record ResponseRecharge(
     UUID uuid,
     BigDecimal rechargeValue,
     PaymentType paymentTypeEnum,
-    String rechargeTimeStamp,
+    String rechargeTimestamp,
     ResponseSummaryCustomer summaryCustomer,
     ResponseSummaryVoluntary summaryVoluntary
 ) {
@@ -21,7 +21,7 @@ public record ResponseRecharge(
     this(recharge.getUuid(),
         recharge.getRechargeValue(),
         recharge.getPaymentTypeEnum(),
-        recharge.getRechargeTimeStamp().toString(),
+        recharge.getRechargeTimestamp().toString(),
         new ResponseSummaryCustomer(recharge.getCustomer()),
         new ResponseSummaryVoluntary(recharge.getVoluntary())
     );

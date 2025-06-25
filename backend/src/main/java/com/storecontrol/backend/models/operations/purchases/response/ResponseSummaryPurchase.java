@@ -10,7 +10,7 @@ import java.util.UUID;
 public record ResponseSummaryPurchase(
     UUID uuid,
     Boolean onOrder,
-    String purchaseTimeStamp,
+    String purchaseTimestamp,
     Integer totalItems,
     BigDecimal totalPurchaseCost,
     BigDecimal totalPurchaseDiscount,
@@ -22,7 +22,7 @@ public record ResponseSummaryPurchase(
     this(
         purchase.getUuid(),
         purchase.isOnOrder(),
-        purchase.getPurchaseTimeStamp().toString(),
+        purchase.getPurchaseTimestamp().toString(),
         purchase.getItems().stream().map(Item::getQuantity)
             .reduce(0, Integer::sum),
         purchase.getItems().stream()
@@ -45,7 +45,7 @@ public record ResponseSummaryPurchase(
     this(
         purchase.getUuid(),
         purchase.isOnOrder(),
-        purchase.getPurchaseTimeStamp().toString(),
+        purchase.getPurchaseTimestamp().toString(),
         sumQuantity(items),
         calcTotal(items),
         calcDiscount(items),

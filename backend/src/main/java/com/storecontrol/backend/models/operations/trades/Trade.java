@@ -25,8 +25,8 @@ public class Trade {
   @Column(name = "purchase_uuid")
   private UUID purchaseUuid;
 
-  @Column(name = "trade_time_stamp", nullable = false)
-  private LocalDateTime tradeTimeStamp;
+  @Column(name = "trade_timestamp", nullable = false)
+  private LocalDateTime tradeTimestamp;
 
   @Column(nullable = false)
   private boolean valid;
@@ -34,7 +34,7 @@ public class Trade {
   public Trade(UUID rechargeUuid, UUID purchaseUuid) {
     this.rechargeUuid = rechargeUuid;
     this.purchaseUuid = purchaseUuid;
-    this.tradeTimeStamp = LocalDateTime.now();
+    this.tradeTimestamp = LocalDateTime.now();
     this.valid = true;
   }
 

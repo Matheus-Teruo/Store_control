@@ -27,8 +27,8 @@ public class Purchase {
     @Column(name = "on_order", nullable = false)
     private boolean onOrder;
 
-    @Column(name = "purchase_time_stamp", nullable = false)
-    private LocalDateTime purchaseTimeStamp;
+    @Column(name = "purchase_timestamp", nullable = false)
+    private LocalDateTime purchaseTimestamp;
 
     @Column(name = "stand_uuid", nullable = false)
     private UUID standUuid;
@@ -49,15 +49,19 @@ public class Purchase {
     private Voluntary voluntary;
 
     @Column(nullable = false)
+    private boolean reversal;
+
+    @Column(nullable = false)
     private boolean valid;
 
 
-    public Purchase(RequestCreatePurchase request, UUID standUuid, Customer customer, Voluntary voluntary) {
+    public Purchase(RequestCreatePurchase request, UUID standUuid, Customer customer, Voluntary voluntary, boolean reversal) {
         this.onOrder = request.onOrder();
-        this.purchaseTimeStamp = LocalDateTime.now();
+        this.purchaseTimestamp = LocalDateTime.now();
         this.standUuid = standUuid;
         this.customer = customer;
         this.voluntary = voluntary;
+        this.reversal = reversal;
         this.valid = true;
     }
 

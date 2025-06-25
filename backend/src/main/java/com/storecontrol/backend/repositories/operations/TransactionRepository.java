@@ -17,9 +17,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
   @Query("SELECT t FROM Transaction t WHERE t.valid = true")
   Page<Transaction> findAllValidTrue(Pageable pageable);
 
-  @Query("SELECT t FROM Transaction t WHERE t.valid = true AND t.voluntary.uuid = :voluntaryUuid ORDER BY t.transactionTimeStamp DESC LIMIT 3")
+  @Query("SELECT t FROM Transaction t WHERE t.valid = true AND t.voluntary.uuid = :voluntaryUuid ORDER BY t.transactionTimestamp DESC LIMIT 3")
   List<Transaction> findLast3ValidTrue(UUID voluntaryUuid);
 
-  @Query("SELECT t FROM Transaction t WHERE t.voluntary.uuid = :userUuid ORDER BY t.transactionTimeStamp DESC LIMIT 1")
+  @Query("SELECT t FROM Transaction t WHERE t.voluntary.uuid = :userUuid ORDER BY t.transactionTimestamp DESC LIMIT 1")
   Optional<Transaction> findLastFromVoluntary(UUID userUuid);
 }

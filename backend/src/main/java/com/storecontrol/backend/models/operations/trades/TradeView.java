@@ -38,8 +38,13 @@ public class TradeView {
   @Enumerated(EnumType.STRING)
   private PaymentType paymentTypeEnum;
 
+  @Column(name = "register_uuid")
+  private UUID registerUuid;
+
   @Column(name = "on_order")
   private boolean onOrder;
+
+  private boolean reversal;
 
   @Column(name = "stand_uuid")
   private UUID standUuid;
@@ -47,8 +52,8 @@ public class TradeView {
   @Column(name = "voluntary_uuid")
   private UUID voluntaryUuid;
 
-  @Column(name = "trade_time_stamp")
-  private LocalDateTime tradeTimeStamp;
+  @Column(name = "trade_timestamp")
+  private LocalDateTime tradeTimestamp;
 
   @Transient
   @Setter
@@ -63,10 +68,12 @@ public class TradeView {
     this.purchaseUuid = purchase.getUuid();
     this.rechargeValue = recharge.getRechargeValue();
     this.paymentTypeEnum = recharge.getPaymentTypeEnum();
+    this.registerUuid = recharge.getRegisterUuid();
     this.onOrder = purchase.isOnOrder();
+    this.reversal = purchase.isReversal();
     this.standUuid = purchase.getStandUuid();
     this.voluntaryUuid = purchase.getVoluntaryUuid();
-    this.tradeTimeStamp = trade.getTradeTimeStamp();
+    this.tradeTimestamp = trade.getTradeTimestamp();
     this.items = purchase.getItems();
     this.valid = trade.isValid();
   }

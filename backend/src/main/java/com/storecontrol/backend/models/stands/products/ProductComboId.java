@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProductComboId {
 
-  @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "combo_product_uuid")
-  private Product comboProduct;
+  @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "product_combo_uuid")
+  private Product productCombo;
 
-  @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "included_product_uuid")
-  private Product includedProduct;
+  @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "product_included_uuid")
+  private Product productIncluded;
 }

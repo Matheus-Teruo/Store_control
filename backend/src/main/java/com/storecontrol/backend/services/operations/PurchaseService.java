@@ -60,7 +60,7 @@ public class PurchaseService {
     validation.checkInsufficientProductStockValidity(request, productMap);
 
     UUID standUuid = productMap.get(request.items().getFirst().productUuid()).getStandUuid();
-    var purchase = new Purchase(request, standUuid, customer, voluntary);
+    var purchase = new Purchase(request, standUuid, customer, voluntary, false);
     var items = itemService.createItems(request, purchase, standUuid);
     purchase.setItems(items);
 
@@ -141,7 +141,7 @@ public class PurchaseService {
 
       if (product.isCombo()) {
         for (ProductCombo productCombo : product.getComboProducts()) {
-          var comboProduct = productMap.get(productCombo.getIncludedProductUuid());
+          var comboProduct = productMap.get(productCombo.getProductIncludedUuid());
           if (comboProduct.getStock() != null) {
             comboProduct.decreaseStock(adjustmentFactor * item.getQuantity() * productCombo.getQuantity());
           }

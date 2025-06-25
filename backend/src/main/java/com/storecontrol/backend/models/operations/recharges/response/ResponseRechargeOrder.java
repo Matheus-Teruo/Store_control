@@ -10,14 +10,14 @@ public record ResponseRechargeOrder(
     UUID uuid,
     BigDecimal rechargeValue,
     PaymentType paymentTypeEnum,
-    String rechargeTimeStamp
+    String rechargeTimestamp
 ) {
 
   public ResponseRechargeOrder(Recharge recharge) {
     this(recharge.getUuid(),
         recharge.getRechargeValue(),
         recharge.getPaymentTypeEnum(),
-        recharge.getRechargeTimeStamp().toString()
+        recharge.getRechargeTimestamp().toString()
     );
   }
 }

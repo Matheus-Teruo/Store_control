@@ -59,7 +59,8 @@ public class TestDataFactory {
         new ArrayList<>(),
         new ArrayList<>(),
         new ArrayList<>(),
-        inUse
+        inUse,
+        true
     );
   }
 
@@ -115,6 +116,7 @@ public class TestDataFactory {
         customer,
         voluntaryUUID,
         createVoluntaryEntity(voluntaryUUID),
+        false,
         true
     );
   }
@@ -231,7 +233,6 @@ public class TestDataFactory {
         recharge.getRechargeValue(),
         recharge.getPaymentTypeEnum().toString(),
         orderCard.getId(),
-        recharge.getRegister().getUuid(),
         purchase.isOnOrder(),
         purchase.getStandUuid(),
         requestCreateItems
@@ -283,7 +284,8 @@ public class TestDataFactory {
 
   public static RequestCreateRegister createRequestCreateRegister(Register register) {
     return new RequestCreateRegister(
-        register.getFunctionName()
+        register.getFunctionName(),
+        null
     );
   }
 
@@ -327,6 +329,7 @@ public class TestDataFactory {
     return new Product(
         uuid,
         nameOnlyLettersSpaceAndNumbers(),
+        generateRandomLength(0, 100000),
         nameOnlyLettersSpaceAndNumbers(),
         textOnlyLettersSpaceAndNumbers(),
         false,
@@ -349,12 +352,13 @@ public class TestDataFactory {
     for (ProductCombo productCombo : product.getComboProducts()) {
       requestCreateItems.add(
           new RequestCreateProductCombo(
-              productCombo.getIncludedProductUuid(),
+              productCombo.getProductIncludedUuid(),
               productCombo.getQuantity()
           ));
     }
     return new RequestCreateProduct(
         product.getProductName(),
+        product.getProductCode(),
         null,
         product.getSummary(),
         product.getDescription(),
@@ -370,6 +374,7 @@ public class TestDataFactory {
     return new RequestUpdateProduct(
         uuid,
         nameOnlyLettersSpaceAndNumbers(),
+        generateRandomLength(0, 100000),
         null,
         nameOnlyLettersSpaceAndNumbers(),
         textOnlyLettersSpaceAndNumbers(),
@@ -453,7 +458,7 @@ public class TestDataFactory {
         null,
         null,
         null,
-        VoluntaryRole.ROLE_USER,
+        VoluntaryRole.ROLE_VOLUNTARY,
         true
     );
   }

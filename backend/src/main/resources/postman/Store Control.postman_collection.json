@@ -193,7 +193,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"registerName\": \"Register\"\r\n}",
+							"raw": "{\r\n    \"registerName\": \"Register\",\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1203,7 +1203,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"productName\": \"productExampleCombo\",\r\n    \"tagsUuid\": [], // [{{tag_id}}],\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"includedProductsCombo\": [{\"includedProductUuid\": \"{{product_id2}}\", \"quantity\": 1}],\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"productName\": \"productExample\",\r\n    \"productCode\": 1,\r\n    \"tagsUuid\": [], // [{{tag_id}}],\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"includedProductsCombo\": [], // [{\"includedProductUuid\": \"{{product_id2}}\", \"quantity\": 1}],\r\n    \"price\": \"1.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1259,7 +1259,7 @@
 								},
 								{
 									"key": "standUuid",
-									"value": "",
+									"value": "{{stand_id}}",
 									"disabled": true
 								},
 								{
@@ -1304,7 +1304,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"uuid\": \"{{product_id}}\",\r\n    \"productName\": null,\r\n    \"tagsUuid\": [], // [{{tag_id}}],\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"includedProductsCombo\": [{\"includedProductUuid\": \"{{product_id2}}\", \"quantity\": 1}],\r\n    \"price\": \"2.00\",\r\n    \"discount\": \"0.00\",\r\n    \"stock\": null,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
+							"raw": "{\r\n    \"uuid\": \"{{product_id}}\",\r\n    \"productName\": null,\r\n    \"productCode\": null,\r\n    \"tagsUuid\": [], // [{{tag_id}}],\r\n    \"summary\": \"resumo\",\r\n    \"description\": \"descrição completa do produto, contendo história, curiosidade, alerta para alérgicos\",\r\n    \"includedProductsCombo\": [{\"includedProductUuid\": \"{{product_id2}}\", \"quantity\": 1}],\r\n    \"price\": \"2.00\",\r\n    \"discount\": \"0.00\",\r\n    \"stock\": 1000,\r\n    \"productImg\": null,\r\n    \"standUuid\": \"{{stand_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1718,7 +1718,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ],\r\n    \"orderCardId\": \"{{card_id}}\"\r\n}",
+									"raw": "{\r\n    \"onOrder\": false,\r\n    \"standUuid\": \"{{stand_id}}\",\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\": -1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ],\r\n    \"orderCardId\": \"{{card_id}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2239,7 +2239,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"OrderCardSimple\",\r\n    \"registerUuid\": \"12345678-abcd-4efa-bcde-f1234567890a\",\r\n    \"onOrder\": false,\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ]\r\n}",
+									"raw": "{\r\n    \"rechargeValue\": \"2.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"OrderCardSimple\",\r\n    \"onOrder\": false,\r\n    \"standUuid\": \"{{stand_id}}\",\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\":-1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"3.00\", \"discount\": \"0.00\"}\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"

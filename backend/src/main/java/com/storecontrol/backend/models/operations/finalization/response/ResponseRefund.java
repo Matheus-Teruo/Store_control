@@ -10,7 +10,7 @@ import java.util.UUID;
 public record ResponseRefund(
     UUID uuid,
     BigDecimal refundValue,
-    String refundTimeStamp,
+    String refundTimestamp,
     ResponseSummaryCustomer summaryCustomer,
     ResponseSummaryVoluntary summaryVoluntary
 ) {
@@ -18,7 +18,7 @@ public record ResponseRefund(
   public ResponseRefund(Refund refund) {
     this(refund.getUuid(),
         refund.getRefundValue(),
-        refund.getRefundTimeStamp().toString(),
+        refund.getRefundTimestamp().toString(),
         new ResponseSummaryCustomer(refund.getCustomer()),
         new ResponseSummaryVoluntary(refund.getVoluntary())
     );

@@ -10,7 +10,7 @@ import java.util.UUID;
 public record ResponseDonation(
     UUID uuid,
     BigDecimal donationValue,
-    String donationTimeStamp,
+    String donationTimestamp,
     ResponseSummaryCustomer summaryCustomer,
     ResponseSummaryVoluntary summaryVoluntary
 ) {
@@ -18,7 +18,7 @@ public record ResponseDonation(
   public ResponseDonation(Donation donation) {
     this(donation.getUuid(),
         donation.getDonationValue(),
-        donation.getDonationTimeStamp().toString(),
+        donation.getDonationTimestamp().toString(),
         new ResponseSummaryCustomer(donation.getCustomer()),
         new ResponseSummaryVoluntary(donation.getVoluntary())
     );

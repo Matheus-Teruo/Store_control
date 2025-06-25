@@ -8,14 +8,14 @@ import java.util.UUID;
 public record ResponseSummaryRefund(
     UUID uuid,
     BigDecimal refundValue,
-    String refundTimeStamp,
+    String refundTimestamp,
     UUID voluntaryUuid
 ) {
 
   public ResponseSummaryRefund(Refund refund) {
     this(refund.getUuid(),
         refund.getRefundValue(),
-        refund.getRefundTimeStamp().toString(),
+        refund.getRefundTimestamp().toString(),
         refund.getVoluntaryUuid()
     );
   }

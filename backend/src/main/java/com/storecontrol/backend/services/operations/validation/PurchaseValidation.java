@@ -65,7 +65,7 @@ public class PurchaseValidation {
 
     } else {
       UUID standUuid = standUuidSet.iterator().next();
-      if (!standUuid.equals(voluntary.getFunction().getUuid())) {
+      if (voluntary.getFunction() == null || !standUuid.equals(voluntary.getFunction().getUuid())) {
         if (voluntary.getVoluntaryRole().isNotAdmin()) {
           throw new InvalidOperationException(
               MessageResolver.getInstance().getMessage("validation.purchase.checkItems.userNotMatch.error"),
@@ -88,7 +88,6 @@ public class PurchaseValidation {
         );
       }
 
-      if (voluntary.getVoluntaryRole().isNotAdmin()) {
         if (product.getPrice().compareTo(requestCreateItem.unitPrice()) != 0) {
           throw new InvalidOperationException(
               MessageResolver.getInstance().getMessage("validation.purchase.checkItem.priceDifferent.error"),
@@ -98,6 +97,7 @@ public class PurchaseValidation {
               )
           );
         }
+      if (voluntary.getVoluntaryRole().isNotAdmin()) {
         if (product.getDiscount().compareTo(requestCreateItem.discount()) != 0) {
           throw new InvalidOperationException(
               MessageResolver.getInstance().getMessage("validation.purchase.checkItem.discountDifferent.error"),
@@ -160,7 +160,7 @@ public class PurchaseValidation {
 
       if (product.isCombo()) {
         for (ProductCombo productCombo : product.getComboProducts()) {
-          UUID includedUuid = productCombo.getIncludedProductUuid();
+          UUID includedUuid = productCombo.getProductIncludedUuid();
           int includedQuantity = requestCreateItem.quantity() * productCombo.getQuantity();
           requiredQuantities.merge(includedUuid, includedQuantity, Integer::sum);
         }

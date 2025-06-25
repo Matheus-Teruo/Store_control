@@ -50,7 +50,7 @@ public class CustomerFinalizationHandler {
       }
     }
 
-    customerService.finalizeCustomer(customer);
+    customerService.finalizeCustomer(customer, false);
     return customer;
   }
 

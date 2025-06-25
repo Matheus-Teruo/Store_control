@@ -90,7 +90,7 @@ public class TradeService {
     purchaseValidation.checkInsufficientProductStockValidity(purchaseRequest, productMap);
     validation.checkRechargeMatchTotalPrice(rechargeRequest, purchaseRequest);
 
-    var register = registerService.safeTakeRegisterByUuid(rechargeRequest.registerUuid());
+    var register = registerService.safeTakeRegisterByStandUuid(purchaseRequest.standUuid());
 
     var customer = handleChangesOnCustomerByCardId(rechargeRequest, purchaseRequest.onOrder());
 
@@ -99,9 +99,10 @@ public class TradeService {
 
     rechargeRepository.save(recharge);
 
-    UUID standUuid = productMap.get(purchaseRequest.items().getFirst().productUuid()).getStandUuid();
-    var purchase = new Purchase(purchaseRequest, standUuid, customer, voluntary);
-    var items = itemService.createItems(purchaseRequest, purchase, standUuid);
+    boolean hasReverseQuantity = purchaseRequest.items().stream()
+        .anyMatch(item -> item.quantity() < 0);
+    var purchase = new Purchase(purchaseRequest, purchaseRequest.standUuid(), customer, voluntary, hasReverseQuantity);
+    var items = itemService.createItems(purchaseRequest, purchase, purchaseRequest.standUuid());
     purchase.setItems(items);
 
     updateItemsFromItemsChanged(purchase, productMap, false);
@@ -109,7 +110,7 @@ public class TradeService {
     purchaseRepository.save(purchase);
 
     if (!purchaseRequest.onOrder()) {
-      customerService.finalizeCustomer(customer);
+      customerService.finalizeCustomer(customer, false);
     }
 
     Trade trade = new Trade(recharge.getUuid(), purchase.getUuid());
@@ -254,7 +255,7 @@ public class TradeService {
 
       if (product.isCombo()) {
         for (ProductCombo productCombo : product.getComboProducts()) {
-          var comboProduct = productMap.get(productCombo.getIncludedProductUuid());
+          var comboProduct = productMap.get(productCombo.getProductIncludedUuid());
           if (comboProduct.getStock() != null) {
             comboProduct.decreaseStock(adjustmentFactor * item.getQuantity() * productCombo.getQuantity());
           }
@@ -272,8 +273,8 @@ public class TradeService {
         .filter(Recharge::isValid)
         .toList();
 
-    if (recharges.isEmpty()) {  // TODO delete customer
-      customerService.finalizeCustomer(customer);
+    if (recharges.isEmpty()) {
+      customerService.finalizeCustomer(customer, true);
     }
   }
 }

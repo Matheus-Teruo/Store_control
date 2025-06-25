@@ -8,10 +8,12 @@ SELECT
     t.purchase_uuid,
     r.recharge_value,
     r.payment_type,
+    r.register_uuid,
     p.on_order,
+    p.reversal,
     p.stand_uuid,
     p.voluntary_uuid,
-    t.trade_time_stamp,
+    t.trade_timestamp,
     t.valid
 FROM trades t
 JOIN recharges r ON t.recharge_uuid = r.uuid

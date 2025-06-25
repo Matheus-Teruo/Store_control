@@ -9,7 +9,7 @@ public record ResponsePurchaseOrder(
     UUID uuid,
     Boolean onOrder,
     UUID standUuid,
-    String purchaseTimeStamp,
+    String purchaseTimestamp,
     List<ResponseItem> items
 ) {
 
@@ -18,7 +18,7 @@ public record ResponsePurchaseOrder(
         purchase.getUuid(),
         purchase.isOnOrder(),
         purchase.getStandUuid(),
-        purchase.getPurchaseTimeStamp().toString(),
+        purchase.getPurchaseTimestamp().toString(),
         purchase.getItems().stream().map(ResponseItem::new).toList()
     );
   }

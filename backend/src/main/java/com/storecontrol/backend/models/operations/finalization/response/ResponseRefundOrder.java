@@ -8,13 +8,13 @@ import java.util.UUID;
 public record ResponseRefundOrder(
     UUID uuid,
     BigDecimal refundValue,
-    String refundTimeStamp
+    String refundTimestamp
 ) {
 
   public ResponseRefundOrder(Refund refund) {
     this(refund.getUuid(),
         refund.getRefundValue(),
-        refund.getRefundTimeStamp().toString()
+        refund.getRefundTimestamp().toString()
     );
   }
 }

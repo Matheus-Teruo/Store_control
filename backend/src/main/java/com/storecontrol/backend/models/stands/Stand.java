@@ -1,5 +1,6 @@
 package com.storecontrol.backend.models.stands;
 
+import com.storecontrol.backend.models.registers.Register;
 import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.models.stands.request.RequestCreateStand;
 import com.storecontrol.backend.models.stands.request.RequestUpdateStand;
@@ -23,6 +24,9 @@ public class Stand extends Function {
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "association_uuid", nullable = false)
     private Association association;
+
+    @OneToOne(mappedBy = "relatedStand")
+    private Register relatedRegister;
 
     @OneToMany(mappedBy = "stand")
     private List<Product> products;

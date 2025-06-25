@@ -31,7 +31,7 @@ public class VoluntaryValidation {
   public void checkVoluntaryPermission(UUID requestUuid, Voluntary user){
     if (!requestUuid.equals(user.getUuid())) {
       var role = user.getVoluntaryRole();
-      if (role.equals(VoluntaryRole.ROLE_USER)) {
+      if (role.equals(VoluntaryRole.ROLE_VOLUNTARY)) {
         throw new InvalidDatabaseQueryException(
             MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.error"),
             MessageResolver.getInstance().getMessage("validation.voluntary.checkAuthentication.voluntaryMatch.message"),

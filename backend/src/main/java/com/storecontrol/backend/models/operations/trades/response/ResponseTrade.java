@@ -17,20 +17,24 @@ public record ResponseTrade(
     BigDecimal rechargeValue,
     PaymentType paymentTypeEnum,
     Boolean onOrder,
-    String tradeTimeStamp,
+    boolean reversal,
+    UUID standUuid,
+    String tradeTimestamp,
     List<ResponseItem> items,
     ResponseSummaryVoluntary summaryVoluntary
 ) {
 
-  public ResponseTrade(TradeView trade, Voluntary voluntary) {
-    this(trade.getUuid(),
-        trade.getRechargeUuid(),
-        trade.getPurchaseUuid(),
-        trade.getRechargeValue(),
-        trade.getPaymentTypeEnum(),
-        trade.isOnOrder(),
-        trade.getTradeTimeStamp().toString(),
-        trade.getItems().stream().map(ResponseItem::new).toList(),
+  public ResponseTrade(TradeView tradeView, Voluntary voluntary) {
+    this(tradeView.getUuid(),
+        tradeView.getRechargeUuid(),
+        tradeView.getPurchaseUuid(),
+        tradeView.getRechargeValue(),
+        tradeView.getPaymentTypeEnum(),
+        tradeView.isOnOrder(),
+        tradeView.isReversal(),
+        tradeView.getStandUuid(),
+        tradeView.getTradeTimestamp().toString(),
+        tradeView.getItems().stream().map(ResponseItem::new).toList(),
         new ResponseSummaryVoluntary(voluntary)
     );
   }

@@ -8,19 +8,21 @@ import java.util.UUID;
 public record ResponseRegister(
     UUID uuid,
     String registerName,
-    BigDecimal cashTotal,
-    BigDecimal creditTotal,
-    BigDecimal debitTotal,
-    BigDecimal pixTotal
+    String standName,
+    BigDecimal totalCash,
+    BigDecimal totalCredit,
+    BigDecimal totalDebit,
+    BigDecimal totalPix
 ) {
 
   public ResponseRegister(Register register) {
     this(register.getUuid(),
         register.getFunctionName(),
-        register.getCashTotal(),
-        register.getCreditTotal(),
-        register.getDebitTotal(),
-        register.getPixTotal()
+        register.getRelatedStand() != null ? register.getRelatedStand().getFunctionName() : null,
+        register.getTotalCash(),
+        register.getTotalCredit(),
+        register.getTotalDebit(),
+        register.getTotalPix()
     );
   }
 }

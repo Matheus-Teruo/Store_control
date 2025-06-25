@@ -43,7 +43,7 @@ public class ProductComboService {
   ) {
     Map<UUID, ProductCombo> existingComboMap = product.getComboProducts()
         .stream()
-        .collect(Collectors.toMap(ProductCombo::getIncludedProductUuid, productCombo -> productCombo));
+        .collect(Collectors.toMap(ProductCombo::getProductIncludedUuid, productCombo -> productCombo));
 
     List<ProductCombo> newProductCombos = new ArrayList<>();
 
