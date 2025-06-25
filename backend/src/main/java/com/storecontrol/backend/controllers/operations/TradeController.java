@@ -37,7 +37,7 @@ public class TradeController {
         request.rechargeValue(),
         request.paymentTypeEnum(),
         request.orderCardId(),
-        request.registerUuid()
+        UUID.fromString("12345678-abcd-4efa-bcde-f1234567890a") // Just to create request.
     );
 
     var purchaseRequest = new RequestCreatePurchase(

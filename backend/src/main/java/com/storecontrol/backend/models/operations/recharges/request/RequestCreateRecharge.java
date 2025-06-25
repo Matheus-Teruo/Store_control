@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public record RequestCreateRecharge(
     @NotNull(message = "{request.validation.createRecharge.rechargeValue.notnull}")
-    @Positive(message = "{request.validation.createRecharge.rechargeValue.positive}")
+    @PositiveOrZero(message = "{request.validation.createRecharge.rechargeValue.positiveOrZero}")
     @Digits(integer = 5, fraction = 2, message = "{request.validation.createRecharge.rechargeValue.digits}")
     BigDecimal rechargeValue,
 
