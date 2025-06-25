@@ -8,6 +8,7 @@ import java.util.UUID;
 public record ResponseSummaryProduct(
     UUID uuid,
     String productName,
+    Integer productCode,
     String summary,
     boolean description,
     boolean combo,
@@ -21,6 +22,7 @@ public record ResponseSummaryProduct(
   public ResponseSummaryProduct(Product product) {
     this(product.getUuid(),
         product.getProductName(),
+        product.getProductCode(),
         product.getSummary(),
         product.getDescription() != null,
         product.isCombo(),

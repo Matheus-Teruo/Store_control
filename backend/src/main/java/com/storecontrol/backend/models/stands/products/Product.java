@@ -27,6 +27,9 @@ public class Product {
     @Column(name = "product_name", nullable = false)
     private String productName;
 
+    @Column(name = "product_code", nullable = false)
+    private Integer productCode;
+
     @Column(name = "summary")
     private String summary;
 
@@ -37,10 +40,10 @@ public class Product {
     private boolean combo;
 
     @Setter
-    @OneToMany(mappedBy = "productComboId.comboProduct", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "productComboId.productCombo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductCombo> comboProducts;
 
-    @OneToMany(mappedBy = "productComboId.includedProduct", orphanRemoval = true)
+    @OneToMany(mappedBy = "productComboId.productIncluded", orphanRemoval = true)
     private List<ProductCombo> usedInCombos;
 
     @Column(nullable = false)
@@ -53,7 +56,7 @@ public class Product {
 
     @ManyToMany
     @JoinTable(
-        name = "tag_product",
+        name = "tag_products",
         joinColumns = @JoinColumn(name = "product_uuid"),
         inverseJoinColumns = @JoinColumn(name = "tag_uuid")
     )
@@ -77,6 +80,7 @@ public class Product {
 
     public Product(RequestCreateProduct request, Stand stand) {
         this.productName = request.productName();
+        this.productCode = request.productCode();
         if (request.summary() != null) {
             this.summary = request.summary();
         }
@@ -98,6 +102,9 @@ public class Product {
     public void updateProduct(RequestUpdateProduct request) {
         if (request.productName() != null) {
             this.productName = request.productName();
+        }
+        if (request.productCode() != null) {
+            this.productCode = request.productCode();
         }
         this.summary = request.summary();
         this.description = request.description();

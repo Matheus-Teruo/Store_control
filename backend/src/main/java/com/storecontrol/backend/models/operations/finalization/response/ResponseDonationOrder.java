@@ -8,13 +8,13 @@ import java.util.UUID;
 public record ResponseDonationOrder(
     UUID uuid,
     BigDecimal donationValue,
-    String donationTimeStamp
+    String donationTimestamp
 ) {
 
   public ResponseDonationOrder(Donation donation) {
     this(donation.getUuid(),
         donation.getDonationValue(),
-        donation.getDonationTimeStamp().toString()
+        donation.getDonationTimestamp().toString()
     );
   }
 }

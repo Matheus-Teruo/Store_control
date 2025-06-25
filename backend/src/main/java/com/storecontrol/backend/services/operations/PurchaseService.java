@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,8 +60,10 @@ public class PurchaseService {
     validation.checkPurchaseHaveItems(request);
     validation.checkInsufficientProductStockValidity(request, productMap);
 
+    boolean onOrder = request.items().stream().anyMatch(
+        item -> item.delivered() != null && !item.delivered().equals(item.quantity()));
     UUID standUuid = productMap.get(request.items().getFirst().productUuid()).getStandUuid();
-    var purchase = new Purchase(request, standUuid, customer, voluntary);
+    var purchase = new Purchase(onOrder, standUuid, customer, voluntary, false);
     var items = itemService.createItems(request, purchase, standUuid);
     purchase.setItems(items);
 
@@ -108,10 +111,17 @@ public class PurchaseService {
   @Transactional
   public Purchase updatePurchase(RequestUpdatePurchase request) {
     var purchase = safeTakePurchaseByUuid(request.uuid());
-
+    Map<UUID, Item> mapItem = purchase.getItems().stream()
+        .collect(Collectors.toMap(Item::getProductUuid, Function.identity()));
     validation.checkItemsFromPurchaseValidation(request.items(), purchase.getItems());
 
-    purchase.updatePurchase(request);
+    if (request.items().stream().anyMatch(item -> item.delivered() != null)) {
+      boolean onOrder = request.items().stream()
+          .anyMatch(
+              item -> item.delivered() != null &&
+                  !item.delivered().equals(mapItem.get(item.productUuid()).getQuantity()));
+      purchase.updatePurchase(onOrder);
+    }
     updateItemsFromPurchase(request.items(), purchase.getItems());
 
     return purchase;
@@ -141,8 +151,10 @@ public class PurchaseService {
 
       if (product.isCombo()) {
         for (ProductCombo productCombo : product.getComboProducts()) {
-          var comboProduct = productMap.get(productCombo.getIncludedProductUuid());
-          comboProduct.decreaseStock(adjustmentFactor * item.getQuantity() * productCombo.getQuantity());
+          var comboProduct = productMap.get(productCombo.getProductIncludedUuid());
+          if (comboProduct.getStock() != null) {
+            comboProduct.decreaseStock(adjustmentFactor * item.getQuantity() * productCombo.getQuantity());
+          }
         }
       }
 

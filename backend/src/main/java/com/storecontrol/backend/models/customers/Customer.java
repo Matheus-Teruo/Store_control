@@ -24,7 +24,7 @@ public class Customer {
     @Id @GeneratedValue(generator = "UUID")
     private UUID uuid;
 
-    @ManyToOne @JoinColumn(name = "order_card_id", nullable = false)
+    @ManyToOne @JoinColumn(name = "card_id", nullable = false)
     private OrderCard orderCard;
 
     @Column(name = "customer_start", nullable = false)
@@ -48,16 +48,26 @@ public class Customer {
     @Column(name = "in_use", nullable = false)
     private boolean inUse;
 
+    @Column(nullable = false)
+    private boolean valid;
+
 
     public Customer(OrderCard orderCard) {
         this.orderCard = orderCard;
         this.customerStart = LocalDateTime.now();
         this.inUse = true;
+        this.valid = true;
     }
 
     public void undoFinalizeCustomer() {
         this.customerEnd = null;
         this.inUse = true;
+    }
+
+    public void deleteCustomer() {
+        this.customerEnd = LocalDateTime.now();
+        this.inUse = false;
+        this.valid = false;
     }
 
     public void finalizeCustomer() {

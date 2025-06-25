@@ -10,7 +10,7 @@ public record ResponseProductCombo(
 ) {
 
   public ResponseProductCombo(ProductCombo productCombo) {
-    this(productCombo.getIncludedProductUuid(),
+    this(productCombo.getProductIncludedUuid(),
         productCombo.getQuantity()
     );
   }

@@ -90,26 +90,29 @@ public class TradeService {
     purchaseValidation.checkInsufficientProductStockValidity(purchaseRequest, productMap);
     validation.checkRechargeMatchTotalPrice(rechargeRequest, purchaseRequest);
 
-    var register = registerService.safeTakeRegisterByUuid(rechargeRequest.registerUuid());
+    var register = registerService.safeTakeRegisterByStandUuid(purchaseRequest.standUuid());
 
-    var customer = handleChangesOnCustomerByCardId(rechargeRequest, purchaseRequest.onOrder());
+    boolean onOrder = purchaseRequest.items().stream().anyMatch(
+        item -> item.delivered() != null && !item.delivered().equals(item.quantity()));
+    var customer = handleChangesOnCustomerByCardId(rechargeRequest, onOrder);
 
     var recharge = new Recharge(rechargeRequest, customer, register, voluntary);
     handleCashTotal(recharge, recharge.getPaymentTypeEnum(), false);
 
     rechargeRepository.save(recharge);
 
-    UUID standUuid = productMap.get(purchaseRequest.items().getFirst().productUuid()).getStandUuid();
-    var purchase = new Purchase(purchaseRequest, standUuid, customer, voluntary);
-    var items = itemService.createItems(purchaseRequest, purchase, standUuid);
+    boolean hasReverseQuantity = purchaseRequest.items().stream()
+        .anyMatch(item -> item.quantity() < 0);
+    var purchase = new Purchase(onOrder, purchaseRequest.standUuid(), customer, voluntary, hasReverseQuantity);
+    var items = itemService.createItems(purchaseRequest, purchase, purchaseRequest.standUuid());
     purchase.setItems(items);
 
     updateItemsFromItemsChanged(purchase, productMap, false);
 
     purchaseRepository.save(purchase);
 
-    if (!purchaseRequest.onOrder()) {
-      customerService.finalizeCustomer(customer);
+    if (!onOrder) {
+      customerService.finalizeCustomer(customer, false);
     }
 
     Trade trade = new Trade(recharge.getUuid(), purchase.getUuid());
@@ -170,18 +173,19 @@ public class TradeService {
     Purchase purchase;
     Recharge recharge;
     if (fixedCardId.equals(cardId)) {
-      purchase = purchaseRepository.findByUuidValidTrue(trade.getPurchaseUuid())
-          .orElseThrow(() -> new InvalidDatabaseQueryException(
-              MessageResolver.getInstance().getMessage("service.exception.purchase.get.validation.error"),
-              MessageResolver.getInstance().getMessage("service.exception.purchase.get.validation.message"),
-              uuid.toString())
-          );
       recharge = rechargeRepository.findByUuidValidTrue(trade.getRechargeUuid())
           .orElseThrow(() -> new InvalidDatabaseQueryException(
               MessageResolver.getInstance().getMessage("service.exception.recharge.get.validation.error"),
               MessageResolver.getInstance().getMessage("service.exception.recharge.get.validation.message"),
               uuid.toString())
           );
+      purchase = purchaseRepository.findByUuidValidTrue(trade.getPurchaseUuid())
+          .orElseThrow(() -> new InvalidDatabaseQueryException(
+              MessageResolver.getInstance().getMessage("service.exception.purchase.get.validation.error"),
+              MessageResolver.getInstance().getMessage("service.exception.purchase.get.validation.message"),
+              uuid.toString())
+          );
+      customer = recharge.getCustomer();
     } else {
       customer = customerService.takeActiveCustomerByCardId(cardId);
       purchase = customer.getPurchases().getFirst();
@@ -192,9 +196,11 @@ public class TradeService {
     validation.checkIfLastTrade(recharge, purchase, trade);
     if (!fixedCardId.equals(cardId)) purchaseValidation.checkSomeItemWasDelivered(purchase);
     purchaseValidation.checkPurchaseBelongsToVoluntary(purchase, voluntary);
-    purchaseValidation.checkIfLastPurchaseOfVoluntary(purchase, voluntary);
     rechargeValidation.checkRechargeBelongsToVoluntary(recharge, voluntary);
-    rechargeValidation.checkIfLastRechargeOfVoluntary(recharge, voluntary);
+    if (fixedCardId.equals(cardId)) {
+      purchaseValidation.checkIfLastPurchaseOfVoluntary(purchase, voluntary);
+      rechargeValidation.checkIfLastRechargeOfVoluntary(recharge, voluntary);
+    }
 
     updateItemsFromItemsChanged(purchase, productMap,true);
 
@@ -206,7 +212,7 @@ public class TradeService {
 
     trade.deleteTrade();
 
-    handleFilterFinalizeCustomer(recharge.getCustomer());
+    handleFilterFinalizeCustomer(customer);
   }
 
   private Customer handleChangesOnCustomerByCardId(RequestCreateRecharge request, boolean onOrder) {
@@ -251,8 +257,10 @@ public class TradeService {
 
       if (product.isCombo()) {
         for (ProductCombo productCombo : product.getComboProducts()) {
-          var comboProduct = productMap.get(productCombo.getIncludedProductUuid());
-          comboProduct.decreaseStock(adjustmentFactor * item.getQuantity() * productCombo.getQuantity());
+          var comboProduct = productMap.get(productCombo.getProductIncludedUuid());
+          if (comboProduct.getStock() != null) {
+            comboProduct.decreaseStock(adjustmentFactor * item.getQuantity() * productCombo.getQuantity());
+          }
         }
       }
 
@@ -268,7 +276,7 @@ public class TradeService {
         .toList();
 
     if (recharges.isEmpty()) {
-      customerService.finalizeCustomer(customer);
+      customerService.finalizeCustomer(customer, true);
     }
   }
 }

@@ -1,7 +1,5 @@
 package com.storecontrol.backend.services.customers;
 
-import com.storecontrol.backend.config.language.MessageResolver;
-import com.storecontrol.backend.infra.exceptions.InvalidCustomerException;
 import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
 import com.storecontrol.backend.models.customers.request.RequestOrderCard;
@@ -43,50 +41,33 @@ public class CustomerFinalizationHandler {
     validation.checkVoluntaryFunctionMatch(register, voluntary);
 
     if (remainingDebit.compareTo(BigDecimal.ZERO) > 0) {
-      if (request.refundValue()
-          .add(request.donationValue())
-          .compareTo(remainingDebit) == 0) {
-        if (request.refundValue().compareTo(BigDecimal.ZERO) > 0) {
-          refundService.createRefund(request, customer, register, voluntary);
-        }
-        if (request.donationValue().compareTo(BigDecimal.ZERO) > 0) {
-          donationService.createDonation(request, customer, register, voluntary);
-        }
-      } else {
-        throw new InvalidCustomerException(
-            MessageResolver.getInstance().getMessage("service.exception.customerFinalization.finalization.validation.error"),
-            MessageResolver.getInstance().getMessage("service.exception.customerFinalization.finalization.validation.message")
-        );
+      validation.checkRemainingDebitMatchTotalDonationAndRefund(request.donationValue(), request.refundValue(), remainingDebit);
+      if (request.refundValue().compareTo(BigDecimal.ZERO) > 0) {
+        refundService.createRefund(request, customer, register, voluntary);
+      }
+      if (request.donationValue().compareTo(BigDecimal.ZERO) > 0) {
+        donationService.createDonation(request, customer, register, voluntary);
       }
     }
 
-    customerService.finalizeCustomer(customer);
+    customerService.finalizeCustomer(customer, false);
     return customer;
   }
 
-  public Customer undoFinalizeCustomer(RequestOrderCard request, boolean fromRegister) {
+  public Customer undoFinalizeCustomer(RequestOrderCard request) {
     var customer = customerService.takeLastActiveFilteredCustomerByCardId(request.cardId());
+    Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    validation.checkVoluntaryFunctionType(voluntary);
+    validation.checkCardHaveACustomerInUse(customer);
 
-    if (fromRegister) {
-      Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-      validation.checkVoluntaryFunctionType(voluntary);
+    if (!customer.getDonations().isEmpty()) {
+      donationService.deleteDonation(customer);
+    }
+    if (!customer.getRefunds().isEmpty()) {
+      refundService.deleteRefund(customer);
     }
 
-    if (!customer.isInUse()) {
-      if (!customer.getDonations().isEmpty()) {
-        donationService.deleteDonation(customer);
-      }
-      if (!customer.getRefunds().isEmpty()) {
-        refundService.deleteRefund(customer);
-      }
-
-      customerService.undoFinalizeCustomer(customer);
-    } else {
-      throw new InvalidCustomerException(
-          MessageResolver.getInstance().getMessage("service.exception.customerFinalization.undoFinalization.validation.error"),
-          MessageResolver.getInstance().getMessage("service.exception.customerFinalization.undoFinalization.validation.message")
-      );
-    }
+    customerService.undoFinalizeCustomer(customer);
 
     return customer;
   }

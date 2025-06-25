@@ -17,8 +17,8 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
   @Query("SELECT p FROM Product p WHERE p.valid = true AND p.standUuid = :standUuid ORDER BY p.productName ASC")
   List<Product> findAllValidByStandUuid(UUID standUuid);
 
-  @Query("SELECT p FROM Product p WHERE p.valid = true AND (:standUuid is null OR p.standUuid = :standUuid)")
-  List<Product> findAllValidAndByStandUuid(UUID standUuid);
+  @Query("SELECT p FROM Product p WHERE (:standUuid is null OR p.standUuid = :standUuid)")
+  List<Product> findAllByStandUuid(UUID standUuid);
 
   @Query("""
     SELECT DISTINCT p FROM Product p
@@ -33,6 +33,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
   boolean existsByProductName(String productName);
 
   @Query("SELECT CASE WHEN COUNT(pc) > 0 THEN true ELSE false END " +
-      "FROM ProductCombo pc WHERE pc.productComboId.includedProduct.uuid = :includedProductUuid")
-  boolean existsByIncludedProductUuid(UUID includedProductUuid);;
+      "FROM ProductCombo pc WHERE pc.productComboId.productIncluded.uuid = :productIncludedUuid")
+  boolean existsByIncludedProductUuid(UUID productIncludedUuid);
 }

@@ -67,7 +67,7 @@ public class CustomerController {
 
   @DeleteMapping("/finalize/{cardId}")
   public ResponseEntity<ResponseCustomer> undoFinalizeCustomer(@PathVariable @Valid RequestOrderCard cardId) {
-    var response = new ResponseCustomer(customerFinalizationHandler.undoFinalizeCustomer(cardId, true));
+    var response = new ResponseCustomer(customerFinalizationHandler.undoFinalizeCustomer(cardId));
 
     return ResponseEntity.ok(response);
   }

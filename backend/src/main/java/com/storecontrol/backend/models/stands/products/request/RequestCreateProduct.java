@@ -13,6 +13,10 @@ public record RequestCreateProduct(
     @Pattern(regexp = "^[\\p{L}\\p{N} /:;,.!()?\\-]*$", message = "{request.validation.createProduct.productName.pattern}")
     String productName,
 
+    @NotNull(message = "{request.validation.createProduct.productCode.notNull}")
+    @Positive(message = "{request.validation.createProduct.productCode.positive}")
+    Integer productCode,
+
     Set<UUID> tagsUuid,
 
     @Size(min= 3, max = 255, message = "{request.validation.createProduct.summary.size}")

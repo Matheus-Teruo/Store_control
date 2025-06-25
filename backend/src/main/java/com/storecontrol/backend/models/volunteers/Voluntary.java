@@ -65,7 +65,7 @@ public class Voluntary implements UserDetails {
     this.user = user;
     this.fullname = request.fullname();
     this.associationUuid = associationUuid;
-    this.voluntaryRole = VoluntaryRole.ROLE_USER;
+    this.voluntaryRole = VoluntaryRole.ROLE_VOLUNTARY;
     this.valid = true;
   }
 

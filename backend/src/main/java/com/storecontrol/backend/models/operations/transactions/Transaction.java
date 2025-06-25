@@ -30,13 +30,13 @@ public class Transaction {
   @Enumerated(EnumType.STRING)
   private TransactionType transactionTypeEnum;
 
-  @Column(name = "transaction_time_stamp", nullable = false)
-  private LocalDateTime transactionTimeStamp;
+  @Column(name = "transaction_timestamp", nullable = false)
+  private LocalDateTime transactionTimestamp;
 
-  @Column(name = "cash_register_uuid", insertable = false, updatable = false)
+  @Column(name = "register_uuid", insertable = false, updatable = false)
   private UUID registerUuid;
 
-  @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "cash_register_uuid", nullable = false)
+  @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "register_uuid", nullable = false)
   private Register register;
 
   @Column(name = "voluntary_uuid", insertable = false, updatable = false)
@@ -52,7 +52,7 @@ public class Transaction {
   public Transaction(RequestCreateTransaction request, Register register, Voluntary voluntary) {
     this.amount = request.amount();
     this.transactionTypeEnum = TransactionType.fromString(request.transactionTypeEnum());
-    this.transactionTimeStamp = LocalDateTime.now();
+    this.transactionTimestamp = LocalDateTime.now();
     this.register = register;
     this.voluntary = voluntary;
     this.valid = true;

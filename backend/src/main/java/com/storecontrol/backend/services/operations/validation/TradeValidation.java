@@ -22,7 +22,7 @@ public class TradeValidation {
                 .multiply(requestCreateItem.unitPrice().subtract(requestCreateItem.discount())))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-    if (totalValue.compareTo(recharge.rechargeValue()) > 0) {
+    if (totalValue.compareTo(recharge.rechargeValue()) != 0) {
       throw new InvalidOperationException(
           MessageResolver.getInstance().getMessage("validation.trade.checkTotal.notMatch.error"),
           MessageResolver.getInstance().getMessage("validation.trade.checkTotal.notMatch.message")

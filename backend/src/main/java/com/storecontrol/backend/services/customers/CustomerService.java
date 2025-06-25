@@ -87,7 +87,7 @@ public class CustomerService {
   }
 
   @Transactional
-  public void finalizeCustomer(Customer customer) {
+  public void finalizeCustomer(Customer customer, boolean delete) {
     if (customer.getOrderCard().getDebit().compareTo(BigDecimal.ZERO) != 0) {
       throw new InvalidCustomerException(
           MessageResolver.getInstance().getMessage("service.exception.customer.finalize.validation.error"),
@@ -96,7 +96,11 @@ public class CustomerService {
     }
 
     customer.getOrderCard().updateActive(false);
-    customer.finalizeCustomer();
+    if (delete) {
+      customer.deleteCustomer();
+    } else {
+      customer.finalizeCustomer();
+    }
   }
 
   @Transactional

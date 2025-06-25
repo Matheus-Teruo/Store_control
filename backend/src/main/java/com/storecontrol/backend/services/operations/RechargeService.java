@@ -111,7 +111,7 @@ public class RechargeService {
         .toList();
 
     if (recharges.isEmpty()) {
-      customerService.finalizeCustomer(customer);
+      customerService.finalizeCustomer(customer, true);
     }
   }
 

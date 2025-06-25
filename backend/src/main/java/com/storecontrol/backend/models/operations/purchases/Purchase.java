@@ -1,8 +1,6 @@
 package com.storecontrol.backend.models.operations.purchases;
 
 import com.storecontrol.backend.models.customers.Customer;
-import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
-import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,8 +25,8 @@ public class Purchase {
     @Column(name = "on_order", nullable = false)
     private boolean onOrder;
 
-    @Column(name = "purchase_time_stamp", nullable = false)
-    private LocalDateTime purchaseTimeStamp;
+    @Column(name = "purchase_timestamp", nullable = false)
+    private LocalDateTime purchaseTimestamp;
 
     @Column(name = "stand_uuid", nullable = false)
     private UUID standUuid;
@@ -49,22 +47,24 @@ public class Purchase {
     private Voluntary voluntary;
 
     @Column(nullable = false)
+    private boolean reversal;
+
+    @Column(nullable = false)
     private boolean valid;
 
 
-    public Purchase(RequestCreatePurchase request, UUID standUuid, Customer customer, Voluntary voluntary) {
-        this.onOrder = request.onOrder();
-        this.purchaseTimeStamp = LocalDateTime.now();
+    public Purchase(boolean onOrder, UUID standUuid, Customer customer, Voluntary voluntary, boolean reversal) {
+        this.onOrder = onOrder;
+        this.purchaseTimestamp = LocalDateTime.now();
         this.standUuid = standUuid;
         this.customer = customer;
         this.voluntary = voluntary;
+        this.reversal = reversal;
         this.valid = true;
     }
 
-    public void updatePurchase(RequestUpdatePurchase request) {
-        if (request.onOrder() != null){
-            this.onOrder = request.onOrder();
-        }
+    public void updatePurchase(boolean onOrder) {
+        this.onOrder = onOrder;
     }
 
     public void deletePurchase() {

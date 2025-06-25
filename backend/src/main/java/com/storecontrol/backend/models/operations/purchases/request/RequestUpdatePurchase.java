@@ -9,8 +9,6 @@ public record RequestUpdatePurchase(
     @NotNull(message = "{request.validation.updatePurchase.uuid.notnull}")
     UUID uuid,
 
-    Boolean onOrder,
-
     List<RequestUpdateItem> items
 ) {
 }

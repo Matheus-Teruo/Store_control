@@ -8,14 +8,14 @@ import java.util.UUID;
 public record ResponseSummaryDonation(
     UUID uuid,
     BigDecimal donationValue,
-    String donationTimeStamp,
+    String donationTimestamp,
     UUID voluntaryUuid
 ) {
 
   public ResponseSummaryDonation(Donation donation) {
     this(donation.getUuid(),
         donation.getDonationValue(),
-        donation.getDonationTimeStamp().toString(),
+        donation.getDonationTimestamp().toString(),
         donation.getVoluntaryUuid()
     );
   }

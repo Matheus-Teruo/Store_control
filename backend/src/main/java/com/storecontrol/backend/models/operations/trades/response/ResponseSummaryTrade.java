@@ -14,7 +14,9 @@ public record ResponseSummaryTrade(
     BigDecimal rechargeValue,
     PaymentType paymentTypeEnum,
     Boolean onOrder,
-    String tradeTimeStamp,
+    boolean reversal,
+    UUID standUuid,
+    String tradeTimestamp,
     Integer totalItems,
     UUID voluntaryUuid
 ) {
@@ -26,7 +28,9 @@ public record ResponseSummaryTrade(
         tradeView.getRechargeValue(),
         tradeView.getPaymentTypeEnum(),
         tradeView.isOnOrder(),
-        tradeView.getTradeTimeStamp().toString(),
+        tradeView.isReversal(),
+        tradeView.getStandUuid(),
+        tradeView.getTradeTimestamp().toString(),
         tradeView.getItems().stream().map(Item::getQuantity)
             .reduce(0, Integer::sum),
         tradeView.getVoluntaryUuid()

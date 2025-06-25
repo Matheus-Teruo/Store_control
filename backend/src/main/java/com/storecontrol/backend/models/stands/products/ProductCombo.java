@@ -20,8 +20,8 @@ public class ProductCombo {
   @EmbeddedId
   private ProductComboId productComboId;
 
-  @Column(name = "included_product_uuid", insertable = false, updatable = false)
-  private UUID includedProductUuid;
+  @Column(name = "product_included_uuid", insertable = false, updatable = false)
+  private UUID productIncludedUuid;
 
   @Setter
   @Column(nullable = false)

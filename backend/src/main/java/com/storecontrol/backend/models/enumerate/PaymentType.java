@@ -1,9 +1,9 @@
 package com.storecontrol.backend.models.enumerate;
 
 public enum PaymentType {
+    CASH("cash"),
     CREDIT("credit"),
     DEBIT("debit"),
-    CASH("cash"),
     PIX("pix");
 
     private final String paymentTypeLower;

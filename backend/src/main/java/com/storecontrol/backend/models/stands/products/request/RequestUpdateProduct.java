@@ -15,6 +15,9 @@ public record RequestUpdateProduct(
     @Pattern(regexp = "^[\\p{L}\\p{N} /:;,.!()?\\-]*$", message = "{request.validation.updateProduct.productName.pattern}")
     String productName,
 
+    @Positive(message = "{request.validation.updateProduct.productCode.positive}")
+    Integer productCode,
+
     Set<UUID> tagsUuid,
 
     @Size(min=3, max = 255, message = "{request.validation.updateProduct.summary.size}")

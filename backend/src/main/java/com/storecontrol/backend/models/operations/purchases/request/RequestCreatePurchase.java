@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 public record RequestCreatePurchase(
-    @NotNull(message = "{request.validation.createPurchase.onOrder.notnull}")
-    Boolean onOrder,
-
     @NotNull(message = "{request.validation.createPurchase.standUuid.notnull}")
     UUID standUuid,
 

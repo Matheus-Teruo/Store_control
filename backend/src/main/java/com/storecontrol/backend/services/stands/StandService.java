@@ -62,6 +62,10 @@ public class StandService {
     return repository.findAllValidTrue();
   }
 
+  public List<Stand> listAllStands() {
+    return repository.findAll();
+  }
+
   @Transactional
   public Stand updateStand(RequestUpdateStand request) {
     validation.checkNameDuplication(request.standName());

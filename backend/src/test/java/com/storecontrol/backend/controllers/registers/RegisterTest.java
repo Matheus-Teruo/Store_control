@@ -123,6 +123,31 @@ class RegisterTest extends BaseTest {
   }
 
   @Test
+  void testReadListAllRegistersSuccess() throws Exception {
+    // Given
+    List<Register> mockRegisters = List.of(
+        createRegisterEntity(UUID.randomUUID()),
+        createRegisterEntity(UUID.randomUUID())
+    );
+    List<ResponseSummaryRegister> expectedResponse = mockRegisters.stream()
+        .map(ResponseSummaryRegister::new)
+        .toList();
+
+    when(service.listAllRegisters()).thenReturn(mockRegisters);
+
+    // When & Then
+    mockMvc.perform(get("/registers/list-all")
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(content().json(toJson(expectedResponse)));
+
+    // Verify interactions
+    verify(service, times(1)).listAllRegisters();
+    verifyNoMoreInteractions(service);
+  }
+
+  @Test
   void testUpdateRegisterSuccess() throws Exception {
     // Given
     Register mockRegisters = createRegisterEntity(UUID.randomUUID());

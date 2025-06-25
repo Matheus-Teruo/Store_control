@@ -5,12 +5,10 @@ import com.storecontrol.backend.models.operations.finalization.Refund;
 import com.storecontrol.backend.models.operations.transactions.Transaction;
 import com.storecontrol.backend.models.registers.request.RequestCreateRegister;
 import com.storecontrol.backend.models.registers.request.RequestUpdateRegister;
+import com.storecontrol.backend.models.stands.Stand;
 import com.storecontrol.backend.models.volunteers.Function;
 import com.storecontrol.backend.models.volunteers.Voluntary;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,22 +17,28 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "cash_registers")
+@Table(name = "registers")
 @Getter
 @NoArgsConstructor
 public class Register extends Function {
 
-  @Column(name = "cash_total", nullable = false)
-  private BigDecimal cashTotal;
+  @OneToOne(fetch = FetchType.LAZY) @JoinColumn(name = "stand_uuid")
+  private Stand relatedStand;
 
-  @Column(name = "credit_total", nullable = false)
-  private BigDecimal creditTotal;
+  @Column(name = "stand_uuid", insertable=false, updatable=false)
+  private UUID standUuid;
 
-  @Column(name = "debit_total", nullable = false)
-  private BigDecimal debitTotal;
+  @Column(name = "total_cash", nullable = false)
+  private BigDecimal totalCash;
 
-  @Column(name = "pix_total", nullable = false)
-  private BigDecimal pixTotal;
+  @Column(name = "total_credit", nullable = false)
+  private BigDecimal totalCredit;
+
+  @Column(name = "total_debit", nullable = false)
+  private BigDecimal totalDebit;
+
+  @Column(name = "total_pix", nullable = false)
+  private BigDecimal totalPix;
 
   @OneToMany(mappedBy = "register")
   private List<Transaction> transactions;
@@ -50,18 +54,27 @@ public class Register extends Function {
                   List<Voluntary> volunteers,
                   boolean valid) {
     super(uuid, functionName, volunteers, valid);
-    this.cashTotal = BigDecimal.ZERO;
-    this.creditTotal = BigDecimal.ZERO;
-    this.debitTotal = BigDecimal.ZERO;
-    this.pixTotal = BigDecimal.ZERO;
+    this.totalCash = BigDecimal.ZERO;
+    this.totalCredit = BigDecimal.ZERO;
+    this.totalDebit = BigDecimal.ZERO;
+    this.totalPix = BigDecimal.ZERO;
   }
 
   public Register(RequestCreateRegister request) {
     super(request.registerName());
-    this.cashTotal = BigDecimal.ZERO;
-    this.creditTotal = BigDecimal.ZERO;
-    this.debitTotal = BigDecimal.ZERO;
-    this.pixTotal = BigDecimal.ZERO;
+    this.totalCash = BigDecimal.ZERO;
+    this.totalCredit = BigDecimal.ZERO;
+    this.totalDebit = BigDecimal.ZERO;
+    this.totalPix = BigDecimal.ZERO;
+  }
+
+  public Register(RequestCreateRegister request, Stand stand) {
+    super(request.registerName());
+    this.relatedStand = stand;
+    this.totalCash = BigDecimal.ZERO;
+    this.totalCredit = BigDecimal.ZERO;
+    this.totalDebit = BigDecimal.ZERO;
+    this.totalPix = BigDecimal.ZERO;
   }
 
   public void updateRegister(RequestUpdateRegister request) {
@@ -71,18 +84,18 @@ public class Register extends Function {
   }
 
   public void incrementCash(BigDecimal value) {
-    this.cashTotal = cashTotal.add(value);
+    this.totalCash = totalCash.add(value);
   }
 
   public void incrementCredit(BigDecimal value) {
-    this.creditTotal = creditTotal.add(value);
+    this.totalCredit = totalCredit.add(value);
   }
 
   public void incrementDebit(BigDecimal value) {
-    this.debitTotal = debitTotal.add(value);
+    this.totalDebit = totalDebit.add(value);
   }
 
   public void incrementPix(BigDecimal value) {
-    this.pixTotal = pixTotal.add(value);
+    this.totalPix = totalPix.add(value);
   }
 }

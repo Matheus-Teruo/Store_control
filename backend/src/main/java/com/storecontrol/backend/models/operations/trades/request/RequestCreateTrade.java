@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public record RequestCreateTrade(
     @NotNull(message = "{request.validation.createRecharge.rechargeValue.notnull}")
-    @Positive(message = "{request.validation.createRecharge.rechargeValue.positive}")
+    @PositiveOrZero(message = "{request.validation.createRecharge.rechargeValue.positiveOrZero}")
     @Digits(integer = 5, fraction = 2, message = "{request.validation.createRecharge.rechargeValue.digits}")
     BigDecimal rechargeValue,
 
@@ -20,12 +20,6 @@ public record RequestCreateTrade(
     @NotBlank(message = "{request.validation.createRecharge.orderCardId.notBlank}")
     @Pattern(regexp = "^[A-Za-z0-9]{15}$", message = "{request.validation.createRecharge.orderCardId.pattern}")
     String orderCardId,
-
-    @NotNull(message = "{request.validation.createRecharge.registerUuid.notnull}")
-    UUID registerUuid,
-
-    @NotNull(message = "{request.validation.createPurchase.onOrder.notnull}")
-    Boolean onOrder,
 
     @NotNull(message = "{request.validation.createPurchase.standUuid.notnull}")
     UUID standUuid,

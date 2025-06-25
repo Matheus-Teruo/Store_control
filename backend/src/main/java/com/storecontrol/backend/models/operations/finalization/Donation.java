@@ -26,16 +26,16 @@ public class Donation {
     @Column(name = "donation_value", nullable = false)
     private BigDecimal donationValue;
 
-    @Column(name = "donation_time_stamp", nullable = false)
-    private LocalDateTime donationTimeStamp;
+    @Column(name = "donation_timestamp", nullable = false)
+    private LocalDateTime donationTimestamp;
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "customer_uuid", nullable = false)
     private Customer customer;
 
-    @Column(name = "cash_register_uuid", insertable = false, updatable = false)
+    @Column(name = "register_uuid", insertable = false, updatable = false)
     private UUID registerUuid;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "cash_register_uuid", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "register_uuid", nullable = false)
     private Register register;
 
     @Column(name = "voluntary_uuid", insertable = false, updatable = false)
@@ -53,7 +53,7 @@ public class Donation {
                     Register register,
                     Voluntary voluntary) {
         this.donationValue = request.donationValue();
-        this.donationTimeStamp = LocalDateTime.now();
+        this.donationTimestamp = LocalDateTime.now();
         this.customer = customer;
         this.register = register;
         this.voluntary = voluntary;

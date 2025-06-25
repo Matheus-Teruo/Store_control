@@ -34,6 +34,21 @@ public class CustomerFinalizationValidation {
     }
   }
 
+  public void checkRemainingDebitMatchTotalDonationAndRefund(
+      BigDecimal donationValue,
+      BigDecimal refundValue,
+      BigDecimal remainingDebit
+  ) {
+    if (refundValue
+        .add(donationValue)
+        .compareTo(remainingDebit) != 0) {
+      throw new InvalidCustomerException(
+          MessageResolver.getInstance().getMessage("validation.customerFinalization.finalization.validation.error"),
+          MessageResolver.getInstance().getMessage("validation.customerFinalization.finalization.validation.message")
+      );
+    }
+  }
+
   public void checkVoluntaryFunctionType(Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {
       if ((voluntary.getFunction() == null)) {
@@ -49,6 +64,15 @@ public class CustomerFinalizationValidation {
           );
         }
       }
+    }
+  }
+
+  public void checkCardHaveACustomerInUse(Customer customer) {
+    if (customer.isInUse()) {
+      throw new InvalidCustomerException(
+          MessageResolver.getInstance().getMessage("validation.customerFinalization.undoFinalization.validation.error"),
+          MessageResolver.getInstance().getMessage("validation.customerFinalization.undoFinalization.validation.message")
+      );
     }
   }
 

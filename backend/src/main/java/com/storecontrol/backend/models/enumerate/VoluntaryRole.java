@@ -1,7 +1,7 @@
 package com.storecontrol.backend.models.enumerate;
 
 public enum VoluntaryRole {
-  ROLE_USER("voluntary", false),
+  ROLE_VOLUNTARY("voluntary", false),
   ROLE_MANAGEMENT("management",false),
   ROLE_ADMIN("admin",true);
 

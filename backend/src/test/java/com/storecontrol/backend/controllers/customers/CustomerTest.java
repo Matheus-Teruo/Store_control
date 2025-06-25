@@ -181,7 +181,7 @@ class CustomerTest extends BaseTest {
     Customer mockCustomer = createCustomerEntity(customerUuid, mockOrderCard,false);
     ResponseCustomer expectedResponse = new ResponseCustomer(mockCustomer);
 
-    when(customerFinalizationHandler.undoFinalizeCustomer(requestOrderCard, true)).thenReturn(mockCustomer);
+    when(customerFinalizationHandler.undoFinalizeCustomer(requestOrderCard)).thenReturn(mockCustomer);
 
     mockMvc.perform(delete("/customers/finalize/{uuid}", cardId)
             .contentType(MediaType.APPLICATION_JSON))
@@ -189,7 +189,7 @@ class CustomerTest extends BaseTest {
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(customerFinalizationHandler, times(1)).undoFinalizeCustomer(requestOrderCard, true);
+    verify(customerFinalizationHandler, times(1)).undoFinalizeCustomer(requestOrderCard);
     verifyNoMoreInteractions(customerFinalizationHandler);
     verifyNoMoreInteractions(service);
   }
