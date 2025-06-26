@@ -52,7 +52,7 @@ function ShowLastTrade({
         <>
           <h4>{trade.onOrder ? "Ativo" : "Concluido"}</h4>
           <p className={styles.timestamp}>
-            Data: {new Date(trade.tradeTimeStamp + "Z").toLocaleString()}
+            Data: {new Date(trade.tradeTimestamp + "Z").toLocaleString()}
             {/* TODO: AJUSTAR HORÁRIO DEPOIS DO EVENTO */}
           </p>
           <ul>

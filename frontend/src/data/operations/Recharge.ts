@@ -5,7 +5,7 @@ export default interface Recharge {
   uuid: string;
   rechargeValue: number;
   paymentTypeEnum: PaymentType;
-  rechargeTimeStamp: string; // TODO: data
+  rechargeTimestamp: string; // TODO: data
   summaryCustomer: SummaryCustomer;
   summaryVoluntary: SummaryVoluntary;
 }
@@ -14,21 +14,21 @@ export interface SummaryRecharge {
   uuid: string;
   rechargeValue: number;
   paymentTypeEnum: PaymentType;
-  rechargeTimeStamp: string; // TODO: data
+  rechargeTimestamp: string; // TODO: data
   voluntaryUuid: string;
 }
 
-export interface RechargeOrder {
+export interface RechargeCard {
   uuid: string;
   rechargeValue: number;
   paymentTypeEnum: PaymentType;
-  rechargeTimeStamp: string; // TODO: data
+  rechargeTimestamp: string; // TODO: data
 }
 
 export interface CreateRecharge {
   rechargeValue: number;
   paymentTypeEnum: PaymentType;
-  orderCardId: string;
+  cardId: string;
   registerUuid: string;
 }
 

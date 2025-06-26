@@ -28,13 +28,12 @@ export function cartPacking(
   const data = JSON.parse(input);
 
   const compacto = {
-    o: data.onOrder,
     s: data.standUuid,
     i: data.items.map((item: CreateItem) => ({
       p: products[item.productUuid].productName,
       q: item.quantity,
     })),
-    c: data.orderCardId,
+    c: data.cardId,
     r: data.rechargeValue,
     t: paymentMap[data.paymentTypeEnum],
     qt: data.totalQuantity,
@@ -51,7 +50,6 @@ export function cartUnpacking(
   const obj = JSON.parse(input);
 
   const reconstruido = {
-    onOrder: obj.o,
     standUuid: obj.s,
     items: obj.i.map((i: CompactCreateItem) => {
       const produto = Object.entries(products).find(
@@ -65,7 +63,7 @@ export function cartUnpacking(
         discount: produto?.[1].discount,
       };
     }),
-    orderCardId: obj.c,
+    cardId: obj.c,
     rechargeValue: obj.r,
     paymentTypeEnum: reversePaymentMap[obj.t],
     cashRegisterUuid: undefined,

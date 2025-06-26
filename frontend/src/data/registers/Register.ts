@@ -1,19 +1,22 @@
 export default interface Register {
   uuid: string;
   registerName: string;
-  cashTotal: number;
-  creditTotal: number;
-  debitTotal: number;
-  pixTotal: number;
+  standName: string;
+  totalCash: number;
+  totalCredit: number;
+  totalDebit: number;
+  totalPix: number;
 }
 
 export interface SummaryRegister {
   uuid: string;
   registerName: string;
+  standUUid: string;
 }
 
 export interface CreateRegister {
   registerName: string;
+  standUuid: string;
 }
 
 export interface UpdateRegister {

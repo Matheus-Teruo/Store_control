@@ -5,17 +5,17 @@ import {
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import OrderCard from "@data/customers/OrderCard";
+import Card from "@data/customers/Card";
 import { formReducer, initialFormState } from "@reducer/formReducer";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
-import useCardService from "@service/customer/useOrderCardService";
+import useCardService from "@service/customer/useCardService";
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FormCard from "./FormCard";
 import Button from "@/components/utils/Button";
 
 function Cards() {
-  const [cards, setCards] = useState<OrderCard[]>([]);
+  const [cards, setCards] = useState<Card[]>([]);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [formState, formDispach] = useReducer(formReducer, initialFormState);
   const { getCards } = useCardService();

@@ -5,7 +5,7 @@ export default interface Transaction {
   uuid: string;
   amount: number;
   transactionTypeEnum: TransactionType;
-  transactionTimeStamp: string; // TODO: data
+  transactionTimestamp: string; // TODO: data
   summaryRegister: SummaryCustomer;
   summaryVoluntary: SummaryVoluntary;
 }
@@ -14,7 +14,7 @@ export interface SummaryTransaction {
   uuid: string;
   amount: number;
   transactionTypeEnum: TransactionType;
-  transactionTimeStamp: string; // TODO: data
+  transactionTimestamp: string; // TODO: data
   voluntaryUuid: string;
 }
 

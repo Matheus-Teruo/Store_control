@@ -19,10 +19,9 @@ export const initialPurchaseState: CreatePurchase & {
   totalPrice: number;
   totalQuantity: number;
 } = {
-  onOrder: false,
   standUuid: "",
   items: [],
-  orderCardId: "",
+  cardId: "",
   totalPrice: 0,
   totalQuantity: 0,
 };
@@ -154,7 +153,7 @@ export function purchaseReducer(
       if (!regexUuid.test(action.payload)) {
         return state;
       }
-      return { ...state, orderCardId: action.payload };
+      return { ...state, cardId: action.payload };
 
     case "RESET":
       return initialPurchaseState;

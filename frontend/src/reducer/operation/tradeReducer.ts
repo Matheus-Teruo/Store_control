@@ -1,7 +1,4 @@
-import activeConfig, {
-  fixedCardID,
-  fixedCashUuid,
-} from "@/config/activeConfig";
+import activeConfig, { fixedCardID } from "@/config/activeConfig";
 import { cartUnpacking } from "@/utils/cartCompactor";
 import { regexUuid } from "@/utils/regex";
 import { CreateItem } from "@data/operations/Item";
@@ -17,7 +14,6 @@ export type TradeAction =
         products: Record<string, Omit<SummaryProduct, "uuid">>;
       };
     }
-  | { type: "SET_ON_ORDER"; payload: boolean }
   | { type: "SET_RECHARGE_TYPE"; payload: PaymentType }
   | { type: "ADD_ITEM"; payload: SummaryProduct }
   | {
@@ -36,7 +32,7 @@ export type TradeAction =
   | { type: "REMOVE_DELIVERED_ITEM"; payload: string }
   | { type: "SET_CASH_REGISTER_UUID"; payload: string }
   | { type: "SET_STAND_UUID"; payload: string | undefined }
-  | { type: "SET_ORDER_CARD_ID"; payload: string }
+  | { type: "SET_CARD_ID"; payload: string }
   | { type: "CLEAR_ERROR" }
   | { type: "SET_MODE"; payload: "menu" | "stand" }
   | { type: "RESET" };
@@ -47,13 +43,11 @@ export const initialTradeState: CreateTrade & {
   mode: "menu" | "stand";
   standList: string[];
 } = {
-  onOrder: activeConfig.version === "order",
   standUuid: "",
   items: [],
-  orderCardId: activeConfig.version === "simple" ? fixedCardID! : "",
+  cardId: activeConfig.version === "simple" ? fixedCardID! : "",
   rechargeValue: 0,
   paymentTypeEnum: PaymentType.CASH,
-  registerUuid: activeConfig.version === "simple" ? fixedCashUuid! : "",
   totalQuantity: 0,
   error: "",
   mode: "menu",
@@ -149,14 +143,11 @@ export function tradeReducer(
         standUuid: object.standUuid,
         paymentTypeEnum: object.paymentTypeEnum,
         items: object.items,
-        orderCardId: object.orderCardId,
+        cardId: object.cardId,
         rechargeValue: object.rechargeValue,
         totalQuantity: object.totalQuantity,
       };
     }
-
-    case "SET_ON_ORDER":
-      return { ...state, onOrder: action.payload };
 
     case "SET_RECHARGE_TYPE":
       return { ...state, paymentTypeEnum: action.payload };
@@ -306,13 +297,6 @@ export function tradeReducer(
       };
     }
 
-    case "SET_CASH_REGISTER_UUID": {
-      if (!regexUuid.test(action.payload)) {
-        return state;
-      }
-      return { ...state, registerUuid: action.payload };
-    }
-
     case "SET_STAND_UUID": {
       if (action.payload === undefined) {
         if (state.mode === "stand") {
@@ -337,11 +321,11 @@ export function tradeReducer(
       }
     }
 
-    case "SET_ORDER_CARD_ID":
+    case "SET_CARD_ID":
       if (!regexUuid.test(action.payload)) {
         return state;
       }
-      return { ...state, orderCardId: action.payload };
+      return { ...state, cardId: action.payload };
 
     case "CLEAR_ERROR":
       return { ...state, error: "" };

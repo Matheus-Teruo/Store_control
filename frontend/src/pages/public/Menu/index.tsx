@@ -5,7 +5,7 @@ import SearchFilter from "./SearchFilter";
 import { SummaryProduct } from "@data/stands/Product";
 import useProductService from "@service/stand/useProductService";
 import PublicDropDrown from "./PublicDropDrown";
-import { ImageSVG } from "@/assets/svg";
+import { ImageSVG, ShoppingCartSVG } from "@/assets/svg";
 import {
   initialTradeState,
   tradeReducer,
@@ -15,7 +15,7 @@ import SingleTagSelect from "@/components/selects/TagSelect/SingleTagSelect";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import calculateLayout from "@/utils/calcAmountItemOnScreen";
 import ItemDetails from "./ItemDetails";
-// import Button from "@/components/utils/Button";
+import Button from "@/components/utils/Button";
 
 type ViewType = "List" | "Items";
 
@@ -194,10 +194,7 @@ function Menu() {
                 )}
               </div>
               <div className={styles.itemFooter}>
-                <div
-                  className={styles.itemLabel}
-                  // onClick={() => setSelectedItem(product.uuid)}
-                >
+                <div className={styles.itemLabel}>
                   <p
                     className={`${styles.name} ${product.stock === 0 && styles.empty}`}
                     onClick={() => setSelectedItem(product.uuid)}
@@ -224,7 +221,7 @@ function Menu() {
                     )}
                   </div>
                 </div>
-                {/* <Button
+                <Button
                   className={styles.cartButton}
                   onClick={() =>
                     dispatch({ type: "ADD_ITEM", payload: { ...product } })
@@ -232,7 +229,7 @@ function Menu() {
                 >
                   <p>Adicionar ao carrinho</p>
                   <ShoppingCartSVG size={12} />
-                </Button> */}
+                </Button>
               </div>
             </li>
           );

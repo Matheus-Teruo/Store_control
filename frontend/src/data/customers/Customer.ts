@@ -1,12 +1,12 @@
-import { RechargeOrder, SummaryRecharge } from "@data/operations/Recharge";
-import OrderCard, { SummaryOrderCard } from "./OrderCard";
-import { PurchaseOrder, SummaryPurchase } from "@data/operations/Purchase";
-import { DonationOrder, SummaryDonation } from "@data/operations/Donation";
-import { RefundOrder, SummaryRefund } from "@data/operations/Refund";
+import { RechargeCard, SummaryRecharge } from "@data/operations/Recharge";
+import Card, { SummaryCard } from "./Card";
+import { PurchaseCard, SummaryPurchase } from "@data/operations/Purchase";
+import { DonationCard, SummaryDonation } from "@data/operations/Donation";
+import { RefundCard, SummaryRefund } from "@data/operations/Refund";
 
 export default interface Customer {
   uuid: string;
-  orderCard: OrderCard;
+  card: Card;
   customerStart: string; // TODO: data
   customerEnd: string; // TODO: data
   summaryRecharges: SummaryRecharge[];
@@ -17,23 +17,23 @@ export default interface Customer {
 
 export interface SummaryCustomer {
   uuid: string;
-  summaryOrderCard: SummaryOrderCard;
+  summaryCard: SummaryCard;
   customerStart: string; // TODO: data
   customerEnd: string; // TODO: data
 }
 
-export interface CustomerOrder {
+export interface CustomerCard {
   uuid: string;
-  orderCard: OrderCard;
-  recharges: RechargeOrder[];
-  purchases: PurchaseOrder[];
-  donation: DonationOrder;
-  refund: RefundOrder;
+  card: Card;
+  recharges: RechargeCard[];
+  purchases: PurchaseCard[];
+  donation: DonationCard;
+  refund: RefundCard;
 }
 
 export interface CustomerFinalization {
   donationValue: string;
   refundValue: number;
-  orderCardId: string;
+  cardId: string;
   registerUuid: string;
 }

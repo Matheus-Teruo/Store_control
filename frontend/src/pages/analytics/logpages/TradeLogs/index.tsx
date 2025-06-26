@@ -57,7 +57,7 @@ function TradeLogs() {
           modeAmin ? undefined : user.summaryFunction?.uuid,
           page.number,
           undefined,
-          "tradeTimeStamp,asc",
+          "tradeTimestamp,asc",
         );
         if (response) {
           setTrades(response.content);
@@ -105,7 +105,7 @@ function TradeLogs() {
             key={trade.uuid}
             className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
           >
-            <p>{new Date(trade.tradeTimeStamp + "Z").toLocaleString()}</p>
+            <p>{new Date(trade.tradeTimestamp + "Z").toLocaleString()}</p>
             {/* TODO: AJUSTAR HORÁRIO DEPOIS DO EVENTO */}
             <p>{volunteersRecord[trade.voluntaryUuid].fullname}</p>
             <p>{trade.totalItems}</p>

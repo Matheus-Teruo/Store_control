@@ -68,7 +68,7 @@ function TradeDetail({ hide, uuid }: TradeDetailProps) {
           <h3>Detalhes de Venda</h3>
           <div className={styles.details}>
             <label>Data</label>
-            <p>{trade?.tradeTimeStamp.replace("T", " ")}</p>
+            <p>{trade?.tradeTimestamp.replace("T", " ")}</p>
             <label>Voluntário</label>
             <p>{trade?.summaryVoluntary.fullname}</p>
             <label>Recarga</label>
