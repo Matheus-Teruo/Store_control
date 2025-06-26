@@ -1,9 +1,6 @@
 import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
-import OrderCard, {
-  RequestOrderCard,
-  SummaryOrderCard,
-} from "@data/customers/OrderCard";
+import Card, { RequestCard, SummaryCard } from "@data/customers/Card";
 import { PaginatedResponse } from "@service/PagesType";
 import { useCallback } from "react";
 
@@ -24,17 +21,15 @@ const useCardService = () => {
   );
 
   const createCard = useCallback(
-    async (card: RequestOrderCard): Promise<OrderCard | null> =>
-      safeRequest(() =>
-        api.post<OrderCard>("cards", card).then((res) => res.data),
-      ),
+    async (card: RequestCard): Promise<Card | null> =>
+      safeRequest(() => api.post<Card>("cards", card).then((res) => res.data)),
     [api, safeRequest],
   );
 
   const getCard = useCallback(
-    async (cardId: string): Promise<OrderCard | null> =>
+    async (cardId: string): Promise<Card | null> =>
       safeRequest(() =>
-        api.get<OrderCard>(`cards/${cardId}`).then((res) => res.data),
+        api.get<Card>(`cards/${cardId}`).then((res) => res.data),
       ),
     [api, safeRequest],
   );
@@ -44,11 +39,11 @@ const useCardService = () => {
       page?: number,
       size?: number,
       sort?: "asc" | "desc",
-    ): Promise<PaginatedResponse<OrderCard> | null> =>
+    ): Promise<PaginatedResponse<Card> | null> =>
       safeRequest(() =>
         api
           .get<
-            PaginatedResponse<OrderCard>
+            PaginatedResponse<Card>
           >("cards", { params: { page, size, sort } })
           .then((res) => res.data),
       ),
@@ -60,11 +55,11 @@ const useCardService = () => {
       page?: number,
       size?: number,
       sort?: "asc" | "desc",
-    ): Promise<PaginatedResponse<SummaryOrderCard> | null> =>
+    ): Promise<PaginatedResponse<SummaryCard> | null> =>
       safeRequest(() =>
         api
           .get<
-            PaginatedResponse<SummaryOrderCard>
+            PaginatedResponse<SummaryCard>
           >("cards/active", { params: { page, size, sort } })
           .then((res) => res.data),
       ),

@@ -49,6 +49,7 @@ type FormTradeProps = {
 
 const emptyProduct: Omit<SummaryProduct, "uuid"> = {
   productName: "productName",
+  productCode: 1,
   summary: "",
   description: false,
   combo: false,
@@ -286,53 +287,48 @@ function FormTrade({
                 {state.rechargeValue.toFixed(2)}
               </p>
             </li>
-            {type === "normal" && (
-              <PaymentSelect
-                payment={state.paymentTypeEnum}
-                onChange={(e) =>
-                  dispatch({
-                    type: "SET_RECHARGE_TYPE",
-                    payload: e.target.value as PaymentType,
-                  })
-                }
-              />
-            )}
+            <PaymentSelect
+              payment={state.paymentTypeEnum}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_RECHARGE_TYPE",
+                  payload: e.target.value as PaymentType,
+                })
+              }
+            />
             {type === "pre" && (
               <p className={styles.communication}>
-                Este carrinho é apenas uma calculadora. Dirija-se ao caixa para
-                comprar fichas.
-                {/* Este carrinho é apenas uma pré ordem, para fazer o pedido pode
-                gerar o QR code e apresentar para o caixa e fazer o pagamento */}
+                Este carrinho é apenas uma pré ordem, para fazer o pedido pode
+                gerar o QR code e apresentar para o caixa e fazer o pagamento
               </p>
             )}
-            {(type === "normal" || state.standList.length === 1) &&
-              (confirmFinalization ? (
-                <div className={styles.finalizationConfirmation}>
-                  <Button
-                    onClick={() => setConfirmFinalization(false)}
-                    className={styles.finalizationButton}
-                  >
-                    <XSVG />
-                  </Button>
-                  <p>{type === "normal" ? "Finalizar" : "Gerar"}</p>
-                  <Button
-                    className={styles.finalizationButton}
-                    type={ButtonHTMLType.Submit}
-                    loading={waitingFetch}
-                  >
-                    <CheckSVG />
-                  </Button>
-                </div>
-              ) : (
-                <div className={styles.finalization}>
-                  <Button
-                    onClick={() => setConfirmFinalization(true)}
-                    className={styles.finalizationButton}
-                  >
-                    <p>{type === "normal" ? "Finalizar" : "Gerar QRcode"}</p>
-                  </Button>
-                </div>
-              ))}
+            {confirmFinalization ? (
+              <div className={styles.finalizationConfirmation}>
+                <Button
+                  onClick={() => setConfirmFinalization(false)}
+                  className={styles.finalizationButton}
+                >
+                  <XSVG />
+                </Button>
+                <p>{type === "normal" ? "Finalizar" : "Gerar"}</p>
+                <Button
+                  className={styles.finalizationButton}
+                  type={ButtonHTMLType.Submit}
+                  loading={waitingFetch}
+                >
+                  <CheckSVG />
+                </Button>
+              </div>
+            ) : (
+              <div className={styles.finalization}>
+                <Button
+                  onClick={() => setConfirmFinalization(true)}
+                  className={styles.finalizationButton}
+                >
+                  <p>{type === "normal" ? "Finalizar" : "Gerar QRcode"}</p>
+                </Button>
+              </div>
+            )}
           </form>
         </div>
       </ComponentWrapper>

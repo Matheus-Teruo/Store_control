@@ -37,7 +37,7 @@ public class RechargeValidation {
 
   public void checkDebitRemainderPositive(Recharge recharge) {
     var rechargeValue = recharge.getRechargeValue();
-    var currentDebit = recharge.getCustomer().getOrderCard().getDebit();
+    var currentDebit = recharge.getCustomer().getCard().getDebit();
 
     if (rechargeValue.compareTo(currentDebit) > 0 ) {
       throw new InvalidOperationException(

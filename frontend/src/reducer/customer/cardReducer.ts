@@ -1,16 +1,16 @@
 import { regexLeterNumber } from "@/utils/regex";
-import { RequestOrderCard } from "@data/customers/OrderCard";
+import { RequestCard } from "@data/customers/Card";
 
 type CardAction = { type: "SET_CARD"; payload: string } | { type: "RESET" };
 
-export const initialCardState: RequestOrderCard = {
+export const initialCardState: RequestCard = {
   cardId: "",
 };
 
 export function cardReducer(
-  state: RequestOrderCard,
+  state: RequestCard,
   action: CardAction,
-): RequestOrderCard {
+): RequestCard {
   switch (action.type) {
     case "SET_CARD": {
       if (!regexLeterNumber.test(action.payload)) {

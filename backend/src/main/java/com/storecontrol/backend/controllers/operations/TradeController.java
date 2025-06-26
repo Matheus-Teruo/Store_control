@@ -36,14 +36,14 @@ public class TradeController {
     var rechargeRequest = new RequestCreateRecharge(
         request.rechargeValue(),
         request.paymentTypeEnum(),
-        request.orderCardId(),
+        request.cardId(),
         UUID.fromString("12345678-abcd-4efa-bcde-f1234567890a") // Just to create request.
     );
 
     var purchaseRequest = new RequestCreatePurchase(
         request.standUuid(),
         request.items(),
-        request.orderCardId()
+        request.cardId()
     );
 
     var trade = service.createTrade(rechargeRequest, purchaseRequest);

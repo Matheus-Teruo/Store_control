@@ -1,6 +1,6 @@
 package com.storecontrol.backend.models.customers;
 
-import com.storecontrol.backend.models.customers.request.RequestOrderCard;
+import com.storecontrol.backend.models.customers.request.RequestCard;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,11 +10,11 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
-@Table(name = "order_cards")
+@Table(name = "cards")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderCard {
+public class Card {
 
     @Id @Column(name = "card_id")
     private String id;
@@ -22,14 +22,14 @@ public class OrderCard {
     @Column(nullable = false)
     private BigDecimal debit;
 
-    @OneToMany(mappedBy = "orderCard")
+    @OneToMany(mappedBy = "card")
     private List<Customer> customers;
 
     @Column(nullable = false)
     private boolean active;
 
 
-    public OrderCard(RequestOrderCard request) {
+    public Card(RequestCard request) {
         this.id = request.cardId();
         this.debit = BigDecimal.ZERO;
         this.active = false;

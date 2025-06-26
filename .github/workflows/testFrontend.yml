@@ -19,8 +19,7 @@ jobs:
     env:
       VITE_BACKEND_BASE_URL: http://localhost:8080/
       VITE_SYSTEM_VERSION: simple
-      VITE_ORDER_CARD_ID_FIXED: "OrderCardSimple"
-      VITE_CASH_REGISTER_UUID_FIXED: "12345678-abcd-4efa-bcde-f1234567890a"
+      VITE_CARD_ID_FIXED: "OrderCardSimple"
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4

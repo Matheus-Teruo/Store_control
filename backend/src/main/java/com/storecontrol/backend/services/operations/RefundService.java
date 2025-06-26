@@ -40,7 +40,7 @@ public class RefundService {
     validation.checkVoluntaryFunctionMatch(voluntary);
     finalizationValidation.checkRefundValueValid(refundValue, customer);
 
-    customer.getOrderCard().incrementDebit(refundValue.negate());
+    customer.getCard().incrementDebit(refundValue.negate());
     register.incrementCash(refundValue.negate());
     var refund = new Refund(request, customer, register, voluntary);
     customer.setRefunds(List.of(refund));
@@ -60,7 +60,7 @@ public class RefundService {
   @Transactional
   public void deleteRefund(Customer customer) {
     var refund = customer.getRefunds().getFirst();
-    customer.getOrderCard().incrementDebit(refund.getRefundValue());
+    customer.getCard().incrementDebit(refund.getRefundValue());
     refund.getRegister().incrementCash(refund.getRefundValue());
 
     refund.deleteRefund();

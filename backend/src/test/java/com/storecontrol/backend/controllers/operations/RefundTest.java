@@ -2,7 +2,7 @@ package com.storecontrol.backend.controllers.operations;
 
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
-import com.storecontrol.backend.models.customers.OrderCard;
+import com.storecontrol.backend.models.customers.Card;
 import com.storecontrol.backend.models.operations.finalization.Refund;
 import com.storecontrol.backend.models.operations.finalization.response.ResponseRefund;
 import com.storecontrol.backend.models.operations.finalization.response.ResponseSummaryRefund;
@@ -33,8 +33,8 @@ class RefundTest extends BaseTest {
     UUID refundUuid = UUID.randomUUID();
 
     String cardId = "CardIDTest12345";
-    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
-    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockOrderCard,false);
+    Card mockCard = createCardEntity(cardId, true);
+    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockCard,false);
     Refund mockRefund = createRefundEntity(refundUuid, mockCustomer);
 
     ResponseRefund expectedResponse = new ResponseRefund(mockRefund);
@@ -56,9 +56,9 @@ class RefundTest extends BaseTest {
   void readRefunds() throws Exception {
     // Given
     String cardId1 = "CardIDTest12345";
-    OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
-    Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
-    Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
+    Card mockCard1 = createCardEntity(cardId1, true);
+    Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockCard1,false);
+    Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockCard1,false);
     List<Refund> mockRefunds = List.of(
         createRefundEntity(UUID.randomUUID(), mockCustomer1),
         createRefundEntity(UUID.randomUUID(), mockCustomer2)

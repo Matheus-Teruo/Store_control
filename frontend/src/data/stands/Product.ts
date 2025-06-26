@@ -5,6 +5,7 @@ import Tag from "./Tag";
 export default interface Product {
   uuid: string;
   productName: string;
+  productCode: number;
   tags: Tag[];
   summary: string;
   description: string;
@@ -24,6 +25,7 @@ export interface ResponseImage {
 export interface SummaryProduct {
   uuid: string;
   productName: string;
+  productCode: number;
   summary: string;
   description: boolean;
   combo: boolean;
@@ -36,6 +38,7 @@ export interface SummaryProduct {
 
 export interface CreateProduct {
   productName: string;
+  productCode: number;
   tagsUuid: string[];
   summary?: string;
   description?: string;
@@ -49,6 +52,7 @@ export interface CreateProduct {
 export interface UpdateProduct {
   uuid: string;
   productName?: string;
+  productCode?: number;
   tagsUuid?: string[];
   summary?: string;
   description?: string;

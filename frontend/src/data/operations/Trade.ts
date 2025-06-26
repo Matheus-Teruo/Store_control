@@ -9,7 +9,9 @@ export default interface Trade {
   rechargeValue: number;
   paymentTypeEnum: PaymentType;
   onOrder: boolean;
-  tradeTimeStamp: string; // TODO: data
+  reversal: boolean;
+  standUuid: string;
+  tradeTimestamp: string; // TODO: data
   items: Item[];
   summaryVoluntary: SummaryVoluntary;
 }
@@ -21,7 +23,9 @@ export interface SummaryTrade {
   rechargeValue: number;
   paymentTypeEnum: PaymentType;
   onOrder: boolean;
-  tradeTimeStamp: string; // TODO: data
+  reversal: boolean;
+  standUuid: string;
+  tradeTimestamp: string; // TODO: data
   totalItems: number;
   voluntaryUuid: string;
 }
@@ -29,9 +33,7 @@ export interface SummaryTrade {
 export interface CreateTrade {
   rechargeValue: number;
   paymentTypeEnum: PaymentType;
-  orderCardId: string;
-  registerUuid: string;
-  onOrder: boolean;
+  cardId: string;
   standUuid: string;
   items: CreateItem[];
 }

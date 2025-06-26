@@ -10,6 +10,7 @@ import java.util.UUID;
 public record ResponseProduct(
     UUID uuid,
     String productName,
+    Integer productCode,
     List<ResponseTag> tags,
     String summary,
     String description,
@@ -25,6 +26,7 @@ public record ResponseProduct(
   public ResponseProduct(Product product) {
     this(product.getUuid(),
         product.getProductName(),
+        product.getProductCode(),
         product.getTags()
             .stream()
             .map(ResponseTag::new).toList(),

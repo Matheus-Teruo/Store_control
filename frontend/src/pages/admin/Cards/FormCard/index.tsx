@@ -5,7 +5,7 @@ import {
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
 import { cardReducer, initialCardState } from "@reducer/customer/cardReducer";
-import useCardService from "@service/customer/useOrderCardService";
+import useCardService from "@service/customer/useCardService";
 import { useReducer } from "react";
 
 function FormCard({ hide }: { hide: () => void }) {
@@ -19,7 +19,7 @@ function FormCard({ hide }: { hide: () => void }) {
     if (card) {
       addNotification({
         title: "Create Card Success",
-        message: `Create OrderCard: ${card.cardId}`,
+        message: `Create Card: ${card.cardId}`,
         type: MessageType.OK,
       });
       dispatch({ type: "RESET" });

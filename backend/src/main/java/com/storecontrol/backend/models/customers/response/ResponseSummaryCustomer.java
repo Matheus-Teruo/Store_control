@@ -6,14 +6,14 @@ import java.util.UUID;
 
 public record ResponseSummaryCustomer(
     UUID uuid,
-    ResponseSummaryOrderCard summaryOrderCard,
+    ResponseSummaryCard summaryCard,
     String customerStart,
     String customerEnd
 ) {
 
   public ResponseSummaryCustomer(Customer customer) {
     this(customer.getUuid(),
-        customer.isInUse() ? new ResponseSummaryOrderCard(customer.getOrderCard()) : null,
+        customer.isInUse() ? new ResponseSummaryCard(customer.getCard()) : null,
         customer.getCustomerStart().toString(),
         customer.getCustomerEnd() != null ? customer.getCustomerEnd().toString() : null
     );

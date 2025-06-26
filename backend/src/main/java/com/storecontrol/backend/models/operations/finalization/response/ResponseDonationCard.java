@@ -5,13 +5,13 @@ import com.storecontrol.backend.models.operations.finalization.Donation;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record ResponseDonationOrder(
+public record ResponseDonationCard(
     UUID uuid,
     BigDecimal donationValue,
     String donationTimestamp
 ) {
 
-  public ResponseDonationOrder(Donation donation) {
+  public ResponseDonationCard(Donation donation) {
     this(donation.getUuid(),
         donation.getDonationValue(),
         donation.getDonationTimestamp().toString()

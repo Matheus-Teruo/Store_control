@@ -1,8 +1,8 @@
 package com.storecontrol.backend.controllers.operations;
 
 import com.storecontrol.backend.BaseTest;
+import com.storecontrol.backend.models.customers.Card;
 import com.storecontrol.backend.models.customers.Customer;
-import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
@@ -37,8 +37,8 @@ class PurchaseTest extends BaseTest {
   void testCreatePurchaseSuccess() throws Exception {
     // Given
     String cardId = "CardIDTest12345";
-    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
-    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockOrderCard,false);
+    Card mockCard = createCardEntity(cardId, true);
+    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockCard,false);
 
     Purchase mockPurchase = createPurchaseEntity(UUID.randomUUID(), mockCustomer);
     mockPurchase.setItems(createItemEntity(mockPurchase));
@@ -67,8 +67,8 @@ class PurchaseTest extends BaseTest {
     UUID purchaseUuid = UUID.randomUUID();
 
     String cardId = "CardIDTest12345";
-    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
-    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockOrderCard,false);
+    Card mockCard = createCardEntity(cardId, true);
+    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockCard,false);
 
     Purchase mockPurchase = createPurchaseEntity(purchaseUuid, mockCustomer);
     mockPurchase.setItems(createItemEntity(mockPurchase));
@@ -91,9 +91,9 @@ class PurchaseTest extends BaseTest {
   void testReadPurchasesSuccess() throws Exception {
     // Given
     String cardId1 = "CardIDTest12345";
-    OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
-    Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
-    Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
+    Card mockCard1 = createCardEntity(cardId1, true);
+    Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockCard1,false);
+    Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockCard1,false);
 
     List<Purchase> mockPurchases = List.of(
         createPurchaseEntity(UUID.randomUUID(), mockCustomer1),
@@ -141,9 +141,9 @@ class PurchaseTest extends BaseTest {
   void testReadLast3PurchasesSuccess() throws Exception {
     // Given
     String cardId1 = "CardIDTest12345";
-    OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
-    Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
-    Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
+    Card mockCard1 = createCardEntity(cardId1, true);
+    Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockCard1,false);
+    Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockCard1,false);
 
     List<Purchase> mockPurchases = List.of(
         createPurchaseEntity(UUID.randomUUID(), mockCustomer1),
@@ -176,8 +176,8 @@ class PurchaseTest extends BaseTest {
   void testUpdatePurchaseSuccess() throws Exception {
     // Given
     String cardId = "CardIDTest12345";
-    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
-    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockOrderCard,false);
+    Card mockCard = createCardEntity(cardId, true);
+    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockCard,false);
 
     Purchase mockPurchase = createPurchaseEntity(UUID.randomUUID(), mockCustomer);
     mockPurchase.setItems(createItemEntity(mockPurchase));
@@ -208,8 +208,8 @@ class PurchaseTest extends BaseTest {
   void testDeletePurchaseSuccess() throws Exception {
     // Given
     String cardId = "CardIDTest12345";
-    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
-    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockOrderCard,false);
+    Card mockCard = createCardEntity(cardId, true);
+    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockCard,false);
 
     Purchase mockPurchase = createPurchaseEntity(UUID.randomUUID(), mockCustomer);
     mockPurchase.setItems(createItemEntity(mockPurchase));

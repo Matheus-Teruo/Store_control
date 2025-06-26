@@ -1,14 +1,14 @@
-export default interface OrderCard {
+export default interface Card {
   cardId: string;
   debit: number;
   active: boolean;
 }
 
-export interface SummaryOrderCard {
+export interface SummaryCard {
   cardId: number;
   debit: number;
 }
 
-export interface RequestOrderCard {
+export interface RequestCard {
   cardId: string;
 }

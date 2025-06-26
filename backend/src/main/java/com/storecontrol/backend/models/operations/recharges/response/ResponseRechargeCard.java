@@ -6,14 +6,14 @@ import com.storecontrol.backend.models.operations.recharges.Recharge;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record ResponseRechargeOrder(
+public record ResponseRechargeCard(
     UUID uuid,
     BigDecimal rechargeValue,
     PaymentType paymentTypeEnum,
     String rechargeTimestamp
 ) {
 
-  public ResponseRechargeOrder(Recharge recharge) {
+  public ResponseRechargeCard(Recharge recharge) {
     this(recharge.getUuid(),
         recharge.getRechargeValue(),
         recharge.getPaymentTypeEnum(),

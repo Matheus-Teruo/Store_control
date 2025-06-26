@@ -1,16 +1,14 @@
 package com.storecontrol.backend;
 
+import com.storecontrol.backend.models.customers.Card;
 import com.storecontrol.backend.models.customers.Customer;
-import com.storecontrol.backend.models.customers.OrderCard;
+import com.storecontrol.backend.models.customers.request.RequestCard;
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
-import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.enumerate.PaymentType;
 import com.storecontrol.backend.models.enumerate.TransactionType;
 import com.storecontrol.backend.models.enumerate.VoluntaryRole;
 import com.storecontrol.backend.models.operations.finalization.Donation;
-import com.storecontrol.backend.models.operations.recharges.Recharge;
 import com.storecontrol.backend.models.operations.finalization.Refund;
-import com.storecontrol.backend.models.operations.transactions.Transaction;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.ItemId;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
@@ -18,10 +16,12 @@ import com.storecontrol.backend.models.operations.purchases.request.RequestCreat
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdatePurchase;
+import com.storecontrol.backend.models.operations.recharges.Recharge;
 import com.storecontrol.backend.models.operations.recharges.request.RequestCreateRecharge;
-import com.storecontrol.backend.models.operations.transactions.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.operations.trades.Trade;
 import com.storecontrol.backend.models.operations.trades.request.RequestCreateTrade;
+import com.storecontrol.backend.models.operations.transactions.Transaction;
+import com.storecontrol.backend.models.operations.transactions.request.RequestCreateTransaction;
 import com.storecontrol.backend.models.registers.Register;
 import com.storecontrol.backend.models.registers.request.RequestCreateRegister;
 import com.storecontrol.backend.models.registers.request.RequestUpdateRegister;
@@ -49,10 +49,10 @@ import java.util.UUID;
 
 public class TestDataFactory {
 
-  public static Customer createCustomerEntity(UUID uuid, OrderCard orderCard, boolean inUse) {
+  public static Customer createCustomerEntity(UUID uuid, Card card, boolean inUse) {
     return new Customer(
         uuid,
-        orderCard,
+        card,
         LocalDateTime.now(),
         null,
         new ArrayList<>(),
@@ -68,13 +68,13 @@ public class TestDataFactory {
     return new RequestCustomerFinalization(
         BigDecimal.TWO,
         BigDecimal.ONE,
-        customer.getOrderCard().getId(),
+        customer.getCard().getId(),
         UUID.randomUUID()
     );
   }
 
-  public static OrderCard createOrderCardEntity(String cardId, boolean active) {
-    return new OrderCard(
+  public static Card createCardEntity(String cardId, boolean active) {
+    return new Card(
         cardId,
         BigDecimal.ZERO,
         null,
@@ -82,8 +82,8 @@ public class TestDataFactory {
     );
   }
 
-  public static RequestOrderCard createRequestOrderCard(String cardId) {
-    return new RequestOrderCard(
+  public static RequestCard createRequestCard(String cardId) {
+    return new RequestCard(
         cardId
     );
   }
@@ -151,7 +151,7 @@ public class TestDataFactory {
     return new RequestCreatePurchase(
         purchase.getStandUuid(),
         requestCreateItems,
-        purchase.getCustomer().getOrderCard().getId()
+        purchase.getCustomer().getCard().getId()
     );
   }
 
@@ -195,7 +195,7 @@ public class TestDataFactory {
     return new RequestCreateRecharge(
         recharge.getRechargeValue(),
         recharge.getPaymentTypeEnum().toString().toLowerCase(),
-        recharge.getCustomer().getOrderCard().getId(),
+        recharge.getCustomer().getCard().getId(),
         recharge.getRegister().getUuid()
     );
   }
@@ -216,7 +216,7 @@ public class TestDataFactory {
     );
   }
 
-  public static RequestCreateTrade createRequestCreateTrade(Recharge recharge, Purchase purchase, OrderCard orderCard) {
+  public static RequestCreateTrade createRequestCreateTrade(Recharge recharge, Purchase purchase, Card card) {
     List<RequestCreateItem> requestCreateItems = new ArrayList<>();
     for (Item item : purchase.getItems()) {
       requestCreateItems.add(new RequestCreateItem(
@@ -230,7 +230,7 @@ public class TestDataFactory {
     return new RequestCreateTrade(
         recharge.getRechargeValue(),
         recharge.getPaymentTypeEnum().toString(),
-        orderCard.getId(),
+        card.getId(),
         purchase.getStandUuid(),
         requestCreateItems
     );

@@ -25,7 +25,7 @@ public class ProductComboService {
     List<ProductCombo> productCombos = new ArrayList<>();
 
     for (RequestCreateProductCombo requestCreateProductCombo : requestProductCombos) {
-      var includedProduct = productMap.get(requestCreateProductCombo.includedProductUuid());
+      var includedProduct = productMap.get(requestCreateProductCombo.productIncludedUuid());
 
       var productComboId = new ProductComboId(product, includedProduct);
       var productCombo = new ProductCombo(requestCreateProductCombo, productComboId);
@@ -48,7 +48,7 @@ public class ProductComboService {
     List<ProductCombo> newProductCombos = new ArrayList<>();
 
     for (RequestCreateProductCombo requestCreateProductCombo : requestProductCombos) {
-      UUID productUuid = requestCreateProductCombo.includedProductUuid();
+      UUID productUuid = requestCreateProductCombo.productIncludedUuid();
 
       if (existingComboMap.containsKey(productUuid)) {
         ProductCombo existing = existingComboMap.get(productUuid);

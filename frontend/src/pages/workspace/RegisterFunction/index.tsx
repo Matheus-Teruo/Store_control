@@ -19,7 +19,7 @@ import useRechargeService from "@service/operations/useRechargeService";
 import useProductService from "@service/stand/useProductService";
 import { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import OrderCard from "./OrderCard";
+import CardInput from "./CardInput";
 import { PaymentType } from "@data/operations/Recharge";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import PageSelect from "@/components/selects/PageSelect";
@@ -66,13 +66,13 @@ function RegisterFunction() {
       const recharge = await createRecharge({
         rechargeValue: state.rechargeValue,
         paymentTypeEnum: state.paymentTypeEnum!,
-        orderCardId: state.orderCardId,
+        cardId: state.cardId,
         registerUuid: state.registerUuid,
       });
       if (recharge) {
         addNotification({
           title: "Create Recharge Success",
-          message: `Value ${recharge.rechargeValue} on ${recharge.paymentTypeEnum} to card ${recharge.summaryCustomer.summaryOrderCard.cardId}`,
+          message: `Value ${recharge.rechargeValue} on ${recharge.paymentTypeEnum} to card ${recharge.summaryCustomer.summaryCard.cardId}`,
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
@@ -100,8 +100,8 @@ function RegisterFunction() {
         </>
       )}
       <form onSubmit={handleSubmit}>
-        <OrderCard
-          value={state.orderCardId}
+        <CardInput
+          value={state.cardId}
           onChange={(e) =>
             dispatch({ type: "SET_CARD_ID", payload: e.target.value })
           }

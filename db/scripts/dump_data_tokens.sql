@@ -12,10 +12,10 @@ SET @PRODUCT3_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @PRODUCT4_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @PRODUCT5_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @PRODUCT6_UUID = UNHEX(REPLACE(UUID(), '-', ''));
-SET @ORDER_CARD1_ID = 'ordercard000001';
-SET @ORDER_CARD2_ID = 'ordercard000002';
-SET @ORDER_CARD3_ID = 'ordercard000003';
-SET @ORDER_CARD4_ID = 'ordercard000004';
+SET @CARD1_ID = 'ordercard000001';
+SET @CARD2_ID = 'ordercard000002';
+SET @CARD3_ID = 'ordercard000003';
+SET @CARD4_ID = 'ordercard000004';
 SET @VOLUNTARY_MANAGER1_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @VOLUNTARY_MANAGER2_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @VOLUNTARY_USER1_UUID = UNHEX(REPLACE(UUID(), '-', ''));
@@ -75,11 +75,11 @@ INSERT INTO products (uuid, product_name, product_code, summary, description, co
 (@PRODUCT6_UUID, 'Mabudofu', 4, "Prato com tofu apimentado acompanhado de arroz japones", "", 0, 35.00, 0.00, 299, @STAND3_UUID, 1);
 
 -- Inserir Cartões de Ordem
-INSERT INTO order_cards (card_id, debit, active) VALUES
-(@ORDER_CARD1_ID, 0.00, 0),
-(@ORDER_CARD2_ID, 0.00, 0),
-(@ORDER_CARD3_ID, 0.00, 0),
-(@ORDER_CARD4_ID, 0.00, 0);
+INSERT INTO cards (card_id, debit, active) VALUES
+(@CARD1_ID, 0.00, 0),
+(@CARD2_ID, 0.00, 0),
+(@CARD3_ID, 0.00, 0),
+(@CARD4_ID, 0.00, 0);
 
 -- Inserir Voluntários
 INSERT INTO volunteers (uuid, username, password, fullname, related_association_uuid, function_uuid, voluntary_role, valid) VALUES
@@ -90,10 +90,10 @@ INSERT INTO volunteers (uuid, username, password, fullname, related_association_
 
 -- Inserir Clientes
 INSERT INTO customers (uuid, card_id, customer_start, customer_end, in_use, valid) VALUES
-(@CUSTOMER1_UUID, @ORDER_CARD1_ID, '2025-06-07 16:40:52', '2025-06-07 17:54:22', 0, 1),
-(@CUSTOMER2_UUID, @ORDER_CARD2_ID, '2025-06-07 12:10:30', '2025-06-07 14:50:23', 0, 1),
-(@CUSTOMER3_UUID, @ORDER_CARD2_ID, '2025-06-07 11:32:25', '2025-06-07 12:00:15', 0, 1),
-(@CUSTOMER4_UUID, @ORDER_CARD3_ID, '2025-06-07 11:17:12', '2025-06-07 12:01:37', 0, 1);
+(@CUSTOMER1_UUID, @CARD1_ID, '2025-06-07 16:40:52', '2025-06-07 17:54:22', 0, 1),
+(@CUSTOMER2_UUID, @CARD2_ID, '2025-06-07 12:10:30', '2025-06-07 14:50:23', 0, 1),
+(@CUSTOMER3_UUID, @CARD2_ID, '2025-06-07 11:32:25', '2025-06-07 12:00:15', 0, 1),
+(@CUSTOMER4_UUID, @CARD3_ID, '2025-06-07 11:17:12', '2025-06-07 12:01:37', 0, 1);
 
 -- Inserir Recharges
 INSERT INTO recharges (uuid, recharge_value, payment_type, recharge_timestamp, customer_uuid, register_uuid, voluntary_uuid, valid) VALUES

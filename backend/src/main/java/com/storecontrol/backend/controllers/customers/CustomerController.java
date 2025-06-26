@@ -1,9 +1,9 @@
 package com.storecontrol.backend.controllers.customers;
 
+import com.storecontrol.backend.models.customers.request.RequestCard;
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
-import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.customers.response.ResponseCustomer;
-import com.storecontrol.backend.models.customers.response.ResponseCustomerOrder;
+import com.storecontrol.backend.models.customers.response.ResponseCustomerCard;
 import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
 import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
 import com.storecontrol.backend.services.customers.CustomerService;
@@ -34,8 +34,8 @@ public class CustomerController {
   }
 
   @GetMapping("/card/{cardId}")
-  public ResponseEntity<ResponseCustomerOrder> readCustomerByCard(@PathVariable @Valid RequestOrderCard cardId) {
-    var response = new ResponseCustomerOrder(service.takeActiveCustomerByCardId(cardId.cardId()));
+  public ResponseEntity<ResponseCustomerCard> readCustomerByCard(@PathVariable @Valid RequestCard cardId) {
+    var response = new ResponseCustomerCard(service.takeActiveCustomerByCardId(cardId.cardId()));
 
     return ResponseEntity.ok(response);
   }
@@ -66,7 +66,7 @@ public class CustomerController {
   }
 
   @DeleteMapping("/finalize/{cardId}")
-  public ResponseEntity<ResponseCustomer> undoFinalizeCustomer(@PathVariable @Valid RequestOrderCard cardId) {
+  public ResponseEntity<ResponseCustomer> undoFinalizeCustomer(@PathVariable @Valid RequestCard cardId) {
     var response = new ResponseCustomer(customerFinalizationHandler.undoFinalizeCustomer(cardId));
 
     return ResponseEntity.ok(response);
