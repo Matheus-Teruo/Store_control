@@ -4,7 +4,7 @@ import { SummaryVoluntary } from "@data/volunteers/Voluntary";
 export default interface Donation {
   uuid: string;
   donationValue: number;
-  donationTimeStamp: string; // TODO: data
+  donationTimestamp: string; // TODO: data
   summaryCustomer: SummaryCustomer;
   summaryVoluntary: SummaryVoluntary;
 }
@@ -12,12 +12,12 @@ export default interface Donation {
 export interface SummaryDonation {
   uuid: string;
   donationValue: number;
-  donationTimeStamp: string; // TODO: data
+  donationTimestamp: string; // TODO: data
   voluntaryUuid: string;
 }
 
-export interface DonationOrder {
+export interface DonationCard {
   uuid: string;
   donationValue: number;
-  donationTimeStamp: string; // TODO: data
+  donationTimestamp: string; // TODO: data
 }

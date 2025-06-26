@@ -33,7 +33,7 @@ function TransactionLogs() {
         <div key={transaction.uuid}>
           <p>{transaction.amount}</p>
           <p>{transaction.transactionTypeEnum}</p>
-          <p>{transaction.transactionTimeStamp}</p>
+          <p>{transaction.transactionTimestamp}</p>
         </div>
       ))}
     </div>

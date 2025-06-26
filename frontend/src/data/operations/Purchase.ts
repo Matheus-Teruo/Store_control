@@ -5,8 +5,9 @@ import Item, { CreateItem, UpdateItem } from "./Item";
 export default interface Purchase {
   uuid: string;
   onOrder: boolean;
+  reversal: boolean;
   standUuid: string;
-  purchaseTimeStamp: string; // TODO: data
+  purchaseTimestamp: string; // TODO: data
   items: Item[];
   summaryCustomer: SummaryCustomer;
   summaryVoluntary: SummaryVoluntary;
@@ -15,7 +16,8 @@ export default interface Purchase {
 export interface SummaryPurchase {
   uuid: string;
   onOrder: boolean;
-  purchaseTimeStamp: string; // TODO: data
+  reversal: boolean;
+  purchaseTimestamp: string; // TODO: data
   totalItems: number;
   totalPurchaseCost: number;
   totalPurchaseDiscount: number;
@@ -23,23 +25,22 @@ export interface SummaryPurchase {
   voluntaryUuid: string;
 }
 
-export interface PurchaseOrder {
+export interface PurchaseCard {
   uuid: string;
   onOrder: boolean;
+  reversal: boolean;
   standUuid: string;
-  purchaseTimeStamp: string; // TODO: data
+  purchaseTimestamp: string; // TODO: data
   items: Item[];
 }
 
 export interface CreatePurchase {
-  onOrder: boolean;
   standUuid: string;
   items: CreateItem[];
-  orderCardId: string;
+  cardId: string;
 }
 
 export interface UpdatePurchase {
   uuid: string;
-  onOrder?: boolean;
-  items?: UpdateItem[];
+  items: UpdateItem[];
 }

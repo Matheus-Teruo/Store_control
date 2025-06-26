@@ -14,7 +14,7 @@ import {
 import useProductService from "@service/stand/useProductService";
 import { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import OrderCard from "../RegisterFunction/OrderCard";
+import Card from "../RegisterFunction/CardInput";
 import { VoluntaryRole } from "@data/volunteers/Voluntary";
 import FormPurchase from "./FormPurchase";
 import Button from "@/components/utils/Button";
@@ -68,8 +68,8 @@ function StandFunction() {
         )}
       </div>
       <div>
-        <OrderCard
-          value={state.orderCardId}
+        <Card
+          value={state.cardId}
           onChange={(e) =>
             dispatch({ type: "SET_CARD_ID", payload: e.target.value })
           }

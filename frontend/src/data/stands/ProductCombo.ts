@@ -1,9 +1,9 @@
 export default interface ProductCombo {
-  includedProduct: string;
+  productIncluded: string;
   quantity: number;
 }
 
 export interface CreateProductCombo {
-  includedProductUuid: string;
+  productIncludedUuid: string;
   quantity: number;
 }

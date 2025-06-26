@@ -4,7 +4,7 @@ import { SummaryVoluntary } from "@data/volunteers/Voluntary";
 export default interface Refund {
   uuid: string;
   refundValue: number;
-  refundTimeStamp: string; // TODO: data
+  refundTimestamp: string; // TODO: data
   summaryCustomer: SummaryCustomer;
   summaryVoluntary: SummaryVoluntary;
 }
@@ -12,12 +12,12 @@ export default interface Refund {
 export interface SummaryRefund {
   uuid: string;
   refundValue: number;
-  refundTimeStamp: string; // TODO: data
+  refundTimestamp: string; // TODO: data
   voluntaryUuid: string;
 }
 
-export interface RefundOrder {
+export interface RefundCard {
   uuid: string;
   refundValue: number;
-  refundTimeStamp: string; // TODO: data
+  refundTimestamp: string; // TODO: data
 }

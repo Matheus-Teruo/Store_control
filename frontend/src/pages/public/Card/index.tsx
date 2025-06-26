@@ -1,13 +1,13 @@
-import styles from "./Order.module.scss";
+import styles from "./Card.module.scss";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useProductService from "@service/stand/useProductService";
 import { SummaryProduct } from "@data/stands/Product";
 import useCustomersApi from "@service/customer/useCustomerService";
-import { CustomerOrder } from "@data/customers/Customer";
+import { CustomerCard } from "@data/customers/Customer";
 
-function Order() {
-  const [customer, setCustomer] = useState<CustomerOrder>();
+function Card() {
+  const [customer, setCustomer] = useState<CustomerCard>();
   const [productsRecord, setProductsRecord] = useState<
     Record<string, Omit<SummaryProduct, "uuid">>
   >({});
@@ -90,4 +90,4 @@ function Order() {
   );
 }
 
-export default Order;
+export default Card;

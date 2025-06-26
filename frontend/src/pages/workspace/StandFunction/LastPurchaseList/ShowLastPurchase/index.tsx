@@ -38,7 +38,7 @@ function ShowLastPurchase({
         <>
           <h4>{purchase.onOrder ? "Ativo" : "Concluido"}</h4>
           <p className={styles.timestamp}>
-            Data: {purchase.purchaseTimeStamp.replace("T1", " ")}
+            Data: {purchase.purchaseTimestamp.replace("T1", " ")}
           </p>
           <ul>
             <li key={"header"} className={styles.listHeader}>

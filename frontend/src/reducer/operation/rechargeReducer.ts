@@ -11,7 +11,7 @@ type RechargeAction =
 export const initialRechargeState: CreateRecharge = {
   rechargeValue: 0,
   paymentTypeEnum: PaymentType.CASH,
-  orderCardId: "",
+  cardId: "",
   registerUuid: "",
 };
 
@@ -33,7 +33,7 @@ export function rechargeReducer(
       if (!regexUuid.test(action.payload)) {
         return state;
       }
-      return { ...state, orderCardId: action.payload };
+      return { ...state, cardId: action.payload };
     }
     case "SET_CASH_REGISTER_UUID": {
       if (!regexUuid.test(action.payload)) {

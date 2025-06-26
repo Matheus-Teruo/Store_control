@@ -49,6 +49,7 @@ type FormTradeProps = {
 
 const emptyProduct: Omit<SummaryProduct, "uuid"> = {
   productName: "productName",
+  productCode: 1,
   summary: "",
   description: false,
   combo: false,
