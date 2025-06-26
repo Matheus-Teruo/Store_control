@@ -3,7 +3,7 @@
 -- Foreign keys for customers table
 ALTER TABLE customers
 ADD CONSTRAINT fk_customers_card_id
-FOREIGN KEY (card_id) REFERENCES order_cards (card_id);
+FOREIGN KEY (card_id) REFERENCES cards (card_id);
 
 -- Foreign keys for donations table
 ALTER TABLE donations

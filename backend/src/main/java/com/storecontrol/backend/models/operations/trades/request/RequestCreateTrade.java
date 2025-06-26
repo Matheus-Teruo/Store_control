@@ -17,9 +17,9 @@ public record RequestCreateTrade(
     @NotBlank(message = "{request.validation.createRecharge.paymentTypeEnum.notBlank}")
     String paymentTypeEnum,
 
-    @NotBlank(message = "{request.validation.createRecharge.orderCardId.notBlank}")
-    @Pattern(regexp = "^[A-Za-z0-9]{15}$", message = "{request.validation.createRecharge.orderCardId.pattern}")
-    String orderCardId,
+    @NotBlank(message = "{request.validation.createRecharge.cardId.notBlank}")
+    @Pattern(regexp = "^[A-Za-z0-9]{15}$", message = "{request.validation.createRecharge.cardId.pattern}")
+    String cardId,
 
     @NotNull(message = "{request.validation.createPurchase.standUuid.notnull}")
     UUID standUuid,

@@ -16,9 +16,9 @@ public record RequestCustomerFinalization(
     @Digits(integer = 5, fraction = 2, message = "{request.validation.customer.refundValue.digits}")
     BigDecimal refundValue,
 
-    @NotNull(message = "{request.validation.customer.orderCardId.notnull}")
-    @Pattern(regexp = "^[A-Za-z0-9]{15}$", message = "{request.validation.customer.orderCardId.pattern}")
-    String orderCardId,
+    @NotNull(message = "{request.validation.customer.cardId.notnull}")
+    @Pattern(regexp = "^[A-Za-z0-9]{15}$", message = "{request.validation.customer.cardId.pattern}")
+    String cardId,
 
     @NotNull(message = "{request.validation.customer.registerUuid.notnull}")
     UUID registerUuid

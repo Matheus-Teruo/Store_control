@@ -2,7 +2,7 @@ package com.storecontrol.backend.controllers.operations;
 
 import com.storecontrol.backend.BaseTest;
 import com.storecontrol.backend.models.customers.Customer;
-import com.storecontrol.backend.models.customers.OrderCard;
+import com.storecontrol.backend.models.customers.Card;
 import com.storecontrol.backend.models.operations.finalization.Donation;
 import com.storecontrol.backend.models.operations.finalization.response.ResponseDonation;
 import com.storecontrol.backend.models.operations.finalization.response.ResponseSummaryDonation;
@@ -33,8 +33,8 @@ class DonationTest extends BaseTest {
     UUID donationUuid = UUID.randomUUID();
 
     String cardId = "CardIDTest12345";
-    OrderCard mockOrderCard = createOrderCardEntity(cardId, false);
-    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockOrderCard,false);
+    Card mockCard = createCardEntity(cardId, false);
+    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockCard,false);
     Donation mockDonation = createDonationEntity(donationUuid, mockCustomer);
 
     ResponseDonation expectedResponse = new ResponseDonation(mockDonation);
@@ -56,9 +56,9 @@ class DonationTest extends BaseTest {
   void testReadDonationsSuccess() throws Exception {
     // Given
     String cardId1 = "CardIDTest12345";
-    OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
-    Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
-    Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
+    Card mockCard1 = createCardEntity(cardId1, true);
+    Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockCard1,false);
+    Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockCard1,false);
     List<Donation> mockDonations = List.of(
         createDonationEntity(UUID.randomUUID(), mockCustomer1),
         createDonationEntity(UUID.randomUUID(), mockCustomer2)

@@ -218,12 +218,12 @@ public class TradeService {
   private Customer handleChangesOnCustomerByCardId(RequestCreateRecharge request, boolean onOrder) {
     Customer customer;
     if (onOrder) {
-      customer = customerService.initializeCustomer(request.orderCardId());
+      customer = customerService.initializeCustomer(request.cardId());
     } else {
       try {
-        customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
+        customer = customerService.takeActiveCustomerByCardId(request.cardId());
       } catch (InvalidDatabaseQueryException ex) {
-        customer = customerService.initializeCustomer(request.orderCardId());
+        customer = customerService.initializeCustomer(request.cardId());
       }
     }
     return customer;

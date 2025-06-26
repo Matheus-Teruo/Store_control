@@ -77,7 +77,7 @@ public class CustomerFinalizationValidation {
   }
 
   public void checkDonationValueValid(BigDecimal donationValue, Customer customer) {
-    var currentDebit = customer.getOrderCard().getDebit();
+    var currentDebit = customer.getCard().getDebit();
 
     if (donationValue.compareTo(currentDebit) > 0) {
       throw new InvalidCustomerException(
@@ -88,7 +88,7 @@ public class CustomerFinalizationValidation {
   }
 
   public void checkRefundValueValid(BigDecimal refundValue, Customer customer) {
-    var remainingDebit = customer.getOrderCard().getDebit();
+    var remainingDebit = customer.getCard().getDebit();
     var viableValueForRefund = customer.getRecharges().stream()
         .filter(recharge -> recharge.getPaymentTypeEnum() == PaymentType.CASH && recharge.isValid())
         .map(Recharge::getRechargeValue)

@@ -120,7 +120,7 @@ public class PurchaseValidation {
                 .multiply(requestCreateItem.unitPrice().subtract(requestCreateItem.discount())))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-    if (totalValue.compareTo(customer.getOrderCard().getDebit()) > 0) {
+    if (totalValue.compareTo(customer.getCard().getDebit()) > 0) {
       throw new InvalidOperationException(
           MessageResolver.getInstance().getMessage("validation.purchase.checkDebit.insufficientDebit.error"),
           MessageResolver.getInstance().getMessage("validation.purchase.checkDebit.insufficientDebit.message")

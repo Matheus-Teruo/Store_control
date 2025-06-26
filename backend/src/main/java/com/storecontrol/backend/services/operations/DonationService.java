@@ -40,7 +40,7 @@ public class DonationService {
     validation.checkVoluntaryFunctionMatch(voluntary);
     finalizationValidation.checkDonationValueValid(donationValue, customer);
 
-    customer.getOrderCard().incrementDebit(donationValue.negate());
+    customer.getCard().incrementDebit(donationValue.negate());
     var donation = new Donation(request, customer, register, voluntary);
     customer.setDonations(List.of(donation));
 
@@ -58,7 +58,7 @@ public class DonationService {
 
   @Transactional
   public void deleteDonation(Customer customer) {
-    customer.getOrderCard().incrementDebit(customer.getDonations().getFirst().getDonationValue());
+    customer.getCard().incrementDebit(customer.getDonations().getFirst().getDonationValue());
 
     customer.getDonations().getFirst().deleteDonation();
   }

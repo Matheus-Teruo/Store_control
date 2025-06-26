@@ -49,8 +49,8 @@ CREATE TABLE items (
     PRIMARY KEY (product_uuid, purchase_uuid)
 );
 
--- Table for order_cards
-CREATE TABLE order_cards (
+-- Table for cards
+CREATE TABLE cards (
     card_id CHAR(15) PRIMARY KEY,
     debit DECIMAL(19, 2) NOT NULL,
     active TINYINT NOT NULL

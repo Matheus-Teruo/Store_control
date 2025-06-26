@@ -1,8 +1,8 @@
 package com.storecontrol.backend.controllers.operations;
 
 import com.storecontrol.backend.BaseTest;
+import com.storecontrol.backend.models.customers.Card;
 import com.storecontrol.backend.models.customers.Customer;
-import com.storecontrol.backend.models.customers.OrderCard;
 import com.storecontrol.backend.models.operations.recharges.Recharge;
 import com.storecontrol.backend.models.operations.recharges.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.recharges.response.ResponseRecharge;
@@ -33,8 +33,8 @@ class RechargeTest extends BaseTest {
   void testCreateRechargeSuccess() throws Exception {
     // Given
     String cardId = "CardIDTest12345";
-    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
-    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockOrderCard,false);
+    Card mockCard = createCardEntity(cardId, true);
+    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockCard,false);
 
     Recharge mockRecharge = createRechargeEntity(UUID.randomUUID(), mockCustomer, false);
     RequestCreateRecharge requestRecharge = createRequestCreateRecharge(mockRecharge);
@@ -62,8 +62,8 @@ class RechargeTest extends BaseTest {
     UUID rechargeUuid = UUID.randomUUID();
 
     String cardId = "CardIDTest12345";
-    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
-    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockOrderCard,false);
+    Card mockCard = createCardEntity(cardId, true);
+    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockCard,false);
 
     Recharge mockRefund = createRechargeEntity(rechargeUuid, mockCustomer, false);
 
@@ -86,9 +86,9 @@ class RechargeTest extends BaseTest {
   void testReadRechargesSuccess() throws Exception {
     // Given
     String cardId1 = "CardIDTest12345";
-    OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
-    Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
-    Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
+    Card mockCard1 = createCardEntity(cardId1, true);
+    Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockCard1,false);
+    Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockCard1,false);
 
     List<Recharge> mockRecharges = List.of(
         createRechargeEntity(UUID.randomUUID(), mockCustomer1, false),
@@ -116,9 +116,9 @@ class RechargeTest extends BaseTest {
   void testReadLast3RechargesSuccess() throws Exception {
     // Given
     String cardId1 = "order_card12345";
-    OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
-    Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
-    Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false);
+    Card mockCard1 = createCardEntity(cardId1, true);
+    Customer mockCustomer1 = createCustomerEntity(UUID.randomUUID(), mockCard1,false);
+    Customer mockCustomer2 = createCustomerEntity(UUID.randomUUID(), mockCard1,false);
 
     List<Recharge> mockRecharges = List.of(
         createRechargeEntity(UUID.randomUUID(), mockCustomer1, false),
@@ -147,8 +147,8 @@ class RechargeTest extends BaseTest {
   void testDeleteRechargeSuccess() throws Exception {
     // Given
     String cardId = "CardIDTest12345";
-    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
-    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockOrderCard,false);
+    Card mockCard = createCardEntity(cardId, true);
+    Customer mockCustomer = createCustomerEntity(UUID.randomUUID(), mockCard,false);
 
     Recharge mockRecharge = createRechargeEntity(UUID.randomUUID(), mockCustomer, false);
 

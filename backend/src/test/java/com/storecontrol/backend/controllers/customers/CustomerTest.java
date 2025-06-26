@@ -1,12 +1,12 @@
 package com.storecontrol.backend.controllers.customers;
 
 import com.storecontrol.backend.BaseTest;
+import com.storecontrol.backend.models.customers.Card;
 import com.storecontrol.backend.models.customers.Customer;
-import com.storecontrol.backend.models.customers.OrderCard;
+import com.storecontrol.backend.models.customers.request.RequestCard;
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
-import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.customers.response.ResponseCustomer;
-import com.storecontrol.backend.models.customers.response.ResponseCustomerOrder;
+import com.storecontrol.backend.models.customers.response.ResponseCustomerCard;
 import com.storecontrol.backend.models.customers.response.ResponseSummaryCustomer;
 import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
 import com.storecontrol.backend.services.customers.CustomerService;
@@ -39,9 +39,9 @@ class CustomerTest extends BaseTest {
     UUID customerUuid = UUID.randomUUID();
 
     String cardId = "CardIDTest12345";
-    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
+    Card mockCard = createCardEntity(cardId, true);
 
-    Customer mockCustomer = createCustomerEntity(customerUuid, mockOrderCard,false);
+    Customer mockCustomer = createCustomerEntity(customerUuid, mockCard,false);
     ResponseCustomer expectedResponse = new ResponseCustomer(mockCustomer);
 
     when(service.takeFilteredCustomerByUuid(customerUuid)).thenReturn(mockCustomer);
@@ -63,10 +63,10 @@ class CustomerTest extends BaseTest {
     UUID customerUuid = UUID.randomUUID();
 
     String cardId = "CardIDTest12345";
-    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
+    Card mockCard = createCardEntity(cardId, true);
 
-    Customer mockCustomer = createCustomerEntity(customerUuid, mockOrderCard,false);
-    ResponseCustomerOrder expectedResponse = new ResponseCustomerOrder(mockCustomer);
+    Customer mockCustomer = createCustomerEntity(customerUuid, mockCard,false);
+    ResponseCustomerCard expectedResponse = new ResponseCustomerCard(mockCustomer);
 
     when(service.takeActiveCustomerByCardId(cardId)).thenReturn(mockCustomer);
 
@@ -86,12 +86,12 @@ class CustomerTest extends BaseTest {
     // Given
     String cardId1 = "CardIDTest12345";
     String cardId2 = "CardIDTest54321";
-    OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
-    OrderCard mockOrderCard2 = createOrderCardEntity(cardId2, true);
+    Card mockCard1 = createCardEntity(cardId1, true);
+    Card mockCard2 = createCardEntity(cardId2, true);
 
     List<Customer> mockCustomers = List.of(
-        createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false),
-        createCustomerEntity(UUID.randomUUID(), mockOrderCard2,true)
+        createCustomerEntity(UUID.randomUUID(), mockCard1,false),
+        createCustomerEntity(UUID.randomUUID(), mockCard2,true)
     );
     Page<Customer> mockPage = new PageImpl<>(mockCustomers);
     Page<ResponseSummaryCustomer> expectedResponse = mockPage
@@ -116,12 +116,12 @@ class CustomerTest extends BaseTest {
     // Given
     String cardId1 = "CardIDTest12345";
     String cardId2 = "CardIDTest54321";
-    OrderCard mockOrderCard1 = createOrderCardEntity(cardId1, true);
-    OrderCard mockOrderCard2 = createOrderCardEntity(cardId2, true);
+    Card mockCard1 = createCardEntity(cardId1, true);
+    Card mockCard2 = createCardEntity(cardId2, true);
 
     List<Customer> mockCustomers = List.of(
-        createCustomerEntity(UUID.randomUUID(), mockOrderCard1,false),
-        createCustomerEntity(UUID.randomUUID(), mockOrderCard2,true)
+        createCustomerEntity(UUID.randomUUID(), mockCard1,false),
+        createCustomerEntity(UUID.randomUUID(), mockCard2,true)
     );
     Page<Customer> mockPage = new PageImpl<>(mockCustomers);
     Page<ResponseSummaryCustomer> expectedResponse = mockPage
@@ -147,9 +147,9 @@ class CustomerTest extends BaseTest {
     UUID customerUuid = UUID.randomUUID();
 
     String cardId = "CardIDTest12345";
-    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
+    Card mockCard = createCardEntity(cardId, true);
 
-    Customer mockCustomer = createCustomerEntity(customerUuid, mockOrderCard,false);
+    Customer mockCustomer = createCustomerEntity(customerUuid, mockCard,false);
     RequestCustomerFinalization request = createRequestCustomerFinalization(mockCustomer);
     ResponseCustomer expectedResponse = new ResponseCustomer(mockCustomer);
 
@@ -175,13 +175,13 @@ class CustomerTest extends BaseTest {
 
     String cardId = "CardIDTest12345";
 
-    RequestOrderCard requestOrderCard = createRequestOrderCard(cardId);
-    OrderCard mockOrderCard = createOrderCardEntity(cardId, true);
+    RequestCard requestCard = createRequestCard(cardId);
+    Card mockCard = createCardEntity(cardId, true);
 
-    Customer mockCustomer = createCustomerEntity(customerUuid, mockOrderCard,false);
+    Customer mockCustomer = createCustomerEntity(customerUuid, mockCard,false);
     ResponseCustomer expectedResponse = new ResponseCustomer(mockCustomer);
 
-    when(customerFinalizationHandler.undoFinalizeCustomer(requestOrderCard)).thenReturn(mockCustomer);
+    when(customerFinalizationHandler.undoFinalizeCustomer(requestCard)).thenReturn(mockCustomer);
 
     mockMvc.perform(delete("/customers/finalize/{uuid}", cardId)
             .contentType(MediaType.APPLICATION_JSON))
@@ -189,7 +189,7 @@ class CustomerTest extends BaseTest {
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(customerFinalizationHandler, times(1)).undoFinalizeCustomer(requestOrderCard);
+    verify(customerFinalizationHandler, times(1)).undoFinalizeCustomer(requestCard);
     verifyNoMoreInteractions(customerFinalizationHandler);
     verifyNoMoreInteractions(service);
   }

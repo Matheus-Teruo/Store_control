@@ -46,7 +46,7 @@ public class RechargeService {
     validation.checkVoluntaryFunctionMatch(register, voluntary);
 
     var customer = handleChangesOnCustomerByCardId(request);
-    customer.getOrderCard().incrementDebit(request.rechargeValue());
+    customer.getCard().incrementDebit(request.rechargeValue());
 
     var recharge = new Recharge(request, customer, register, voluntary);
     handleCashTotal(recharge, recharge.getPaymentTypeEnum(), false);
@@ -88,7 +88,7 @@ public class RechargeService {
     validation.checkRechargeBelongsToVoluntary(recharge, voluntary);
     validation.checkIfLastRechargeOfVoluntary(recharge, voluntary);
 
-    recharge.getCustomer().getOrderCard().incrementDebit(recharge.getRechargeValue().negate());
+    recharge.getCustomer().getCard().incrementDebit(recharge.getRechargeValue().negate());
     handleCashTotal(recharge, recharge.getPaymentTypeEnum(), true);
 
     recharge.deleteRecharge();
@@ -98,9 +98,9 @@ public class RechargeService {
   private Customer handleChangesOnCustomerByCardId(RequestCreateRecharge request) {
     Customer customer;
     try {
-      customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
+      customer = customerService.takeActiveCustomerByCardId(request.cardId());
     } catch (InvalidDatabaseQueryException ex) {
-      customer = customerService.initializeCustomer(request.orderCardId());
+      customer = customerService.initializeCustomer(request.cardId());
     }
     return customer;
   }

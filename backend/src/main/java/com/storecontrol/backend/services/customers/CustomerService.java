@@ -26,14 +26,14 @@ public class CustomerService {
   private CustomerRepository repository;
 
   @Autowired
-  private OrderCardService orderCardService;
+  private CardService cardService;
 
   @Transactional
   public Customer initializeCustomer(String cardId) {
-    var orderCard = orderCardService.safeTakeOrderCardById(cardId);
+    var card = cardService.safeTakeCardById(cardId);
 
-    orderCard.updateActive(true);
-    var customer = new Customer(orderCard);
+    card.updateActive(true);
+    var customer = new Customer(card);
 
     repository.save(customer);
 
@@ -50,7 +50,7 @@ public class CustomerService {
   }
 
   public Customer takeActiveCustomerByCardId(String cardId) {
-    return repository.findByOrderCardIdActiveTrue(cardId)
+    return repository.findByCardIdActiveTrue(cardId)
         .orElseThrow(() -> new InvalidDatabaseQueryException(
             MessageResolver.getInstance().getMessage("service.exception.customer.get.validation.error"),
             MessageResolver.getInstance().getMessage("service.exception.customer.get.validation.message"),
@@ -59,7 +59,7 @@ public class CustomerService {
   }
 
   public Customer takeLastActiveFilteredCustomerByCardId(String cardId) {
-    var customer = repository.findByOrderCardId(cardId)
+    var customer = repository.findByCardId(cardId)
         .orElseThrow(() -> new InvalidDatabaseQueryException(
             MessageResolver.getInstance().getMessage("service.exception.customer.get.validation.error"),
             MessageResolver.getInstance().getMessage("service.exception.customer.get.validation.message"),
@@ -88,14 +88,14 @@ public class CustomerService {
 
   @Transactional
   public void finalizeCustomer(Customer customer, boolean delete) {
-    if (customer.getOrderCard().getDebit().compareTo(BigDecimal.ZERO) != 0) {
+    if (customer.getCard().getDebit().compareTo(BigDecimal.ZERO) != 0) {
       throw new InvalidCustomerException(
           MessageResolver.getInstance().getMessage("service.exception.customer.finalize.validation.error"),
           MessageResolver.getInstance().getMessage("service.exception.customer.finalize.validation.message")
       );
     }
 
-    customer.getOrderCard().updateActive(false);
+    customer.getCard().updateActive(false);
     if (delete) {
       customer.deleteCustomer();
     } else {
@@ -106,7 +106,7 @@ public class CustomerService {
   @Transactional
   public void undoFinalizeCustomer(Customer customer) {
 
-    customer.getOrderCard().updateActive(true);
+    customer.getCard().updateActive(true);
     customer.undoFinalizeCustomer();
     filter.filterInactiveRelations(customer);
   }

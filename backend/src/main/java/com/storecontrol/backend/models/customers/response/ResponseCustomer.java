@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public record ResponseCustomer(
     UUID uuid,
-    ResponseOrderCard orderCard,
+    ResponseCard card,
     String customerStart,
     String customerEnd,
     List<ResponseSummaryRecharge> summaryRecharges,
@@ -22,7 +22,7 @@ public record ResponseCustomer(
 
   public ResponseCustomer(Customer customer) {
     this(customer.getUuid(),
-        new ResponseOrderCard(customer.getOrderCard()),
+        new ResponseCard(customer.getCard()),
         customer.getCustomerStart().toString(),
         customer.getCustomerEnd() != null ? customer.getCustomerEnd().toString() : null,
         customer.getRecharges().stream().map(ResponseSummaryRecharge::new).toList(),

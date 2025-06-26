@@ -178,7 +178,7 @@
 									"\r",
 									"if (responseBody && responseBody.uuid) {\r",
 									"    pm.collectionVariables.set(\"register_id\", responseBody.uuid);\r",
-									"    // console.log(\"cash_register ID (UUID) saved as:\", responseBody.uuid);\r",
+									"    // console.log(\"register ID (UUID) saved as:\", responseBody.uuid);\r",
 									"} else {\r",
 									"    console.error(\"UUID not found in the response body\");\r",
 									"}"
@@ -656,7 +656,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"donationValue\": \"4\",\r\n    \"refundValue\": \"0\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"registerUuid\": \"{{register_id}}\"\r\n}",
+							"raw": "{\r\n    \"donationValue\": \"4\",\r\n    \"refundValue\": \"0\",\r\n    \"cardId\": \"{{card_id}}\",\r\n    \"registerUuid\": \"{{register_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -705,10 +705,10 @@
 			]
 		},
 		{
-			"name": "OrderCard",
+			"name": "Card",
 			"item": [
 				{
-					"name": "Create OrderCard",
+					"name": "Create Card",
 					"event": [
 						{
 							"listen": "test",
@@ -736,7 +736,7 @@
 									"}\r",
 									"\r",
 									"const generatedId = generateRandomId(6);\r",
-									"pm.collectionVariables.set(\"card_id\", \"ordercard\" + generatedId);\r",
+									"pm.collectionVariables.set(\"card_id\", \"card\" + generatedId);\r",
 									""
 								],
 								"type": "text/javascript",
@@ -766,7 +766,7 @@
 					"response": []
 				},
 				{
-					"name": "Page OrderCard",
+					"name": "Page Card",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -796,7 +796,7 @@
 					"response": []
 				},
 				{
-					"name": "Read OrderCard",
+					"name": "Read Card",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -825,7 +825,7 @@
 					"response": []
 				},
 				{
-					"name": "Page OrderCard Active",
+					"name": "Page Card Active",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -1718,7 +1718,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"standUuid\": \"{{stand_id}}\",\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\": -1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ],\r\n    \"orderCardId\": \"{{card_id}}\"\r\n}",
+									"raw": "{\r\n    \"standUuid\": \"{{stand_id}}\",\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\": -1, \"delivered\": 0, \"unitPrice\": \"2.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"}\r\n    ],\r\n    \"cardId\": \"{{card_id}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1896,7 +1896,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"{{card_id}}\",\r\n    \"registerUuid\": \"{{register_id}}\"\r\n}",
+									"raw": "{\r\n    \"rechargeValue\": \"50.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"cardId\": \"{{card_id}}\",\r\n    \"registerUuid\": \"{{register_id}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2239,7 +2239,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"rechargeValue\": \"2.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"orderCardId\": \"OrderCardSimple\",\r\n    \"standUuid\": \"{{stand_id}}\",\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\":-1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"3.00\", \"discount\": \"0.00\"}\r\n    ]\r\n}",
+									"raw": "{\r\n    \"rechargeValue\": \"2.00\",\r\n    \"paymentTypeEnum\": \"debit\",\r\n    \"cardId\": \"OrderCardSimple\",\r\n    \"standUuid\": \"{{stand_id}}\",\r\n    \"items\": [\r\n        {\"productUuid\": \"{{product_id}}\", \"quantity\":-1, \"delivered\": 0, \"unitPrice\": \"1.00\", \"discount\": \"0.00\"},\r\n        {\"productUuid\": \"{{product_id2}}\", \"quantity\": 1, \"delivered\": 0, \"unitPrice\": \"3.00\", \"discount\": \"0.00\"}\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"

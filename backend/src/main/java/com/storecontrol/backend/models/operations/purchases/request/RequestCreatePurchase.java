@@ -13,8 +13,8 @@ public record RequestCreatePurchase(
     @NotNull(message = "{request.validation.createPurchase.items.notnull}")
     List<RequestCreateItem> items,
 
-    @NotNull(message = "{request.validation.createPurchase.orderCardId.notnull}")
-    @Pattern(regexp = "^[A-Za-z0-9]{15}$", message = "{request.validation.createPurchase.orderCardId.pattern}")
-    String orderCardId
+    @NotNull(message = "{request.validation.createPurchase.cardId.notnull}")
+    @Pattern(regexp = "^[A-Za-z0-9]{15}$", message = "{request.validation.createPurchase.cardId.pattern}")
+    String cardId
 ) {
 }

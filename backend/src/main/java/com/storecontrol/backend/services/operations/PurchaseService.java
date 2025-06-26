@@ -53,7 +53,7 @@ public class PurchaseService {
     validation.checkVoluntaryFunctionMatch(request.standUuid(), voluntary);
 
     Map<UUID, Product> productMap = productService.listProductsAsMap(request.standUuid());
-    var customer = customerService.takeActiveCustomerByCardId(request.orderCardId());
+    var customer = customerService.takeActiveCustomerByCardId(request.cardId());
     validation.checkStandFromItems(voluntary, request.items(), productMap);
     validation.checkItemPriceAndDiscountMatch(request, voluntary, productMap);
     validation.checkInsufficientDebitValidity(request, customer);
@@ -172,7 +172,7 @@ public class PurchaseService {
 
     BigDecimal adjustmentFactor = isReversal ? BigDecimal.ONE : BigDecimal.ONE.negate();
 
-    purchase.getCustomer().getOrderCard().incrementDebit(totalValue.multiply(adjustmentFactor));
+    purchase.getCustomer().getCard().incrementDebit(totalValue.multiply(adjustmentFactor));
   }
 
   public void updateItemsFromPurchase(List<RequestUpdateItem> request, List<Item> items) {

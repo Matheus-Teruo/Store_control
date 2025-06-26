@@ -5,7 +5,7 @@ import com.storecontrol.backend.models.operations.purchases.Purchase;
 import java.util.List;
 import java.util.UUID;
 
-public record ResponsePurchaseOrder(
+public record ResponsePurchaseCard(
     UUID uuid,
     Boolean onOrder,
     UUID standUuid,
@@ -13,7 +13,7 @@ public record ResponsePurchaseOrder(
     List<ResponseItem> items
 ) {
 
-  public ResponsePurchaseOrder(Purchase purchase) {
+  public ResponsePurchaseCard(Purchase purchase) {
     this(
         purchase.getUuid(),
         purchase.isOnOrder(),

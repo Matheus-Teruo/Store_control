@@ -1,8 +1,8 @@
 package com.storecontrol.backend.services.customers;
 
 import com.storecontrol.backend.models.customers.Customer;
+import com.storecontrol.backend.models.customers.request.RequestCard;
 import com.storecontrol.backend.models.customers.request.RequestCustomerFinalization;
-import com.storecontrol.backend.models.customers.request.RequestOrderCard;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.services.customers.component.CustomerFinalizationValidation;
 import com.storecontrol.backend.services.operations.DonationService;
@@ -35,8 +35,8 @@ public class CustomerFinalizationHandler {
   public Customer finalizeCustomer(RequestCustomerFinalization request) {
     Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     var register = registerService.safeTakeRegisterByUuid(request.registerUuid());
-    var customer = customerService.takeActiveFilteredCustomerByCardId(request.orderCardId());
-    var remainingDebit = customer.getOrderCard().getDebit();
+    var customer = customerService.takeActiveFilteredCustomerByCardId(request.cardId());
+    var remainingDebit = customer.getCard().getDebit();
 
     validation.checkVoluntaryFunctionMatch(register, voluntary);
 
@@ -54,7 +54,7 @@ public class CustomerFinalizationHandler {
     return customer;
   }
 
-  public Customer undoFinalizeCustomer(RequestOrderCard request) {
+  public Customer undoFinalizeCustomer(RequestCard request) {
     var customer = customerService.takeLastActiveFilteredCustomerByCardId(request.cardId());
     Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     validation.checkVoluntaryFunctionType(voluntary);

@@ -25,7 +25,7 @@ public class Customer {
     private UUID uuid;
 
     @ManyToOne @JoinColumn(name = "card_id", nullable = false)
-    private OrderCard orderCard;
+    private Card card;
 
     @Column(name = "customer_start", nullable = false)
     private LocalDateTime customerStart;
@@ -52,8 +52,8 @@ public class Customer {
     private boolean valid;
 
 
-    public Customer(OrderCard orderCard) {
-        this.orderCard = orderCard;
+    public Customer(Card card) {
+        this.card = card;
         this.customerStart = LocalDateTime.now();
         this.inUse = true;
         this.valid = true;

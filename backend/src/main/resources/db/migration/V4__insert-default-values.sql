@@ -8,7 +8,7 @@ BEGIN
     SET mode_value = '${MODE}';
 
     IF mode_value = 'simple' THEN
-        INSERT INTO order_cards (card_id, debit, active)
+        INSERT INTO cards (card_id, debit, active)
         VALUES ('${CARD_ID}', 0.00, 0);
     END IF;
 END $$

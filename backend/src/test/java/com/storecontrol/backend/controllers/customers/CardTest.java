@@ -1,11 +1,11 @@
 package com.storecontrol.backend.controllers.customers;
 
 import com.storecontrol.backend.BaseTest;
-import com.storecontrol.backend.models.customers.OrderCard;
-import com.storecontrol.backend.models.customers.request.RequestOrderCard;
-import com.storecontrol.backend.models.customers.response.ResponseOrderCard;
-import com.storecontrol.backend.models.customers.response.ResponseSummaryOrderCard;
-import com.storecontrol.backend.services.customers.OrderCardService;
+import com.storecontrol.backend.models.customers.Card;
+import com.storecontrol.backend.models.customers.request.RequestCard;
+import com.storecontrol.backend.models.customers.response.ResponseCard;
+import com.storecontrol.backend.models.customers.response.ResponseSummaryCard;
+import com.storecontrol.backend.services.customers.CardService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -15,40 +15,40 @@ import org.springframework.http.MediaType;
 
 import java.util.List;
 
-import static com.storecontrol.backend.TestDataFactory.createOrderCardEntity;
-import static com.storecontrol.backend.TestDataFactory.createRequestOrderCard;
+import static com.storecontrol.backend.TestDataFactory.createCardEntity;
+import static com.storecontrol.backend.TestDataFactory.createRequestCard;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class OrderCardTest extends BaseTest {
+class CardTest extends BaseTest {
 
   @MockBean
-  private OrderCardService service;
+  private CardService service;
 
   @Test
   void testCreateCardSuccess() throws Exception {
     // Given
     String cardId = "CardIDTest12345";
-    OrderCard mockOrderCard = createOrderCardEntity(cardId, false);
+    Card mockCard = createCardEntity(cardId, false);
 
-    RequestOrderCard requestOrderCard = createRequestOrderCard(cardId);
-    ResponseOrderCard expectedResponse = new ResponseOrderCard(mockOrderCard);
+    RequestCard requestCard = createRequestCard(cardId);
+    ResponseCard expectedResponse = new ResponseCard(mockCard);
 
-    when(service.createOrderCard(requestOrderCard)).thenReturn(mockOrderCard);
+    when(service.createCard(requestCard)).thenReturn(mockCard);
 
     // When & Then
     mockMvc.perform(post("/cards")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(requestOrderCard)))
+            .content(toJson(requestCard)))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location", containsString("/cards/" + cardId)))
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).createOrderCard(requestOrderCard);
+    verify(service, times(1)).createCard(requestCard);
     verifyNoMoreInteractions(service);
   }
 
@@ -56,10 +56,10 @@ class OrderCardTest extends BaseTest {
   void testReadCardSuccess() throws Exception {
     // Given
     String cardId = "CardIDTest12345";
-    OrderCard mockAssociation = createOrderCardEntity(cardId, true);
-    ResponseOrderCard expectedResponse = new ResponseOrderCard(mockAssociation);
+    Card mockAssociation = createCardEntity(cardId, true);
+    ResponseCard expectedResponse = new ResponseCard(mockAssociation);
 
-    when(service.takeOrderCardById(cardId)).thenReturn(mockAssociation);
+    when(service.takeCardById(cardId)).thenReturn(mockAssociation);
 
     // When & Then
     mockMvc.perform(get("/cards/{cardId}", cardId)
@@ -68,7 +68,7 @@ class OrderCardTest extends BaseTest {
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).takeOrderCardById(cardId);
+    verify(service, times(1)).takeCardById(cardId);
     verifyNoMoreInteractions(service);
   }
 
@@ -77,15 +77,15 @@ class OrderCardTest extends BaseTest {
     // Given
     String cardId1 = "CardIDTest12345";
     String cardId2 = "CardIDTest54321";
-    List<OrderCard> mockOrderCard = List.of(
-        createOrderCardEntity(cardId1, false),
-        createOrderCardEntity(cardId2, true)
+    List<Card> mockCard = List.of(
+        createCardEntity(cardId1, false),
+        createCardEntity(cardId2, true)
     );
-    Page<OrderCard> mockPage = new PageImpl<>(mockOrderCard);
-    Page<ResponseOrderCard> expectedResponse = mockPage
-        .map(ResponseOrderCard::new);
+    Page<Card> mockPage = new PageImpl<>(mockCard);
+    Page<ResponseCard> expectedResponse = mockPage
+        .map(ResponseCard::new);
 
-    when(service.pageAllOrderCards(any(Pageable.class))).thenReturn(mockPage);
+    when(service.pageAllCards(any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
     mockMvc.perform(get("/cards")
@@ -95,7 +95,7 @@ class OrderCardTest extends BaseTest {
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).pageAllOrderCards(any(Pageable.class));
+    verify(service, times(1)).pageAllCards(any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 
@@ -104,15 +104,15 @@ class OrderCardTest extends BaseTest {
     // Given
     String cardId1 = "CardIDTest12345";
     String cardId2 = "CardIDTest54321";
-    List<OrderCard> mockOrderCard = List.of(
-        createOrderCardEntity(cardId1, false),
-        createOrderCardEntity(cardId2, true)
+    List<Card> mockCard = List.of(
+        createCardEntity(cardId1, false),
+        createCardEntity(cardId2, true)
     );
-    Page<OrderCard> mockPage = new PageImpl<>(mockOrderCard);
-    Page<ResponseSummaryOrderCard> expectedResponse = mockPage
-        .map(ResponseSummaryOrderCard::new);
+    Page<Card> mockPage = new PageImpl<>(mockCard);
+    Page<ResponseSummaryCard> expectedResponse = mockPage
+        .map(ResponseSummaryCard::new);
 
-    when(service.pageActiveOrderCards(any(Pageable.class))).thenReturn(mockPage);
+    when(service.pageActiveCards(any(Pageable.class))).thenReturn(mockPage);
 
     // When & Then
     mockMvc.perform(get("/cards/active")
@@ -122,7 +122,7 @@ class OrderCardTest extends BaseTest {
         .andExpect(content().json(toJson(expectedResponse)));
 
     // Verify interactions
-    verify(service, times(1)).pageActiveOrderCards(any(Pageable.class));
+    verify(service, times(1)).pageActiveCards(any(Pageable.class));
     verifyNoMoreInteractions(service);
   }
 }

@@ -34,8 +34,7 @@ jobs:
           build-args: |
             VITE_BACKEND_BASE_URL=${{ vars.VITE_BACKEND_BASE_URL }}
             VITE_SYSTEM_VERSION=${{ vars.VITE_SYSTEM_VERSION }}
-            VITE_ORDER_CARD_ID_FIXED=${{ vars.VITE_ORDER_CARD_ID_FIXED }}
-            VITE_CASH_REGISTER_UUID_FIXED=${{ vars.VITE_CASH_REGISTER_UUID_FIXED }}
+            VITE_CARD_ID_FIXED=${{ vars.VITE_CARD_ID_FIXED }}
 
       - name: Aguardar a disponibilidade da imagem
         run: sleep 10

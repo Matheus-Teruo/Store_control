@@ -5,13 +5,13 @@ import com.storecontrol.backend.models.operations.finalization.Refund;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record ResponseRefundOrder(
+public record ResponseRefundCard(
     UUID uuid,
     BigDecimal refundValue,
     String refundTimestamp
 ) {
 
-  public ResponseRefundOrder(Refund refund) {
+  public ResponseRefundCard(Refund refund) {
     this(refund.getUuid(),
         refund.getRefundValue(),
         refund.getRefundTimestamp().toString()
