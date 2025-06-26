@@ -1,6 +1,7 @@
 package com.storecontrol.backend.models.registers.response;
 
 import com.storecontrol.backend.models.registers.Register;
+import com.storecontrol.backend.models.stands.response.ResponseSummaryStand;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -8,7 +9,7 @@ import java.util.UUID;
 public record ResponseRegister(
     UUID uuid,
     String registerName,
-    String standName,
+    ResponseSummaryStand summaryStand,
     BigDecimal totalCash,
     BigDecimal totalCredit,
     BigDecimal totalDebit,
@@ -18,7 +19,7 @@ public record ResponseRegister(
   public ResponseRegister(Register register) {
     this(register.getUuid(),
         register.getFunctionName(),
-        register.getRelatedStand() != null ? register.getRelatedStand().getFunctionName() : null,
+        register.getRelatedStand() != null ? new ResponseSummaryStand(register.getRelatedStand()) : null,
         register.getTotalCash(),
         register.getTotalCredit(),
         register.getTotalDebit(),
