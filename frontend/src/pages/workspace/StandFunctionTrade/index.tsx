@@ -24,6 +24,7 @@ import {
   HistorySVG,
   ImageSVG,
   MinusSVG,
+  PackageSVG,
   PlusSVG,
   ShoppingCartSVG,
 } from "@/assets/svg";
@@ -138,6 +139,18 @@ function StandFunctionSimple() {
           </div>
         </div>
       </div>
+      <li key="header" className={styles.listHeader}>
+        <p />
+        <div className={styles.iconHeader}>
+          <ImageSVG size={18} />
+        </div>
+        <p>Nome</p>
+        <p>Preço</p>
+        <div className={styles.iconHeader}>
+          <PackageSVG size={18} />
+        </div>
+        <p />
+      </li>
       <ul className={styles.main}>
         {products.map((product, index) => {
           const quantity =
@@ -171,10 +184,7 @@ function StandFunctionSimple() {
               </div>
               <p>{product.productName}</p>
               <p>R${(product.price - product.discount).toFixed(2)}</p>
-              <p>
-                Estoque:{" "}
-                {product.stock !== null ? product.stock - quantity : "∞"}
-              </p>
+              <p>{product.stock !== null ? product.stock - quantity : "∞"}</p>
               <Button
                 className={`${styles.modifierProduct} ${product.stock === 0 && styles.itemNull}`}
                 onClick={() =>

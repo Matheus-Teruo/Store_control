@@ -25,6 +25,7 @@ import LockPadOpenSVG from "./components/LockPadOpenSVG";
 import LockPadCloseSVG from "./components/LockPadCloseSVG";
 import MenuSVG from "./components/MenuSVG";
 import MinusSVG from "./components/MinusSVG";
+import PackageSVG from "./components/PackageSVG";
 import PlusSVG from "./components/PlusSVG";
 import QRcodeScanSVG from "./components/QRcodeScanSVG";
 import SearchSVG from "./components/SearchSVG";
@@ -66,6 +67,7 @@ export {
   LockPadCloseSVG,
   MenuSVG,
   MinusSVG,
+  PackageSVG,
   PlusSVG,
   QRcodeScanSVG,
   SearchSVG,
