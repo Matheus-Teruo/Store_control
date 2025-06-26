@@ -1,8 +1,8 @@
 # Dump Data
 
-### CMD
-
 To create a dump data using the script sql use the following command on cmd:
+
+### CMD
 
 ```
 docker exec -i store_control-db-1 \
