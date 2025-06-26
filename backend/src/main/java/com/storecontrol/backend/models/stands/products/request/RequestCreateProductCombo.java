@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public record RequestCreateProductCombo(
     @NotNull(message = "{request.validation.createCombo.includedUuid.notnull}")
-    UUID includedProductUuid,
+    UUID productIncludedUuid,
 
     @PositiveOrZero(message = "{request.validation.createCombo.quantity.positiveOrZero}")
     Integer quantity

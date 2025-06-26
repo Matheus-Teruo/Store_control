@@ -8,6 +8,7 @@ import java.util.UUID;
 public record ResponsePurchaseCard(
     UUID uuid,
     Boolean onOrder,
+    Boolean reversal,
     UUID standUuid,
     String purchaseTimestamp,
     List<ResponseItem> items
@@ -17,6 +18,7 @@ public record ResponsePurchaseCard(
     this(
         purchase.getUuid(),
         purchase.isOnOrder(),
+        purchase.isReversal(),
         purchase.getStandUuid(),
         purchase.getPurchaseTimestamp().toString(),
         purchase.getItems().stream().map(ResponseItem::new).toList()

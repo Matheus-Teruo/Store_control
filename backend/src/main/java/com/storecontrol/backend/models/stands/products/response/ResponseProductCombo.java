@@ -5,7 +5,7 @@ import com.storecontrol.backend.models.stands.products.ProductCombo;
 import java.util.UUID;
 
 public record ResponseProductCombo(
-    UUID includedProduct,
+    UUID productIncludedUuid,
     Integer quantity
 ) {
 
