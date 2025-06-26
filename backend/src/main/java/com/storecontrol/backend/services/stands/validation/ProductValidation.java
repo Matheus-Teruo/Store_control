@@ -49,8 +49,8 @@ public class ProductValidation {
   }
 
   public void checkProductIncludedOnComboBelongsStand(List<RequestCreateProductCombo> includedProductsCombo, Map<UUID, Product> productMap) {
-    for (RequestCreateProductCombo includedProduct : includedProductsCombo) {
-      UUID uuid = includedProduct.includedProductUuid();
+    for (RequestCreateProductCombo productIncluded : includedProductsCombo) {
+      UUID uuid = productIncluded.productIncludedUuid();
 
       if (!productMap.containsKey(uuid)) {
         throw new InvalidDatabaseInsertionException(
@@ -66,8 +66,8 @@ public class ProductValidation {
   }
 
   public void checkProductIncludedOnComboIsNotACombo(List<RequestCreateProductCombo> includedProductsCombo, Map<UUID, Product> productMap) {
-    for (RequestCreateProductCombo includedProduct : includedProductsCombo) {
-      UUID uuid = includedProduct.includedProductUuid();
+    for (RequestCreateProductCombo productIncluded : includedProductsCombo) {
+      UUID uuid = productIncluded.productIncludedUuid();
 
       if (productMap.get(uuid).isCombo()) {
         throw new InvalidDatabaseInsertionException(
