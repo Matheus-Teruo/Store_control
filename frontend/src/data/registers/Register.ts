@@ -1,7 +1,9 @@
+import { SummaryStand } from "@data/stands/Stand";
+
 export default interface Register {
   uuid: string;
   registerName: string;
-  standName: string;
+  summaryStand: SummaryStand;
   totalCash: number;
   totalCredit: number;
   totalDebit: number;
@@ -16,10 +18,10 @@ export interface SummaryRegister {
 
 export interface CreateRegister {
   registerName: string;
-  standUuid: string;
+  standUuid?: string;
 }
 
 export interface UpdateRegister {
   uuid: string;
-  registerName: string;
+  registerName?: string;
 }

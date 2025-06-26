@@ -3,10 +3,10 @@ import Product, { CreateProduct, UpdateProduct } from "@data/stands/Product";
 import ProductCombo, { CreateProductCombo } from "@data/stands/ProductCombo";
 
 function convertComboResponseToCreate(
-  includedProductsCombo: ProductCombo[],
+  productsIncludedCombo: ProductCombo[],
 ): CreateProductCombo[] {
-  return includedProductsCombo.map((productCombo) => ({
-    includedProductUuid: productCombo.includedProduct,
+  return productsIncludedCombo.map((productCombo) => ({
+    productIncludedUuid: productCombo.productIncludedUuid,
     quantity: productCombo.quantity,
   }));
 }
@@ -31,6 +31,7 @@ type ProductAction =
 export const initialProductState: CreateProduct & UpdateProduct = {
   uuid: "",
   productName: "",
+  productCode: 1,
   tagsUuid: [],
   summary: "",
   description: "",
@@ -51,6 +52,7 @@ export function productReducer(
       return {
         uuid: action.payload.uuid,
         productName: action.payload.productName,
+        productCode: action.payload.productCode,
         tagsUuid: action.payload.tags.map((tag) => tag.uuid),
         summary: action.payload.summary !== null ? action.payload.summary : "",
         description:
@@ -128,7 +130,7 @@ export function productReducer(
     case "ADD_PRODUCT_COMBO":
       if (action.payload) {
         const existingIndex = state.includedProductsCombo.findIndex(
-          (product) => product.includedProductUuid === action.payload,
+          (product) => product.productIncludedUuid === action.payload,
         );
 
         if (existingIndex !== -1) {
@@ -147,7 +149,7 @@ export function productReducer(
           ...state,
           includedProductsCombo: [
             ...state.includedProductsCombo,
-            { includedProductUuid: action.payload, quantity: 1 },
+            { productIncludedUuid: action.payload, quantity: 1 },
           ],
         };
       }
@@ -155,7 +157,7 @@ export function productReducer(
     case "REMOVE_PRODUCT_COMBO":
       if (action.payload) {
         const existingIndex = state.includedProductsCombo.findIndex(
-          (product) => product.includedProductUuid === action.payload,
+          (product) => product.productIncludedUuid === action.payload,
         );
 
         if (existingIndex !== -1) {
@@ -176,7 +178,7 @@ export function productReducer(
           return {
             ...state,
             includedProductsCombo: state.includedProductsCombo.filter(
-              (product) => product.includedProductUuid !== action.payload,
+              (product) => product.productIncludedUuid !== action.payload,
             ),
           };
         }

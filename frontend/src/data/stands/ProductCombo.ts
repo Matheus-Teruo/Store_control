@@ -1,5 +1,5 @@
 export default interface ProductCombo {
-  productIncluded: string;
+  productIncludedUuid: string;
   quantity: number;
 }
 

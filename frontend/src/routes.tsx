@@ -3,7 +3,7 @@ import Login from "./pages/authentication/Login";
 import Signup from "./pages/authentication/Signup";
 import User from "./pages/authentication/User";
 import Menu from "./pages/public/Menu";
-import Order from "./pages/public/Order";
+import Card from "./pages/public/Card";
 import AuthPage from "./components/pagePieces/AuthBackground";
 import NotificationManager from "./components/NotificationManager";
 import PublicHeader from "./components/pagePieces/PublicHeader";
@@ -24,7 +24,7 @@ function AppRouter() {
         <Route path="/" element={<Home />} />
         <Route path="/" element={<PublicHeader />}>
           <Route path="/menu" element={<Menu />} />
-          <Route path="/card/:cardID" element={<Order />} />
+          <Route path="/card/:cardID" element={<Card />} />
         </Route>
         <Route path="/auth" element={<AuthPage />}>
           <Route path="signup" element={<Signup />} />
