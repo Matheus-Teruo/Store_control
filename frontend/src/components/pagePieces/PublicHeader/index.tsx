@@ -1,7 +1,7 @@
 import styles from "./PublicHeader.module.scss";
 import activeConfig from "@/config/activeConfig";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import LogoShizuoka from "@/assets/image/shizuoka_logo.png";
+import Logo from "@/assets/image/LogoStoreControl.png";
 
 function PublicHeader() {
   const location = useLocation();
@@ -11,8 +11,8 @@ function PublicHeader() {
         <div className={styles.header}>
           <Link to="/" className={styles.linkLogo}>
             <img
-              src={LogoShizuoka}
-              alt="Logo: símbolo de shizuoka, link para home"
+              src={Logo}
+              alt="Logo: imagem circular com um rosto de raposa no meio"
             />
           </Link>
           <ul className={styles.navigate}>
