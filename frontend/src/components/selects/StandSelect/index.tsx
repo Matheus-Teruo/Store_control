@@ -71,7 +71,11 @@ function StandSelect({
             value={value}
             onChange={handleChangeSelect}
           >
-            <option value="" disabled={notNull} style={{ color: "#656360" }}>
+            <option
+              value=""
+              disabled={notNull}
+              style={notNull ? { color: "#656360" } : {}}
+            >
               -- estande --
             </option>
             {listStands.map((stand) => (

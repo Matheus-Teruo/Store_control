@@ -2,6 +2,7 @@ import AdminHeader from "@/components/pagePieces/AdminHeader";
 import Associations from "@/pages/admin/Associations";
 import Cards from "@/pages/admin/Cards";
 import Stands from "@/pages/admin/Stands";
+import Registers from "@/pages/admin/Registers";
 import Tags from "@/pages/admin/Tags";
 import Volunteers from "@/pages/admin/Volunteers";
 import { Route, Routes } from "react-router-dom";
@@ -14,6 +15,7 @@ function AdminRoutesComponent() {
         <Route path="associations" element={<Associations />} />
         <Route path="cards" element={<Cards />} />
         <Route path="stands" element={<Stands />} />
+        <Route path="registers" element={<Registers />} />
         <Route path="volunteers" element={<Volunteers />} />
       </Route>
     </Routes>

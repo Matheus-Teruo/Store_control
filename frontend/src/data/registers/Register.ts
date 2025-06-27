@@ -3,7 +3,7 @@ import { SummaryStand } from "@data/stands/Stand";
 export default interface Register {
   uuid: string;
   registerName: string;
-  summaryStand: SummaryStand;
+  summaryStand?: SummaryStand;
   totalCash: number;
   totalCredit: number;
   totalDebit: number;

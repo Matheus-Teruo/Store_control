@@ -87,7 +87,7 @@
         justify-content: center;
       }
 
-      .editStand {
+      .editRegister {
         display: flex;
         justify-content: center;
         padding: 2px;
@@ -96,7 +96,7 @@
       }
     }
 
-    .newStand {
+    .newRegister {
       padding: 3px;
       grid-column: span 3;
       background-color: $color-secundary-1;
@@ -104,6 +104,10 @@
       align-items: center;
       justify-content: center;
       color: $color-font-2;
+
+      &:disabled {
+        color: $color-gray-400;
+      }
 
       p {
         margin-left: 2px;

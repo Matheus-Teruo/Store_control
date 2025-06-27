@@ -117,7 +117,7 @@ function Hub() {
                 className={styles.links}
                 to="/analytics/statistics/recharge"
               >
-                Caixa
+                Financeiro
               </Link>
             </li>
           )}
@@ -171,6 +171,11 @@ function Hub() {
               <li className={styles.liStands}>
                 <Link className={styles.links} to="/admin/stands">
                   Estandes
+                </Link>
+              </li>
+              <li className={styles.liRegisters}>
+                <Link className={styles.links} to="/admin/registers">
+                  Caixas
                 </Link>
               </li>
               {activeConfig.enableCard && (

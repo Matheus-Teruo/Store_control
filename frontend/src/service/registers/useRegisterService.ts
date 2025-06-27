@@ -44,7 +44,7 @@ const useRegisterService = () => {
     async (
       page?: number,
       size?: number,
-      sort?: "asc" | "desc",
+      sort?: string,
     ): Promise<PaginatedResponse<SummaryRegister> | null> =>
       safeRequest(() =>
         api

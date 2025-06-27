@@ -1,4 +1,4 @@
-import styles from "./FormStand.module.scss";
+import styles from "./FormRegister.module.scss";
 import Button from "@/components/utils/Button";
 import {
   isMessage,
@@ -6,30 +6,28 @@ import {
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
 import {
-  createStandPayload,
-  initialStandState,
-  standReducer,
-  updateStandPayload,
-} from "@reducer/stand/standReducer";
-import useStandService from "@service/stand/useStandService";
+  createRegisterPayload,
+  initialRegisterState,
+  registerReducer,
+  updateRegisterPayload,
+} from "@reducer/register/registerReducer";
 import useRegisterService from "@service/registers/useRegisterService";
 import { useEffect, useReducer, useState } from "react";
-import AssociationSelect from "@/components/selects/AssociationSelect";
 import Input from "@/components/utils/ProductInput";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import { CheckSVG, XSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
-import Stand from "@data/stands/Stand";
+import Register from "@data/registers/Register";
 
-type FormStandProps = {
+type FormRegisterProps = {
   type: "create" | "update";
   hide: () => void;
   uuid?: string;
 };
 
-function FormStand({ type, hide, uuid }: FormStandProps) {
-  const [state, dispatch] = useReducer(standReducer, initialStandState);
-  const [initial, setInitial] = useState<Stand>();
+function FormRegister({ type, hide, uuid }: FormRegisterProps) {
+  const [state, dispatch] = useReducer(registerReducer, initialRegisterState);
+  const [initial, setInitial] = useState<Register>();
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const [waitingFetch, setWaitingFetch] = useState<
     "create/update" | "delete" | ""
@@ -37,56 +35,40 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   const [touched, setTouched] = useState<boolean>(false);
   const [messageError, setMessageError] = useState<Record<string, string>>({});
   const { addNotification } = useAlertsContext();
-  const { getStand, createStand, updateStand, deleteStand } = useStandService();
-  const { createRegister } = useRegisterService();
+  const { getRegister, createRegister, updateRegister, deleteRegister } =
+    useRegisterService();
 
   useEffect(() => {
-    const fetchStand = async () => {
+    const fetchRegister = async () => {
       if (type === "update" && uuid) {
-        const stand = await getStand(uuid);
-        if (stand) {
-          dispatch({ type: "SET_STAND", payload: stand });
-          setInitial(stand);
+        const register = await getRegister(uuid);
+        if (register) {
+          dispatch({ type: "SET_REGISTER", payload: register });
+          setInitial(register);
         }
       } else if (type === "update" && uuid === undefined) {
         console.error("uuid need to be defined when type is update");
       }
     };
 
-    fetchStand();
-  }, [uuid, type, getStand]);
+    fetchRegister();
+  }, [uuid, type, getRegister]);
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setWaitingFetch("create/update");
     setTouched(false);
-    const stand = await createStand(createStandPayload(state));
-    if (stand && !isMessage(stand)) {
+    const register = await createRegister(createRegisterPayload(state));
+    if (register && !isMessage(register)) {
       addNotification({
         title: "Create Stand Success",
-        message: `Create stand: ${stand.standName}, with president: ${stand.association.associationName}`,
+        message: `Create stand: ${register.registerName}, with stand: ${register.summaryStand !== undefined ? register.summaryStand.standName : "não definido"}`,
         type: MessageType.OK,
       });
-
-      const register = await createRegister({
-        registerName: stand.standName + " Register",
-        standUuid: stand.uuid,
-      });
-      if (register && !isMessage(register)) {
-        addNotification({
-          title: "Create Stand Success",
-          message: `Create stand: ${register.registerName}, with stand: ${register.summaryStand !== undefined ? register.summaryStand.standName : "não definido"}`,
-          type: MessageType.OK,
-        });
-      } else if (isMessage(register)) {
-        const message = register;
-        if (message.invalidFields) setMessageError(message.invalidFields);
-      }
-
       dispatch({ type: "RESET" });
       hide();
-    } else if (isMessage(stand)) {
-      const message = stand;
+    } else if (isMessage(register)) {
+      const message = register;
       if (message.invalidFields) setMessageError(message.invalidFields);
     }
     setTouched(true);
@@ -98,17 +80,19 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
     if (initial) {
       setWaitingFetch("create/update");
       setTouched(false);
-      const stand = await updateStand(updateStandPayload(state, initial));
-      if (stand && !isMessage(stand)) {
+      const register = await updateRegister(
+        updateRegisterPayload(state, initial),
+      );
+      if (register && !isMessage(register)) {
         addNotification({
-          title: "Update Stand Success",
-          message: `Update stand: ${stand.standName}, with president: ${stand.association.associationName}`,
+          title: "Update Register Success",
+          message: `Update register: ${register.registerName}, with president: ${register.summaryStand !== undefined ? register.summaryStand.standName : "não definido"}`,
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
         hide();
-      } else if (isMessage(stand)) {
-        const message = stand;
+      } else if (isMessage(register)) {
+        const message = register;
         if (message.invalidFields) setMessageError(message.invalidFields);
       }
     }
@@ -119,10 +103,10 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   const handleDeleteSubmit = async () => {
     if (uuid) {
       setWaitingFetch("delete");
-      await deleteStand(state.uuid);
+      await deleteRegister(state.uuid);
       addNotification({
-        title: "Delete Stand Success",
-        message: `Delete stand: ${state.standName}`,
+        title: "Delete Register Success",
+        message: `Delete Register: ${state.registerName}`,
         type: MessageType.OK,
       });
       dispatch({ type: "RESET" });
@@ -135,34 +119,38 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   return (
     <>
       <div className={styles.main}>
-        <h3>{type === "create" ? "Criar Estande" : "Editar Estande"}</h3>
+        <h3>{type === "create" ? "Criar Caixa" : "Editar Caixa"}</h3>
         <form
           onSubmit={type === "create" ? handleCreateSubmit : handleUpdateSubmit}
         >
-          <label>Nome do estande</label>
+          <label>Nome do caixa</label>
           <Input
             type="text"
-            id="standName"
-            value={state.standName}
+            id="registerName"
+            value={state.registerName}
             onChange={(e) =>
-              dispatch({ type: "SET_STAND_NAME", payload: e.target.value })
+              dispatch({ type: "SET_REGISTER_NAME", payload: e.target.value })
             }
             showStatus={touched}
-            message={messageError["standName"]}
+            message={messageError["registerName"]}
             isRequired
           />
-          <label>Associação</label>
-          <AssociationSelect
-            value={state.associationUuid}
-            onChange={(e) =>
-              dispatch({
-                type: "SET_ASSOCIATION_UUID",
-                payload: e.target.value,
-              })
-            }
-            showStatus={touched}
-            message={messageError["associationUuid"]}
-          />
+          {type !== "create" ? (
+            <>
+              <label>Estande</label>
+
+              <p className={styles.standField}>
+                {initial &&
+                  (initial.summaryStand
+                    ? initial.summaryStand.standName
+                    : "Não atrelado")}
+              </p>
+            </>
+          ) : (
+            <label>
+              Neste modo o site não permite atrelar caixa ao estande
+            </label>
+          )}
           <div className={styles.footerButtons}>
             {type === "update" && !confirmDelete && (
               <Button onClick={() => setConfirmDelete(true)}>Excluir</Button>
@@ -200,4 +188,4 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
   );
 }
 
-export default FormStand;
+export default FormRegister;

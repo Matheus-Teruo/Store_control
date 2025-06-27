@@ -53,6 +53,15 @@ function AdminHeader() {
                       </h3>
                     </Link>
                   </li>
+                  <li>
+                    <Link to="/admin/registers">
+                      <h3
+                        className={`${location.pathname === "/admin/registers" && styles.selected}`}
+                      >
+                        Caixas
+                      </h3>
+                    </Link>
+                  </li>
                   {activeConfig.enableCard && (
                     <li>
                       <Link to="/admin/cards">

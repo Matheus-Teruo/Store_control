@@ -3,10 +3,10 @@ import StatisticsHeader from "@/components/pagePieces/StatisticsHeader";
 import PurchaseLogs from "@/pages/analytics/logpages/PurchaseLogs";
 import TradeLogs from "@/pages/analytics/logpages/TradeLogs";
 import TransactionLogs from "@/pages/analytics/logpages/TransactionLogs";
-import CustomerStatistics from "@/pages/analytics/Statistics/CustomerStatistics";
-import PurchaseChart from "@/pages/analytics/Statistics/PurchaseChart";
-import RechargeChart from "@/pages/analytics/Statistics/RechargeChart";
-import TotalProductsBars from "@/pages/analytics/Statistics/TotalProductsBars";
+import CustomerStatistics from "@/pages/analytics/statistics/CustomerStatistics";
+import PurchaseChart from "@/pages/analytics/statistics/PurchaseChart";
+import RechargeChart from "@/pages/analytics/statistics/RechargeChart";
+import TotalProductsBars from "@/pages/analytics/statistics/TotalProductsBars";
 import { Route, Routes } from "react-router-dom";
 
 function AnalysticsRoutesComponent() {

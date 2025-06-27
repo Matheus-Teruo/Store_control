@@ -1,4 +1,4 @@
-import styles from "./Stands.module.scss";
+import styles from "./Registers.module.scss";
 import PageSelect from "@/components/selects/PageSelect";
 import {
   isAdmin,
@@ -6,99 +6,100 @@ import {
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import { SummaryStand } from "@data/stands/Stand";
+import { SummaryRegister } from "@data/registers/Register";
 import { formReducer, initialFormState } from "@reducer/formReducer";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
-import useStandService from "@service/stand/useStandService";
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import FormStand from "./FormStand";
 import Button from "@/components/utils/Button";
 import { EditSVG, PlusSVG } from "@/assets/svg";
-import { SummaryAssociation } from "@data/stands/Association";
-import useAssociationService from "@service/stand/useAssociationService";
+import { SummaryStand } from "@data/stands/Stand";
+import useStandService from "@service/stand/useStandService";
+import useRegisterService from "@service/registers/useRegisterService";
+import FormRegister from "./FormRegister";
+import activeConfig from "@/config/activeConfig";
 
-function Stands() {
-  const [stands, setStands] = useState<SummaryStand[]>([]);
-  const [associationsRecord, setAssociationsRecord] = useState<
-    Record<string, Omit<SummaryAssociation, "uuid">>
+function Registers() {
+  const [registers, setRegisters] = useState<SummaryRegister[]>([]);
+  const [standsRecord, setStandsRecord] = useState<
+    Record<string, Omit<SummaryStand, "uuid">>
   >({});
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [formState, formDispach] = useReducer(formReducer, initialFormState);
-  const { getListAssociations } = useAssociationService();
-  const { getStands } = useStandService();
+  const { getListStands } = useStandService();
+  const { getRegisters } = useRegisterService();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchAssociations = async () => {
-      const associations = await getListAssociations();
-      if (associations) {
-        const associationsObject = associations.reduce(
-          (acc, association) => {
-            const { uuid, ...rest } = association;
+    const fetchStands = async () => {
+      const stands = await getListStands();
+      if (stands) {
+        const standsObject = stands.reduce(
+          (acc, stand) => {
+            const { uuid, ...rest } = stand;
             acc[uuid] = rest;
             return acc;
           },
-          {} as Record<string, Omit<SummaryAssociation, "uuid">>,
+          {} as Record<string, Omit<SummaryStand, "uuid">>,
         );
-        setAssociationsRecord(associationsObject);
+        setStandsRecord(standsObject);
       }
     };
-    fetchAssociations();
-  }, [getListAssociations]);
+    fetchStands();
+  }, [getListStands]);
 
-  const fetchStands = useCallback(async () => {
-    const response = await getStands(
+  const fetchRegisters = useCallback(async () => {
+    const response = await getRegisters(
       page.number,
       undefined,
       "functionName,asc",
     );
     if (response) {
-      setStands(response.content);
+      setRegisters(response.content);
       pageDispatch({
         type: "SET_PAGE_MAX",
         payload: response.page.totalPages,
       });
     }
-  }, [page.number, getStands]);
+  }, [page.number, getRegisters]);
 
   useEffect(() => {
     if (isUserLogged(user) && isAdmin(user)) {
-      fetchStands();
+      fetchRegisters();
     } else if (isUserUnlogged(user)) {
       navigate("/");
     }
-  }, [user, navigate, fetchStands]);
+  }, [user, navigate, fetchRegisters]);
 
   const handleFormShow = () => {
     formDispach({ type: "SET_FALSE" });
-    fetchStands();
+    fetchRegisters();
   };
 
   return (
     <div className={styles.body}>
       <li key={"header"} className={styles.listHeader}>
-        <p>Nome do estande</p>
-        <p>Associação</p>
+        <p>Nome do caixa</p>
+        <p>Estande associado</p>
         <p className={styles.propAligned}>Editar</p>
       </li>
       <ul className={styles.main}>
-        {stands.map((stand, index) => (
+        {registers.map((register, index) => (
           <li
-            key={stand.uuid}
+            key={register.uuid}
             className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
           >
-            <p>{stand.standName}</p>
+            <p>{register.registerName}</p>
             <p>
-              {associationsRecord[stand.associationUuid]
-                ? associationsRecord[stand.associationUuid].associationName
+              {standsRecord[register.standUUid]
+                ? standsRecord[register.standUUid].standName
                 : ""}
             </p>
             <Button
-              className={styles.editStand}
+              className={styles.editRegister}
               onClick={() =>
-                formDispach({ type: "SET_UPDATE", payload: stand.uuid })
+                formDispach({ type: "SET_UPDATE", payload: register.uuid })
               }
             >
               <EditSVG size={16} />
@@ -107,17 +108,18 @@ function Stands() {
         ))}
         <li key={"add"}>
           <Button
-            className={styles.newStand}
+            className={styles.newRegister}
             onClick={() => formDispach({ type: "SET_CREATE" })}
+            disabled={!activeConfig.enableToken}
           >
             <PlusSVG size={18} />
-            <p>Estande</p>
+            <p>Caixa</p>
           </Button>
         </li>
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
       {formState.show && (
-        <FormStand
+        <FormRegister
           type={formState.type}
           hide={handleFormShow}
           uuid={formState.uuid}
@@ -127,4 +129,4 @@ function Stands() {
   );
 }
 
-export default Stands;
+export default Registers;
