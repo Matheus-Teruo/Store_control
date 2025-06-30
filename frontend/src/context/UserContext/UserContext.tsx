@@ -22,9 +22,9 @@ function UserProvider({ children }: { children: React.ReactNode }) {
       } else {
         setUser("unlogged");
       }
-    } catch (error) {
+    } catch (_error) {
       setUser("unlogged");
-      console.log(error);
+      // console.log(error);
       // TODO: verificar o que fazer com as response do axios
     }
   }, [getUser]);

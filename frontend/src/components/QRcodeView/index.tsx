@@ -19,8 +19,7 @@ function QRcodeView({ code, showCode, setShowCode }: QRcodeViewProps) {
             <h3>Compras</h3>
             <img className={styles.frame} src={code} />
             <p>
-              Esse QR code só funcionará como pré-order do estande de Shizuoka.
-              {/* apresente esse QRcode ao caixa para pagar e retirar seu pedido */}
+              Apresente esse QRcode ao caixa para pagar e retirar seu pedido
             </p>
           </div>
           <GlassBackground

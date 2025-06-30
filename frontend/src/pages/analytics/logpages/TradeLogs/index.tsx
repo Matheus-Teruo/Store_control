@@ -107,7 +107,10 @@ function TradeLogs() {
           >
             <p>{new Date(trade.tradeTimestamp + "Z").toLocaleString()}</p>
             {/* TODO: AJUSTAR HORÁRIO DEPOIS DO EVENTO */}
-            <p>{volunteersRecord[trade.voluntaryUuid].fullname}</p>
+            <p>
+              {volunteersRecord[trade.voluntaryUuid]?.fullname ||
+                "Nome não disponível"}
+            </p>
             <p>{trade.totalItems}</p>
             <p>{PaymentStringMetadata[trade.paymentTypeEnum].pt}</p>
             <p>R${trade.rechargeValue.toFixed(2)}</p>

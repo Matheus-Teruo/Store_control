@@ -242,7 +242,7 @@ function User() {
               Alterar Senha
             </Button>
             <Button className={styles.buttonFooter} onClick={handleLogout}>
-              Sair
+              Sair da conta
             </Button>
           </div>
         ) : (
@@ -301,7 +301,7 @@ function User() {
               </Button>
             </div>
             <Button className={styles.buttonFooter} onClick={handleLogout}>
-              Sair
+              Sair da conta
             </Button>
           </>
         )}

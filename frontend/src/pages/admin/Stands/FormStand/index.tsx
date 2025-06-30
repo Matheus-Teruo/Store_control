@@ -20,6 +20,7 @@ import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import { CheckSVG, XSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
 import Stand from "@data/stands/Stand";
+import activeConfig from "@/config/activeConfig";
 
 type FormStandProps = {
   type: "create" | "update";
@@ -68,19 +69,21 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
         type: MessageType.OK,
       });
 
-      const register = await createRegister({
-        registerName: stand.standName + " Register",
-        standUuid: stand.uuid,
-      });
-      if (register && !isMessage(register)) {
-        addNotification({
-          title: "Create Stand Success",
-          message: `Create stand: ${register.registerName}, with stand: ${register.summaryStand !== undefined ? register.summaryStand.standName : "não definido"}`,
-          type: MessageType.OK,
+      if (!activeConfig.enableToken) {
+        const register = await createRegister({
+          registerName: stand.standName + " Register",
+          standUuid: stand.uuid,
         });
-      } else if (isMessage(register)) {
-        const message = register;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+        if (register && !isMessage(register)) {
+          addNotification({
+            title: "Create Stand Success",
+            message: `Create stand: ${register.registerName}, with stand: ${register.summaryStand !== undefined ? register.summaryStand.standName : "não definido"}`,
+            type: MessageType.OK,
+          });
+        } else if (isMessage(register)) {
+          const message = register;
+          if (message.invalidFields) setMessageError(message.invalidFields);
+        }
       }
 
       dispatch({ type: "RESET" });

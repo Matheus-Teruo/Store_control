@@ -2,7 +2,7 @@ import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
 import Customer, {
   CustomerFinalization,
-  CustomerOrder,
+  CustomerCard,
   SummaryCustomer,
 } from "@data/customers/Customer";
 import { PaginatedResponse } from "@service/PagesType";
@@ -33,10 +33,10 @@ const useCustomerService = () => {
   );
 
   const getCustomerByCard = useCallback(
-    async (cardId: string): Promise<CustomerOrder | null> =>
+    async (cardId: string): Promise<CustomerCard | null> =>
       safeRequest(() =>
         api
-          .get<CustomerOrder>(`customers/card/${cardId}`)
+          .get<CustomerCard>(`customers/card/${cardId}`)
           .then((res) => res.data),
       ),
     [api, safeRequest],
