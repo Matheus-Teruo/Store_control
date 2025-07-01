@@ -1,11 +1,13 @@
+import styles from "./Cards.module.scss";
 import PageSelect from "@/components/selects/PageSelect";
+import { PlusSVG } from "@/assets/svg";
 import {
   isAdmin,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import Card from "@data/customers/Card";
+import Card, { CardStatusMetadata } from "@data/customers/Card";
 import { formReducer, initialFormState } from "@reducer/formReducer";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import useCardService from "@service/customer/useCardService";
@@ -43,26 +45,36 @@ function Cards() {
   };
 
   return (
-    <div>
-      <Button onClick={() => formDispach({ type: "SET_CREATE" })}>
-        Criar Cartão
-      </Button>
-      <ul>
-        {cards.map((card) => (
-          <li key={card.cardId}>
+    <div className={styles.body}>
+      <li key={"header"} className={styles.listHeader}>
+        <p>Código do cartão</p>
+        <p>Saldo</p>
+        <p className={styles.propAligned}>Status</p>
+      </li>
+      <ul className={styles.main}>
+        {cards.map((card, index) => (
+          <li
+            key={card.cardId}
+            className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
+          >
             <p>{card.cardId}</p>
             <p>{card.debit}</p>
-            <p>{card.active}</p>
+            <p className={styles.propAligned}>
+              {CardStatusMetadata[card.active ? 1 : 0].pt}
+            </p>
           </li>
         ))}
+        <li key={"add"}>
+          <Button
+            className={styles.newCard}
+            onClick={() => formDispach({ type: "SET_CREATE" })}
+          >
+            <PlusSVG size={18} /> Cadastrar Cartão
+          </Button>
+        </li>
       </ul>
       <PageSelect value={page.number} max={page.max} dispatch={pageDispatch} />
-      {formState.show && (
-        <>
-          <FormCard hide={handleFormShow} />
-          <div onClick={() => formDispach({ type: "SET_FALSE" })}>Editar</div>
-        </>
-      )}
+      {formState.show && <FormCard hide={handleFormShow} />}
     </div>
   );
 }

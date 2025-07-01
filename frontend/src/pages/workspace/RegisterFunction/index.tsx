@@ -19,7 +19,7 @@ import useRechargeService from "@service/operations/useRechargeService";
 import useProductService from "@service/stand/useProductService";
 import { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import CardInput from "./CardInput";
+import CardInput from "@/components/utils/CardInput";
 import { PaymentType } from "@data/operations/Recharge";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import PageSelect from "@/components/selects/PageSelect";

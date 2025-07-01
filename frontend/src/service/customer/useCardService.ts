@@ -1,12 +1,29 @@
 import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
+import { Message } from "@context/AlertsContext/useAlertsContext";
 import Card, { RequestCard, SummaryCard } from "@data/customers/Card";
 import { PaginatedResponse } from "@service/PagesType";
+import { AxiosError } from "axios";
 import { useCallback } from "react";
 
 const useCardService = () => {
   const api = useAxios();
   const handleApiError = useApiError();
+
+  const safeRequestWithFeedback = useCallback(
+    async <T>(fn: () => Promise<T>): Promise<T | Message | null> => {
+      try {
+        return await fn();
+      } catch (error) {
+        handleApiError(error);
+        if (error instanceof AxiosError) {
+          return error.response!.data as Message;
+        }
+        return null;
+      }
+    },
+    [handleApiError],
+  );
 
   const safeRequest = useCallback(
     async <T>(fn: () => Promise<T>): Promise<T | null> => {
@@ -21,9 +38,11 @@ const useCardService = () => {
   );
 
   const createCard = useCallback(
-    async (card: RequestCard): Promise<Card | null> =>
-      safeRequest(() => api.post<Card>("cards", card).then((res) => res.data)),
-    [api, safeRequest],
+    async (card: RequestCard): Promise<Card | Message | null> =>
+      safeRequestWithFeedback(() =>
+        api.post<Card>("cards", card).then((res) => res.data),
+      ),
+    [api, safeRequestWithFeedback],
   );
 
   const getCard = useCallback(

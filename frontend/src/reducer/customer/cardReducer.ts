@@ -13,7 +13,10 @@ export function cardReducer(
 ): RequestCard {
   switch (action.type) {
     case "SET_CARD": {
-      if (!regexLeterNumber.test(action.payload)) {
+      if (
+        !regexLeterNumber.test(action.payload) ||
+        action.payload.length > 15
+      ) {
         return state;
       }
       return { ...state, cardId: action.payload };

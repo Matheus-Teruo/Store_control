@@ -12,3 +12,8 @@ export interface SummaryCard {
 export interface RequestCard {
   cardId: string;
 }
+
+export const CardStatusMetadata: Record<number, { pt: string; en: string }> = {
+  1: { pt: "Ativo", en: "Active" },
+  0: { pt: "Desativado", en: "Deactivated" },
+};

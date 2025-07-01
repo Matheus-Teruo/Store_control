@@ -16,16 +16,25 @@ function PublicHeader() {
             />
           </Link>
           <ul className={styles.navigate}>
-            {location.pathname === "/menu" && (
-              <li>
-                <h2 className={styles.title}>Cardápio</h2>
-              </li>
-            )}
-            {activeConfig.enableCard && location.pathname === "/card" && (
-              <li>
-                <h2 className={styles.title}>Cartão</h2>
-              </li>
-            )}
+            <Link to="/menu">
+              <h2
+                className={`${styles.title} ${location.pathname === "/menu" && styles.selected}`}
+              >
+                Cardápio
+              </h2>
+            </Link>
+            {activeConfig.enableCard &&
+              (location.pathname.startsWith("/card") ? (
+                <li>
+                  <h2 className={`${styles.title} ${styles.selected}`}>
+                    Cartão
+                  </h2>
+                </li>
+              ) : (
+                <Link to="/card">
+                  <h2 className={styles.title}>Cartão</h2>
+                </Link>
+              ))}
           </ul>
           <div className={styles.spaceHolder} />
         </div>

@@ -14,7 +14,7 @@ import {
 import useProductService from "@service/stand/useProductService";
 import { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Card from "../RegisterFunction/CardInput";
+import Card from "@/components/utils/CardInput";
 import { VoluntaryRole } from "@data/volunteers/Voluntary";
 import FormPurchase from "./FormPurchase";
 import Button from "@/components/utils/Button";

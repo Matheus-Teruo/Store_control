@@ -38,7 +38,11 @@
     font-size: 1.5rem;
     font-weight: 500;
     color: $color-font-2;
-    margin: 0 20px;
+    margin: 0 15px;
+  }
+
+  .selected {
+    text-decoration: underline;
   }
 
   .spaceHolder {
