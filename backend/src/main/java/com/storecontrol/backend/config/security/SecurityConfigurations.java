@@ -47,16 +47,16 @@ public class SecurityConfigurations {
 
           req.requestMatchers(HttpMethod.GET,
                   AUTHORIZED_GET_ENDPOINTS_LOGGED)
-              .hasAnyRole( "USER", "MANAGEMENT", "ADMIN");
+              .hasAnyRole( "VOLUNTARY", "MANAGEMENT", "ADMIN");
           req.requestMatchers(HttpMethod.POST,
                   AUTHORIZED_POST_ENDPOINTS_LOGGED)
-              .hasAnyRole( "USER", "MANAGEMENT", "ADMIN");
+              .hasAnyRole( "VOLUNTARY", "MANAGEMENT", "ADMIN");
           req.requestMatchers(HttpMethod.PUT,
                   AUTHORIZED_PUT_ENDPOINTS_LOGGED)
-              .hasAnyRole(  "USER", "MANAGEMENT", "ADMIN");
+              .hasAnyRole(  "VOLUNTARY", "MANAGEMENT", "ADMIN");
           req.requestMatchers(HttpMethod.DELETE,
                   AUTHORIZED_DELETE_ENDPOINTS_LOGGED)
-              .hasAnyRole( "USER", "MANAGEMENT", "ADMIN");
+              .hasAnyRole( "VOLUNTARY", "MANAGEMENT", "ADMIN");
 
 
           req.requestMatchers(HttpMethod.GET,

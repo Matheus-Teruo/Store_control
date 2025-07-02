@@ -2,6 +2,7 @@ package com.storecontrol.backend.models.stands;
 
 import com.storecontrol.backend.models.stands.request.RequestCreateAssociation;
 import com.storecontrol.backend.models.stands.request.RequestUpdateAssociation;
+import com.storecontrol.backend.models.volunteers.Function;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -61,7 +62,7 @@ public class Association {
         this.associationName = this.associationName + "_deleted_" + generateRandomString();
         this.valid = false;
 
-        for (Stand stand : stands) {
+        for (Stand stand : stands.stream().filter(Function::isValid).toList()) {
             stand.deleteFunction();
         }
     }

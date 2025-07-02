@@ -62,7 +62,7 @@ public class Stand extends Function {
     public void deleteFunction() {
         super.deleteFunction();
 
-        for (Product product : products) {
+        for (Product product : products.stream().filter(Product::isValid).toList()) {
             product.deleteProduct();
         }
     }
