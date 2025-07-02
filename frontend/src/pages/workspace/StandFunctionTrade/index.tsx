@@ -124,7 +124,7 @@ function StandFunctionSimple() {
               </div>
             </div>
           )}
-          <div className={styles.header_main}>
+          <div className={styles.headerMain}>
             <Button onClick={() => setShowLast(true)}>
               <HistorySVG />
             </Button>

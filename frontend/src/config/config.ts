@@ -8,7 +8,7 @@ export interface Config {
 const configs: Record<string, Config> = {
   simple: {
     version: "simple",
-    enableOrder: true,
+    enableOrder: false,
     enableToken: false,
     enableCard: false,
   },

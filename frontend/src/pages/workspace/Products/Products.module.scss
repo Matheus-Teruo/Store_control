@@ -25,6 +25,7 @@
     padding: 4px;
     background-color: $color-secundary-2;
     box-shadow: $color-shadow-1 0 2px 4px inset;
+    box-sizing: border-box;
 
     .filter {
       display: flex;
@@ -64,8 +65,10 @@
   .listHeader {
     width: 100%;
     max-width: 1280px;
-    padding: 2px 8px;
+    padding: 2px 10px;
     background-color: $color-primary-2;
+    border-bottom-left-radius: $border-radius;
+    border-bottom-right-radius: $border-radius;
 
     p {
       font-size: 1rem;
@@ -104,6 +107,10 @@
     }
 
     .listProducts {
+      margin-bottom: 8px;
+      padding: 2px 4px;
+      border-radius: $border-radius;
+
       p {
         font-size: 0.875rem;
 
@@ -129,10 +136,6 @@
         color: $color-primary-4;
       }
     }
-
-    li {
-      margin-bottom: 8px;
-    }
   }
 
   .list {
@@ -140,9 +143,7 @@
     grid-template-columns: 0.5fr 3fr 1fr 1fr 1fr 1fr 1fr 1fr;
     grid-auto-flow: row;
     gap: 2px;
-    padding: 2px 4px;
     box-sizing: border-box;
-    border-radius: $border-radius;
 
     .productImage {
       justify-content: center;

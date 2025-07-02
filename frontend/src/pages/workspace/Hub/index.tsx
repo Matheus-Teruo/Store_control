@@ -43,42 +43,51 @@ function Hub() {
           <h2>Função</h2>
         )}
       <ul className={styles.home}>
-        {isUserLogged(user) &&
-          isSeller(user.summaryFunction, user.voluntaryRole) && (
-            <li className={styles.liSales}>
-              <Link className={styles.links} to="/workspace/sales">
-                Vendas
-              </Link>
-            </li>
-          )}
-        {activeConfig.enableCard &&
-          isUserLogged(user) &&
-          isRegister(user.summaryFunction, user.voluntaryRole) && (
-            <li className={styles.liCashier}>
-              <Link className={styles.links} to="/workspace/registers">
-                Caixa
-              </Link>
-            </li>
-          )}
-        {isUserLogged(user) &&
-          isSeller(user.summaryFunction, user.voluntaryRole) && (
-            <li className={styles.liProducts}>
-              <Link className={styles.links} to="/workspace/products">
-                Produtos
-              </Link>
-            </li>
-          )}
-        {isUserLogged(user) &&
-          !isSeller(user.summaryFunction, user.voluntaryRole) &&
-          !isRegister(user.summaryFunction, user.voluntaryRole) && (
-            <li className={styles.liDefault}>
-              <h3>Bem vindo</h3>
-              <p>
-                Você não está alocado no momento. Comunique-se com o coordenador
-                da sua associação para conseguir permissão.
-              </p>
-            </li>
-          )}
+        {isUserLogged(user) && (
+          <>
+            {isSeller(user.summaryFunction, user.voluntaryRole) &&
+              activeConfig.enableOrder && (
+                <li className={styles.liSales}>
+                  <Link className={styles.links} to="/workspace/sales">
+                    Atendentes
+                  </Link>
+                </li>
+              )}
+            {isSeller(user.summaryFunction, user.voluntaryRole) &&
+              !activeConfig.enableOrder && (
+                <li className={styles.liSales}>
+                  <Link className={styles.links} to="/workspace/sales">
+                    Vendas
+                  </Link>
+                </li>
+              )}
+            {activeConfig.enableCard &&
+              isRegister(user.summaryFunction, user.voluntaryRole) && (
+                <li className={styles.liCashier}>
+                  <Link className={styles.links} to="/workspace/registers">
+                    Caixa
+                  </Link>
+                </li>
+              )}
+            {isSeller(user.summaryFunction, user.voluntaryRole) && (
+              <li className={styles.liProducts}>
+                <Link className={styles.links} to="/workspace/products">
+                  Produtos
+                </Link>
+              </li>
+            )}
+            {!isSeller(user.summaryFunction, user.voluntaryRole) &&
+              !isRegister(user.summaryFunction, user.voluntaryRole) && (
+                <li className={styles.liDefault}>
+                  <h3>Bem vindo</h3>
+                  <p>
+                    Você não está alocado no momento. Comunique-se com o
+                    coordenador da sua associação para conseguir permissão.
+                  </p>
+                </li>
+              )}
+          </>
+        )}
       </ul>
       {isUserLogged(user) && user.voluntaryRole === VoluntaryRole.MANAGEMENT ? (
         <h2>Gerente</h2>
@@ -89,11 +98,19 @@ function Hub() {
       {isManeger(user) && (
         <ul className={styles.manager}>
           <h3>Histórico (Logs)</h3>
-          <li className={styles.liLogPurchases}>
-            <Link className={styles.links} to="/analytics/logs/trades">
-              Vendas Diretas
-            </Link>
-          </li>
+          {!activeConfig.enableToken ? (
+            <li className={styles.liLogPurchases}>
+              <Link className={styles.links} to="/analytics/logs/trades">
+                Vendas Diretas
+              </Link>
+            </li>
+          ) : (
+            <li className={styles.liLogPurchases}>
+              <Link className={styles.links} to="/analytics/logs/sales">
+                Vendas
+              </Link>
+            </li>
+          )}
           <h3>Estatísticas</h3>
           {activeConfig.enableCard && isAdmin(user) && (
             <li className={styles.liStatistics}>

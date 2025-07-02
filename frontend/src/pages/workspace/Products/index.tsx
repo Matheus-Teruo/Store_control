@@ -109,7 +109,7 @@ function Products() {
       </div>
       <li key={"header"} className={`${styles.listHeader} ${styles.list}`}>
         <p className={styles.productFrame}>Img</p>
-        <p className={styles.productName}>Produto</p>
+        <p className={styles.productName}>Nome</p>
         <p className={styles.productsSummary}>Resumo</p>
         <p className={styles.productDescription}>Descrição</p>
         <p className={styles.productPrice}>Preço</p>

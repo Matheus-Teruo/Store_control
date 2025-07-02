@@ -70,7 +70,7 @@ function createNewItem(product: SummaryProduct): CreateItem {
   return {
     productUuid: product.uuid,
     quantity: 1,
-    delivered: 0,
+    delivered: activeConfig.enableOrder ? 0 : undefined,
     unitPrice: product.price,
     discount: product.discount,
   };
@@ -80,7 +80,10 @@ function updateQuantity(item: CreateItem, newQuantity: number): CreateItem {
   return { ...item, quantity: newQuantity };
 }
 
-function updateDelivered(item: CreateItem, newDelivered: number): CreateItem {
+function updateDelivered(
+  item: CreateItem,
+  newDelivered: number | undefined,
+): CreateItem {
   return { ...item, delivered: newDelivered };
 }
 
@@ -256,9 +259,11 @@ export function tradeReducer(
         items: updateItemInList(state.items, productIndex, (item) =>
           updateDelivered(
             item,
-            item.delivered < item.quantity
-              ? item.delivered + 1
-              : item.delivered,
+            item.delivered !== undefined
+              ? item.delivered < item.quantity
+                ? item.delivered + 1
+                : item.delivered
+              : undefined,
           ),
         ),
       };
@@ -282,6 +287,19 @@ export function tradeReducer(
           updateDelivered(
             item,
             Math.min(action.payload.delivered, item.quantity),
+          ),
+        ),
+      };
+    }
+
+    case "DECREASE_DELIVERED_ITEM": {
+      const productIndex = findProductIndex(state.items, action.payload);
+      return {
+        ...state,
+        items: updateItemInList(state.items, productIndex, (item) =>
+          updateDelivered(
+            item,
+            Math.max(item.delivered !== undefined ? item.delivered + 1 : 1, 0),
           ),
         ),
       };

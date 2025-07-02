@@ -5,7 +5,7 @@ import HubDropDown from "./HubDropDown";
 
 const PagesData: Record<string, { label: string }> = {
   ["/workspace"]: { label: "Workspace" },
-  ["/workspace/cashier"]: { label: "Caixa" },
+  ["/workspace/registers"]: { label: "Caixa" },
   ["/workspace/sales"]: { label: "Estande" },
   ["/workspace/products"]: { label: "Produtos" },
   ["/workspace/transaction"]: { label: "Transação de Caixa" },
@@ -28,7 +28,7 @@ function WorkspaceHeader() {
           ) : (
             <div className={styles.spaceHolder} />
           )}
-          <h3>{PagesData[location.pathname].label}</h3>
+          <h3>{PagesData[location.pathname]?.label || "indefinido"}</h3>
           {location.pathname === "/workspace" ? (
             <HubDropDown />
           ) : (
