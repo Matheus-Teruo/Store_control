@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { PaymentStringMetadata } from "@/components/selects/PaymentSelect/paymentMetadata";
 import useVoluntaryService from "@service/voluntary/useVoluntaryService";
 import { SummaryVoluntary } from "@data/volunteers/Voluntary";
+import { InfoSVG } from "@/assets/svg";
 
 function TradeLogs() {
   const [trades, setTrades] = useState<SummaryTrade[]>([]);
@@ -92,12 +93,12 @@ function TradeLogs() {
   return (
     <div className={styles.body}>
       <li key={"header"} className={styles.listHeader}>
-        <p>Data</p>
-        <p>Voluntário</p>
-        <p>Quantidade de itens</p>
-        <p>Método de pagamento</p>
-        <p>Custo total</p>
-        <p className={styles.propAligned}></p>
+        <p className={styles.headerDate}>Data</p>
+        <p className={styles.headerVoluntary}>Voluntário</p>
+        <p className={styles.headerQuantity}>Itens</p>
+        <p className={styles.headerPaymentType}>Pagamento</p>
+        <p className={styles.headerTotal}>Custo total</p>
+        <p className={styles.headerDetails}></p>
       </li>
       <ul className={styles.main}>
         {trades.map((trade, index) => (
@@ -105,22 +106,28 @@ function TradeLogs() {
             key={trade.uuid}
             className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
           >
-            <p>{new Date(trade.tradeTimestamp + "Z").toLocaleString()}</p>
+            <p className={styles.tradeDate}>
+              {new Date(trade.tradeTimestamp + "Z").toLocaleString()}
+            </p>
             {/* TODO: AJUSTAR HORÁRIO DEPOIS DO EVENTO */}
-            <p>
+            <p className={styles.tradeVoluntary}>
               {volunteersRecord[trade.voluntaryUuid]?.fullname ||
                 "Nome não disponível"}
             </p>
-            <p>{trade.totalItems}</p>
-            <p>{PaymentStringMetadata[trade.paymentTypeEnum].pt}</p>
-            <p>R${trade.rechargeValue.toFixed(2)}</p>
+            <p className={styles.tradeQuantity}>{trade.totalItems}</p>
+            <p className={styles.tradePaymentType}>
+              {PaymentStringMetadata[trade.paymentTypeEnum].pt}
+            </p>
+            <p className={styles.tradeTotal}>
+              R${trade.rechargeValue.toFixed(2)}
+            </p>
             <Button
-              className={styles.tradeView}
+              className={styles.detailsButton}
               onClick={() =>
                 formDispach({ type: "SET_UPDATE", payload: trade.uuid })
               }
             >
-              <span>Detalhes</span>
+              <InfoSVG />
             </Button>
           </li>
         ))}
