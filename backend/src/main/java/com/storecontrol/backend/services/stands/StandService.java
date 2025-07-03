@@ -81,6 +81,10 @@ public class StandService {
   public void deleteStand(UUID uuid) {
     var stand = safeTakeStandByUuid(uuid);
 
+    if (stand.getRelatedRegister() != null && stand.getRelatedRegister().isValid()) {
+      stand.getRelatedRegister().deleteFunction();
+    }
+
     stand.deleteFunction();
   }
 
