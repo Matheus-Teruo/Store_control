@@ -12,6 +12,7 @@ public record ResponseSummaryPurchase(
     Boolean onOrder,
     Boolean reversal,
     String purchaseTimestamp,
+    UUID standUuid,
     Integer totalItems,
     BigDecimal totalPurchaseCost,
     BigDecimal totalPurchaseDiscount,
@@ -24,6 +25,7 @@ public record ResponseSummaryPurchase(
         purchase.isOnOrder(),
         purchase.isReversal(),
         purchase.getPurchaseTimestamp().toString(),
+        purchase.getStandUuid(),
         purchase.getItems().stream().map(Item::getQuantity)
             .reduce(0, Integer::sum),
         purchase.getItems().stream()
@@ -47,6 +49,7 @@ public record ResponseSummaryPurchase(
         purchase.isOnOrder(),
         purchase.isReversal(),
         purchase.getPurchaseTimestamp().toString(),
+        purchase.getStandUuid(),
         sumQuantity(items),
         calcTotal(items),
         calcDiscount(items),
