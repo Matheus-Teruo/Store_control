@@ -27,7 +27,6 @@ export interface SummaryTrade {
   standUuid: string;
   tradeTimestamp: string; // TODO: data
   totalItems: number;
-  voluntaryUuid: string;
 }
 
 export interface CreateTrade {

@@ -18,11 +18,11 @@ export interface SummaryPurchase {
   onOrder: boolean;
   reversal: boolean;
   purchaseTimestamp: string; // TODO: data
+  standUuid: string;
   totalItems: number;
   totalPurchaseCost: number;
   totalPurchaseDiscount: number;
   finalTotalPurchase: number;
-  voluntaryUuid: string;
 }
 
 export interface PurchaseCard {

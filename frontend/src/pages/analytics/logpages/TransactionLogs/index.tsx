@@ -5,52 +5,52 @@ import { useUserContext } from "@context/UserContext/useUserContext";
 import { SummaryTransaction } from "@data/operations/Transaction";
 import TransactionDetail from "./TransactionDetail";
 import useTransactionService from "@service/operations/useTransactionService";
-import useVoluntaryService from "@service/voluntary/useVoluntaryService";
+import useRegisterService from "@service/registers/useRegisterService";
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import { formReducer, initialFormState } from "@reducer/formReducer";
-import { SummaryVoluntary } from "@data/volunteers/Voluntary";
+import { SummaryRegister } from "@data/registers/Register";
 import Button from "@/components/utils/Button";
 import { InfoSVG } from "@/assets/svg";
 import { TransactionTypeMetadata } from "@/components/selects/TransactionTypeSelect/TransactionTypeMetadata";
 
 function TransactionLogs() {
   const [transactions, setTransactions] = useState<SummaryTransaction[]>([]);
-  const [volunteersRecord, setVolunteersRecord] = useState<
-    Record<string, Omit<SummaryVoluntary, "uuid">>
+  const [registersRecord, setRegistersRecord] = useState<
+    Record<string, Omit<SummaryRegister, "uuid">>
   >({});
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [formState, formDispach] = useReducer(formReducer, initialFormState);
   const { getTransactions } = useTransactionService();
-  const { getListVolunteers } = useVoluntaryService();
+  const { getListRegisters } = useRegisterService();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchVolunteers = async () => {
-      const volunteers = await getListVolunteers();
-      if (volunteers) {
-        const volunteersObject = volunteers.reduce(
-          (acc, voluntary) => {
-            const { uuid, ...rest } = voluntary;
+    const fetchRegisters = async () => {
+      const registers = await getListRegisters();
+      if (registers) {
+        const registersObject = registers.reduce(
+          (acc, register) => {
+            const { uuid, ...rest } = register;
             acc[uuid] = rest;
             return acc;
           },
-          {} as Record<string, Omit<SummaryVoluntary, "uuid">>,
+          {} as Record<string, Omit<SummaryRegister, "uuid">>,
         );
-        setVolunteersRecord(volunteersObject);
+        setRegistersRecord(registersObject);
       }
     };
-    fetchVolunteers();
-  }, [getListVolunteers]);
+    fetchRegisters();
+  }, [getListRegisters]);
 
   const fetchTransactions = useCallback(async () => {
     if (isManeger(user)) {
       const response = await getTransactions(
         page.number,
         undefined,
-        "transactionTimestamp,asc",
+        "transactionTimestamp,desc",
       );
       if (response) {
         setTransactions(response.content);
@@ -79,7 +79,7 @@ function TransactionLogs() {
     <div className={styles.body}>
       <li key={"header"} className={styles.listHeader}>
         <p className={styles.headerDate}>Data</p>
-        <p className={styles.headerVoluntary}>Voluntário</p>
+        <p className={styles.headerRegister}>Caixa</p>
         <p className={styles.headerType}>Transação</p>
         <p className={styles.headerAmount}>Valor</p>
         <p className={styles.headerDetails}></p>
@@ -91,10 +91,12 @@ function TransactionLogs() {
             className={`${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
           >
             <p className={styles.transactionDate}>
-              {transaction.transactionTimestamp}
+              {new Date(
+                transaction.transactionTimestamp + "Z",
+              ).toLocaleString()}
             </p>
-            <p className={styles.transactionVoluntary}>
-              {volunteersRecord[transaction.voluntaryUuid]?.fullname ||
+            <p className={styles.transactionRegister}>
+              {registersRecord[transaction.registerUuid]?.registerName ||
                 "Nome não disponível"}
             </p>
             <p className={styles.transactionType}>

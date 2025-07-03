@@ -15,7 +15,7 @@ export interface SummaryTransaction {
   amount: number;
   transactionTypeEnum: TransactionType;
   transactionTimestamp: string; // TODO: data
-  voluntaryUuid: string;
+  registerUuid: string;
 }
 
 export interface CreateTransaction {

@@ -15,7 +15,7 @@ export interface SummaryRecharge {
   rechargeValue: number;
   paymentTypeEnum: PaymentType;
   rechargeTimestamp: string; // TODO: data
-  voluntaryUuid: string;
+  registerUuid: string;
 }
 
 export interface RechargeCard {

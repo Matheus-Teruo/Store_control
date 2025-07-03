@@ -113,7 +113,7 @@ function Hub() {
           )}
           {activeConfig.enableCard && (
             <li className={styles.liLogTransactions}>
-              <Link className={styles.links} to="/analytics/logs/trades">
+              <Link className={styles.links} to="/analytics/logs/transactions">
                 Transações de Caixa
               </Link>
             </li>

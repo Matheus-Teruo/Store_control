@@ -16,40 +16,40 @@ import {
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { useNavigate } from "react-router-dom";
 import { PaymentStringMetadata } from "@/components/selects/PaymentSelect/paymentMetadata";
-import useVoluntaryService from "@service/voluntary/useVoluntaryService";
-import { SummaryVoluntary } from "@data/volunteers/Voluntary";
+import useStandService from "@service/stand/useStandService";
+import { SummaryStand } from "@data/stands/Stand";
 import { InfoSVG } from "@/assets/svg";
 
 function TradeLogs() {
   const [trades, setTrades] = useState<SummaryTrade[]>([]);
-  const [volunteersRecord, setVolunteersRecord] = useState<
-    Record<string, Omit<SummaryVoluntary, "uuid">>
+  const [standsRecord, setStandsRecord] = useState<
+    Record<string, Omit<SummaryStand, "uuid">>
   >({});
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [formState, formDispach] = useReducer(formReducer, initialFormState);
   const [modeAdmin, setModeAdmin] = useState<boolean>(false);
   const { getTrades } = useTradeService();
-  const { getListVolunteers } = useVoluntaryService();
+  const { getListStands } = useStandService();
   const { user } = useUserContext();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchVolunteers = async () => {
-      const volunteers = await getListVolunteers();
-      if (volunteers) {
-        const volunteersObject = volunteers.reduce(
-          (acc, voluntary) => {
-            const { uuid, ...rest } = voluntary;
+    const fetchStands = async () => {
+      const stands = await getListStands();
+      if (stands) {
+        const standsObject = stands.reduce(
+          (acc, stand) => {
+            const { uuid, ...rest } = stand;
             acc[uuid] = rest;
             return acc;
           },
-          {} as Record<string, Omit<SummaryVoluntary, "uuid">>,
+          {} as Record<string, Omit<SummaryStand, "uuid">>,
         );
-        setVolunteersRecord(volunteersObject);
+        setStandsRecord(standsObject);
       }
     };
-    fetchVolunteers();
-  }, [getListVolunteers]);
+    fetchStands();
+  }, [getListStands]);
 
   const fetchTrades = useCallback(
     async (modeAmin: boolean) => {
@@ -58,7 +58,7 @@ function TradeLogs() {
           modeAmin ? undefined : user.summaryFunction?.uuid,
           page.number,
           undefined,
-          "tradeTimestamp,asc",
+          "tradeTimestamp,desc",
         );
         if (response) {
           setTrades(response.content);
@@ -94,7 +94,7 @@ function TradeLogs() {
     <div className={styles.body}>
       <li key={"header"} className={styles.listHeader}>
         <p className={styles.headerDate}>Data</p>
-        <p className={styles.headerVoluntary}>Voluntário</p>
+        <p className={styles.headerStand}>Estande</p>
         <p className={styles.headerQuantity}>Itens</p>
         <p className={styles.headerPaymentType}>Pagamento</p>
         <p className={styles.headerTotal}>Custo total</p>
@@ -110,8 +110,8 @@ function TradeLogs() {
               {new Date(trade.tradeTimestamp + "Z").toLocaleString()}
             </p>
             {/* TODO: AJUSTAR HORÁRIO DEPOIS DO EVENTO */}
-            <p className={styles.tradeVoluntary}>
-              {volunteersRecord[trade.voluntaryUuid]?.fullname ||
+            <p className={styles.tradeStand}>
+              {standsRecord[trade.standUuid]?.standName ||
                 "Nome não disponível"}
             </p>
             <p className={styles.tradeQuantity}>{trade.totalItems}</p>
