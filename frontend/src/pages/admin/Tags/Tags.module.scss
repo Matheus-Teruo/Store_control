@@ -88,7 +88,8 @@
     gap: 2px;
     padding: 2px 10px;
     box-sizing: border-box;
-    border-radius: $border-radius;
+    border-bottom-left-radius: $border-radius;
+    border-bottom-right-radius: $border-radius;
 
     p {
       font-size: 1rem;

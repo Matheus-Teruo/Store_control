@@ -1,10 +1,12 @@
 import styles from "./LogsHeader.module.scss";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import Logo from "@/assets/image/LogoStoreControl.png";
 import activeConfig from "@/config/activeConfig";
 
 function LogHeader() {
+  const location = useLocation();
+
   return (
     <div>
       <div className={styles.background}>
@@ -45,7 +47,7 @@ function LogHeader() {
                       <h3
                         className={`${location.pathname === "/analytics/logs/purchases" && styles.selected}`}
                       >
-                        Vendas Tokens
+                        Vendas por Tokens
                       </h3>
                     </Link>
                   </li>

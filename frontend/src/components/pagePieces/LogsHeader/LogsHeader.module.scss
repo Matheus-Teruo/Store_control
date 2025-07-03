@@ -39,17 +39,18 @@
 
     .baseNavigate {
       width: 100%;
+      background-color: $color-secundary-2;
+      box-shadow: $color-shadow-1 0 2px 4px inset;
+      display: flex;
+      justify-content: center;
 
       .navigate {
         height: 36px;
         display: flex;
-        justify-content: center;
-        width: 100%;
-        background-color: $color-secundary-2;
-        box-shadow: $color-shadow-1 0 2px 4px inset;
 
         @media (max-width: $mobile) {
           height: 32px;
+          overflow-x: auto;
         }
 
         li {

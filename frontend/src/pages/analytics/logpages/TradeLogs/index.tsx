@@ -34,21 +34,21 @@ function TradeLogs() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchAssociations = async () => {
-      const products = await getListVolunteers();
-      if (products) {
-        const productsObject = products.reduce(
-          (acc, product) => {
-            const { uuid, ...rest } = product;
+    const fetchVolunteers = async () => {
+      const volunteers = await getListVolunteers();
+      if (volunteers) {
+        const volunteersObject = volunteers.reduce(
+          (acc, voluntary) => {
+            const { uuid, ...rest } = voluntary;
             acc[uuid] = rest;
             return acc;
           },
           {} as Record<string, Omit<SummaryVoluntary, "uuid">>,
         );
-        setVolunteersRecord(productsObject);
+        setVolunteersRecord(volunteersObject);
       }
     };
-    fetchAssociations();
+    fetchVolunteers();
   }, [getListVolunteers]);
 
   const fetchTrades = useCallback(

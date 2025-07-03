@@ -13,10 +13,13 @@ SET @PRODUCT3_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @PRODUCT4_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @PRODUCT5_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @PRODUCT6_UUID = UNHEX(REPLACE(UUID(), '-', ''));
-SET @CARD1_ID = 'ordercard000001';
-SET @CARD2_ID = 'ordercard000002';
-SET @CARD3_ID = 'ordercard000003';
-SET @CARD4_ID = 'ordercard000004';
+SET @TAG1_UUID = UNHEX(REPLACE(UUID(), '-', ''));
+SET @TAG2_UUID = UNHEX(REPLACE(UUID(), '-', ''));
+SET @TAG3_UUID = UNHEX(REPLACE(UUID(), '-', ''));
+SET @CARD1_ID = 'OrderCard000001';
+SET @CARD2_ID = 'OrderCard000002';
+SET @CARD3_ID = 'OrderCard000003';
+SET @CARD4_ID = 'OrderCard000004';
 SET @VOLUNTARY_MANAGER1_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @VOLUNTARY_MANAGER2_UUID = UNHEX(REPLACE(UUID(), '-', ''));
 SET @VOLUNTARY_USER1_UUID = UNHEX(REPLACE(UUID(), '-', ''));
@@ -81,6 +84,21 @@ INSERT INTO products (uuid, product_name, product_code, summary, description, co
 (@PRODUCT4_UUID, 'Matcha Cookies', 2, "Cookies com massa de matcha e gotas de chocolate branco", "", 0, 8.00, 0.00, 192, @STAND2_UUID, 1),
 (@PRODUCT5_UUID, 'Brownie de Matcha', 3, "Bolo denso com gosto de matcha e com nozes na massa", "", 0, 12.00, 0.00, 247, @STAND2_UUID, 1),
 (@PRODUCT6_UUID, 'Mabudofu', 4, "Prato com tofu apimentado acompanhado de arroz japones", "", 0, 35.00, 0.00, 299, @STAND3_UUID, 1);
+
+-- Inserir Tags
+INSERT INTO tags (uuid, tag_name, color) VALUES
+(@TAG1_UUID, 'Refeição', "#ffb380"),
+(@TAG2_UUID, 'Doce', "#f2b1f0"),
+(@TAG3_UUID, 'Bebida', "#a8d9ff");
+
+-- Inserir relação Tag Products
+INSERT INTO tags (tag_uuid, product_uuid) VALUES
+(@TAG1_UUID, @PRODUCT6_UUID),
+(@TAG2_UUID, @PRODUCT2_UUID),
+(@TAG2_UUID, @PRODUCT4_UUID),
+(@TAG2_UUID, @PRODUCT5_UUID),
+(@TAG3_UUID, @PRODUCT1_UUID),
+(@TAG3_UUID, @PRODUCT3_UUID);
 
 -- Inserir Cartões de Ordem
 INSERT INTO cards (card_id, debit, active) VALUES

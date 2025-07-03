@@ -72,7 +72,8 @@
     grid-auto-rows: auto;
     gap: 10px;
 
-    .liLogPurchases {
+    .liLogPurchases,
+    .liLogTransactions {
       grid-column: span 2;
     }
 

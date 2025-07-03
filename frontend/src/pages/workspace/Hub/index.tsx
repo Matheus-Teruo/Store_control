@@ -111,6 +111,13 @@ function Hub() {
               </Link>
             </li>
           )}
+          {activeConfig.enableCard && (
+            <li className={styles.liLogTransactions}>
+              <Link className={styles.links} to="/analytics/logs/trades">
+                Transações de Caixa
+              </Link>
+            </li>
+          )}
           <h3>Estatísticas</h3>
           {activeConfig.enableCard && isAdmin(user) && (
             <li className={styles.liStatistics}>
