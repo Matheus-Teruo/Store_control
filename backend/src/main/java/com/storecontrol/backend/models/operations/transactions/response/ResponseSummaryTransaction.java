@@ -11,8 +11,7 @@ public record ResponseSummaryTransaction(
     BigDecimal amount,
     TransactionType transactionTypeEnum,
     String transactionTimestamp,
-    UUID registerUuid,
-    UUID voluntaryUuid
+    UUID registerUuid
 ) {
 
   public ResponseSummaryTransaction(Transaction transaction) {
@@ -20,8 +19,7 @@ public record ResponseSummaryTransaction(
         transaction.getAmount(),
         transaction.getTransactionTypeEnum(),
         transaction.getTransactionTimestamp().toString(),
-        transaction.getRegister().getUuid(),
-        transaction.getVoluntaryUuid()
+        transaction.getRegisterUuid()
     );
   }
 }

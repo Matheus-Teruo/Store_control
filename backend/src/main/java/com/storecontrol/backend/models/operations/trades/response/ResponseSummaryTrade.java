@@ -17,8 +17,7 @@ public record ResponseSummaryTrade(
     boolean reversal,
     UUID standUuid,
     String tradeTimestamp,
-    Integer totalItems,
-    UUID voluntaryUuid
+    Integer totalItems
 ) {
 
   public ResponseSummaryTrade(TradeView tradeView) {
@@ -32,8 +31,7 @@ public record ResponseSummaryTrade(
         tradeView.getStandUuid(),
         tradeView.getTradeTimestamp().toString(),
         tradeView.getItems().stream().map(Item::getQuantity)
-            .reduce(0, Integer::sum),
-        tradeView.getVoluntaryUuid()
+            .reduce(0, Integer::sum)
     );
   }
 }
