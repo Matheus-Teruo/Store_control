@@ -15,8 +15,7 @@ public record ResponseSummaryPurchase(
     Integer totalItems,
     BigDecimal totalPurchaseCost,
     BigDecimal totalPurchaseDiscount,
-    BigDecimal finalTotalPurchase,
-    UUID voluntaryUuid
+    BigDecimal finalTotalPurchase
 ) {
 
   public ResponseSummaryPurchase(Purchase purchase) {
@@ -38,8 +37,7 @@ public record ResponseSummaryPurchase(
         purchase.getItems().stream()
             .map(item -> BigDecimal.valueOf(item.getQuantity())
                 .multiply(item.getUnitPrice().subtract(item.getDiscount())))
-            .reduce(BigDecimal.ZERO, BigDecimal::add),
-        purchase.getVoluntaryUuid()
+            .reduce(BigDecimal.ZERO, BigDecimal::add)
     );
   }
 
@@ -52,8 +50,7 @@ public record ResponseSummaryPurchase(
         sumQuantity(items),
         calcTotal(items),
         calcDiscount(items),
-        calcFinal(items),
-        purchase.getVoluntaryUuid()
+        calcFinal(items)
     );
   }
 
