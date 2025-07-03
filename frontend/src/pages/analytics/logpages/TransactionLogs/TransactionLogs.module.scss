@@ -1,0 +1,162 @@
+@use "@styles/variables" as *;
+@use "@styles/breakpoint" as *;
+
+.body {
+  background-color: $color-gray-000;
+  width: 100vw;
+  height: calc(100vh - $admin-header-height - 4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (max-width: $mobile) {
+    height: calc(100vh - $admin-header-height);
+  }
+
+  .listHeader {
+    background-color: $color-primary-2;
+    width: 100%;
+    max-width: 1280px;
+    display: grid;
+    grid-template-columns: 140px 2fr 1fr 1fr 54px;
+    grid-auto-flow: row;
+    gap: 2px;
+    padding: 2px 10px;
+    box-sizing: border-box;
+    border-bottom-left-radius: $border-radius;
+    border-bottom-right-radius: $border-radius;
+
+    @media (max-width: $mobile) {
+      grid-template-columns: 70px 2fr 1fr 46px;
+      grid-template-rows: 1fr 1fr;
+
+      .headerDate {
+        grid-row: span 2;
+        grid-column: 1;
+      }
+
+      .headerVoluntary {
+        grid-row: span 2;
+        grid-column: 2;
+      }
+
+      .headerType {
+        grid-row: 1;
+        grid-column: 3;
+      }
+
+      .headerAmount {
+        grid-row: 2;
+        grid-column: 3;
+      }
+
+      .headerDetails {
+        grid-row: span 2;
+        grid-column: 4;
+      }
+    }
+
+    p {
+      font-size: 1rem;
+      font-weight: 500;
+      align-content: center;
+
+      @media (max-width: $mobile) {
+        font-size: 0.875rem;
+      }
+    }
+
+    .propAligned {
+      justify-content: center;
+      text-align: center;
+    }
+  }
+
+  .main {
+    padding: 6px 0;
+    max-width: calc(1280px);
+    width: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+
+    @media (max-width: $desktop_md) {
+      padding: 6px;
+    }
+
+    .itemOdd {
+      background-color: $color-primary-1;
+    }
+
+    .itemPair {
+      background-color: $color-tertiary-1;
+    }
+
+    li {
+      display: grid;
+      grid-template-columns: 140px 2fr 1fr 1fr 54px;
+      grid-auto-flow: row;
+      gap: 2px;
+      padding: 2px 10px;
+      box-sizing: border-box;
+      margin-bottom: 4px;
+      border-radius: $border-radius;
+
+      @media (max-width: $desktop_md) {
+        padding: 2px 4px;
+        margin-bottom: 6px;
+      }
+
+      @media (max-width: $mobile) {
+        grid-template-columns: 70px 2fr 1fr 46px;
+        grid-template-rows: 1fr 1fr;
+
+        svg {
+          width: 20px;
+        }
+
+        .transactionDate {
+          grid-row: span 2;
+          grid-column: 1;
+        }
+
+        .transactionVoluntary {
+          grid-row: span 2;
+          grid-column: 2;
+        }
+
+        .transactionType {
+          grid-row: 1;
+          grid-column: 3;
+        }
+
+        .transactionAmount {
+          grid-row: 2;
+          grid-column: 3;
+        }
+
+        .detailsButton {
+          grid-row: span 2;
+          grid-column: 4;
+        }
+      }
+
+      p {
+        display: flex;
+        align-items: center;
+        font-size: 0.875rem;
+
+        @media (max-width: $mobile) {
+          font-size: 0.75rem;
+        }
+      }
+
+      .detailsButton {
+        display: flex;
+        justify-content: center;
+        padding: 2px;
+        margin: 0 4px;
+        background-color: $color-secundary-1;
+      }
+    }
+  }
+}

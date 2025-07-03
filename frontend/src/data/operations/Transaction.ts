@@ -1,4 +1,4 @@
-import { SummaryCustomer } from "@data/customers/Customer";
+import { SummaryRegister } from "@data/registers/Register";
 import { SummaryVoluntary } from "@data/volunteers/Voluntary";
 
 export default interface Transaction {
@@ -6,7 +6,7 @@ export default interface Transaction {
   amount: number;
   transactionTypeEnum: TransactionType;
   transactionTimestamp: string; // TODO: data
-  summaryRegister: SummaryCustomer;
+  summaryRegister: SummaryRegister;
   summaryVoluntary: SummaryVoluntary;
 }
 

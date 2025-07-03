@@ -47,7 +47,7 @@ const useTransactionService = () => {
     async (
       page?: number,
       size?: number,
-      sort?: "asc" | "desc",
+      sort?: string,
     ): Promise<PaginatedResponse<SummaryTransaction> | null> =>
       safeRequest(() =>
         api
