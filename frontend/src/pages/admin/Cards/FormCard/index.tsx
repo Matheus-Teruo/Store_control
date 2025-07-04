@@ -1,7 +1,7 @@
 import styles from "./FormCard.module.scss";
 import GlassBackground from "@/components/GlassBackground";
 import Button from "@/components/utils/Button";
-import Input from "@/components/utils/ProductInput";
+import Input from "@/components/utils/CardInput";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import {
   isMessage,
@@ -48,15 +48,12 @@ function FormCard({ hide }: { hide: () => void }) {
         <form onSubmit={handleCreateSubmit}>
           <label>Card ID</label>
           <Input
-            type="text"
-            id="cardId"
             value={state.cardId}
             onChange={(e) =>
               dispatch({ type: "SET_CARD", payload: e.target.value })
             }
             showStatus={touched}
             message={messageError["cardId"]}
-            isRequired
           />
           <div className={styles.footerButtons}>
             <div />

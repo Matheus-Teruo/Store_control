@@ -103,7 +103,9 @@ function TransactionLogs() {
               {transaction &&
                 TransactionTypeMetadata[transaction?.transactionTypeEnum].pt}
             </p>
-            <p className={styles.transactionAmount}>R${transaction.amount}</p>
+            <p className={styles.transactionAmount}>
+              R${transaction.amount.toFixed(2)}
+            </p>
             <Button
               className={styles.detailsButton}
               onClick={() =>

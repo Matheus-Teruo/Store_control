@@ -32,7 +32,7 @@ const useDonationService = () => {
     async (
       page?: number,
       size?: number,
-      sort?: "asc" | "desc",
+      sort?: string,
     ): Promise<PaginatedResponse<SummaryDonation> | null> =>
       safeRequest(() =>
         api

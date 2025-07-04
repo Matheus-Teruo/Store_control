@@ -43,7 +43,7 @@ const useRechargeService = () => {
     async (
       page?: number,
       size?: number,
-      sort?: "asc" | "desc",
+      sort?: string,
     ): Promise<PaginatedResponse<SummaryRecharge> | null> =>
       safeRequest(() =>
         api

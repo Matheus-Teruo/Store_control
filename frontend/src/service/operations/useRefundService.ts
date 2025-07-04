@@ -32,7 +32,7 @@ const useRefundService = () => {
     async (
       page?: number,
       size?: number,
-      sort?: "asc" | "desc",
+      sort?: string,
     ): Promise<PaginatedResponse<SummaryRefund> | null> =>
       safeRequest(() =>
         api

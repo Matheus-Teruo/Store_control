@@ -7,7 +7,7 @@ import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
-import useCustomersApi from "@service/customer/useCustomerService";
+import useCustomerService from "@service/customer/useCustomerService";
 import useProductService from "@service/stand/useProductService";
 import Button from "@/components/utils/Button";
 import QRcodeReader from "@/components/QRcodeReader";
@@ -35,7 +35,7 @@ function Card() {
   const [showScanner, setShowScanner] = useState<boolean>(false);
   const [cardStatus, setCardStatus] = useState<CardStatus>(CardStatus.NoCard);
   const { addNotification } = useAlertsContext();
-  const { getCustomerByCard } = useCustomersApi();
+  const { getCustomerByCard } = useCustomerService();
   const { getListStands } = useStandService();
   const { getListProducts } = useProductService();
   const navigate = useNavigate();
@@ -200,7 +200,11 @@ function Card() {
                   key={recharge.uuid}
                   className={index % 2 === 0 ? styles.itemPair : styles.itemOdd}
                 >
-                  <p>{recharge.rechargeTimestamp}</p>
+                  <p>
+                    {new Date(
+                      recharge.rechargeTimestamp + "Z",
+                    ).toLocaleString()}
+                  </p>
                   <p>{PaymentStringMetadata[recharge.paymentTypeEnum]?.pt}</p>
                   <p>R$ {recharge.rechargeValue.toFixed(2)}</p>
                 </li>
@@ -227,7 +231,11 @@ function Card() {
                   <div
                     className={`${styles.purchaseSpec} ${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
                   >
-                    <p>{purchase.purchaseTimestamp}</p>
+                    <p>
+                      {new Date(
+                        purchase.purchaseTimestamp + "Z",
+                      ).toLocaleString()}
+                    </p>
                     <p>{standsRecord[purchase.standUuid].standName}</p>
                     <p>{purchase.onOrder ? "Ativo" : "Finalizada"}</p>
                   </div>

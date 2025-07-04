@@ -44,7 +44,7 @@ const usePurchaseService = () => {
     async (
       page?: number,
       size?: number,
-      sort?: "asc" | "desc",
+      sort?: string,
     ): Promise<PaginatedResponse<SummaryPurchase> | null> =>
       safeRequest(() =>
         api

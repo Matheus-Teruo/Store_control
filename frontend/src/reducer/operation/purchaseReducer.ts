@@ -1,9 +1,13 @@
 import { regexUuid } from "@/utils/regex";
 import { CreateItem } from "@data/operations/Item";
-import { CreatePurchase } from "@data/operations/Purchase";
+import { CreatePurchase, PurchaseCard } from "@data/operations/Purchase";
 import { SummaryProduct } from "@data/stands/Product";
 
 export type PurchaseAction =
+  | {
+      type: "SET_CART";
+      payload: { purchase: PurchaseCard; cardId: string };
+    }
   | { type: "ADD_ITEM"; payload: SummaryProduct }
   | {
       type: "ON_CHANGE_ITEM";
@@ -11,6 +15,14 @@ export type PurchaseAction =
     }
   | { type: "DECREASE_ITEM"; payload: string }
   | { type: "REMOVE_ITEM"; payload: string }
+  | { type: "ADD_DELIVERED_ITEM"; payload: string }
+  | { type: "COMPLETE_DELIVERED_ITEM"; payload: string }
+  | {
+      type: "ON_CHANGE_DELIVERED_ITEM";
+      payload: { uuid: string; delivered: number };
+    }
+  | { type: "DECREASE_DELIVERED_ITEM"; payload: string }
+  | { type: "REMOVE_DELIVERED_ITEM"; payload: string }
   | { type: "SET_STAND_UUID"; payload: string }
   | { type: "SET_CARD_ID"; payload: string }
   | { type: "RESET" };
@@ -52,6 +64,13 @@ function updateQuantity(item: CreateItem, newQuantity: number): CreateItem {
   return { ...item, quantity: newQuantity };
 }
 
+function updateDelivered(
+  item: CreateItem,
+  newDelivered: number | undefined,
+): CreateItem {
+  return { ...item, delivered: newDelivered };
+}
+
 function calculateTotals(items: CreateItem[]): {
   totalPrice: number;
   totalQuantity: number;
@@ -71,6 +90,22 @@ export function purchaseReducer(
   action: PurchaseAction,
 ): CreatePurchase & { totalPrice: number; totalQuantity: number } {
   switch (action.type) {
+    case "SET_CART":
+      return {
+        ...state,
+        standUuid: action.payload.purchase.standUuid,
+        items: action.payload.purchase.items,
+        cardId: action.payload.cardId,
+        totalPrice: action.payload.purchase.items.reduce(
+          (total, item) =>
+            total + item.quantity * (item.unitPrice - item.discount),
+          0,
+        ),
+        totalQuantity: action.payload.purchase.items.reduce(
+          (soma, item) => soma + item.quantity,
+          0,
+        ),
+      };
     case "ADD_ITEM": {
       const newProduct = action.payload;
       if (newProduct.stock === 0) return state;
@@ -135,6 +170,69 @@ export function purchaseReducer(
 
       const totals = calculateTotals(updatedItems);
       return { ...state, items: updatedItems, ...totals };
+    }
+
+    case "ADD_DELIVERED_ITEM": {
+      const productIndex = findProductIndex(state.items, action.payload);
+      return {
+        ...state,
+        items: updateItemInList(state.items, productIndex, (item) =>
+          updateDelivered(
+            item,
+            item.delivered !== undefined
+              ? item.delivered < item.quantity
+                ? item.delivered + 1
+                : item.delivered
+              : undefined,
+          ),
+        ),
+      };
+    }
+
+    case "COMPLETE_DELIVERED_ITEM": {
+      const productIndex = findProductIndex(state.items, action.payload);
+      return {
+        ...state,
+        items: updateItemInList(state.items, productIndex, (item) =>
+          updateDelivered(item, item.quantity),
+        ),
+      };
+    }
+
+    case "ON_CHANGE_DELIVERED_ITEM": {
+      const productIndex = findProductIndex(state.items, action.payload.uuid);
+      return {
+        ...state,
+        items: updateItemInList(state.items, productIndex, (item) =>
+          updateDelivered(
+            item,
+            Math.min(action.payload.delivered, item.quantity),
+          ),
+        ),
+      };
+    }
+
+    case "DECREASE_DELIVERED_ITEM": {
+      const productIndex = findProductIndex(state.items, action.payload);
+      return {
+        ...state,
+        items: updateItemInList(state.items, productIndex, (item) =>
+          updateDelivered(
+            item,
+            Math.max(item.delivered !== undefined ? item.delivered + 1 : 1, 0),
+          ),
+        ),
+      };
+    }
+
+    case "REMOVE_DELIVERED_ITEM": {
+      const productIndex = findProductIndex(state.items, action.payload);
+      return {
+        ...state,
+        items: updateItemInList(state.items, productIndex, (item) =>
+          updateDelivered(item, 0),
+        ),
+      };
     }
 
     case "SET_STAND_UUID": {
