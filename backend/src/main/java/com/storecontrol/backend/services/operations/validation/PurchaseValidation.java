@@ -188,6 +188,15 @@ public class PurchaseValidation {
     }
   }
 
+  public void checkCardIsValidToPurchase(UUID purchaseUuid, List<Purchase> purchases) {
+    if (purchases.stream().noneMatch(purchase -> purchaseUuid == purchase.getUuid())) {
+      throw new InvalidOperationException(
+          MessageResolver.getInstance().getMessage("validation.purchase.checkPurchaseUuid.notBelongsCard.error"),
+          MessageResolver.getInstance().getMessage("validation.purchase.checkPurchaseUuid.notBelongsCard.message")
+      );
+    }
+  }
+
   public void checkItemsFromPurchaseValidation(List<RequestUpdateItem> requestUpdateItems, List<Item> items) {
     if (requestUpdateItems != null && !requestUpdateItems.isEmpty()) {
 
