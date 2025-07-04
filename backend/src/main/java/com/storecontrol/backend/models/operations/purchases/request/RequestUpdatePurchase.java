@@ -9,6 +9,9 @@ public record RequestUpdatePurchase(
     @NotNull(message = "{request.validation.updatePurchase.uuid.notnull}")
     UUID uuid,
 
+    @NotNull(message = "{request.validation.updatePurchase.cardId.notnull")
+    String CardId,
+
     @NotNull(message = "{request.validation.updatePurchase.items.notnull}")
     List<RequestUpdateItem> items
 ) {

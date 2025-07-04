@@ -1,17 +1,18 @@
 package com.storecontrol.backend.models.customers.response;
 
+import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.operations.finalization.response.ResponseSummaryDonation;
+import com.storecontrol.backend.models.operations.finalization.response.ResponseSummaryRefund;
 import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
 import com.storecontrol.backend.models.operations.recharges.response.ResponseSummaryRecharge;
-import com.storecontrol.backend.models.operations.finalization.response.ResponseSummaryRefund;
-import com.storecontrol.backend.models.customers.Customer;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
 public record ResponseCustomer(
     UUID uuid,
-    ResponseCard card,
+    BigDecimal cardDebit,
     String customerStart,
     String customerEnd,
     List<ResponseSummaryRecharge> summaryRecharges,
@@ -22,7 +23,7 @@ public record ResponseCustomer(
 
   public ResponseCustomer(Customer customer) {
     this(customer.getUuid(),
-        new ResponseCard(customer.getCard()),
+        customer.isInUse() ? customer.getCard().getDebit() : BigDecimal.ZERO,
         customer.getCustomerStart().toString(),
         customer.getCustomerEnd() != null ? customer.getCustomerEnd().toString() : null,
         customer.getRecharges().stream().map(ResponseSummaryRecharge::new).toList(),
