@@ -168,6 +168,7 @@ public class TestDataFactory {
     );
     return new RequestUpdatePurchase(
         uuid,
+        purchase.getCustomer().getCard().getId(),
         requestUpdateItems
     );
   }

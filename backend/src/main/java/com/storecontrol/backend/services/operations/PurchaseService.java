@@ -110,6 +110,8 @@ public class PurchaseService {
 
   @Transactional
   public Purchase updatePurchase(RequestUpdatePurchase request) {
+    var customer = customerService.takeActiveCustomerByCardId(request.CardId());
+    validation.checkCardIsValidToPurchase(request.uuid(), customer.getPurchases());
     var purchase = safeTakePurchaseByUuid(request.uuid());
     Map<UUID, Item> mapItem = purchase.getItems().stream()
         .collect(Collectors.toMap(Item::getProductUuid, Function.identity()));
