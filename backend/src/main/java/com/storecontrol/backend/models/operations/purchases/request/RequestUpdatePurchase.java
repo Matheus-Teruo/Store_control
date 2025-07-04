@@ -10,7 +10,7 @@ public record RequestUpdatePurchase(
     UUID uuid,
 
     @NotNull(message = "{request.validation.updatePurchase.cardId.notnull")
-    String CardId,
+    String cardId,
 
     @NotNull(message = "{request.validation.updatePurchase.items.notnull}")
     List<RequestUpdateItem> items
