@@ -119,16 +119,6 @@ function Hub() {
             </li>
           )}
           <h3>Estatísticas</h3>
-          {activeConfig.enableCard && isAdmin(user) && (
-            <li className={styles.liStatistics}>
-              <Link
-                className={styles.links}
-                to="/analytics/statistics/customer"
-              >
-                Consumidor
-              </Link>
-            </li>
-          )}
           {shouldShowRechargeLink && (
             <li
               className={
@@ -172,6 +162,16 @@ function Hub() {
                 </li>
               </>
             )}
+          {activeConfig.enableCard && isAdmin(user) && (
+            <li className={styles.liStatistics}>
+              <Link
+                className={styles.links}
+                to="/analytics/statistics/customer"
+              >
+                Consumidor
+              </Link>
+            </li>
+          )}
           <h3>Organização</h3>
           {isAdmin(user) && (
             <li className={styles.liTags}>

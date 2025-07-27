@@ -32,6 +32,7 @@ import QRcodeReader from "@/components/QRcodeReader";
 import { cartPacking, takeStandUuid } from "@/utils/cartCompactor";
 import ComponentWrapper from "@/components/ComponentWrapper";
 import CardInput from "@/components/utils/CardInput";
+import activeConfig from "@/config/activeConfig";
 
 type FormTradeProps = {
   reducer: [
@@ -288,16 +289,21 @@ function FormTrade({
                 {state.rechargeValue.toFixed(2)}
               </p>
             </li>
-            <label>Cartão</label>
-            <CardInput
-              onChange={(e) =>
-                dispatch({
-                  type: "SET_CARD_ID",
-                  payload: e.target.value as PaymentType,
-                })
-              }
-              value={state.cardId}
-            />
+            {activeConfig.enableCard && (
+              <>
+                <label>Cartão</label>
+                <CardInput
+                  onChange={(e) =>
+                    dispatch({
+                      type: "SET_CARD_ID",
+                      payload: e.target.value as PaymentType,
+                    })
+                  }
+                  value={state.cardId}
+                  isRequired
+                />
+              </>
+            )}
             <PaymentSelect
               payment={state.paymentTypeEnum}
               onChange={(e) =>

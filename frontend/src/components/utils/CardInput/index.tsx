@@ -4,6 +4,7 @@ import styles from "./CardInput.module.scss";
 interface FunctionSelectProps {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  isRequired?: boolean;
   disabled?: boolean;
   showStatus?: boolean;
   message?: string;
@@ -13,9 +14,10 @@ interface FunctionSelectProps {
 function CardInput({
   value,
   onChange,
-  disabled,
-  showStatus,
-  message,
+  isRequired = false,
+  disabled = false,
+  showStatus = false,
+  message = "",
   className,
 }: FunctionSelectProps) {
   const [status, setStatus] = useState<InputStatus>(InputStatus.Untouched);
@@ -51,6 +53,7 @@ function CardInput({
         placeholder="ID do Cartão"
         id="cardId"
         name="cardId"
+        required={isRequired}
         disabled={disabled}
         maxLength={15}
       />

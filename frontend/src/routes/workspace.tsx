@@ -1,6 +1,7 @@
 import WorkspaceHeader from "@/components/pagePieces/WorkspaceHeader";
 import activeConfig from "@/config/activeConfig";
 import Hub from "@/pages/workspace/Hub";
+import PickUpCounter from "@/pages/workspace/PickUpCounter";
 import Products from "@/pages/workspace/Products";
 import RegisterFunction from "@/pages/workspace/RegisterFunction";
 import StandFunction from "@/pages/workspace/StandFunction";
@@ -20,7 +21,7 @@ function WorkspaceRoutesComponent() {
   if (activeConfig.enableToken) {
     salesComponent = <StandFunction />;
   } else if (activeConfig.enableOrder) {
-    salesComponent = <StandFunctionTrade />;
+    salesComponent = <PickUpCounter />;
   } else {
     salesComponent = <StandFunctionTrade />;
   }

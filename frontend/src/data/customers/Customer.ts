@@ -1,12 +1,11 @@
 import { RechargeCard, SummaryRecharge } from "@data/operations/Recharge";
-import Card, { SummaryCard } from "./Card";
 import { PurchaseCard, SummaryPurchase } from "@data/operations/Purchase";
 import { DonationCard, SummaryDonation } from "@data/operations/Donation";
 import { RefundCard, SummaryRefund } from "@data/operations/Refund";
 
 export default interface Customer {
   uuid: string;
-  card: Card;
+  cardDebit: number;
   customerStart: string; // TODO: data
   customerEnd: string; // TODO: data
   summaryRecharges: SummaryRecharge[];
@@ -17,14 +16,14 @@ export default interface Customer {
 
 export interface SummaryCustomer {
   uuid: string;
-  summaryCard: SummaryCard;
+  cardDebit: number;
   customerStart: string; // TODO: data
   customerEnd: string; // TODO: data
 }
 
 export interface CustomerCard {
   uuid: string;
-  card: Card;
+  cardDebit: number;
   recharges: RechargeCard[];
   purchases: PurchaseCard[];
   donation: DonationCard;

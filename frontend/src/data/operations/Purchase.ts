@@ -42,5 +42,6 @@ export interface CreatePurchase {
 
 export interface UpdatePurchase {
   uuid: string;
+  cardId: string;
   items: UpdateItem[];
 }

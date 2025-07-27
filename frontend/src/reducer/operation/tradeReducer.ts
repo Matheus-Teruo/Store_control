@@ -340,7 +340,7 @@ export function tradeReducer(
     }
 
     case "SET_CARD_ID":
-      if (!regexUuid.test(action.payload)) {
+      if (action.payload.length > 15) {
         return state;
       }
       return { ...state, cardId: action.payload };

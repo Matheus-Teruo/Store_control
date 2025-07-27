@@ -1,23 +1,33 @@
-import styles from "./Card.module.scss";
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import styles from "./PickUpCounter.module.scss";
+import Logo from "@/assets/image/LogoStoreControl.png";
 import { SummaryProduct } from "@data/stands/Product";
+import { SummaryStand } from "@data/stands/Stand";
 import { CustomerCard } from "@data/customers/Customer";
+import useProductService from "@service/stand/useProductService";
+import { useEffect, useReducer, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Button from "@/components/utils/Button";
+
+import {
+  CheckSVG,
+  ImageSVG,
+  MinusSVG,
+  PlusSVG,
+  QRcodeScanSVG,
+} from "@/assets/svg";
 import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
 import useCustomerService from "@service/customer/useCustomerService";
-import useProductService from "@service/stand/useProductService";
-import Button from "@/components/utils/Button";
-import QRcodeReader from "@/components/QRcodeReader";
-import CardInput from "@/components/utils/CardInput";
-import { ImageSVG, QRcodeScanSVG } from "@/assets/svg";
-import Logo from "@/assets/image/LogoStoreControl.png";
-import { PaymentStringMetadata } from "@/components/selects/PaymentSelect/paymentMetadata";
 import useStandService from "@service/stand/useStandService";
-import { SummaryStand } from "@data/stands/Stand";
+import CardInput from "@/components/utils/CardInput";
+import QRcodeReader from "@/components/QRcodeReader";
 import activeConfig from "@/config/activeConfig";
+import {
+  initialPickUpCounterState,
+  pickUpCounterReducer,
+} from "@reducer/operation/pickUpCounterReducer";
 
 enum CardStatus {
   NoCard = "NoCard",
@@ -25,7 +35,7 @@ enum CardStatus {
   InvalidCard = "InvalidCard",
 }
 
-function Card() {
+function PickUpCounter() {
   const [customer, setCustomer] = useState<CustomerCard>();
   const [productsRecord, setProductsRecord] = useState<
     Record<string, Omit<SummaryProduct, "uuid">>
@@ -35,37 +45,36 @@ function Card() {
   >({});
   const [showScanner, setShowScanner] = useState<boolean>(false);
   const [cardStatus, setCardStatus] = useState<CardStatus>(CardStatus.NoCard);
+  const [card, setCard] = useState<string>("");
+  const [state, dispatch] = useReducer(
+    pickUpCounterReducer,
+    initialPickUpCounterState,
+  );
   const { addNotification } = useAlertsContext();
   const { getCustomerByCard } = useCustomerService();
   const { getListStands } = useStandService();
   const { getListProducts } = useProductService();
   const navigate = useNavigate();
-  const { cardID } = useParams();
-  const [card, setCard] = useState<string>("");
-  const location = useLocation();
 
   useEffect(() => {
     const fetchCustomer = async () => {
-      if (cardID && cardID.length === 15) {
-        setCard(cardID);
-        const customerResponse = await getCustomerByCard(cardID);
+      if (card && card.length === 15) {
+        const customerResponse = await getCustomerByCard(card);
         if (customerResponse) {
-          localStorage.setItem("userCardId", cardID);
           setCardStatus(CardStatus.ValidCard);
           setCustomer(customerResponse);
+          dispatch({
+            type: "SET_CART",
+            payload: { purchases: customerResponse.purchases, cardId: "" },
+          });
         } else {
           setCardStatus(CardStatus.InvalidCard);
-        }
-      } else if (cardID === undefined) {
-        const localCard = localStorage.getItem("userCardId") || "";
-        if (localCard !== "") {
-          navigate(`/card/${localCard}`, { replace: true });
         }
       }
     };
 
     fetchCustomer();
-  }, [cardID, getCustomerByCard, navigate]);
+  }, [card, getCustomerByCard, navigate]);
 
   useEffect(() => {
     const fetchAssociations = async () => {
@@ -88,7 +97,7 @@ function Card() {
   const handleQRcode = (value: string) => {
     const cardReaded = value.split("/").at(-1);
     if (cardReaded && cardReaded.length === 15) {
-      navigate(`/card/${cardReaded}`, { replace: true });
+      setCard(cardReaded);
     } else {
       addNotification({
         title: "Erro no código do QRcode",
@@ -101,7 +110,7 @@ function Card() {
   function handleCardId(input: string) {
     if (input.length <= 15) setCard(input);
     if (input.length === 15) {
-      navigate(`/card/${input}`, { replace: true });
+      setCard(input);
     } else {
       setCardStatus(CardStatus.NoCard);
     }
@@ -137,11 +146,7 @@ function Card() {
         <div className={styles.header}>
           <div />
           <Button onClick={() => setShowScanner(true)}>
-            <p>
-              {location.pathname === "/card"
-                ? "Escanear Cartão"
-                : "Escanear Outro Cartão"}
-            </p>
+            <p>{card ? "Escanear Cartão" : "Escanear Outro Cartão"}</p>
             <QRcodeScanSVG />
           </Button>
         </div>
@@ -172,12 +177,12 @@ function Card() {
                 ? activeConfig.enableToken
                   ? "R$ " + (customer?.cardDebit || "0")
                   : "Cartão Ativo"
-                : cardStatus === CardStatus.InvalidCard && "Cartão Inválido"}
+                : cardStatus === CardStatus.InvalidCard && "Cartão Desativado"}
             </p>
           </div>
           <div className={styles.cardFooter}>
             <div className={styles.cardActions}>
-              {customer && (
+              {customer && cardStatus === CardStatus.ValidCard && (
                 <>
                   <p>recargas: {customer?.recharges.length}</p>
                   <p>compras: {customer?.purchases.length}</p>
@@ -187,35 +192,7 @@ function Card() {
             <span>store-control</span>
           </div>
         </div>
-        {customer?.recharges.length !== 0 && (
-          <>
-            <div className={styles.actionHeader}>
-              <p>Recargas</p>
-            </div>
-            <li key="rechargeHeader" className={styles.rechargesListHeader}>
-              <p>Tempo</p>
-              <p>Pagamento</p>
-              <p>Total</p>
-            </li>
-            <ul className={styles.rechargesList}>
-              {customer?.recharges?.map((recharge, index) => (
-                <li
-                  key={recharge.uuid}
-                  className={index % 2 === 0 ? styles.itemPair : styles.itemOdd}
-                >
-                  <p>
-                    {new Date(
-                      recharge.rechargeTimestamp + "Z",
-                    ).toLocaleString()}
-                  </p>
-                  <p>{PaymentStringMetadata[recharge.paymentTypeEnum]?.pt}</p>
-                  <p>R$ {recharge.rechargeValue.toFixed(2)}</p>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-        {customer?.purchases.length !== 0 && (
+        {state.purchases.length !== 0 && (
           <>
             <div className={styles.actionHeader}>
               <p>Compras</p>
@@ -226,7 +203,7 @@ function Card() {
               <p>Status</p>
             </li>
             <ul className={styles.purchasesList}>
-              {customer?.purchases?.map((purchase, index) => (
+              {state.purchases?.map((purchase, index) => (
                 <li
                   key={purchase.uuid}
                   className={`${styles.purchaseItem} ${index % 2 === 0 ? styles.itemPair : styles.itemOdd}`}
@@ -263,12 +240,65 @@ function Card() {
                                 <ImageSVG />
                               ))}
                           </div>
-                          <p className={styles.productName}>
-                            {item.productName}
-                          </p>
-                          <p className={styles.quantity}>
-                            {item.quantity}/{item.delivered}
-                          </p>
+                          <div className={styles.productName}>
+                            <p>{item.productName} </p>
+                            <span>qntd: {item.quantity}</span>
+                          </div>
+                          <div className={styles.delivered}>
+                            <Button
+                              onClick={() =>
+                                dispatch({
+                                  type: "DECREASE_DELIVERED_ITEM",
+                                  payload: {
+                                    purchaseUuid: purchase.uuid,
+                                    uuid: item.productUuid,
+                                  },
+                                })
+                              }
+                            >
+                              <MinusSVG size={18} />
+                            </Button>
+                            <input
+                              type="number"
+                              onChange={(e) =>
+                                dispatch({
+                                  type: "ON_CHANGE_DELIVERED_ITEM",
+                                  payload: {
+                                    purchaseUuid: purchase.uuid,
+                                    uuid: item.productUuid,
+                                    delivered: parseInt(e.target.value),
+                                  },
+                                })
+                              }
+                              value={item.delivered}
+                            />
+                            <Button
+                              onClick={() =>
+                                dispatch({
+                                  type: "ADD_DELIVERED_ITEM",
+                                  payload: {
+                                    purchaseUuid: purchase.uuid,
+                                    uuid: item.productUuid,
+                                  },
+                                })
+                              }
+                            >
+                              <PlusSVG size={18} />
+                            </Button>
+                            <Button
+                              onClick={() =>
+                                dispatch({
+                                  type: "COMPLETE_DELIVERED_ITEM",
+                                  payload: {
+                                    purchaseUuid: purchase.uuid,
+                                    uuid: item.productUuid,
+                                  },
+                                })
+                              }
+                            >
+                              <CheckSVG size={18} />
+                            </Button>
+                          </div>
                         </li>
                       );
                     })}
@@ -289,4 +319,4 @@ function Card() {
   );
 }
 
-export default Card;
+export default PickUpCounter;
