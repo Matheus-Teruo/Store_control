@@ -16,39 +16,15 @@ import {
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { useNavigate } from "react-router-dom";
 import { PaymentStringMetadata } from "@/components/selects/PaymentSelect/paymentMetadata";
-import useVoluntaryService from "@service/voluntary/useVoluntaryService";
-import { SummaryVoluntary } from "@data/volunteers/Voluntary";
 
 function PurchaseLogs() {
   const [trades, setTrades] = useState<SummaryTrade[]>([]);
-  const [volunteersRecord, setVolunteersRecord] = useState<
-    Record<string, Omit<SummaryVoluntary, "uuid">>
-  >({});
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
   const [formState, formDispach] = useReducer(formReducer, initialFormState);
   const [modeAdmin, setModeAdmin] = useState<boolean>(false);
   const { getTrades } = useTradeService();
-  const { getListVolunteers } = useVoluntaryService();
   const { user } = useUserContext();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchAssociations = async () => {
-      const products = await getListVolunteers();
-      if (products) {
-        const productsObject = products.reduce(
-          (acc, product) => {
-            const { uuid, ...rest } = product;
-            acc[uuid] = rest;
-            return acc;
-          },
-          {} as Record<string, Omit<SummaryVoluntary, "uuid">>,
-        );
-        setVolunteersRecord(productsObject);
-      }
-    };
-    fetchAssociations();
-  }, [getListVolunteers]);
 
   const fetchTrades = useCallback(
     async (modeAmin: boolean) => {
@@ -93,7 +69,6 @@ function PurchaseLogs() {
     <div className={styles.body}>
       <li key={"header"} className={styles.listHeader}>
         <p className={styles.headerDate}>Data</p>
-        <p className={styles.headerVoluntary}>Voluntário</p>
         <p className={styles.headerQuantity}>Itens</p>
         <p className={styles.headerPaymentType}>Pagamento</p>
         <p className={styles.headerTotal}>Custo total</p>
@@ -109,10 +84,6 @@ function PurchaseLogs() {
               {new Date(trade.tradeTimestamp + "Z").toLocaleString()}
             </p>
             {/* TODO: AJUSTAR HORÁRIO DEPOIS DO EVENTO */}
-            <p className={styles.tradeVoluntary}>
-              {volunteersRecord[trade.voluntaryUuid]?.fullname ||
-                "Nome não disponível"}
-            </p>
             <p className={styles.tradeQuantity}>{trade.totalItems}</p>
             <p className={styles.tradePaymentType}>
               {PaymentStringMetadata[trade.paymentTypeEnum].pt}

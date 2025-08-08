@@ -72,7 +72,7 @@ function RegisterFunction() {
       if (recharge) {
         addNotification({
           title: "Create Recharge Success",
-          message: `Value ${recharge.rechargeValue} on ${recharge.paymentTypeEnum} to card ${recharge.summaryCustomer.summaryCard.cardId}`,
+          message: `Value ${recharge.rechargeValue} on ${recharge.paymentTypeEnum} to card ${state.cardId}`,
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });

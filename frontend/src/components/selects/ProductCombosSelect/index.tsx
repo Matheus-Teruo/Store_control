@@ -68,7 +68,7 @@ function ProductCombosSelect({
   const availableProducts = listProducts.filter(
     (product) =>
       !value.some(
-        (comboProduct) => comboProduct.includedProductUuid === product.uuid,
+        (comboProduct) => comboProduct.productIncludedUuid === product.uuid,
       ) &&
       product.uuid !== productUuid &&
       !product.combo,
@@ -77,12 +77,12 @@ function ProductCombosSelect({
   const selectedProducts = listProducts
     .filter((product) =>
       value.some(
-        (comboProduct) => comboProduct.includedProductUuid === product.uuid,
+        (comboProduct) => comboProduct.productIncludedUuid === product.uuid,
       ),
     )
     .map((product) => {
       const combo = value.find(
-        (comboProduct) => comboProduct.includedProductUuid === product.uuid,
+        (comboProduct) => comboProduct.productIncludedUuid === product.uuid,
       );
 
       return {
