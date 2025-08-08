@@ -62,7 +62,7 @@ services:
     env_file:
       - .env
     ports:
-      - "80:80"
+      - "3000:80"
     networks:
       - public
     depends_on:
@@ -78,6 +78,20 @@ services:
   #   volumes:
   #     - ./app:/app
   #   command: python main.py
+  proxy:
+    image: jc21/nginx-proxy-manager:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    environment:
+      DB_SQLITE_FILE: "/data/database.sqlite"
+    volumes:
+      - ./proxy/data:/data
+      - ./proxy/letsencrypt:/etc/letsencrypt
+    networks:
+      - public
 networks:
   public:
   private:
