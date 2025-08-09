@@ -92,6 +92,7 @@ public class AuthController {
     authCookie.setSecure(true);
     authCookie.setPath("/");
     authCookie.setMaxAge(60 * 60 * hours);
+    authCookie.setAttribute("SameSite", "None");
     return authCookie;
   }
 }
