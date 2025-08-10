@@ -63,6 +63,6 @@ This will start the application with 5 containers:
 
 - Frontend: A web interface built with React (using Vite and TypeScript).
 - Backend: A REST API built with Java (Spring Boot).
-- MinIO: Local storage (simulate AWS storage)
+- Storage: Local storage, MinIO (simulate AWS storage)
 - Database: MySQL for data storage.
 - Table Service: A Python application designed for extracting tables from images

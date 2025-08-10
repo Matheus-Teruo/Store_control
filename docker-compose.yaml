@@ -35,7 +35,7 @@ services:
       - MYSQL_USER=${DATABASE_USER}
       - MYSQL_PASSWORD=${DATABASE_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD_ROOT}
-  minio:
+  storage:
     image: minio/minio
     restart: always
     env_file:
@@ -50,7 +50,7 @@ services:
     networks:
       - public
     volumes:
-      - minio-data:/data
+      - storage-data:/data
   frontend:
     build:
       context: ./frontend
@@ -97,4 +97,4 @@ networks:
   private:
 volumes:
   db-data:
-  minio-data:
+  storage-data:
