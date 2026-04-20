@@ -69,23 +69,6 @@ This will start the application with 5 containers:
 
 # local config
 
-run unit test before do a git push
+config to run unit test before do a git push
 
-```
-#!/bin/sh
-echo "📦 Rodando testes no Docker antes do push..."
-
-docker run --rm \
-    -v "$PWD/backend":/app \
-    -w /app \
-    --network host \
-    openjdk:21-jdk-slim \
-    ./mvnw test
-
-if [ $? -ne 0 ]; then
-  echo "❌ Testes falharam. Push cancelado."
-  exit 1
-fi
-
-echo "✅ Testes passaram. Continuando o push..."
-```
+git config core.hooksPath .githooks
