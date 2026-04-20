@@ -66,3 +66,26 @@ This will start the application with 5 containers:
 - Storage: Local storage, MinIO (simulate AWS storage)
 - Database: MySQL for data storage.
 - Table Service: A Python application designed for extracting tables from images
+
+# local config
+
+run unit test before do a git push
+
+```
+#!/bin/sh
+echo "📦 Rodando testes no Docker antes do push..."
+
+docker run --rm \
+    -v "$PWD/backend":/app \
+    -w /app \
+    --network host \
+    openjdk:21-jdk-slim \
+    ./mvnw test
+
+if [ $? -ne 0 ]; then
+  echo "❌ Testes falharam. Push cancelado."
+  exit 1
+fi
+
+echo "✅ Testes passaram. Continuando o push..."
+```
