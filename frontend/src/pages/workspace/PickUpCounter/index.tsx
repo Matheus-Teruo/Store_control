@@ -109,9 +109,7 @@ function PickUpCounter() {
 
   function handleCardId(input: string) {
     if (input.length <= 15) setCard(input);
-    if (input.length === 15) {
-      setCard(input);
-    } else {
+    if (input.length !== 15) {
       setCardStatus(CardStatus.NoCard);
     }
   }

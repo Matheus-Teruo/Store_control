@@ -301,6 +301,7 @@ function FormTrade({
                   }
                   value={state.cardId}
                   isRequired
+                  checkCard
                 />
               </>
             )}

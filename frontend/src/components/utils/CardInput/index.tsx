@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { InputStatus } from "../InputStatus";
 import styles from "./CardInput.module.scss";
+import useCustomerService from "@service/customer/useCustomerService";
+
 interface FunctionSelectProps {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -8,6 +10,7 @@ interface FunctionSelectProps {
   disabled?: boolean;
   showStatus?: boolean;
   message?: string;
+  checkCard?: boolean;
   className?: string;
 }
 
@@ -18,9 +21,11 @@ function CardInput({
   disabled = false,
   showStatus = false,
   message = "",
+  checkCard = false,
   className,
 }: FunctionSelectProps) {
   const [status, setStatus] = useState<InputStatus>(InputStatus.Untouched);
+  const { getCustomerByCard } = useCustomerService();
 
   useEffect(() => {
     if (showStatus) {
@@ -32,9 +37,20 @@ function CardInput({
     }
   }, [showStatus, message]);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(event);
-    setStatus(InputStatus.Untouched);
+  const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value.length <= 15) onChange(event);
+    if (checkCard && event.target.value.length === 15) {
+      const customerResponse = await getCustomerByCard(event.target.value);
+      if (customerResponse) {
+        console.log("Valido");
+        setStatus(InputStatus.Accepted);
+      } else {
+        console.log("Inválido");
+        setStatus(InputStatus.Rejected);
+      }
+    } else {
+      setStatus(InputStatus.Untouched);
+    }
   };
 
   return (
