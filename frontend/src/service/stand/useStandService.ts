@@ -1,56 +1,27 @@
-import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
-import { Message } from "@context/AlertsContext/useAlertsContext";
+import { useSafeRequest } from "@/axios/useHandleRequest";
 import Stand, {
   CreateStand,
   SummaryStand,
   UpdateStand,
 } from "@data/stands/Stand";
 import { PaginatedResponse } from "@service/PagesType";
-import { AxiosError } from "axios";
 import { useCallback } from "react";
 
 const useStandService = () => {
   const api = useAxios();
-  const handleApiError = useApiError();
-
-  const safeRequestWithFeedback = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | Message | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        if (error instanceof AxiosError) {
-          return error.response!.data as Message;
-        }
-        return null;
-      }
-    },
-    [handleApiError],
-  );
-
-  const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        return null;
-      }
-    },
-    [handleApiError],
-  );
+  const { safeRequest } = useSafeRequest();
 
   const createStand = useCallback(
-    async (stand: CreateStand): Promise<Stand | Message | null> =>
-      safeRequestWithFeedback(() =>
+    async (stand: CreateStand): Promise<Stand> =>
+      safeRequest(() =>
         api.post<Stand>("stands", stand).then((res) => res.data),
       ),
-    [api, safeRequestWithFeedback],
+    [api, safeRequest],
   );
 
   const getStand = useCallback(
-    async (standUuid: string): Promise<Stand | null> =>
+    async (standUuid: string): Promise<Stand> =>
       safeRequest(() =>
         api.get<Stand>(`stands/${standUuid}`).then((res) => res.data),
       ),
@@ -62,7 +33,7 @@ const useStandService = () => {
       page?: number,
       size?: number,
       sort?: string,
-    ): Promise<PaginatedResponse<SummaryStand> | null> =>
+    ): Promise<PaginatedResponse<SummaryStand>> =>
       safeRequest(() =>
         api
           .get<PaginatedResponse<SummaryStand>>("stands", {
@@ -74,7 +45,7 @@ const useStandService = () => {
   );
 
   const getListStands = useCallback(
-    async (): Promise<SummaryStand[] | null> =>
+    async (): Promise<SummaryStand[]> =>
       safeRequest(() =>
         api.get<SummaryStand[]>("stands/list").then((res) => res.data),
       ),
@@ -82,17 +53,20 @@ const useStandService = () => {
   );
 
   const updateStand = useCallback(
-    async (stand: UpdateStand): Promise<Stand | Message | null> =>
-      safeRequestWithFeedback(() =>
+    async (stand: UpdateStand): Promise<Stand> =>
+      safeRequest(() =>
         api.put<Stand>("stands", stand).then((res) => res.data),
       ),
-    [api, safeRequestWithFeedback],
+    [api, safeRequest],
   );
 
   const deleteStand = useCallback(
-    async (standUuid: string): Promise<void> => {
-      await safeRequest(() => api.delete<void>(`stands/${standUuid}`));
-    },
+    async (standUuid: string): Promise<void> =>
+      safeRequest(() =>
+        api
+          .delete<void>(`stands/${standUuid}`)
+          .then((res) => res.data),
+      ),
     [api, safeRequest],
   );
 

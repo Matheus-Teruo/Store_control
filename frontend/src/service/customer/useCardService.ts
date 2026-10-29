@@ -1,52 +1,23 @@
-import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
-import { Message } from "@context/AlertsContext/useAlertsContext";
+import { useSafeRequest } from "@/axios/useHandleRequest";
 import Card, { RequestCard, SummaryCard } from "@data/customers/Card";
 import { PaginatedResponse } from "@service/PagesType";
-import { AxiosError } from "axios";
 import { useCallback } from "react";
 
 const useCardService = () => {
   const api = useAxios();
-  const handleApiError = useApiError();
-
-  const safeRequestWithFeedback = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | Message | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        if (error instanceof AxiosError) {
-          return error.response!.data as Message;
-        }
-        return null;
-      }
-    },
-    [handleApiError],
-  );
-
-  const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        return null;
-      }
-    },
-    [handleApiError],
-  );
+  const { safeRequest } = useSafeRequest();
 
   const createCard = useCallback(
-    async (card: RequestCard): Promise<Card | Message | null> =>
-      safeRequestWithFeedback(() =>
+    async (card: RequestCard): Promise<Card> =>
+      safeRequest(() =>
         api.post<Card>("cards", card).then((res) => res.data),
       ),
-    [api, safeRequestWithFeedback],
+    [api, safeRequest],
   );
 
   const getCard = useCallback(
-    async (cardId: string): Promise<Card | null> =>
+    async (cardId: string): Promise<Card> =>
       safeRequest(() =>
         api.get<Card>(`cards/${cardId}`).then((res) => res.data),
       ),
@@ -58,12 +29,10 @@ const useCardService = () => {
       page?: number,
       size?: number,
       sort?: "asc" | "desc",
-    ): Promise<PaginatedResponse<Card> | null> =>
+    ): Promise<PaginatedResponse<Card>> =>
       safeRequest(() =>
         api
-          .get<
-            PaginatedResponse<Card>
-          >("cards", { params: { page, size, sort } })
+          .get<PaginatedResponse<Card>>("cards", {params: { page, size, sort },})
           .then((res) => res.data),
       ),
     [api, safeRequest],
@@ -74,12 +43,10 @@ const useCardService = () => {
       page?: number,
       size?: number,
       sort?: "asc" | "desc",
-    ): Promise<PaginatedResponse<SummaryCard> | null> =>
+    ): Promise<PaginatedResponse<SummaryCard>> =>
       safeRequest(() =>
         api
-          .get<
-            PaginatedResponse<SummaryCard>
-          >("cards/active", { params: { page, size, sort } })
+          .get<PaginatedResponse<SummaryCard>>("cards/active", {params: { page, size, sort },})
           .then((res) => res.data),
       ),
     [api, safeRequest],

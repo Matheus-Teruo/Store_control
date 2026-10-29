@@ -1,0 +1,41 @@
+import { Message, MessageType } from "@context/AlertsContext/useAlertsContext";
+import ApiError from "@data/Error";
+import { AxiosError } from "axios";
+
+export function parseAxiosError(
+    error: AxiosError<ApiError>
+): Message {
+  switch (error.code) {
+    case "ERR_NETWORK":
+      return {
+        title: "Sem conexão",
+        message: "Verifique sua internet.",
+        type: MessageType.ERROR
+      };
+    case "ECONNABORTED":
+      return {
+        title: "Servidor ocupado",
+        message: "A requisição demorou muito.",
+        type: MessageType.ERROR
+      };
+  }
+
+  const apiError = error.response?.data;
+
+  if (apiError) {
+    const status = error.response?.status;
+    if (status && status < 500) {  
+      return {
+        title: apiError.title ?? "Erro",
+        message: apiError.message,
+        type: MessageType.WARNING,
+      };
+    }
+  }
+
+  return {
+    title: "Erro inesperado",
+    message: "Algo inesperado aconteceu.",
+    type: MessageType.ERROR,
+  };
+}

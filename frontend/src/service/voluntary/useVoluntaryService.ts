@@ -1,49 +1,20 @@
-import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
+import { useSafeRequest } from "@/axios/useHandleRequest";
 import Voluntary, {
   SummaryVoluntary,
   UpdateVoluntary,
   UpdateVoluntaryFunction,
   UpdateVoluntaryRole,
 } from "@/data/volunteers/Voluntary";
-import { Message } from "@context/AlertsContext/useAlertsContext";
 import { PaginatedResponse } from "@service/PagesType";
-import { AxiosError } from "axios";
 import { useCallback } from "react";
 
 const useVoluntaryService = () => {
   const api = useAxios();
-  const handleApiError = useApiError();
-
-  const safeRequestWithFeedback = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | Message | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        if (error instanceof AxiosError) {
-          return error.response!.data as Message;
-        }
-        return null;
-      }
-    },
-    [handleApiError],
-  );
-
-  const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        return null;
-      }
-    },
-    [handleApiError],
-  );
+  const { safeRequest } = useSafeRequest();
 
   const getVoluntary = useCallback(
-    async (voluntaryUuid: string): Promise<Voluntary | null> =>
+    async (voluntaryUuid: string): Promise<Voluntary> =>
       safeRequest(() =>
         api
           .get<Voluntary>(`volunteers/${voluntaryUuid}`)
@@ -57,7 +28,7 @@ const useVoluntaryService = () => {
       page?: number,
       size?: number,
       sort?: string,
-    ): Promise<PaginatedResponse<SummaryVoluntary> | null> =>
+    ): Promise<PaginatedResponse<SummaryVoluntary>> =>
       safeRequest(() =>
         api
           .get<PaginatedResponse<SummaryVoluntary>>("/volunteers", {
@@ -69,7 +40,7 @@ const useVoluntaryService = () => {
   );
 
   const getListVolunteers = useCallback(
-    async (): Promise<SummaryVoluntary[] | null> =>
+    async (): Promise<SummaryVoluntary[]> =>
       safeRequest(() =>
         api.get<SummaryVoluntary[]>("volunteers/list").then((res) => res.data),
       ),
@@ -77,55 +48,57 @@ const useVoluntaryService = () => {
   );
 
   const updateVoluntary = useCallback(
-    async (voluntary: UpdateVoluntary): Promise<Voluntary | Message | null> =>
-      safeRequestWithFeedback(() =>
+    async (voluntary: UpdateVoluntary): Promise<Voluntary> =>
+      safeRequest(() =>
         api.put<Voluntary>("/volunteers", voluntary).then((res) => res.data),
       ),
-    [api, safeRequestWithFeedback],
+    [api, safeRequest],
   );
 
   const updateVoluntaryFunction = useCallback(
     async (
       voluntary: UpdateVoluntaryFunction,
-    ): Promise<Voluntary | Message | null> =>
-      safeRequestWithFeedback(() =>
+    ): Promise<Voluntary> =>
+      safeRequest(() =>
         api
           .put<Voluntary>("/volunteers/function", voluntary)
           .then((res) => res.data),
       ),
-    [api, safeRequestWithFeedback],
+    [api, safeRequest],
   );
 
   const updateVoluntaryRole = useCallback(
     async (
       voluntary: UpdateVoluntaryRole,
-    ): Promise<Voluntary | Message | null> =>
-      safeRequestWithFeedback(() =>
+    ): Promise<Voluntary> =>
+      safeRequest(() =>
         api
           .put<Voluntary>("/volunteers/role", voluntary)
           .then((res) => res.data),
       ),
-    [api, safeRequestWithFeedback],
+    [api, safeRequest],
   );
 
   const updatePassword = useCallback(
-    async (voluntaryUuid: string): Promise<Voluntary | Message | null> =>
-      safeRequestWithFeedback(() =>
+    async (voluntaryUuid: string): Promise<Voluntary> =>
+      safeRequest(() =>
         api
           .put<Voluntary>("/volunteers/forgot-password", {
             uuid: voluntaryUuid,
           })
           .then((res) => res.data),
       ),
-    [api, safeRequestWithFeedback],
+    [api, safeRequest],
   );
 
   const deleteVoluntary = useCallback(
-    async (voluntaryUuid: string): Promise<void | Message | null> =>
-      safeRequestWithFeedback(() =>
-        api.delete<void>(`volunteers/${voluntaryUuid}`).then((res) => res.data),
+    async (voluntaryUuid: string): Promise<void> =>
+      safeRequest(() =>
+        api
+          .delete<void>(`volunteers/${voluntaryUuid}`)
+          .then((res) => res.data),
       ),
-    [api, safeRequestWithFeedback],
+    [api, safeRequest],
   );
 
   return {

@@ -1,5 +1,5 @@
-import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
+import { useSafeRequest } from "@/axios/useHandleRequest";
 import ResponseRegisterChart, {
   ResponsePaymentTypeTotal,
 } from "@data/statistics/registerChart";
@@ -7,35 +7,21 @@ import { useCallback } from "react";
 
 const useStatisticsRegisterService = () => {
   const api = useAxios();
-  const handleApiError = useApiError();
+  const { safeRequest } = useSafeRequest();
 
-  const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        return null;
-      }
-    },
-    [handleApiError],
-  );
   const getPaymentTypeTotals = useCallback(
     async (
       startTime: string,
       endTime: string,
-    ): Promise<ResponsePaymentTypeTotal[] | null> =>
+    ): Promise<ResponsePaymentTypeTotal[]> =>
       safeRequest(() =>
         api
-          .get<ResponsePaymentTypeTotal[]>(
-            `statistics/registers/payment-type`,
-            {
-              params: {
-                startTime: startTime,
-                endTime: endTime,
-              },
+          .get<ResponsePaymentTypeTotal[]>("statistics/registers/payment-type", {
+            params: {
+              startTime,
+              endTime,
             },
-          )
+          })
           .then((res) => res.data),
       ),
     [api, safeRequest],
@@ -45,13 +31,13 @@ const useStatisticsRegisterService = () => {
     async (
       startTime: string,
       endTime: string,
-    ): Promise<ResponseRegisterChart[] | null> =>
+    ): Promise<ResponseRegisterChart[]> =>
       safeRequest(() =>
         api
-          .get<ResponseRegisterChart[]>(`statistics/registers/recharges`, {
+          .get<ResponseRegisterChart[]>("statistics/registers/recharges", {
             params: {
-              startTime: startTime,
-              endTime: endTime,
+              startTime,
+              endTime,
             },
           })
           .then((res) => res.data),

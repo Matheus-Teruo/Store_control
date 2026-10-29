@@ -1,5 +1,5 @@
-import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
+import { useSafeRequest } from "@/axios/useHandleRequest";
 import Purchase, {
   CreatePurchase,
   SummaryPurchase,
@@ -10,22 +10,10 @@ import { useCallback } from "react";
 
 const usePurchaseService = () => {
   const api = useAxios();
-  const handleApiError = useApiError();
-
-  const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        return null;
-      }
-    },
-    [handleApiError],
-  );
+  const { safeRequest } = useSafeRequest();
 
   const createPurchase = useCallback(
-    async (purchase: CreatePurchase): Promise<Purchase | null> =>
+    async (purchase: CreatePurchase): Promise<Purchase> =>
       safeRequest(() =>
         api.post<Purchase>("purchases", purchase).then((res) => res.data),
       ),
@@ -33,9 +21,11 @@ const usePurchaseService = () => {
   );
 
   const getPurchase = useCallback(
-    async (purchaseUuid: string): Promise<Purchase | null> =>
+    async (purchaseUuid: string): Promise<Purchase> =>
       safeRequest(() =>
-        api.get<Purchase>(`purchases/${purchaseUuid}`).then((res) => res.data),
+        api
+          .get<Purchase>(`purchases/${purchaseUuid}`)
+          .then((res) => res.data),
       ),
     [api, safeRequest],
   );
@@ -45,19 +35,19 @@ const usePurchaseService = () => {
       page?: number,
       size?: number,
       sort?: string,
-    ): Promise<PaginatedResponse<SummaryPurchase> | null> =>
+    ): Promise<PaginatedResponse<SummaryPurchase>> =>
       safeRequest(() =>
         api
-          .get<
-            PaginatedResponse<SummaryPurchase>
-          >("purchases", { params: { page, size, sort } })
+          .get<PaginatedResponse<SummaryPurchase>>("purchases", {
+          params: { page, size, sort },
+          })
           .then((res) => res.data),
       ),
     [api, safeRequest],
   );
 
   const getLast3Purchases = useCallback(
-    async (): Promise<SummaryPurchase[] | null> =>
+    async (): Promise<SummaryPurchase[]> =>
       safeRequest(() =>
         api.get<SummaryPurchase[]>("purchases/last3").then((res) => res.data),
       ),
@@ -65,7 +55,7 @@ const usePurchaseService = () => {
   );
 
   const updatePurchase = useCallback(
-    async (purchase: UpdatePurchase): Promise<Purchase | null> =>
+    async (purchase: UpdatePurchase): Promise<Purchase> =>
       safeRequest(() =>
         api.put<Purchase>("purchases", purchase).then((res) => res.data),
       ),
@@ -73,9 +63,10 @@ const usePurchaseService = () => {
   );
 
   const deletePurchase = useCallback(
-    async (purchaseUuid: string): Promise<void> => {
-      await safeRequest(() => api.delete<void>(`purchases/${purchaseUuid}`));
-    },
+    async (purchaseUuid: string): Promise<void> => 
+      safeRequest(() =>
+        api.delete<void>(`purchases/${purchaseUuid}`).then((res) => res.data),
+      ),
     [api, safeRequest],
   );
 

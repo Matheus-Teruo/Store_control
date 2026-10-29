@@ -1,5 +1,5 @@
-import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
+import { useSafeRequest } from "@/axios/useHandleRequest";
 import ResponseStandChart, {
   ResponseStandProductTotal,
   ResponseStandTotal,
@@ -8,33 +8,21 @@ import { useCallback } from "react";
 
 const useStatisticsStandService = () => {
   const api = useAxios();
-  const handleApiError = useApiError();
-
-  const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        return null;
-      }
-    },
-    [handleApiError],
-  );
+  const { safeRequest } = useSafeRequest();
 
   const getStandTotals = useCallback(
     async (
       startTime: string,
       endTime: string,
       standUuid?: string,
-    ): Promise<ResponseStandTotal[] | null> =>
+    ): Promise<ResponseStandTotal[]> =>
       safeRequest(() =>
         api
-          .get<ResponseStandTotal[]>(`statistics/stands`, {
+          .get<ResponseStandTotal[]>("statistics/stands", {
             params: {
               standUuid: standUuid != "" ? standUuid : undefined,
-              startTime: startTime,
-              endTime: endTime,
+              startTime,
+              endTime,
             },
           })
           .then((res) => res.data),
@@ -47,14 +35,14 @@ const useStatisticsStandService = () => {
       startTime: string,
       endTime: string,
       standUuid?: string,
-    ): Promise<ResponseStandProductTotal[] | null> =>
+    ): Promise<ResponseStandProductTotal[]> =>
       safeRequest(() =>
         api
-          .get<ResponseStandProductTotal[]>(`statistics/stands/products`, {
+          .get<ResponseStandProductTotal[]>("statistics/stands/products", {
             params: {
               standUuid: standUuid != "" ? standUuid : undefined,
-              startTime: startTime,
-              endTime: endTime,
+              startTime,
+              endTime,
             },
           })
           .then((res) => res.data),
@@ -67,14 +55,14 @@ const useStatisticsStandService = () => {
       startTime: string,
       endTime: string,
       standUuid?: string,
-    ): Promise<ResponseStandChart[] | null> =>
+    ): Promise<ResponseStandChart[]> =>
       safeRequest(() =>
         api
-          .get<ResponseStandChart[]>(`statistics/stands/purchases`, {
+          .get<ResponseStandChart[]>("statistics/stands/purchases", {
             params: {
               standUuid: standUuid != "" ? standUuid : undefined,
-              startTime: startTime,
-              endTime: endTime,
+              startTime,
+              endTime,
             },
           })
           .then((res) => res.data),

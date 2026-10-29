@@ -1,5 +1,5 @@
-import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
+import { useSafeRequest } from "@/axios/useHandleRequest";
 import Transaction, {
   CreateTransaction,
   SummaryTransaction,
@@ -9,22 +9,10 @@ import { useCallback } from "react";
 
 const useTransactionService = () => {
   const api = useAxios();
-  const handleApiError = useApiError();
-
-  const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        return null;
-      }
-    },
-    [handleApiError],
-  );
+  const { safeRequest } = useSafeRequest();
 
   const createTransaction = useCallback(
-    async (transaction: CreateTransaction): Promise<Transaction | null> =>
+    async (transaction: CreateTransaction): Promise<Transaction> =>
       safeRequest(() =>
         api
           .post<Transaction>("transactions", transaction)
@@ -34,7 +22,7 @@ const useTransactionService = () => {
   );
 
   const getTransaction = useCallback(
-    async (transactionUuid: string): Promise<Transaction | null> =>
+    async (transactionUuid: string): Promise<Transaction> =>
       safeRequest(() =>
         api
           .get<Transaction>(`transactions/${transactionUuid}`)
@@ -48,19 +36,19 @@ const useTransactionService = () => {
       page?: number,
       size?: number,
       sort?: string,
-    ): Promise<PaginatedResponse<SummaryTransaction> | null> =>
+    ): Promise<PaginatedResponse<SummaryTransaction>> =>
       safeRequest(() =>
         api
-          .get<
-            PaginatedResponse<SummaryTransaction>
-          >("transactions", { params: { page, size, sort } })
+          .get<PaginatedResponse<SummaryTransaction>>("transactions", {
+            params: { page, size, sort },
+          })
           .then((res) => res.data),
       ),
     [api, safeRequest],
   );
 
   const getLast3Transactions = useCallback(
-    async (): Promise<SummaryTransaction[] | null> =>
+    async (): Promise<SummaryTransaction[]> =>
       safeRequest(() =>
         api
           .get<SummaryTransaction[]>("transactions/last3")
@@ -70,11 +58,12 @@ const useTransactionService = () => {
   );
 
   const deleteTransaction = useCallback(
-    async (transactionUuid: string): Promise<void> => {
-      await safeRequest(() =>
-        api.delete<void>(`transactions/${transactionUuid}`),
-      );
-    },
+    async (transactionUuid: string): Promise<void> =>
+      safeRequest(() =>
+        api
+          .delete<void>(`transactions/${transactionUuid}`)
+          .then((res) => res.data),
+      ),
     [api, safeRequest],
   );
 

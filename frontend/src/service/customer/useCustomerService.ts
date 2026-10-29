@@ -1,5 +1,5 @@
-import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
+import { useSafeRequest } from "@/axios/useHandleRequest";
 import Customer, {
   CustomerFinalization,
   CustomerCard,
@@ -10,30 +10,20 @@ import { useCallback } from "react";
 
 const useCustomerService = () => {
   const api = useAxios();
-  const handleApiError = useApiError();
-
-  const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        return null;
-      }
-    },
-    [handleApiError],
-  );
+  const { safeRequest } = useSafeRequest();
 
   const getCustomer = useCallback(
-    async (customerUuid: string): Promise<Customer | null> =>
+    async (customerUuid: string): Promise<Customer> =>
       safeRequest(() =>
-        api.get<Customer>(`customers/${customerUuid}`).then((res) => res.data),
+        api
+          .get<Customer>(`customers/${customerUuid}`)
+          .then((res) => res.data),
       ),
     [api, safeRequest],
   );
 
   const getCustomerByCard = useCallback(
-    async (cardId: string): Promise<CustomerCard | null> =>
+    async (cardId: string): Promise<CustomerCard> =>
       safeRequest(() =>
         api
           .get<CustomerCard>(`customers/card/${cardId}`)
@@ -47,12 +37,12 @@ const useCustomerService = () => {
       page?: number,
       size?: number,
       sort?: "asc" | "desc",
-    ): Promise<PaginatedResponse<SummaryCustomer> | null> =>
+    ): Promise<PaginatedResponse<SummaryCustomer>> =>
       safeRequest(() =>
         api
-          .get<
-            PaginatedResponse<SummaryCustomer>
-          >("customers", { params: { page, size, sort } })
+          .get<PaginatedResponse<SummaryCustomer>>("customers", {
+          params: { page, size, sort },
+          })
           .then((res) => res.data),
       ),
     [api, safeRequest],
@@ -63,12 +53,12 @@ const useCustomerService = () => {
       page?: number,
       size?: number,
       sort?: "asc" | "desc",
-    ): Promise<PaginatedResponse<SummaryCustomer> | null> =>
+    ): Promise<PaginatedResponse<SummaryCustomer>> =>
       safeRequest(() =>
         api
-          .get<
-            PaginatedResponse<SummaryCustomer>
-          >("customers/active", { params: { page, size, sort } })
+          .get<PaginatedResponse<SummaryCustomer>>("customers/active", {
+          params: { page, size, sort },
+          })
           .then((res) => res.data),
       ),
     [api, safeRequest],
@@ -77,7 +67,7 @@ const useCustomerService = () => {
   const finalizeCustomer = useCallback(
     async (
       customerFinalization: CustomerFinalization,
-    ): Promise<Customer | null> =>
+    ): Promise<Customer> =>
       safeRequest(() =>
         api
           .post<Customer>("customers/finalize", customerFinalization)
@@ -87,7 +77,7 @@ const useCustomerService = () => {
   );
 
   const undoFinalizeCustomer = useCallback(
-    async (cardId: string): Promise<Customer | null> =>
+    async (cardId: string): Promise<Customer> =>
       safeRequest(() =>
         api
           .delete<Customer>(`customers/finalize/${cardId}`)

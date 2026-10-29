@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect } from "react";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_BASE_URL || "http://localhost:8080/",
+  baseURL: import.meta.env.VITE_BACKEND_BASE_URL || "http://localhost/api/",
   withCredentials: true,
   timeout: 10000,
   headers: {
@@ -21,7 +21,7 @@ function useAxios() {
     });
 
     return () => {
-      api.interceptors.request.eject(requestInterceptor); // Remove o interceptor ao desmontar ou atualizar
+      api.interceptors.request.eject(requestInterceptor); 
     };
   }, [language]);
 

@@ -1,5 +1,5 @@
-import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
+import { useSafeRequest } from "@/axios/useHandleRequest";
 import Register, {
   CreateRegister,
   SummaryRegister,
@@ -10,22 +10,10 @@ import { useCallback } from "react";
 
 const useRegisterService = () => {
   const api = useAxios();
-  const handleApiError = useApiError();
-
-  const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        return null;
-      }
-    },
-    [handleApiError],
-  );
+  const { safeRequest } = useSafeRequest();
 
   const createRegister = useCallback(
-    async (register: CreateRegister): Promise<Register | null> =>
+    async (register: CreateRegister): Promise<Register> =>
       safeRequest(() =>
         api.post<Register>("registers", register).then((res) => res.data),
       ),
@@ -33,7 +21,7 @@ const useRegisterService = () => {
   );
 
   const getRegister = useCallback(
-    async (registerUuid: string): Promise<Register | null> =>
+    async (registerUuid: string): Promise<Register> =>
       safeRequest(() =>
         api.get<Register>(`registers/${registerUuid}`).then((res) => res.data),
       ),
@@ -45,19 +33,19 @@ const useRegisterService = () => {
       page?: number,
       size?: number,
       sort?: string,
-    ): Promise<PaginatedResponse<SummaryRegister> | null> =>
+    ): Promise<PaginatedResponse<SummaryRegister>> =>
       safeRequest(() =>
         api
-          .get<
-            PaginatedResponse<SummaryRegister>
-          >("registers", { params: { page, size, sort } })
+          .get<PaginatedResponse<SummaryRegister>>("registers", {
+            params: { page, size, sort },
+          })
           .then((res) => res.data),
       ),
     [api, safeRequest],
   );
 
   const getListRegisters = useCallback(
-    async (): Promise<SummaryRegister[] | null> =>
+    async (): Promise<SummaryRegister[]> =>
       safeRequest(() =>
         api.get<SummaryRegister[]>("registers/list").then((res) => res.data),
       ),
@@ -65,7 +53,7 @@ const useRegisterService = () => {
   );
 
   const updateRegister = useCallback(
-    async (register: UpdateRegister): Promise<Register | null> =>
+    async (register: UpdateRegister): Promise<Register> =>
       safeRequest(() =>
         api.put<Register>("registers", register).then((res) => res.data),
       ),
@@ -73,9 +61,12 @@ const useRegisterService = () => {
   );
 
   const deleteRegister = useCallback(
-    async (registerUuid: string): Promise<void> => {
-      await safeRequest(() => api.delete<void>(`registers/${registerUuid}`));
-    },
+    async (registerUuid: string): Promise<void> =>
+      safeRequest(() =>
+        api
+          .delete<void>(`registers/${registerUuid}`)
+          .then((res) => res.data),
+      ),
     [api, safeRequest],
   );
 

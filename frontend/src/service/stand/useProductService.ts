@@ -1,7 +1,6 @@
-import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
+import { useSafeRequest } from "@/axios/useHandleRequest";
 import { resizeImage } from "@/utils/cropImage";
-import { Message } from "@context/AlertsContext/useAlertsContext";
 import Product, {
   CreateProduct,
   ResponseImage,
@@ -9,50 +8,22 @@ import Product, {
   UpdateProduct,
 } from "@data/stands/Product";
 import { PaginatedResponse } from "@service/PagesType";
-import { AxiosError } from "axios";
 import { useCallback } from "react";
 
 const useProductService = () => {
   const api = useAxios();
-  const handleApiError = useApiError();
-
-  const safeRequestWithFeedback = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | Message | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        if (error instanceof AxiosError) {
-          return error.response!.data as Message;
-        }
-        return null;
-      }
-    },
-    [handleApiError],
-  );
-
-  const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        return null;
-      }
-    },
-    [handleApiError],
-  );
+  const { safeRequest } = useSafeRequest();
 
   const createProduct = useCallback(
-    async (product: CreateProduct): Promise<Product | Message | null> =>
-      safeRequestWithFeedback(() =>
+    async (product: CreateProduct): Promise<Product> =>
+      safeRequest(() =>
         api.post<Product>("products", product).then((res) => res.data),
       ),
-    [api, safeRequestWithFeedback],
+    [api, safeRequest],
   );
 
   const getProduct = useCallback(
-    async (productUuid: string): Promise<Product | null> =>
+    async (productUuid: string): Promise<Product> =>
       safeRequest(() =>
         api.get<Product>(`products/${productUuid}`).then((res) => res.data),
       ),
@@ -67,7 +38,7 @@ const useProductService = () => {
       page?: number,
       size?: number,
       sort?: string,
-    ): Promise<PaginatedResponse<SummaryProduct> | null> =>
+    ): Promise<PaginatedResponse<SummaryProduct>> =>
       safeRequest(() =>
         api
           .get<PaginatedResponse<SummaryProduct>>("products", {
@@ -86,7 +57,7 @@ const useProductService = () => {
   );
 
   const getListProducts = useCallback(
-    async (standUuid: string): Promise<SummaryProduct[] | null> =>
+    async (standUuid: string): Promise<SummaryProduct[]> =>
       safeRequest(() =>
         api
           .get<SummaryProduct[]>(`products/list/${standUuid}`)
@@ -96,27 +67,29 @@ const useProductService = () => {
   );
 
   const updateProduct = useCallback(
-    async (product: UpdateProduct): Promise<Product | Message | null> =>
-      safeRequestWithFeedback(() =>
+    async (product: UpdateProduct): Promise<Product> =>
+      safeRequest(() =>
         api.put<Product>("products", product).then((res) => res.data),
       ),
-    [api, safeRequestWithFeedback],
+    [api, safeRequest],
   );
 
   const deleteProduct = useCallback(
-    async (productUuid: string): Promise<void> => {
-      await safeRequestWithFeedback(() =>
-        api.delete<void>(`products/${productUuid}`),
-      );
-    },
-    [api, safeRequestWithFeedback],
+    async (productUuid: string): Promise<void> =>
+      safeRequest(() =>
+        api
+          .delete<void>(`products/${productUuid}`)
+          .then((res) => res.data),
+      ),
+    [api, safeRequest],
   );
 
   const uploadImage = useCallback(
-    async (imageData: File): Promise<ResponseImage | null> => {
+    async (imageData: File): Promise<ResponseImage> => {
       const resizedFile = await resizeImage(imageData, 800);
       const formData = new FormData();
       formData.append("image", resizedFile, "cropped-image.png");
+
       return safeRequest(() =>
         api
           .post<ResponseImage>("products/upload-image", formData, {

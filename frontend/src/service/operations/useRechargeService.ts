@@ -1,5 +1,5 @@
-import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
+import { useSafeRequest } from "@/axios/useHandleRequest";
 import Recharge, {
   CreateRecharge,
   SummaryRecharge,
@@ -9,22 +9,10 @@ import { useCallback } from "react";
 
 const useRechargeService = () => {
   const api = useAxios();
-  const handleApiError = useApiError();
-
-  const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        return null;
-      }
-    },
-    [handleApiError],
-  );
+  const { safeRequest } = useSafeRequest();
 
   const createRecharge = useCallback(
-    async (recharge: CreateRecharge): Promise<Recharge | null> =>
+    async (recharge: CreateRecharge): Promise<Recharge> =>
       safeRequest(() =>
         api.post<Recharge>("recharges", recharge).then((res) => res.data),
       ),
@@ -32,9 +20,11 @@ const useRechargeService = () => {
   );
 
   const getRecharge = useCallback(
-    async (rechargeUuid: string): Promise<Recharge | null> =>
+    async (rechargeUuid: string): Promise<Recharge> =>
       safeRequest(() =>
-        api.get<Recharge>(`recharges/${rechargeUuid}`).then((res) => res.data),
+        api
+          .get<Recharge>(`recharges/${rechargeUuid}`)
+          .then((res) => res.data),
       ),
     [api, safeRequest],
   );
@@ -44,29 +34,34 @@ const useRechargeService = () => {
       page?: number,
       size?: number,
       sort?: string,
-    ): Promise<PaginatedResponse<SummaryRecharge> | null> =>
+    ): Promise<PaginatedResponse<SummaryRecharge>> =>
       safeRequest(() =>
         api
-          .get<
-            PaginatedResponse<SummaryRecharge>
-          >("recharges", { params: { page, size, sort } })
+          .get<PaginatedResponse<SummaryRecharge>>("recharges", {
+          params: { page, size, sort },
+          })
           .then((res) => res.data),
       ),
     [api, safeRequest],
   );
 
   const getLast3Recharges = useCallback(
-    async (): Promise<SummaryRecharge[] | null> =>
+    async (): Promise<SummaryRecharge[]> =>
       safeRequest(() =>
-        api.get<SummaryRecharge[]>("recharges/last3").then((res) => res.data),
+        api
+          .get<SummaryRecharge[]>("recharges/last3")
+          .then((res) => res.data),
       ),
     [api, safeRequest],
   );
 
   const deleteRecharge = useCallback(
-    async (rechargeUuid: string): Promise<void> => {
-      await safeRequest(() => api.delete<void>(`recharges/${rechargeUuid}`));
-    },
+    async (rechargeUuid: string): Promise<void> => 
+      safeRequest(() =>
+        api
+          .delete<void>(`recharges/${rechargeUuid}`)
+          .then((res) => res.data),
+      ),
     [api, safeRequest],
   );
 

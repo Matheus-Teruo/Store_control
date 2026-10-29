@@ -1,60 +1,32 @@
-import { useApiError } from "@/axios/useApiError";
 import useAxios from "@/axios/useAxios";
-import { Message } from "@context/AlertsContext/useAlertsContext";
+import { useSafeRequest } from "@/axios/useHandleRequest";
 import Association, {
   CreateAssociation,
   SummaryAssociation,
   UpdateAssociation,
 } from "@data/stands/Association";
 import { PaginatedResponse } from "@service/PagesType";
-import { AxiosError } from "axios";
 import { useCallback } from "react";
 
 const useAssociationService = () => {
   const api = useAxios();
-  const handleApiError = useApiError();
-
-  const safeRequestWithFeedback = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | Message | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        if (error instanceof AxiosError) {
-          return error.response!.data as Message;
-        }
-        return null;
-      }
-    },
-    [handleApiError],
-  );
-
-  const safeRequest = useCallback(
-    async <T>(fn: () => Promise<T>): Promise<T | null> => {
-      try {
-        return await fn();
-      } catch (error) {
-        handleApiError(error);
-        return null;
-      }
-    },
-    [handleApiError],
-  );
+  const { safeRequest } = useSafeRequest();
 
   const createAssociation = useCallback(
     async (
       association: CreateAssociation,
-    ): Promise<Association | Message | null> =>
-      safeRequestWithFeedback(() =>
+    ): Promise<Association> =>
+      safeRequest(() =>
         api
           .post<Association>("associations", association)
           .then((res) => res.data),
       ),
-    [api, safeRequestWithFeedback],
+    [api, safeRequest,
+],
   );
 
   const getAssociation = useCallback(
-    async (associationUuid: string): Promise<Association | null> =>
+    async (associationUuid: string): Promise<Association> =>
       safeRequest(() =>
         api
           .get<Association>(`associations/${associationUuid}`)
@@ -68,7 +40,7 @@ const useAssociationService = () => {
       page?: number,
       size?: number,
       sort?: string,
-    ): Promise<PaginatedResponse<SummaryAssociation> | null> =>
+    ): Promise<PaginatedResponse<SummaryAssociation>> =>
       safeRequest(() =>
         api
           .get<PaginatedResponse<SummaryAssociation>>("associations", {
@@ -80,7 +52,7 @@ const useAssociationService = () => {
   );
 
   const getListAssociations = useCallback(
-    async (): Promise<SummaryAssociation[] | null> =>
+    async (): Promise<SummaryAssociation[]> =>
       safeRequest(() =>
         api
           .get<SummaryAssociation[]>("associations/list")
@@ -92,21 +64,22 @@ const useAssociationService = () => {
   const updateAssociation = useCallback(
     async (
       association: UpdateAssociation,
-    ): Promise<Association | Message | null> =>
-      safeRequestWithFeedback(() =>
+    ): Promise<Association> =>
+      safeRequest(() =>
         api
           .put<Association>("associations", association)
           .then((res) => res.data),
       ),
-    [api, safeRequestWithFeedback],
+    [api, safeRequest],
   );
 
   const deleteAssociation = useCallback(
-    async (associationUuid: string): Promise<void> => {
-      await safeRequest(() =>
-        api.delete<void>(`associations/${associationUuid}`),
-      );
-    },
+    async (associationUuid: string): Promise<void> =>
+      safeRequest(() =>
+        api
+          .delete<void>(`associations/${associationUuid}`)
+          .then((res) => res.data),
+      ),
     [api, safeRequest],
   );
 
