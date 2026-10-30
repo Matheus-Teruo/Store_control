@@ -4,7 +4,7 @@ import ChartSelect from "@/components/selects/ChartSelect";
 import StandSelect from "@/components/selects/StandSelect";
 import {
   isAdmin,
-  isManeger,
+  isManager,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
 import { totalProductData, totalStandData } from "@/utils/dataChartConverter";
@@ -39,7 +39,7 @@ function TotalProductsBars() {
 
   const fetchTotals = useCallback(
     async (modeAmin: boolean) => {
-      if (isManeger(user)) {
+      if (isManager(user)) {
         const standTotalResponse = await getStandTotals(
           convertToString(date.startTime),
           convertToString(date.endTime),
@@ -58,7 +58,7 @@ function TotalProductsBars() {
   );
 
   useEffect(() => {
-    if (isManeger(user)) {
+    if (isManager(user)) {
       if (isAdmin(user)) {
         fetchTotals(true);
       } else {

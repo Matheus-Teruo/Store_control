@@ -2,7 +2,7 @@ import styles from "./Hub.module.scss";
 import {
   isAdmin,
   isRegister,
-  isManeger,
+  isManager,
   isSeller,
   isUserLogged,
   isUserUnlogged,
@@ -95,7 +95,7 @@ function Hub() {
         isUserLogged(user) &&
         user.voluntaryRole === VoluntaryRole.ADMIN && <h2>Administrador</h2>
       )}
-      {isManeger(user) && (
+      {isManager(user) && (
         <ul className={styles.manager}>
           <h3>Histórico (Logs)</h3>
           {!activeConfig.enableToken ? (

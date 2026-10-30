@@ -1,7 +1,7 @@
 import LineChartGeneric from "@/components/charts/LineChartGeneric";
 import style from "./RechargeChart.module.scss";
 import ChartSelect from "@/components/selects/ChartSelect";
-import { isManeger, isUserUnlogged } from "@/utils/checkAuthentication";
+import { isManager, isUserUnlogged } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import ResponseRegisterChart from "@data/statistics/registerChart";
 import {
@@ -34,7 +34,7 @@ function RechargeChart() {
       setRegisters(rechargeCharts);
     };
 
-    if (isManeger(user)) {
+    if (isManager(user)) {
       fetchRegistersChart();
     } else if (isUserUnlogged(user)) {
       navigate("/");

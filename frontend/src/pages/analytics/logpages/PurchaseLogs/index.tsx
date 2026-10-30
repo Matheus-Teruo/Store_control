@@ -9,7 +9,7 @@ import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import { formReducer, initialFormState } from "@reducer/formReducer";
 import {
   isAdmin,
-  isManeger,
+  isManager,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
@@ -28,7 +28,7 @@ function PurchaseLogs() {
 
   const fetchTrades = useCallback(
     async (modeAmin: boolean) => {
-      if (isManeger(user)) {
+      if (isManager(user)) {
         const response = await getTrades(
           modeAmin ? undefined : user.summaryFunction?.uuid,
           page.number,
@@ -46,7 +46,7 @@ function PurchaseLogs() {
   );
 
   useEffect(() => {
-    if (isUserLogged(user) && isManeger(user)) {
+    if (isUserLogged(user) && isManager(user)) {
       if (isAdmin(user)) {
         setModeAdmin(true);
         fetchTrades(true);

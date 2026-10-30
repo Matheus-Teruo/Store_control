@@ -1,6 +1,6 @@
 import {
   isRegister,
-  isManeger,
+  isManager,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
@@ -21,14 +21,14 @@ function Transaction() {
       if (
         isUserLogged(user) &&
         isRegister(user.summaryFunction, user.voluntaryRole) &&
-        isManeger(user)
+        isManager(user)
       ) {
         const response = await getListRegisters();
         setRegisters(response);
       } else if (
         isUserUnlogged(user) ||
         (user && !isRegister(user.summaryFunction, user.voluntaryRole)) ||
-        isManeger(user)
+        isManager(user)
       ) {
         navigate("/");
       }

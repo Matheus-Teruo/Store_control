@@ -3,7 +3,7 @@ import style from "./PurchaseChart.module.scss";
 import ChartSelect from "@/components/selects/ChartSelect";
 import {
   isAdmin,
-  isManeger,
+  isManager,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
@@ -34,7 +34,7 @@ function PurchaseChart() {
 
   const fetchPurhcases = useCallback(
     async (modeAmin: boolean) => {
-      if (isManeger(user)) {
+      if (isManager(user)) {
         const purchasesCharts = await getPurchaseCharts(
           convertToString(date.startTime),
           convertToString(date.endTime),
@@ -47,7 +47,7 @@ function PurchaseChart() {
   );
 
   useEffect(() => {
-    if (isManeger(user)) {
+    if (isManager(user)) {
       if (isAdmin(user)) {
         fetchPurhcases(true);
       } else {

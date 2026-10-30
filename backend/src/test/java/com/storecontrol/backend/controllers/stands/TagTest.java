@@ -1,15 +1,9 @@
 package com.storecontrol.backend.controllers.stands;
 
 import com.storecontrol.backend.BaseTest;
-import com.storecontrol.backend.models.stands.Stand;
-import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.models.stands.products.Tag;
-import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.products.request.RequestCreateTag;
-import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.stands.products.request.RequestUpdateTag;
-import com.storecontrol.backend.models.stands.products.response.ResponseProduct;
-import com.storecontrol.backend.models.stands.products.response.ResponseSummaryProduct;
 import com.storecontrol.backend.models.stands.products.response.ResponseTag;
 import com.storecontrol.backend.services.stands.TagService;
 import org.junit.jupiter.api.Test;

@@ -42,7 +42,7 @@ export function isRegister(
   );
 }
 
-export function isManeger(user: User | null | "unlogged"): user is User {
+export function isManager(user: User | null | "unlogged"): user is User {
   return isUserLogged(user) && user.voluntaryRole !== VoluntaryRole.VOLUNTARY;
 }
 

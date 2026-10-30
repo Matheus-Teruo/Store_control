@@ -2,7 +2,7 @@ import styles from "./Associations.module.scss";
 import PageSelect from "@/components/selects/PageSelect";
 import Button from "@/components/utils/Button";
 import {
-  isManeger,
+  isManager,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
@@ -38,7 +38,7 @@ function Associations() {
   }, [page.number, getAssociations]);
 
   useEffect(() => {
-    if (isUserLogged(user) && isManeger(user)) {
+    if (isUserLogged(user) && isManager(user)) {
       fetchAssociations();
     } else if (isUserUnlogged(user)) {
       navigate("/");

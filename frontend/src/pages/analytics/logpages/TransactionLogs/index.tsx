@@ -1,6 +1,6 @@
 import PageSelect from "@/components/selects/PageSelect";
 import styles from "./TransactionLogs.module.scss";
-import { isManeger, isUserUnlogged } from "@/utils/checkAuthentication";
+import { isManager, isUserUnlogged } from "@/utils/checkAuthentication";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { SummaryTransaction } from "@data/operations/Transaction";
 import TransactionDetail from "./TransactionDetail";
@@ -44,7 +44,7 @@ function TransactionLogs() {
   }, [getListRegisters]);
 
   const fetchTransactions = useCallback(async () => {
-    if (isManeger(user)) {
+    if (isManager(user)) {
       const response = await getTransactions(
         page.number,
         undefined,
@@ -59,7 +59,7 @@ function TransactionLogs() {
   }, [user, page.number, getTransactions]);
 
   useEffect(() => {
-    if (isManeger(user)) {
+    if (isManager(user)) {
       fetchTransactions();
     } else if (isUserUnlogged(user)) {
       navigate("/");

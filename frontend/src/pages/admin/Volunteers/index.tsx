@@ -2,7 +2,7 @@ import styles from "./Volunteers.module.scss";
 import PageSelect from "@/components/selects/PageSelect";
 import {
   isAdmin,
-  isManeger,
+  isManager,
   isUserLogged,
   isUserUnlogged,
 } from "@/utils/checkAuthentication";
@@ -70,7 +70,7 @@ function Volunteers() {
   }, [page.number, getVolunteers]);
 
   useEffect(() => {
-    if (isUserLogged(user) && isManeger(user)) {
+    if (isUserLogged(user) && isManager(user)) {
       fetchVolunteers();
     } else if (isUserUnlogged(user)) {
       navigate("/");
