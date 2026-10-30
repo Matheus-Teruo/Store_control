@@ -1,9 +1,11 @@
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
+import { isApiError } from "@/utils/checkApiResponse";
 import {
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
+import ApiError from "@data/Error";
 import { CreatePurchase } from "@data/operations/Purchase";
 import { SummaryProduct } from "@data/stands/Product";
 import {
@@ -34,17 +36,15 @@ function FormPurchase({ reducer }: FormPurchaseProps) {
     const fetchProducts = async () => {
       if (state.standUuid) {
         const products = await getListProducts(state.standUuid);
-        if (products) {
-          const productsObject = products.reduce(
-            (acc, product) => {
-              const { uuid, ...rest } = product;
-              acc[uuid] = rest;
-              return acc;
-            },
-            {} as Record<string, Omit<SummaryProduct, "uuid">>,
-          );
-          setProductsRecord(productsObject);
-        }
+        const productsObject = products.reduce(
+          (acc, product) => {
+            const { uuid, ...rest } = product;
+            acc[uuid] = rest;
+            return acc;
+          },
+          {} as Record<string, Omit<SummaryProduct, "uuid">>,
+        );
+        setProductsRecord(productsObject);
       }
     };
     fetchProducts();
@@ -52,14 +52,22 @@ function FormPurchase({ reducer }: FormPurchaseProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const purchase = await createPurchase(createPurchasePayload(state));
-    if (purchase) {
+    try {
+      const purchase = await createPurchase(createPurchasePayload(state));
       addNotification({
         title: "Create Purchase Success",
-        message: `Create purchase with ${purchase.items.length} itens diferent`,
+        message: `Create purchase with ${purchase.items.length} different itens`,
         type: MessageType.OK,
       });
       dispatch({ type: "RESET" });
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) {
+          addNotification({
+          title: "Create Purchase Fail",
+          message: `Fail to create purchase`,
+          type: MessageType.ERROR,
+        });
+      }
     }
   };
 

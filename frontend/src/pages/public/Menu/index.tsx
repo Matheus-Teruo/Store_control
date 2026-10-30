@@ -43,20 +43,18 @@ function Menu() {
         calculateLayout(window.innerWidth, window.innerHeight),
         "productName,asc",
       );
-      if (response) {
-        pageDispatch({
-          type: "SET_PAGE_MAX",
-          payload: response.page.totalPages,
-        });
-        setProductPages(page.number);
-        setProducts((prev) => {
-          const existingIds = new Set(prev.map((p) => p.uuid));
-          const uniqueNewProducts = response.content.filter(
-            (p) => !existingIds.has(p.uuid),
-          );
-          return [...prev, ...uniqueNewProducts];
-        });
-      }
+      pageDispatch({
+        type: "SET_PAGE_MAX",
+        payload: response.page.totalPages,
+      });
+      setProductPages(page.number);
+      setProducts((prev) => {
+        const existingIds = new Set(prev.map((p) => p.uuid));
+        const uniqueNewProducts = response.content.filter(
+          (p) => !existingIds.has(p.uuid),
+        );
+        return [...prev, ...uniqueNewProducts];
+      });
     };
     if (page.number > productPages) {
       fetchProducts();

@@ -79,17 +79,15 @@ function PickUpCounter() {
   useEffect(() => {
     const fetchAssociations = async () => {
       const associations = await getListStands();
-      if (associations) {
-        const associationsObject = associations.reduce(
-          (acc, association) => {
-            const { uuid, ...rest } = association;
-            acc[uuid] = rest;
-            return acc;
-          },
-          {} as Record<string, Omit<SummaryStand, "uuid">>,
-        );
-        setStandsRecord(associationsObject);
-      }
+      const associationsObject = associations.reduce(
+        (acc, association) => {
+          const { uuid, ...rest } = association;
+          acc[uuid] = rest;
+          return acc;
+        },
+        {} as Record<string, Omit<SummaryStand, "uuid">>,
+      );
+      setStandsRecord(associationsObject);
     };
     fetchAssociations();
   }, [getListStands]);
@@ -126,12 +124,10 @@ function PickUpCounter() {
 
         for (const purchase of customer.purchases) {
           const products = await getListProducts(purchase.standUuid);
-          if (products) {
-            products.forEach((product) => {
-              const { uuid, ...rest } = product;
-              allProductsRecord[uuid] = rest;
-            });
-          }
+          products.forEach((product) => {
+            const { uuid, ...rest } = product;
+            allProductsRecord[uuid] = rest;
+          });
         }
         setProductsRecord(allProductsRecord);
       }

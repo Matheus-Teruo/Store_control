@@ -31,9 +31,7 @@ function RechargeChart() {
         convertToString(date.startTime),
         convertToString(date.endTime),
       );
-      if (rechargeCharts) {
-        setRegisters(rechargeCharts);
-      }
+      setRegisters(rechargeCharts);
     };
 
     if (isManeger(user)) {

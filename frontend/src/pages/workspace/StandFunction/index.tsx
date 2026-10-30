@@ -45,7 +45,7 @@ function StandFunction() {
           undefined,
           "productName,asc",
         );
-        if (response) setProducts(response.content);
+        setProducts(response.content);
       } else if (
         isUserUnlogged(user) ||
         (user && !isSeller(user.summaryFunction, user.voluntaryRole))

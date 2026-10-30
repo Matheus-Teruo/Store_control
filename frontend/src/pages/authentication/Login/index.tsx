@@ -6,12 +6,10 @@ import Input from "@/components/utils/AuthInput";
 import { useReducer, useState } from "react";
 import useUserService from "@service/voluntary/useUserService";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
 import { useUserContext } from "@context/UserContext/useUserContext";
-import User from "@data/volunteers/User";
 import {
   initialUserState,
   loginPayload,
@@ -25,6 +23,8 @@ import {
   UserSVG,
   UserXSVG,
 } from "@/assets/svg";
+import ApiError from "@data/Error";
+import { isApiError, mapFieldErrors } from "@/utils/checkApiResponse";
 
 function Login() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
@@ -38,11 +38,11 @@ function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch(true);
-    setTouched(false);
-    setMessageError({});
-    const user = await loginVoluntary(loginPayload(state));
-    if (user && !isMessage<User>(user)) {
+    try {
+      setWaitingFetch(true);
+      setTouched(false);
+      setMessageError({});
+      const user = await loginVoluntary(loginPayload(state));
       addNotification({
         title: "Login Success",
         message: `User ${state.username} logged`,
@@ -51,12 +51,12 @@ function Login() {
       login(user);
       dispatch({ type: "RESET" });
       navigate("/workspace", { replace: true });
-    } else if (user) {
-      const message = user;
-      if (message.invalidFields) setMessageError(message.invalidFields);
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch(false);
     }
-    setTouched(true);
-    setWaitingFetch(false);
   };
 
   return (

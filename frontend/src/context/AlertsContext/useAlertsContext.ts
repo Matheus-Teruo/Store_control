@@ -14,10 +14,6 @@ export interface Message {
   type: MessageType;
 }
 
-export function isMessage<T>(response: T | Message): response is Message {
-  return (response as Message).message !== undefined;
-}
-
 export interface Notification {
   id: number;
   message: Message;

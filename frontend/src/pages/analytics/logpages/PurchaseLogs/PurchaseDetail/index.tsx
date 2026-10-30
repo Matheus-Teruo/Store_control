@@ -43,17 +43,20 @@ function PurchaseDetail({ hide, uuid }: PurchaseDetailProps) {
 
   const handleDeleteSubmit = async () => {
     if (uuid && purchase) {
-      setWaitingFetch("delete");
-      await deletePurchase(uuid);
-      addNotification({
-        title: "Delete Trade Success",
-        message: `Delete trade: ${uuid}`,
-        type: MessageType.OK,
-      });
-      setConfirmDelete(false);
-      hide();
+      try {
+        setWaitingFetch("delete");
+        await deletePurchase(uuid);
+        addNotification({
+          title: "Delete Trade Success",
+          message: `Delete trade: ${uuid}`,
+          type: MessageType.OK,
+        });
+        setConfirmDelete(false);
+        hide();
+      } finally {
+        setWaitingFetch("");
+      }
     }
-    setWaitingFetch("");
   };
 
   return (

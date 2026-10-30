@@ -31,9 +31,7 @@ function TransactionDetail({ hide, uuid }: TransactionDetailProps) {
     const fetchTransaction = async () => {
       if (uuid) {
         const transaction = await getTransaction(uuid);
-        if (transaction) {
-          setTransaction(transaction);
-        }
+        setTransaction(transaction);
       } else if (uuid === undefined) {
         console.error("uuid need to be defined when type is update");
       }
@@ -44,17 +42,20 @@ function TransactionDetail({ hide, uuid }: TransactionDetailProps) {
 
   const handleDeleteSubmit = async () => {
     if (uuid && transaction) {
-      setWaitingFetch("delete");
-      await deleteTransaction(uuid);
-      addNotification({
-        title: "Delete Transaction Success",
-        message: `Delete Transaction: ${uuid}`,
-        type: MessageType.OK,
-      });
-      setConfirmDelete(false);
-      hide();
+      try {
+        setWaitingFetch("delete");
+        await deleteTransaction(uuid);
+        addNotification({
+          title: "Delete Transaction Success",
+          message: `Delete Transaction: ${uuid}`,
+          type: MessageType.OK,
+        });
+        setConfirmDelete(false);
+        hide();
+      } finally {
+        setWaitingFetch("");
+      }
     }
-    setWaitingFetch("");
   };
 
   return (

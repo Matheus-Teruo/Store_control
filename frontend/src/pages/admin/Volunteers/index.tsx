@@ -62,13 +62,11 @@ function Volunteers() {
       undefined,
       "fullname,asc",
     );
-    if (response) {
-      setVolunteers(response.content);
-      pageDispatch({
-        type: "SET_PAGE_MAX",
-        payload: response.page.totalPages,
-      });
-    }
+    setVolunteers(response.content);
+    pageDispatch({
+      type: "SET_PAGE_MAX",
+      payload: response.page.totalPages,
+    });
   }, [page.number, getVolunteers]);
 
   useEffect(() => {
@@ -82,17 +80,15 @@ function Volunteers() {
   useEffect(() => {
     const fetchAssociations = async () => {
       const associations = await getListAssociations();
-      if (associations) {
-        const productsObject = associations.reduce(
-          (acc, product) => {
-            const { uuid, ...rest } = product;
-            acc[uuid] = rest;
-            return acc;
-          },
-          {} as Record<string, Omit<SummaryAssociation, "uuid">>,
-        );
-        setAssociationsRecord(productsObject);
-      }
+      const productsObject = associations.reduce(
+        (acc, product) => {
+          const { uuid, ...rest } = product;
+          acc[uuid] = rest;
+          return acc;
+        },
+        {} as Record<string, Omit<SummaryAssociation, "uuid">>,
+      );
+      setAssociationsRecord(productsObject);
     };
 
     fetchAssociations();

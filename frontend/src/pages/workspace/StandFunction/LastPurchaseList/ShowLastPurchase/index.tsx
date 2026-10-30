@@ -12,6 +12,7 @@ function ShowLastPurchase({
   deletable: boolean;
 }) {
   const [purchase, setPurchase] = useState<Purchase | undefined>();
+  const [waitingFetch, setWaitingFetch] = useState<boolean>(false);
   const { getPurchase } = usePurchaseService();
   const { deletePurchase } = usePurchaseService();
 
@@ -28,7 +29,12 @@ function ShowLastPurchase({
 
   const handleDelete = () => {
     if (purchase) {
-      deletePurchase(purchase?.uuid);
+      try {
+        setWaitingFetch(true)
+        deletePurchase(purchase?.uuid);
+      } finally {
+        setWaitingFetch(false)
+      }
     }
   };
 
@@ -56,7 +62,7 @@ function ShowLastPurchase({
           </ul>
           {deletable && (
             <div className={styles.delete}>
-              <Button onClick={handleDelete}>
+              <Button onClick={handleDelete} loading={waitingFetch}>
                 <p>Deletar</p>
               </Button>
             </div>

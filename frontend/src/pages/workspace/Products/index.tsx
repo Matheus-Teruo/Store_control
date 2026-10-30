@@ -43,13 +43,11 @@ function Products() {
           undefined,
           "productName,asc",
         );
-        if (response) {
-          setProducts(response.content);
-          pageDispatch({
-            type: "SET_PAGE_MAX",
-            payload: response.page.totalPages,
-          });
-        }
+        setProducts(response.content);
+        pageDispatch({
+          type: "SET_PAGE_MAX",
+          payload: response.page.totalPages,
+        });
       }
     },
     [user, page.number, selectedStand, getProducts],

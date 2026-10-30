@@ -26,9 +26,7 @@ function AssociationSelect({
   useEffect(() => {
     const fetchAssociation = async () => {
       const association = await getListAssociations();
-      if (association) {
-        setListAssociations(association);
-      }
+      setListAssociations(association);
     };
     fetchAssociation();
   }, [getListAssociations]);

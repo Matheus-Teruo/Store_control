@@ -33,17 +33,15 @@ function Stands() {
   useEffect(() => {
     const fetchAssociations = async () => {
       const associations = await getListAssociations();
-      if (associations) {
-        const associationsObject = associations.reduce(
-          (acc, association) => {
-            const { uuid, ...rest } = association;
-            acc[uuid] = rest;
-            return acc;
-          },
-          {} as Record<string, Omit<SummaryAssociation, "uuid">>,
-        );
-        setAssociationsRecord(associationsObject);
-      }
+      const associationsObject = associations.reduce(
+        (acc, association) => {
+          const { uuid, ...rest } = association;
+          acc[uuid] = rest;
+          return acc;
+        },
+        {} as Record<string, Omit<SummaryAssociation, "uuid">>,
+      );
+      setAssociationsRecord(associationsObject);
     };
     fetchAssociations();
   }, [getListAssociations]);
@@ -54,13 +52,11 @@ function Stands() {
       undefined,
       "functionName,asc",
     );
-    if (response) {
-      setStands(response.content);
-      pageDispatch({
-        type: "SET_PAGE_MAX",
-        payload: response.page.totalPages,
-      });
-    }
+    setStands(response.content);
+    pageDispatch({
+      type: "SET_PAGE_MAX",
+      payload: response.page.totalPages,
+    });
   }, [page.number, getStands]);
 
   useEffect(() => {

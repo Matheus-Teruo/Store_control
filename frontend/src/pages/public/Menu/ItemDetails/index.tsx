@@ -20,9 +20,7 @@ function ItemDetails({ uuid, hide }: ItemDetailsProps) {
     const fetchProduct = async () => {
       if (uuid) {
         const product = await getProduct(uuid);
-        if (product) {
-          setProduct(product);
-        }
+        setProduct(product);
       }
     };
 

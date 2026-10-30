@@ -21,15 +21,13 @@ function FunctionSelect({
   useEffect(() => {
     const fetchAssociation = async () => {
       const voluntaryFunctions = await getListFunctions();
-      if (voluntaryFunctions) {
-        if (activeConfig.version === "simple") {
-          const filteredFunctions = voluntaryFunctions.filter(
-            (item) => item.uuid !== "12345678-abcd-4efa-bcde-f1234567890a",
-          );
-          setListFunctions(filteredFunctions);
-        } else {
-          setListFunctions(voluntaryFunctions);
-        }
+      if (activeConfig.version === "simple") {
+        const filteredFunctions = voluntaryFunctions.filter(
+          (item) => item.uuid !== "12345678-abcd-4efa-bcde-f1234567890a",
+        );
+        setListFunctions(filteredFunctions);
+      } else {
+        setListFunctions(voluntaryFunctions);
       }
     };
 

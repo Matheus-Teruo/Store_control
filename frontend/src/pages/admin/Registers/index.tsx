@@ -34,17 +34,15 @@ function Registers() {
   useEffect(() => {
     const fetchStands = async () => {
       const stands = await getListStands();
-      if (stands) {
-        const standsObject = stands.reduce(
-          (acc, stand) => {
-            const { uuid, ...rest } = stand;
-            acc[uuid] = rest;
-            return acc;
-          },
-          {} as Record<string, Omit<SummaryStand, "uuid">>,
-        );
-        setStandsRecord(standsObject);
-      }
+      const standsObject = stands.reduce(
+        (acc, stand) => {
+          const { uuid, ...rest } = stand;
+          acc[uuid] = rest;
+          return acc;
+        },
+        {} as Record<string, Omit<SummaryStand, "uuid">>,
+      );
+      setStandsRecord(standsObject);
     };
     fetchStands();
   }, [getListStands]);
@@ -55,13 +53,11 @@ function Registers() {
       undefined,
       "functionName,asc",
     );
-    if (response) {
-      setRegisters(response.content);
-      pageDispatch({
-        type: "SET_PAGE_MAX",
-        payload: response.page.totalPages,
-      });
-    }
+    setRegisters(response.content);
+    pageDispatch({
+      type: "SET_PAGE_MAX",
+      payload: response.page.totalPages,
+    });
   }, [page.number, getRegisters]);
 
   useEffect(() => {

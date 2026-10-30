@@ -2,7 +2,6 @@ import styles from "./FormVoluntary.module.scss";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
@@ -20,6 +19,8 @@ import { VoluntaryRole } from "@data/volunteers/Voluntary";
 import GlassBackground from "@/components/GlassBackground";
 import { CheckSVG, XSVG } from "@/assets/svg";
 import { VoluntaryRoleMetadata } from "@/components/selects/RoleSelect/voluntaryRoleMetadata";
+import ApiError from "@data/Error";
+import { isApiError, mapFieldErrors } from "@/utils/checkApiResponse";
 
 type FormVoluntaryProps = {
   hide: () => void;
@@ -53,9 +54,7 @@ function FormVoluntary({
     const fetchVoluntary = async () => {
       if (uuid) {
         const voluntary = await getVoluntary(uuid);
-        if (voluntary) {
-          dispatch({ type: "SET_VOLUNTARY", payload: voluntary });
-        }
+        dispatch({ type: "SET_VOLUNTARY", payload: voluntary });
       } else if (uuid === undefined) {
         console.error("uuid need to be defined when type is update");
       }
@@ -66,11 +65,11 @@ function FormVoluntary({
 
   const handleUpdateFunctionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch("function");
-    const voluntary = await updateVoluntaryFunction(
-      updateVoluntaryFunctionPayload(state),
-    );
-    if (voluntary && !isMessage(voluntary)) {
+    try {
+      setWaitingFetch("function");
+      const voluntary = await updateVoluntaryFunction(
+        updateVoluntaryFunctionPayload(state),
+      );
       addNotification({
         title: "Update Voluntary Function Success",
         message: `Update voluntary ${voluntary.fullname} to function: ${voluntary.summaryFunction}`,
@@ -78,21 +77,21 @@ function FormVoluntary({
       });
       dispatch({ type: "RESET" });
       hide();
-    } else if (voluntary) {
-      const message = voluntary;
-      if (message.invalidFields) setMessageError(message.invalidFields);
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setWaitingFetch("");
     }
-    setWaitingFetch("");
   };
 
   const handleUpdateRoleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (uuid) {
-      setWaitingFetch("role");
-      const voluntary = await updateVoluntaryRole(
-        updateVoluntaryRolePayload(state),
-      );
-      if (voluntary && !isMessage(voluntary)) {
+      try {
+        setWaitingFetch("role");
+        const voluntary = await updateVoluntaryRole(
+          updateVoluntaryRolePayload(state),
+        );
         addNotification({
           title: "Update Voluntary Role Success",
           message: `Update voluntary ${voluntary.fullname} to role: ${voluntary.voluntaryRole}`,
@@ -100,19 +99,19 @@ function FormVoluntary({
         });
         dispatch({ type: "RESET" });
         hide();
-      } else if (voluntary) {
-        const message = voluntary;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+      } catch (error: ApiError | any) {
+        if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+      } finally {
+        setWaitingFetch("");
       }
     }
-    setWaitingFetch("");
   };
 
   const handleForgotPasswordSubmit = async () => {
     if (uuid) {
-      setWaitingFetch("delete");
-      const voluntary = await updatePassword(state.uuid);
-      if (voluntary && !isMessage(voluntary)) {
+      try {
+        setWaitingFetch("delete");
+        const voluntary = await updatePassword(state.uuid);
         addNotification({
           title: "Updated Password Success",
           message: `Updated password to username: ${voluntary.username}`,
@@ -120,29 +119,32 @@ function FormVoluntary({
         });
         dispatch({ type: "RESET" });
         hide();
-      } else if (voluntary) {
-        const message = voluntary;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+      } catch (error: ApiError | any) {
+        if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+      } finally {
+        setConfirm("");
+        setWaitingFetch("");
       }
-      setConfirm("");
     }
-    setWaitingFetch("");
   };
 
   const handleDeleteSubmit = async () => {
     if (uuid) {
-      setWaitingFetch("delete");
-      await deleteVoluntary(state.uuid);
-      addNotification({
-        title: "Delete Voluntary Success",
-        message: `Delete voluntary ${state.fullname}`,
-        type: MessageType.OK,
-      });
-      dispatch({ type: "RESET" });
-      setConfirm("");
-      hide();
+      try {
+        setWaitingFetch("delete");
+        await deleteVoluntary(state.uuid);
+        addNotification({
+          title: "Delete Voluntary Success",
+          message: `Delete voluntary ${state.fullname}`,
+          type: MessageType.OK,
+        });
+        dispatch({ type: "RESET" });
+        setConfirm("");
+        hide();
+      } finally {
+        setWaitingFetch("");
+      }
     }
-    setWaitingFetch("");
   };
 
   return (

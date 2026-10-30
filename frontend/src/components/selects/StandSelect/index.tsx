@@ -30,7 +30,7 @@ function StandSelect({
   useEffect(() => {
     const fetchStands = async () => {
       const stands = await getListStands();
-      if (stands) setListStands(stands);
+      setListStands(stands);
     };
     fetchStands();
   }, [getListStands]);

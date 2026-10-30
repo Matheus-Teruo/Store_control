@@ -2,6 +2,7 @@ import User from "@data/volunteers/User";
 import React, { useCallback, useEffect, useState } from "react";
 import { UserContext } from "./useUserContext";
 import useUserService from "@service/voluntary/useUserService";
+import { isApiError } from "@/utils/checkApiResponse";
 
 const LOCAL_STORAGE_KEY = "loggedInUser";
 
@@ -16,16 +17,15 @@ function UserProvider({ children }: { children: React.ReactNode }) {
 
   const checkLogged = useCallback(async () => {
     try {
-      const logginUser = await getUser();
-      if (logginUser !== null) {
-        setUser(logginUser);
-      } else {
-        setUser("unlogged");
+      const loginUser = await getUser();
+      setUser(loginUser);
+    } catch (error) {
+      if (isApiError(error)) {
+        setUser("unlogged")
+        return
       }
-    } catch (_error) {
       setUser("unlogged");
-      // console.log(error);
-      // TODO: verificar o que fazer com as response do axios
+      console.log(error);
     }
   }, [getUser]);
 

@@ -30,13 +30,11 @@ function Tags() {
 
   const fetchTags = useCallback(async () => {
     const response = await getTags(page.number, undefined, "tagName,asc");
-    if (response) {
-      setTags(response.content);
-      pageDispatch({
-        type: "SET_PAGE_MAX",
-        payload: response.page.totalPages,
-      });
-    }
+    setTags(response.content);
+    pageDispatch({
+      type: "SET_PAGE_MAX",
+      payload: response.page.totalPages,
+    });
   }, [page.number, getTags]);
 
   useEffect(() => {

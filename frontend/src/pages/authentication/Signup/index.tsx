@@ -5,7 +5,6 @@ import { useReducer, useState } from "react";
 import useUserService from "@service/voluntary/useUserService";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
@@ -28,6 +27,8 @@ import {
   UserSVG,
   UserXSVG,
 } from "@/assets/svg";
+import ApiError from "@data/Error";
+import { isApiError, mapFieldErrors } from "@/utils/checkApiResponse";
 
 function Signup() {
   const [state, dispatch] = useReducer(userReducer, initialUserState);
@@ -42,10 +43,10 @@ function Signup() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (state.password == state.confirmPassword) {
-      setWaitingFetch(true);
-      setTouched(false);
-      const voluntary = await signupVoluntary(signupPayload(state));
-      if (voluntary && !isMessage(voluntary)) {
+      try {
+        setWaitingFetch(true);
+        setTouched(false);
+        const voluntary = await signupVoluntary(signupPayload(state));
         addNotification({
           title: "Signup Success",
           message: `Create user ${voluntary.username} and logged`,
@@ -59,19 +60,20 @@ function Signup() {
         });
         dispatch({ type: "RESET" });
         navigate("/workspace", { replace: true });
-      } else if (isMessage(voluntary)) {
-        const message = voluntary;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+      } catch (error: ApiError | any) {
+        if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+      } finally {
+        setTouched(true);
+        setWaitingFetch(false);
       }
     } else {
       addNotification({
         title: "Error to Submit",
-        message: `password and password confirmation are not iqual`,
+        message: `password and password confirmation are not equal`,
         type: MessageType.WARNING,
       });
     }
     setTouched(true);
-    setWaitingFetch(false);
   };
 
   return (

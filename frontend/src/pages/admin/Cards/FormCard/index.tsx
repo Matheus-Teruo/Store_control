@@ -4,13 +4,14 @@ import Button from "@/components/utils/Button";
 import Input from "@/components/utils/CardInput";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
 import { cardReducer, initialCardState } from "@reducer/customer/cardReducer";
 import useCardService from "@service/customer/useCardService";
 import { useReducer, useState } from "react";
+import ApiError from "@data/Error";
+import { isApiError, mapFieldErrors } from "@/utils/checkApiResponse";
 
 function FormCard({ hide }: { hide: () => void }) {
   const [state, dispatch] = useReducer(cardReducer, initialCardState);
@@ -22,10 +23,10 @@ function FormCard({ hide }: { hide: () => void }) {
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch(true);
-    setTouched(false);
-    const card = await createCard(state);
-    if (card && !isMessage(card)) {
+    try {
+      setWaitingFetch(true);
+      setTouched(false);
+      const card = await createCard(state);
       addNotification({
         title: "Create Card Success",
         message: `Create Card: ${card.cardId}`,
@@ -33,12 +34,12 @@ function FormCard({ hide }: { hide: () => void }) {
       });
       dispatch({ type: "RESET" });
       hide();
-    } else if (isMessage(card)) {
-      const message = card;
-      if (message.invalidFields) setMessageError(message.invalidFields);
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch(false);
     }
-    setTouched(true);
-    setWaitingFetch(false);
   };
 
   return (

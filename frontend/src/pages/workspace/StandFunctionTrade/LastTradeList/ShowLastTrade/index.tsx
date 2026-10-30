@@ -36,14 +36,17 @@ function ShowLastTrade({
   const handleDelete = async () => {
     if (!activeConfig.enableCard) {
       if (uuid) {
-        setWaitingFetch("delete");
-        await deleteTrade(fixedCardID, uuid);
-        setShow();
+        try {
+          setWaitingFetch("delete");
+          await deleteTrade(fixedCardID, uuid);
+          setShow();
+        } finally {
+          setWaitingFetch("");
+        }
       }
     } else {
       // TODO: create card logic
     }
-    setWaitingFetch("");
   };
 
   return (

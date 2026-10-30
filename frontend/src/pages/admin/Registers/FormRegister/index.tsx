@@ -1,7 +1,6 @@
 import styles from "./FormRegister.module.scss";
 import Button from "@/components/utils/Button";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
@@ -18,6 +17,8 @@ import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import { CheckSVG, XSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
 import Register from "@data/registers/Register";
+import { isApiError, mapFieldErrors } from "@/utils/checkApiResponse";
+import ApiError from "@data/Error";
 
 type FormRegisterProps = {
   type: "create" | "update";
@@ -42,10 +43,8 @@ function FormRegister({ type, hide, uuid }: FormRegisterProps) {
     const fetchRegister = async () => {
       if (type === "update" && uuid) {
         const register = await getRegister(uuid);
-        if (register) {
-          dispatch({ type: "SET_REGISTER", payload: register });
-          setInitial(register);
-        }
+        dispatch({ type: "SET_REGISTER", payload: register });
+        setInitial(register);
       } else if (type === "update" && uuid === undefined) {
         console.error("uuid need to be defined when type is update");
       }
@@ -56,10 +55,10 @@ function FormRegister({ type, hide, uuid }: FormRegisterProps) {
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch("create/update");
-    setTouched(false);
-    const register = await createRegister(createRegisterPayload(state));
-    if (register && !isMessage(register)) {
+    try {
+      setWaitingFetch("create/update");
+      setTouched(false);
+      const register = await createRegister(createRegisterPayload(state));
       addNotification({
         title: "Create Stand Success",
         message: `Create stand: ${register.registerName}, with stand: ${register.summaryStand !== undefined ? register.summaryStand.standName : "não definido"}`,
@@ -67,23 +66,23 @@ function FormRegister({ type, hide, uuid }: FormRegisterProps) {
       });
       dispatch({ type: "RESET" });
       hide();
-    } else if (isMessage(register)) {
-      const message = register;
-      if (message.invalidFields) setMessageError(message.invalidFields);
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch("");
     }
-    setTouched(true);
-    setWaitingFetch("");
   };
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (initial) {
-      setWaitingFetch("create/update");
-      setTouched(false);
-      const register = await updateRegister(
-        updateRegisterPayload(state, initial),
-      );
-      if (register && !isMessage(register)) {
+      try {
+        setWaitingFetch("create/update");
+        setTouched(false);
+        const register = await updateRegister(
+          updateRegisterPayload(state, initial),
+        );
         addNotification({
           title: "Update Register Success",
           message: `Update register: ${register.registerName}, with president: ${register.summaryStand !== undefined ? register.summaryStand.standName : "não definido"}`,
@@ -91,29 +90,32 @@ function FormRegister({ type, hide, uuid }: FormRegisterProps) {
         });
         dispatch({ type: "RESET" });
         hide();
-      } else if (isMessage(register)) {
-        const message = register;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+      } catch (error: ApiError | any) {
+        if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+      } finally {
+        setTouched(true);
+        setWaitingFetch("");
       }
     }
-    setTouched(true);
-    setWaitingFetch("");
   };
 
   const handleDeleteSubmit = async () => {
     if (uuid) {
-      setWaitingFetch("delete");
-      await deleteRegister(state.uuid);
-      addNotification({
-        title: "Delete Register Success",
-        message: `Delete Register: ${state.registerName}`,
-        type: MessageType.OK,
-      });
-      dispatch({ type: "RESET" });
-      setConfirmDelete(false);
-      hide();
+      try {
+        setWaitingFetch("delete");
+        await deleteRegister(state.uuid);
+        addNotification({
+          title: "Delete Register Success",
+          message: `Delete Register: ${state.registerName}`,
+          type: MessageType.OK,
+        });
+        dispatch({ type: "RESET" });
+        setConfirmDelete(false);
+        hide();
+      } finally {
+        setWaitingFetch("");
+      }
     }
-    setWaitingFetch("");
   };
 
   return (

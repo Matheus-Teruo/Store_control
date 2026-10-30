@@ -19,7 +19,7 @@ import { EditSVG, PlusSVG } from "@/assets/svg";
 function Associations() {
   const [associations, setAssociations] = useState<SummaryAssociation[]>([]);
   const [page, pageDispatch] = useReducer(pageReducer, initialPageState);
-  const [formState, formDispach] = useReducer(formReducer, initialFormState);
+  const [formState, formDispatch] = useReducer(formReducer, initialFormState);
   const { getAssociations } = useAssociationService();
   const { user } = useUserContext();
   const navigate = useNavigate();
@@ -30,13 +30,11 @@ function Associations() {
       undefined,
       "associationName,asc",
     );
-    if (response) {
-      setAssociations(response.content);
-      pageDispatch({
-        type: "SET_PAGE_MAX",
-        payload: response.page.totalPages,
-      });
-    }
+    setAssociations(response.content);
+    pageDispatch({
+      type: "SET_PAGE_MAX",
+      payload: response.page.totalPages,
+    });
   }, [page.number, getAssociations]);
 
   useEffect(() => {
@@ -48,7 +46,7 @@ function Associations() {
   }, [user, navigate, fetchAssociations]);
 
   const handleFormShow = () => {
-    formDispach({ type: "SET_FALSE" });
+    formDispatch({ type: "SET_FALSE" });
     fetchAssociations();
   };
 
@@ -70,7 +68,7 @@ function Associations() {
             <Button
               className={styles.associationEdit}
               onClick={() =>
-                formDispach({ type: "SET_UPDATE", payload: association.uuid })
+                formDispatch({ type: "SET_UPDATE", payload: association.uuid })
               }
             >
               <EditSVG size={16} />
@@ -80,7 +78,7 @@ function Associations() {
         <li key={"add"}>
           <Button
             className={styles.newAssociation}
-            onClick={() => formDispach({ type: "SET_CREATE" })}
+            onClick={() => formDispatch({ type: "SET_CREATE" })}
           >
             <PlusSVG size={18} />
             <p>Associação</p>

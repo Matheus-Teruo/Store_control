@@ -36,17 +36,15 @@ function TradeLogs() {
   useEffect(() => {
     const fetchStands = async () => {
       const stands = await getListStands();
-      if (stands) {
-        const standsObject = stands.reduce(
-          (acc, stand) => {
-            const { uuid, ...rest } = stand;
-            acc[uuid] = rest;
-            return acc;
-          },
-          {} as Record<string, Omit<SummaryStand, "uuid">>,
-        );
-        setStandsRecord(standsObject);
-      }
+      const standsObject = stands.reduce(
+        (acc, stand) => {
+          const { uuid, ...rest } = stand;
+          acc[uuid] = rest;
+          return acc;
+        },
+        {} as Record<string, Omit<SummaryStand, "uuid">>,
+      );
+      setStandsRecord(standsObject);
     };
     fetchStands();
   }, [getListStands]);
@@ -60,13 +58,11 @@ function TradeLogs() {
           undefined,
           "tradeTimestamp,desc",
         );
-        if (response) {
-          setTrades(response.content);
-          pageDispatch({
-            type: "SET_PAGE_MAX",
-            payload: response.page.totalPages,
-          });
-        }
+        setTrades(response.content);
+        pageDispatch({
+          type: "SET_PAGE_MAX",
+          payload: response.page.totalPages,
+        });
       }
     },
     [user, page.number, getTrades],

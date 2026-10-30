@@ -16,7 +16,7 @@ function SingleTagSelect({ value, onChange }: TagSelectProps) {
   useEffect(() => {
     const fetchTags = async () => {
       const tags = await getListTags();
-      if (tags) setListTags(tags);
+      setListTags(tags);
     };
     fetchTags();
   }, [getListTags]);

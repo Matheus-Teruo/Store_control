@@ -35,13 +35,11 @@ function PurchaseLogs() {
           undefined,
           "tradeTimestamp,asc",
         );
-        if (response) {
-          setTrades(response.content);
-          pageDispatch({
-            type: "SET_PAGE_MAX",
-            payload: response.page.totalPages,
-          });
-        }
+        setTrades(response.content);
+        pageDispatch({
+          type: "SET_PAGE_MAX",
+          payload: response.page.totalPages,
+        });
       }
     },
     [user, page.number, getTrades],

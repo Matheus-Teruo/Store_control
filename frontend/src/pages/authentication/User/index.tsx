@@ -7,7 +7,6 @@ import Voluntary, { VoluntaryRole } from "@/data/volunteers/Voluntary";
 import { useUserContext } from "@context/UserContext/useUserContext";
 import { useNavigate } from "react-router-dom";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
@@ -30,6 +29,8 @@ import {
   XSVG,
 } from "@/assets/svg";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
+import ApiError from "@data/Error";
+import { isApiError, mapFieldErrors } from "@/utils/checkApiResponse";
 
 const voluntaryInitialValue: Voluntary = {
   uuid: "",
@@ -91,15 +92,15 @@ function User() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch(update);
-    setTouched(false);
-    const voluntary = await updateVoluntary({
-      uuid: userProperties.uuid,
-      username: update === "username" ? state.username : undefined,
-      password: update === "password" ? state.password : undefined,
-      fullname: update === "fullname" ? state.fullname : undefined,
-    });
-    if (voluntary && !isMessage<Voluntary>(voluntary)) {
+    try {
+      setWaitingFetch(update);
+      setTouched(false);
+      const voluntary = await updateVoluntary({
+        uuid: userProperties.uuid,
+        username: update === "username" ? state.username : undefined,
+        password: update === "password" ? state.password : undefined,
+        fullname: update === "fullname" ? state.fullname : undefined,
+      });
       addNotification({
         title: "Update Success",
         message: `Update ${update}: ${update === "username" ? state.username : update === "password" ? "successful" : update === "fullname" ? state.fullname : ""}`,
@@ -108,12 +109,12 @@ function User() {
       dispatch({ type: "RESET" });
       setUpdate("");
       setUserProperties(voluntary);
-    } else if (voluntary) {
-      const message = voluntary;
-      if (message.invalidFields) setMessageError(message.invalidFields);
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch("");
     }
-    setTouched(true);
-    setWaitingFetch("");
   };
 
   const handleUpdate = (value: "username" | "fullname" | "password" | "") => {

@@ -2,7 +2,6 @@ import styles from "./FormAssociation.module.scss";
 import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
@@ -19,6 +18,8 @@ import { useEffect, useReducer, useState } from "react";
 import { CheckSVG, XSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
 import Association from "@data/stands/Association";
+import ApiError from "@data/Error";
+import { isApiError, mapFieldErrors } from "@/utils/checkApiResponse";
 
 type FormAssociationProps = {
   type: "create" | "update";
@@ -51,10 +52,8 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
     const fetchAssociation = async () => {
       if (type === "update" && uuid) {
         const association = await getAssociation(uuid);
-        if (association) {
-          dispatch({ type: "SET_ASSOCIATION", payload: association });
-          setInitial(association);
-        }
+        dispatch({ type: "SET_ASSOCIATION", payload: association });
+        setInitial(association);
       } else if (type === "update" && uuid === undefined) {
         console.error("uuid need to be defined when type is update");
       }
@@ -65,12 +64,12 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch("create/update");
-    setTouched(false);
-    const association = await createAssociation(
-      createAssociationPayload(state),
-    );
-    if (association && !isMessage(association)) {
+    try {
+      setWaitingFetch("create/update");
+      setTouched(false);
+      const association = await createAssociation(
+        createAssociationPayload(state),
+      );
       addNotification({
         title: "Create Association Success",
         message: `Create associatione: ${association.associationName}, with president: ${association.principalName}`,
@@ -78,23 +77,23 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
       });
       dispatch({ type: "RESET" });
       hide();
-    } else if (isMessage(association)) {
-      const message = association;
-      if (message.invalidFields) setMessageError(message.invalidFields);
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch("");
     }
-    setTouched(true);
-    setWaitingFetch("");
   };
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (initial) {
-      setWaitingFetch("create/update");
-      setTouched(false);
-      const association = await updateAssociation(
-        updateAssociationPayload(state, initial),
-      );
-      if (association && !isMessage(association)) {
+      try {
+        setWaitingFetch("create/update");
+        setTouched(false);
+        const association = await updateAssociation(
+          updateAssociationPayload(state, initial),
+        );
         addNotification({
           title: "Update Association Success",
           message: `Update association: ${association.associationName}, with president: ${association.principalName}`,
@@ -102,29 +101,32 @@ function FormAssociation({ type, hide, uuid }: FormAssociationProps) {
         });
         dispatch({ type: "RESET" });
         hide();
-      } else if (isMessage(association)) {
-        const message = association;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+      } catch (error: ApiError | any) {
+        if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+      } finally {
+        setTouched(true);
+        setWaitingFetch("");
       }
     }
-    setTouched(true);
-    setWaitingFetch("");
   };
 
   const handleDeleteSubmit = async () => {
     if (uuid) {
-      setWaitingFetch("delete");
-      await deleteAssociation(state.uuid);
-      addNotification({
-        title: "Delete Association Success",
-        message: `Delete association ${state.associationName}`,
-        type: MessageType.OK,
-      });
-      dispatch({ type: "RESET" });
-      setConfirmDelete(false);
-      hide();
+      try {
+        setWaitingFetch("delete");
+        await deleteAssociation(state.uuid);
+        addNotification({
+          title: "Delete Association Success",
+          message: `Delete association ${state.associationName}`,
+          type: MessageType.OK,
+        });
+        dispatch({ type: "RESET" });
+        setConfirmDelete(false);
+        hide();
+      } finally {
+        setWaitingFetch("");
+      }
     }
-    setWaitingFetch("");
   };
 
   return (

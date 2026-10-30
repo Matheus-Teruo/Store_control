@@ -1,7 +1,6 @@
 import styles from "./FormStand.module.scss";
 import Button from "@/components/utils/Button";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
@@ -21,6 +20,8 @@ import { CheckSVG, XSVG } from "@/assets/svg";
 import GlassBackground from "@/components/GlassBackground";
 import Stand from "@data/stands/Stand";
 import activeConfig from "@/config/activeConfig";
+import ApiError from "@data/Error";
+import { isApiError, mapFieldErrors } from "@/utils/checkApiResponse";
 
 type FormStandProps = {
   type: "create" | "update";
@@ -45,10 +46,8 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
     const fetchStand = async () => {
       if (type === "update" && uuid) {
         const stand = await getStand(uuid);
-        if (stand) {
-          dispatch({ type: "SET_STAND", payload: stand });
-          setInitial(stand);
-        }
+        dispatch({ type: "SET_STAND", payload: stand });
+        setInitial(stand);
       } else if (type === "update" && uuid === undefined) {
         console.error("uuid need to be defined when type is update");
       }
@@ -59,10 +58,10 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch("create/update");
-    setTouched(false);
-    const stand = await createStand(createStandPayload(state));
-    if (stand && !isMessage(stand)) {
+    try {
+      setWaitingFetch("create/update");
+      setTouched(false);
+      const stand = await createStand(createStandPayload(state));
       addNotification({
         title: "Create Stand Success",
         message: `Create stand: ${stand.standName}, with president: ${stand.association.associationName}`,
@@ -70,39 +69,37 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
       });
 
       if (!activeConfig.enableToken) {
-        const register = await createRegister({
-          registerName: stand.standName + " Register",
-          standUuid: stand.uuid,
-        });
-        if (register && !isMessage(register)) {
+        try {
+          const register = await createRegister({
+            registerName: stand.standName + " Register",
+            standUuid: stand.uuid,
+          });
           addNotification({
             title: "Create Stand Success",
             message: `Create stand: ${register.registerName}, with stand: ${register.summaryStand !== undefined ? register.summaryStand.standName : "não definido"}`,
             type: MessageType.OK,
           });
-        } else if (isMessage(register)) {
-          const message = register;
-          if (message.invalidFields) setMessageError(message.invalidFields);
+        } catch (error: ApiError | any) {
+          if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
         }
       }
-
       dispatch({ type: "RESET" });
       hide();
-    } else if (isMessage(stand)) {
-      const message = stand;
-      if (message.invalidFields) setMessageError(message.invalidFields);
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch("");
     }
-    setTouched(true);
-    setWaitingFetch("");
   };
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (initial) {
-      setWaitingFetch("create/update");
-      setTouched(false);
-      const stand = await updateStand(updateStandPayload(state, initial));
-      if (stand && !isMessage(stand)) {
+      try {
+        setWaitingFetch("create/update");
+        setTouched(false);
+        const stand = await updateStand(updateStandPayload(state, initial));
         addNotification({
           title: "Update Stand Success",
           message: `Update stand: ${stand.standName}, with president: ${stand.association.associationName}`,
@@ -110,29 +107,32 @@ function FormStand({ type, hide, uuid }: FormStandProps) {
         });
         dispatch({ type: "RESET" });
         hide();
-      } else if (isMessage(stand)) {
-        const message = stand;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+      } catch (error: ApiError | any) {
+        if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+      } finally {
+        setTouched(true);
+        setWaitingFetch("");
       }
     }
-    setTouched(true);
-    setWaitingFetch("");
   };
 
   const handleDeleteSubmit = async () => {
     if (uuid) {
-      setWaitingFetch("delete");
-      await deleteStand(state.uuid);
-      addNotification({
-        title: "Delete Stand Success",
-        message: `Delete stand: ${state.standName}`,
-        type: MessageType.OK,
-      });
-      dispatch({ type: "RESET" });
-      setConfirmDelete(false);
-      hide();
+      try {
+        setWaitingFetch("delete");
+        await deleteStand(state.uuid);
+        addNotification({
+          title: "Delete Stand Success",
+          message: `Delete stand: ${state.standName}`,
+          type: MessageType.OK,
+        });
+        dispatch({ type: "RESET" });
+        setConfirmDelete(false);
+        hide();
+      } finally {
+        setWaitingFetch("");
+      }
     }
-    setWaitingFetch("");
   };
 
   return (

@@ -23,6 +23,8 @@ import CardInput from "@/components/utils/CardInput";
 import { PaymentType } from "@data/operations/Recharge";
 import { initialPageState, pageReducer } from "@reducer/pageReducer";
 import PageSelect from "@/components/selects/PageSelect";
+import { isApiError } from "@/utils/checkApiResponse";
+import ApiError from "@data/Error";
 
 function RegisterFunction() {
   const [products, setProducts] = useState<SummaryProduct[]>([]);
@@ -38,9 +40,7 @@ function RegisterFunction() {
   useEffect(() => {
     const fetchVoluntary = async () => {
       const response = await getProducts();
-      if (response) {
-        setProducts(response.content);
-      }
+      setProducts(response.content);
     };
 
     fetchVoluntary();
@@ -63,19 +63,27 @@ function RegisterFunction() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isUserLogged(user) && isRegister(user.summaryFunction)) {
-      const recharge = await createRecharge({
-        rechargeValue: state.rechargeValue,
-        paymentTypeEnum: state.paymentTypeEnum!,
-        cardId: state.cardId,
-        registerUuid: state.registerUuid,
-      });
-      if (recharge) {
+      try{
+        const recharge = await createRecharge({
+          rechargeValue: state.rechargeValue,
+          paymentTypeEnum: state.paymentTypeEnum!,
+          cardId: state.cardId,
+          registerUuid: state.registerUuid,
+        });
         addNotification({
           title: "Create Recharge Success",
           message: `Value ${recharge.rechargeValue} on ${recharge.paymentTypeEnum} to card ${state.cardId}`,
           type: MessageType.OK,
         });
         dispatch({ type: "RESET" });
+      } catch (error: ApiError | any) {
+        if (isApiError(error)) {
+          addNotification({
+            title: "Create Recharge Fail",
+            message: `Recharge fail on card ${state.cardId}`,
+            type: MessageType.ERROR,
+          });
+        }
       }
     }
   };

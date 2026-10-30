@@ -1,6 +1,5 @@
 import styles from "./FormTag.module.scss";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
@@ -19,6 +18,8 @@ import { CheckSVG, XSVG } from "@/assets/svg";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import GlassBackground from "@/components/GlassBackground";
 import ColorSelect from "@/components/selects/ColorSelect";
+import ApiError from "@data/Error";
+import { isApiError, mapFieldErrors } from "@/utils/checkApiResponse";
 
 type FormTagProps = {
   type: "create" | "update";
@@ -49,10 +50,10 @@ function FormTag({ type, hide, tag }: FormTagProps) {
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch("create/update");
-    setTouched(false);
-    const tag = await createTag(createTagPayload(state));
-    if (tag && !isMessage(tag)) {
+    try {
+      setWaitingFetch("create/update");
+      setTouched(false);
+      const tag = await createTag(createTagPayload(state));
       addNotification({
         title: "Create Tag Success",
         message: `Create tag: ${tag.tagName}, with color: ${tag.color}`,
@@ -60,21 +61,21 @@ function FormTag({ type, hide, tag }: FormTagProps) {
       });
       dispatch({ type: "RESET" });
       hide();
-    } else if (isMessage(tag)) {
-      const message = tag;
-      if (message.invalidFields) setMessageError(message.invalidFields);
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch("");
     }
-    setTouched(true);
-    setWaitingFetch("");
   };
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (initial) {
-      setWaitingFetch("create/update");
-      setTouched(false);
-      const tag = await updateTag(updateTagPayload(state, initial));
-      if (tag && !isMessage(tag)) {
+      try {
+        setWaitingFetch("create/update");
+        setTouched(false);
+        const tag = await updateTag(updateTagPayload(state, initial));
         addNotification({
           title: "Update Tag Success",
           message: `Update tag: ${tag.tagName}, with color: ${tag.color}`,
@@ -82,29 +83,32 @@ function FormTag({ type, hide, tag }: FormTagProps) {
         });
         dispatch({ type: "RESET" });
         hide();
-      } else if (isMessage(tag)) {
-        const message = tag;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+      } catch (error: ApiError | any) {
+        if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+      } finally {
+        setTouched(true);
+        setWaitingFetch("");
       }
     }
-    setTouched(true);
-    setWaitingFetch("");
   };
 
   const handleDeleteSubmit = async () => {
     if (tag) {
-      setWaitingFetch("delete");
-      await deleteTag(state.uuid);
-      addNotification({
-        title: "Delete Tag Success",
-        message: `Delete tag: ${state.tagName}`,
-        type: MessageType.OK,
-      });
-      dispatch({ type: "RESET" });
-      setConfirmDelete(false);
-      hide();
+      try {
+        setWaitingFetch("delete");
+        await deleteTag(state.uuid);
+        addNotification({
+          title: "Delete Tag Success",
+          message: `Delete tag: ${state.tagName}`,
+          type: MessageType.OK,
+        });
+        dispatch({ type: "RESET" });
+        setConfirmDelete(false);
+        hide();
+      } finally {
+        setWaitingFetch("");
+      }
     }
-    setWaitingFetch("");
   };
 
   return (

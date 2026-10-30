@@ -34,7 +34,7 @@ function ProductCombosSelect({
     const fetchProducts = async () => {
       if (standUuid) {
         const products = await getListProducts(standUuid);
-        if (products) setListProducts(products);
+        setListProducts(products);
       }
     };
     fetchProducts();

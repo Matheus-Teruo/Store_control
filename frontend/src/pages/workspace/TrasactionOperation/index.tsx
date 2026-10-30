@@ -24,9 +24,7 @@ function Transaction() {
         isManeger(user)
       ) {
         const response = await getListRegisters();
-        if (response) {
-          setRegisters(response);
-        }
+        setRegisters(response);
       } else if (
         isUserUnlogged(user) ||
         (user && !isRegister(user.summaryFunction, user.voluntaryRole)) ||

@@ -50,12 +50,8 @@ function TotalProductsBars() {
           convertToString(date.endTime),
           modeAmin ? stand : user.summaryFunction?.uuid,
         );
-        if (standTotalResponse) {
-          setStandTotals(standTotalResponse);
-        }
-        if (productTotalResponse) {
-          setProductTotals(productTotalResponse);
-        }
+        setStandTotals(standTotalResponse);
+        setProductTotals(productTotalResponse);
       }
     },
     [user, date, stand, getStandTotals, getProductTotals],

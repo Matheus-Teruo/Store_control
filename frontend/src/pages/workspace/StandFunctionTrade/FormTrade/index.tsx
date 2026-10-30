@@ -33,6 +33,8 @@ import { cartPacking, takeStandUuid } from "@/utils/cartCompactor";
 import ComponentWrapper from "@/components/ComponentWrapper";
 import CardInput from "@/components/utils/CardInput";
 import activeConfig from "@/config/activeConfig";
+import ApiError from "@data/Error";
+import { isApiError } from "@/utils/checkApiResponse";
 
 type FormTradeProps = {
   reducer: [
@@ -87,23 +89,6 @@ function FormTrade({
         const newMap: Record<string, Omit<SummaryProduct, "uuid">> = {};
         for (const stand of state.standList) {
           const products = await getListProducts(stand);
-          if (products) {
-            const productsObject = products.reduce(
-              (acc, product) => {
-                const { uuid, ...rest } = product;
-                acc[uuid] = rest;
-                return acc;
-              },
-              {} as Record<string, Omit<SummaryProduct, "uuid">>,
-            );
-            Object.assign(newMap, productsObject);
-          }
-        }
-
-        setProductsRecord(newMap);
-      } else if (state.standUuid) {
-        const products = await getListProducts(state.standUuid);
-        if (products) {
           const productsObject = products.reduce(
             (acc, product) => {
               const { uuid, ...rest } = product;
@@ -112,8 +97,21 @@ function FormTrade({
             },
             {} as Record<string, Omit<SummaryProduct, "uuid">>,
           );
-          setProductsRecord(productsObject);
+          Object.assign(newMap, productsObject);
         }
+
+        setProductsRecord(newMap);
+      } else if (state.standUuid) {
+        const products = await getListProducts(state.standUuid);
+        const productsObject = products.reduce(
+          (acc, product) => {
+            const { uuid, ...rest } = product;
+            acc[uuid] = rest;
+            return acc;
+          },
+          {} as Record<string, Omit<SummaryProduct, "uuid">>,
+        );
+        setProductsRecord(productsObject);
       }
     };
 
@@ -133,10 +131,10 @@ function FormTrade({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch(true);
     if (type === "normal") {
-      const purchase = await createTrade(createTradePayload(state));
-      if (purchase) {
+      try {
+        setWaitingFetch(true);
+        const purchase = await createTrade(createTradePayload(state));
         addNotification({
           title: "Compra criada com sucesso",
           message: `Compra criada com ${purchase.items.length} items diferentes`,
@@ -145,13 +143,22 @@ function FormTrade({
         setConfirmFinalization(false);
         hide();
         dispatch({ type: "RESET" });
+      } catch (error: ApiError | any) {
+        if (isApiError(error)) {
+          addNotification({
+            title: "Compra Falhou",
+            message: `Não foi possível criar compra`,
+            type: MessageType.OK,
+          });
+        }
+      } finally {
+        setWaitingFetch(false);
       }
     } else {
       const jsonString = JSON.stringify(state);
       const image = createQRcodeImage(cartPacking(jsonString, productsRecord));
       setqrcode(image);
     }
-    setWaitingFetch(false);
   };
 
   const handleCode = (value: boolean) => {
@@ -173,20 +180,18 @@ function FormTrade({
       }
     } else {
       const products = await getListProducts(fetchStand);
-      if (products) {
-        const productsObject = products.reduce(
-          (acc, product) => {
-            const { uuid, ...rest } = product;
-            acc[uuid] = rest;
-            return acc;
-          },
-          {} as Record<string, Omit<SummaryProduct, "uuid">>,
-        );
-        dispatch({
-          type: "SET_CART",
-          payload: { cart: value, products: productsObject },
-        });
-      }
+      const productsObject = products.reduce(
+        (acc, product) => {
+          const { uuid, ...rest } = product;
+          acc[uuid] = rest;
+          return acc;
+        },
+        {} as Record<string, Omit<SummaryProduct, "uuid">>,
+      );
+      dispatch({
+        type: "SET_CART",
+        payload: { cart: value, products: productsObject },
+      });
       return;
     }
     dispatch({

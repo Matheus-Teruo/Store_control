@@ -45,20 +45,23 @@ function TradeDetail({ hide, uuid }: TradeDetailProps) {
 
   const handleDeleteSubmit = async () => {
     if (uuid && trade) {
-      setWaitingFetch("delete");
-      await deleteTrade(
-        activeConfig.enableCard ? undefined : fixedCardID, // TODO: add a input to a car later
-        uuid,
-      );
-      addNotification({
-        title: "Delete Trade Success",
-        message: `Delete trade: ${uuid}`,
-        type: MessageType.OK,
-      });
-      setConfirmDelete(false);
-      hide();
+      try {
+        setWaitingFetch("delete");
+        await deleteTrade(
+          activeConfig.enableCard ? undefined : fixedCardID, // TODO: add a input to a car later
+          uuid,
+        );
+        addNotification({
+          title: "Delete Trade Success",
+          message: `Delete trade: ${uuid}`,
+          type: MessageType.OK,
+        });
+        setConfirmDelete(false);
+        hide();
+      } finally {
+        setWaitingFetch("");
+      }
     }
-    setWaitingFetch("");
   };
 
   return (

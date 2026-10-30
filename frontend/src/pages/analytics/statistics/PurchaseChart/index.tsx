@@ -40,9 +40,7 @@ function PurchaseChart() {
           convertToString(date.endTime),
           modeAmin ? stand : user.summaryFunction?.uuid,
         );
-        if (purchasesCharts) {
-          setPurchases(purchasesCharts);
-        }
+        setPurchases(purchasesCharts);
       }
     },
     [user, date, stand, getPurchaseCharts],

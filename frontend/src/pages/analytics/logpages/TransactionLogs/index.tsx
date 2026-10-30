@@ -30,17 +30,15 @@ function TransactionLogs() {
   useEffect(() => {
     const fetchRegisters = async () => {
       const registers = await getListRegisters();
-      if (registers) {
-        const registersObject = registers.reduce(
-          (acc, register) => {
-            const { uuid, ...rest } = register;
-            acc[uuid] = rest;
-            return acc;
-          },
-          {} as Record<string, Omit<SummaryRegister, "uuid">>,
-        );
-        setRegistersRecord(registersObject);
-      }
+      const registersObject = registers.reduce(
+        (acc, register) => {
+          const { uuid, ...rest } = register;
+          acc[uuid] = rest;
+          return acc;
+        },
+        {} as Record<string, Omit<SummaryRegister, "uuid">>,
+      );
+      setRegistersRecord(registersObject);
     };
     fetchRegisters();
   }, [getListRegisters]);
@@ -52,13 +50,11 @@ function TransactionLogs() {
         undefined,
         "transactionTimestamp,desc",
       );
-      if (response) {
-        setTransactions(response.content);
-        pageDispatch({
-          type: "SET_PAGE_MAX",
-          payload: response.page.totalPages,
-        });
-      }
+      setTransactions(response.content);
+      pageDispatch({
+        type: "SET_PAGE_MAX",
+        payload: response.page.totalPages,
+      });
     }
   }, [user, page.number, getTransactions]);
 

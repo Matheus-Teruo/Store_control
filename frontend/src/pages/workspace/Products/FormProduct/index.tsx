@@ -4,7 +4,6 @@ import Button from "@/components/utils/Button";
 import { ButtonHTMLType } from "@/components/utils/Button/ButtonHTMLType";
 import { isAdmin, isSeller, isUserLogged } from "@/utils/checkAuthentication";
 import {
-  isMessage,
   MessageType,
   useAlertsContext,
 } from "@context/AlertsContext/useAlertsContext";
@@ -26,6 +25,8 @@ import GlassBackground from "@/components/GlassBackground";
 import MultTagSelect from "@/components/selects/TagSelect/MultTagSelect";
 import ComponentWrapper from "@/components/ComponentWrapper";
 import ProductCombosSelect from "@/components/selects/ProductCombosSelect";
+import ApiError from "@data/Error";
+import { isApiError, mapFieldErrors } from "@/utils/checkApiResponse";
 
 type FormPurchaseProps = {
   type: "create" | "update";
@@ -64,14 +65,12 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
     const fetchProduct = async () => {
       if (type === "update" && uuid) {
         const product = await getProduct(uuid);
-        if (product) {
-          dispatch({ type: "SET_PRODUCT", payload: product });
-          setImage({
-            path: product.productImg ? product.productImg : "",
-            updated: false,
-          });
-          setInitial(product);
-        }
+        dispatch({ type: "SET_PRODUCT", payload: product });
+        setImage({
+          path: product.productImg ? product.productImg : "",
+          updated: false,
+        });
+        setInitial(product);
       } else if (type === "update" && uuid === undefined) {
         console.error("uuid need to be defined when type is update");
       }
@@ -82,10 +81,10 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setWaitingFetch("create/update");
-    setTouched(false);
-    const product = await createProduct(createProductPayload(state));
-    if (product && !isMessage(product)) {
+    try {
+      setWaitingFetch("create/update");
+      setTouched(false);
+      const product = await createProduct(createProductPayload(state));
       addNotification({
         title: "Create Product Success",
         message: `Create product ${product.productName}, price: ${product.price}, stock: ${product.stock}`,
@@ -93,21 +92,21 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
       });
       dispatch({ type: "RESET" });
       hide();
-    } else if (isMessage(product)) {
-      const message = product;
-      if (message.invalidFields) setMessageError(message.invalidFields);
+    } catch (error: ApiError | any) {
+      if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+    } finally {
+      setTouched(true);
+      setWaitingFetch("");
     }
-    setTouched(true);
-    setWaitingFetch("");
   };
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (initial) {
-      setWaitingFetch("create/update");
-      setTouched(false);
-      const product = await updateProduct(updateProductPayload(state, initial));
-      if (product && !isMessage(product)) {
+      try {
+        setWaitingFetch("create/update");
+        setTouched(false);
+        const product = await updateProduct(updateProductPayload(state, initial));
         addNotification({
           title: "Update Product Success",
           message: `Update product ${product.productName}${product.description && ", description:"}${product.description}, price: ${product.price}, stock: ${product.stock}`,
@@ -115,27 +114,30 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
         });
         dispatch({ type: "RESET" });
         hide();
-      } else if (isMessage(product)) {
-        const message = product;
-        if (message.invalidFields) setMessageError(message.invalidFields);
+      } catch (error: ApiError | any) {
+        if (isApiError(error)) setMessageError(mapFieldErrors(error.fields));
+      } finally {
+        setTouched(true);
+        setWaitingFetch("");
       }
     }
-    setTouched(true);
-    setWaitingFetch("");
   };
 
   const handleDeleteSubmit = async () => {
-    setWaitingFetch("create/update");
-    await deleteProduct(state.uuid);
-    addNotification({
-      title: "Delete Product Success",
-      message: `Delete product ${state.productName}`,
-      type: MessageType.OK,
-    });
-    dispatch({ type: "RESET" });
-    setConfirmDelete(false);
-    hide();
-    setWaitingFetch("");
+    try {
+      setWaitingFetch("create/update");
+      await deleteProduct(state.uuid);
+      addNotification({
+        title: "Delete Product Success",
+        message: `Delete product ${state.productName}`,
+        type: MessageType.OK,
+      });
+      dispatch({ type: "RESET" });
+      setConfirmDelete(false);
+      hide();
+    } finally {
+      setWaitingFetch("");
+    }
   };
 
   return (
