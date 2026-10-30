@@ -7,7 +7,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -17,23 +18,25 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor 
 public class SecurityFilter extends OncePerRequestFilter {
 
-  @Autowired
-  TokenServiceConfig service;
-
-  @Autowired
-  VoluntaryRepository repository;
+  private final TokenServiceConfig service;
+  private final VoluntaryRepository repository;
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-      throws ServletException, IOException {
+  protected void doFilterInternal(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      FilterChain filterChain
+    ) throws ServletException, IOException {
 
     var tokenJWT = recoverToken(request);
 
     if (tokenJWT != null) {
-      var userUuid = service.recoverVoluntaryUuid(tokenJWT);
-      Optional<Voluntary> user = repository.findByUuidValidTrue(userUuid);
+      Optional<Voluntary> user = Optional.ofNullable(
+          service.recoverVoluntaryUuid(tokenJWT)
+      ).flatMap(repository::findById);
 
       if (user.isPresent()){
         var authentication = new UsernamePasswordAuthenticationToken(

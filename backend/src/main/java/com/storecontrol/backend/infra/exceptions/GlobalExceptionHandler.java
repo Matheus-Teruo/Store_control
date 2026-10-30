@@ -8,24 +8,22 @@ import com.storecontrol.backend.infra.exceptions.dto.FieldErrorDetail;
 import jakarta.persistence.EntityNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 
+import javax.security.sasl.AuthenticationException;
+
 @Slf4j 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    private final MessageResolver messageResolver =
-            MessageResolver.getInstance();
-
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiError> handleError404(
             EntityNotFoundException ex,
@@ -38,6 +36,12 @@ public class GlobalExceptionHandler {
                 status.getReasonPhrase(),
                 ex.getMessage(),
                 request.getRequestURI()
+        );
+
+        log.debug(
+            "Entity not found | path={} | cause={}",
+            request.getRequestURI(),
+            ex.getMessage()
         );
 
         return ResponseEntity.status(status).body(error);
@@ -53,19 +57,29 @@ public class GlobalExceptionHandler {
         List<FieldErrorDetail> fields = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(this::toFieldErrorDetail)
+                .map(err -> new FieldErrorDetail(
+                    err.getField(),
+                    err.getDefaultMessage()
+                ))
                 .toList();
 
         ApiError error = ApiError.validation(
                 status,
-                messageResolver.getMessage(
+                MessageResolver.getInstance().getMessage(
                         "exception.global.methodNotValid.errorType"
                 ),
-                messageResolver.getMessage(
+                MessageResolver.getInstance().getMessage(
                         "exception.global.methodNotValid.message"
                 ),
                 request.getRequestURI(),
                 fields
+        );
+
+        log.warn(
+            "Validation Error | fields={} | path={} | cause={}",
+            fields,
+            request.getRequestURI(),
+            ex.getMessage()
         );
 
         return ResponseEntity.status(status).body(error);
@@ -76,13 +90,24 @@ public class GlobalExceptionHandler {
             InvalidCustomerException ex,
             HttpServletRequest request
     ) {
-        return badRequest(
-                messageResolver.getMessage(
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        ApiError error = ApiError.of(
+                status,
+                MessageResolver.getInstance().getMessage(
                         "exception.global.customerException.errorType"
                 ),
                 ex.getMessage(),
-                request
+                request.getRequestURI()
         );
+
+        log.debug(
+            "Invalidate Customer | path={} | cause={}",
+            request.getRequestURI(),
+            ex.getMessage()
+        );
+
+        return ResponseEntity.status(status).body(error);
     }
 
     @ExceptionHandler(InvalidOperationException.class)
@@ -90,13 +115,18 @@ public class GlobalExceptionHandler {
             InvalidOperationException ex,
             HttpServletRequest request
     ) {
-        return badRequest(
-                messageResolver.getMessage(
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        ApiError error = ApiError.of(
+                status,
+                MessageResolver.getInstance().getMessage(
                         "exception.global.operationException.errorType"
                 ),
                 ex.getMessage(),
-                request
+                request.getRequestURI()
         );
+
+        return ResponseEntity.status(status).body(error);
     }
 
     @ExceptionHandler(InvalidDatabaseInsertionException.class)
@@ -117,12 +147,18 @@ public class GlobalExceptionHandler {
 
         ApiError error = ApiError.validation(
                 status,
-                messageResolver.getMessage(
+                MessageResolver.getInstance().getMessage(
                         "exception.global.insertEntity.errorType"
                 ),
                 ex.getMessage(),
                 request.getRequestURI(),
                 fields
+        );
+
+        log.debug(
+            "Invalid Database Insertion | path={} | cause={}",
+            request.getRequestURI(),
+            ex.getMessage()
         );
 
         return ResponseEntity.status(status).body(error);
@@ -133,37 +169,47 @@ public class GlobalExceptionHandler {
             InvalidDatabaseQueryException ex,
             HttpServletRequest request
     ) {
-        return badRequest(
-                messageResolver.getMessage(
-                        "exception.global.queryEntity.errorType"
-                ),
-                ex.getMessage(),
-                request
-        );
-    }
-
-    private ResponseEntity<ApiError> badRequest(
-            String title,
-            String message,
-            HttpServletRequest request
-    ) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         ApiError error = ApiError.of(
                 status,
-                title,
-                message,
+                MessageResolver.getInstance().getMessage(
+                        "exception.global.queryEntity.errorType"
+                ),
+                ex.getMessage(),
                 request.getRequestURI()
+        );
+
+        log.debug(
+            "Invalid Database Query | path={} | cause={}",
+            request.getRequestURI(),
+            ex.getMessage()
         );
 
         return ResponseEntity.status(status).body(error);
     }
 
-    private FieldErrorDetail toFieldErrorDetail(FieldError error) {
-        return new FieldErrorDetail(
-                error.getField(),
-                error.getDefaultMessage()
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiError> handleAuthenticationException(
+        AuthenticationException ex,
+        HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+        ApiError error = ApiError.of(
+                status,
+                "Authentication fail",
+                ex.getMessage(),
+                request.getRequestURI()
         );
+
+        log.debug(
+            "Authentication failed | path={} | cause={}",
+            request.getRequestURI(),
+            ex.getMessage()
+        );
+
+        return ResponseEntity.status(status).body(error);
     }
 
     @ExceptionHandler(Exception.class)

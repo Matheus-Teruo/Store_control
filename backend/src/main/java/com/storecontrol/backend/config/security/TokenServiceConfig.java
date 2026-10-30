@@ -5,7 +5,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.storecontrol.backend.models.volunteers.Voluntary;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Instant;
@@ -13,20 +14,19 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;
 
+
 @Configuration
+@EnableConfigurationProperties(TokenProperties.class)
+@RequiredArgsConstructor
 public class TokenServiceConfig {
 
-  @Value("${api.security.token.secret}")
-  private String secret;
-
-  @Value("${api.security.auth.issuer}")
-  private String issuer;
+  private final TokenProperties props;
 
   public String generateToken(Voluntary voluntary) {
     try {
-      Algorithm algorithm = Algorithm.HMAC256(secret);
+      Algorithm algorithm = Algorithm.HMAC256(props.token().secret());
       return JWT.create()
-          .withIssuer(issuer)
+          .withIssuer(props.issuer())
           .withSubject(voluntary.getUser().getUsername())
           .withClaim("id", voluntary.getUuid().toString())
           .withExpiresAt(dataExpired())
@@ -39,8 +39,8 @@ public class TokenServiceConfig {
   public UUID recoverVoluntaryUuid(String jwtToken) {
     try {
       return UUID.fromString(
-          JWT.require(Algorithm.HMAC256(secret))
-          .withIssuer(issuer)
+          JWT.require(Algorithm.HMAC256(props.token().secret()))
+          .withIssuer(props.issuer())
           .build()
           .verify(jwtToken)
           .getClaim("id").asString());
