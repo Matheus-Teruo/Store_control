@@ -93,6 +93,12 @@ public class ProductService {
         .collect(Collectors.toMap(Product::getUuid, product -> product));
   }
 
+  public Map<UUID, Product> listAllProductsAsMap() {
+    List<Product> products = repository.findAllValid();
+    return products.stream()
+        .collect(Collectors.toMap(Product::getUuid, product -> product));
+  }
+
   @Transactional
   public Product updateProduct(RequestUpdateProduct request) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

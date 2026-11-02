@@ -17,6 +17,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
   @Query("SELECT p FROM Product p WHERE p.valid = true AND p.standUuid = :standUuid ORDER BY p.productName ASC")
   List<Product> findAllValidByStandUuid(UUID standUuid);
 
+  @Query("SELECT p FROM Product p WHERE p.valid = true ORDER BY p.productName ASC")
+  List<Product> findAllValid();
+
   @Query("SELECT p FROM Product p WHERE (:standUuid is null OR p.standUuid = :standUuid)")
   List<Product> findAllByStandUuid(UUID standUuid);
 
