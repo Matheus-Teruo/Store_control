@@ -6,7 +6,8 @@ import com.storecontrol.backend.models.stands.response.ResponseStand;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryStand;
 import com.storecontrol.backend.services.stands.StandService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("stands")
+@RequiredArgsConstructor
 public class StandController {
 
-  @Autowired
-  private StandService service;
+  private final StandService service;
 
   @PostMapping
   public ResponseEntity<ResponseStand> createStand(@RequestBody @Valid RequestCreateStand request) {

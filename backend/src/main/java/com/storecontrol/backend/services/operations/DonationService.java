@@ -10,7 +10,8 @@ import com.storecontrol.backend.services.customers.component.CustomerFinalizatio
 import com.storecontrol.backend.services.operations.validation.DonationValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,22 +20,20 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class DonationService {
 
-  @Autowired
-  private DonationValidation validation;
-
-  @Autowired
-  private DonationRepository repository;
-
-  @Autowired
-  private CustomerFinalizationValidation finalizationValidation;
+  private final DonationValidation validation;
+  private final DonationRepository repository;
+  private final CustomerFinalizationValidation finalizationValidation;
 
   @Transactional
-  public void createDonation(RequestCustomerFinalization request,
-                             Customer customer,
-                             Register register,
-                             Voluntary voluntary) {
+  public void createDonation(
+    RequestCustomerFinalization request,
+    Customer customer,
+    Register register,
+    Voluntary voluntary
+  ) {
     var donationValue = request.donationValue();
 
     validation.checkVoluntaryFunctionMatch(voluntary);

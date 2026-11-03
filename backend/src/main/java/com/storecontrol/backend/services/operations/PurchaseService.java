@@ -16,7 +16,8 @@ import com.storecontrol.backend.services.operations.validation.PurchaseValidatio
 import com.storecontrol.backend.services.stands.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,22 +31,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PurchaseService {
 
-  @Autowired
-  private PurchaseValidation validation;
-
-  @Autowired
-  private PurchaseRepository repository;
-
-  @Autowired
-  private ProductService productService;
-
-  @Autowired
-  private CustomerService customerService;
-
-  @Autowired
-  private ItemService itemService;
+  private final PurchaseValidation validation;
+  private final PurchaseRepository repository;
+  private final ProductService productService;
+  private final CustomerService customerService;
+  private final ItemService itemService;
 
   @Transactional
   public Purchase createPurchase(RequestCreatePurchase request) {

@@ -4,7 +4,8 @@ import com.storecontrol.backend.models.operations.finalization.response.Response
 import com.storecontrol.backend.models.operations.finalization.response.ResponseSummaryRefund;
 import com.storecontrol.backend.services.operations.RefundService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("refunds")
+@RequiredArgsConstructor
 public class RefundController {
 
-  @Autowired
-  private RefundService service;
+  private final RefundService service;
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseRefund> readRefund(@PathVariable @Valid UUID uuid) {

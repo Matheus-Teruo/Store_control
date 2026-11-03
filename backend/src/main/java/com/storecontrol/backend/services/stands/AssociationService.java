@@ -9,7 +9,8 @@ import com.storecontrol.backend.repositories.stands.AssociationRepository;
 import com.storecontrol.backend.services.stands.validation.AssociationValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class AssociationService {
 
-  @Autowired
-  private AssociationValidation validation;
-
-  @Autowired
-  private AssociationRepository repository;
+  private final AssociationValidation validation;
+  private final AssociationRepository repository;
 
   @Transactional
   public Association createAssociation(RequestCreateAssociation request) {

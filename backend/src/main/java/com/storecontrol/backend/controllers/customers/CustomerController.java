@@ -8,7 +8,8 @@ import com.storecontrol.backend.models.customers.response.ResponseSummaryCustome
 import com.storecontrol.backend.services.customers.CustomerFinalizationHandler;
 import com.storecontrol.backend.services.customers.CustomerService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("customers")
+@RequiredArgsConstructor 
 public class CustomerController {
 
-  @Autowired
-  private CustomerService service;
-
-  @Autowired
-  private CustomerFinalizationHandler customerFinalizationHandler;
+  private final CustomerService service;
+  private final CustomerFinalizationHandler customerFinalizationHandler;
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseCustomer> readCustomer(@PathVariable UUID uuid) {

@@ -8,7 +8,8 @@ import com.storecontrol.backend.models.stands.products.request.RequestUpdateTag;
 import com.storecontrol.backend.repositories.stands.TagRepository;
 import com.storecontrol.backend.services.stands.validation.TagValidation;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,11 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class TagService {
 
-  @Autowired
-  private TagValidation validation;
-
-  @Autowired
-  private TagRepository repository;
+  private final TagValidation validation;
+  private final TagRepository repository;
 
   @Transactional
   public Tag createTag(RequestCreateTag request) {

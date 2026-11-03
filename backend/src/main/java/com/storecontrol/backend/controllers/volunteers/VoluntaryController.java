@@ -8,7 +8,8 @@ import com.storecontrol.backend.models.volunteers.response.ResponseSummaryVolunt
 import com.storecontrol.backend.models.volunteers.response.ResponseVoluntary;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("volunteers")
+@RequiredArgsConstructor
 public class VoluntaryController {
 
-  @Autowired
-  private VoluntaryService service;
+  private final VoluntaryService service;
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseVoluntary> readVoluntary(

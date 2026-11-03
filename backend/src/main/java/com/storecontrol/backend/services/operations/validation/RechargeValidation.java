@@ -6,16 +6,17 @@ import com.storecontrol.backend.models.operations.recharges.Recharge;
 import com.storecontrol.backend.models.volunteers.Function;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.RechargeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class RechargeValidation {
 
-  @Autowired
-  private RechargeRepository repository;
+  private final RechargeRepository repository;
 
   public void checkVoluntaryFunctionMatch(Function function, Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {

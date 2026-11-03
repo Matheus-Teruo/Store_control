@@ -3,7 +3,8 @@ package com.storecontrol.backend.controllers.statistics;
 import com.storecontrol.backend.models.statistics.registers.response.ResponsePaymentTypeTotal;
 import com.storecontrol.backend.models.statistics.registers.response.ResponseRegisterChart;
 import com.storecontrol.backend.services.statistics.StatisticsService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,10 +16,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("statistics/registers")
+@RequiredArgsConstructor
 public class RechargeStatisticsController {
 
-  @Autowired
-  private StatisticsService service;
+  private final StatisticsService service;
 
   @GetMapping("/payment-type")
   public ResponseEntity<List<ResponsePaymentTypeTotal>> readPaymentTypeTotals(

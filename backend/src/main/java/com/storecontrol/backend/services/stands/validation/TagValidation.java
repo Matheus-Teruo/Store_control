@@ -3,16 +3,17 @@ package com.storecontrol.backend.services.stands.validation;
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.repositories.stands.TagRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class TagValidation {
 
-  @Autowired
-  private TagRepository repository;
+  private final TagRepository repository;
 
   public void checkNameDuplication(String productName) {
     if (repository.existsByTagName(productName)) {

@@ -9,7 +9,8 @@ import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.services.operations.TradeService;
 import com.storecontrol.backend.services.volunteers.VoluntaryService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("trades")
+@RequiredArgsConstructor
 public class TradeController {
 
-  @Autowired
-  private TradeService service;
-
-  @Autowired
-  private VoluntaryService voluntaryService;
+  private final TradeService service;
+  private final VoluntaryService voluntaryService;
 
   @PostMapping
   public ResponseEntity<ResponseTrade> createTrade(@RequestBody @Valid RequestCreateTrade request) {

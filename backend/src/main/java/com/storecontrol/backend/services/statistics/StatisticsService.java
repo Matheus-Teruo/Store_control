@@ -22,7 +22,8 @@ import com.storecontrol.backend.repositories.resgisters.RegisterRepository;
 import com.storecontrol.backend.repositories.stands.ProductRepository;
 import com.storecontrol.backend.repositories.stands.StandRepository;
 import com.storecontrol.backend.services.statistics.validation.StatisticsValidation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -33,25 +34,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class StatisticsService {
 
-  @Autowired
-  private RechargeRepository rechargeRepository;
-
-  @Autowired
-  private PurchaseRepository purchaseRepository;
-
-  @Autowired
-  private RegisterRepository registerRepository;
-
-  @Autowired
-  private StandRepository standRepository;
-
-  @Autowired
-  private ProductRepository productRepository;
-
-  @Autowired
-  private StatisticsValidation validation;
+  private final RechargeRepository rechargeRepository;
+  private final PurchaseRepository purchaseRepository;
+  private final RegisterRepository registerRepository;
+  private final StandRepository standRepository;
+  private final ProductRepository productRepository;
+  private final StatisticsValidation validation;
 
   public List<ResponsePaymentTypeTotal> getPaymentTypeTotals(LocalDateTime startTime, LocalDateTime endTime) {
     Voluntary manager = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

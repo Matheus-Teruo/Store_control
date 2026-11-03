@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 
 @Component
 public class TradeValidation {
+  
   public void checkRechargeMatchTotalPrice(RequestCreateRecharge recharge, RequestCreatePurchase purchase) {
     var totalValue = purchase
         .items()

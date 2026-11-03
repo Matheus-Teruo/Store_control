@@ -10,23 +10,20 @@ import com.storecontrol.backend.models.volunteers.request.RequestUpdateVoluntary
 import com.storecontrol.backend.repositories.stands.AssociationRepository;
 import com.storecontrol.backend.repositories.volunteers.FunctionRepository;
 import com.storecontrol.backend.repositories.volunteers.VoluntaryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class VoluntaryValidation {
 
-  @Autowired
-  private VoluntaryRepository repository;
-
-  @Autowired
-  private FunctionRepository functionRepository;
-
-  @Autowired
-  private AssociationRepository associationRepository;
+  private final VoluntaryRepository repository;
+  private final FunctionRepository functionRepository;
+  private final AssociationRepository associationRepository;
 
   public void checkVoluntaryPermission(UUID requestUuid, Voluntary user){
     if (!requestUuid.equals(user.getUuid())) {

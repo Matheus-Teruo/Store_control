@@ -5,7 +5,8 @@ import com.storecontrol.backend.models.operations.transactions.response.Response
 import com.storecontrol.backend.models.operations.transactions.response.ResponseTransaction;
 import com.storecontrol.backend.services.operations.TransactionService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("transactions")
+@RequiredArgsConstructor
 public class TransactionController {
 
-  @Autowired
-  private TransactionService service;
+  private final TransactionService service;
 
   @PostMapping
   public ResponseEntity<ResponseTransaction> createTransaction(@RequestBody @Valid RequestCreateTransaction request) {

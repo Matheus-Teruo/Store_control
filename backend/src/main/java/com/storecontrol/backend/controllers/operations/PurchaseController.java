@@ -7,7 +7,8 @@ import com.storecontrol.backend.models.operations.purchases.response.ResponsePur
 import com.storecontrol.backend.models.operations.purchases.response.ResponseSummaryPurchase;
 import com.storecontrol.backend.services.operations.PurchaseService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -21,10 +22,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("purchases")
+@RequiredArgsConstructor 
 public class PurchaseController {
 
-  @Autowired
-  private PurchaseService service;
+  private final PurchaseService service;
 
   @PostMapping
   public ResponseEntity<ResponsePurchase> createPurchase(@RequestBody @Valid RequestCreatePurchase request) {

@@ -11,7 +11,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,16 +23,12 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("user")
+@RequiredArgsConstructor
 public class AuthController {
 
-  @Autowired
-  private AuthenticationManager manager;
-
-  @Autowired
-  private TokenServiceConfig tokenService;
-
-  @Autowired
-  private VoluntaryService service;
+  private final AuthenticationManager manager;
+  private final TokenServiceConfig tokenService;
+  private final VoluntaryService service;
 
   @PostMapping("/signup")
   public ResponseEntity<ResponseVoluntary> signup(

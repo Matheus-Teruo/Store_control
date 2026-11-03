@@ -7,17 +7,18 @@ import com.storecontrol.backend.models.operations.transactions.Transaction;
 import com.storecontrol.backend.models.registers.Register;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.TransactionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class TransactionValidation {
 
-  @Autowired
-  private TransactionRepository repository;
+  private final TransactionRepository repository;
 
   public void checkCashAvailableToTransaction(
       BigDecimal amount,

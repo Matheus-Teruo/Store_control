@@ -14,7 +14,8 @@ import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.models.stands.products.ProductCombo;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -22,10 +23,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class PurchaseValidation {
 
-  @Autowired
-  private PurchaseRepository repository;
+  private final PurchaseRepository repository;
 
   public void checkVoluntaryFunctionMatch(UUID standUuid, Voluntary voluntary) {
     if (voluntary.getVoluntaryRole().isNotAdmin()) {

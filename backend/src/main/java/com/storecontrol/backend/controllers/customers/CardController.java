@@ -5,7 +5,8 @@ import com.storecontrol.backend.models.customers.response.ResponseCard;
 import com.storecontrol.backend.models.customers.response.ResponseSummaryCard;
 import com.storecontrol.backend.services.customers.CardService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +17,10 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("cards")
+@RequiredArgsConstructor 
 public class CardController {
 
-  @Autowired
-  private CardService service;
+  private final CardService service;
 
   @PostMapping
   public ResponseEntity<ResponseCard> createCard(@RequestBody @Valid RequestCard request) {
