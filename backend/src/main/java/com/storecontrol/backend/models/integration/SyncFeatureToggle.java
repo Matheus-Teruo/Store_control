@@ -1,4 +1,4 @@
-package com.storecontrol.backend.models.polling;
+package com.storecontrol.backend.models.integration;
 
 import java.util.UUID;
 
@@ -23,6 +23,12 @@ public class SyncFeatureToggle {
 
     @Column(name = "feature_name", unique = true, nullable = false)
     private String featureName;
+
+    @Column(nullable = false)
+    private String origin;
+
+    @Column(name = "event_linked", nullable = false)
+    private UUID eventLinked;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;

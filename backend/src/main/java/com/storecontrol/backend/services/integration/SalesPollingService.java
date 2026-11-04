@@ -1,18 +1,18 @@
-package com.storecontrol.backend.services.polling;
+package com.storecontrol.backend.services.integration;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.storecontrol.backend.models.polling.ProcessedSale;
-import com.storecontrol.backend.models.polling.SalePollingStatus;
-import com.storecontrol.backend.models.polling.SyncExecutionLog;
-import com.storecontrol.backend.models.polling.SyncFeatureToggle;
-import com.storecontrol.backend.models.polling.response.ExternalSaleDTO;
-import com.storecontrol.backend.repositories.polling.ProcessedSaleRepository;
-import com.storecontrol.backend.repositories.polling.SyncExecutionLogRepository;
-import com.storecontrol.backend.repositories.polling.SyncFeatureToggleRepository;
+import com.storecontrol.backend.models.enumerate.SalePollingStatus;
+import com.storecontrol.backend.models.integration.ProcessedSale;
+import com.storecontrol.backend.models.integration.SyncExecutionLog;
+import com.storecontrol.backend.models.integration.SyncFeatureToggle;
+import com.storecontrol.backend.models.integration.response.ExternalSaleDTO;
+import com.storecontrol.backend.repositories.integration.ProcessedSaleRepository;
+import com.storecontrol.backend.repositories.integration.SyncExecutionLogRepository;
+import com.storecontrol.backend.repositories.integration.SyncFeatureToggleRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

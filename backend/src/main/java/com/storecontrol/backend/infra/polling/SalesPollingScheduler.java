@@ -3,7 +3,7 @@ package com.storecontrol.backend.infra.polling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.storecontrol.backend.services.polling.SalesPollingService;
+import com.storecontrol.backend.services.integration.SalesPollingService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.storecontrol.backend.services.polling;
+package com.storecontrol.backend.services.integration;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.storecontrol.backend.models.enumerate.PaymentType;
+import com.storecontrol.backend.models.integration.response.ExternalSaleDTO;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
@@ -15,7 +16,6 @@ import com.storecontrol.backend.models.operations.recharges.Recharge;
 import com.storecontrol.backend.models.operations.recharges.request.RequestCreateRecharge;
 import com.storecontrol.backend.models.operations.trades.Trade;
 import com.storecontrol.backend.models.operations.trades.TradeView;
-import com.storecontrol.backend.models.polling.response.ExternalSaleDTO;
 import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.models.stands.products.ProductCombo;
 import com.storecontrol.backend.models.volunteers.Voluntary;

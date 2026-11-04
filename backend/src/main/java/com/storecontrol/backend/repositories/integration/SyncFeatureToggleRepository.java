@@ -1,7 +1,8 @@
-package com.storecontrol.backend.repositories.polling;
+package com.storecontrol.backend.repositories.integration;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.storecontrol.backend.models.polling.SyncFeatureToggle;
+
+import com.storecontrol.backend.models.integration.SyncFeatureToggle;
 
 import java.util.Optional;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package com.storecontrol.backend.models.polling;
+package com.storecontrol.backend.models.enumerate;
 
 public enum SalePollingStatus {
     SUCCESS,

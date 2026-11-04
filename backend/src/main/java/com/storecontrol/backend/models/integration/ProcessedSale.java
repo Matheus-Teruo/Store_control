@@ -1,4 +1,4 @@
-package com.storecontrol.backend.models.polling;
+package com.storecontrol.backend.models.integration;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -26,11 +26,15 @@ public class ProcessedSale {
     @Column(name = "external_sale_id", nullable = false, unique = true)
     private String externalSaleId;
 
+    @Column(name = "external_sale_field", nullable = false, unique = true)
+    private String externalSaleField;
+
     @Column(name = "processed_at", nullable = false)
     private LocalDateTime processedAt;
 
-    public ProcessedSale(String externalId, LocalDateTime processedAt){
+    public ProcessedSale(String externalId, String externalField, LocalDateTime processedAt){
         this.externalSaleId = externalId;
+        this.externalSaleField = externalField;
         this.processedAt = processedAt;
     }
 }
