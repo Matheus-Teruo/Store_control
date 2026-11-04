@@ -8,7 +8,8 @@ import com.storecontrol.backend.repositories.customers.CustomerRepository;
 import com.storecontrol.backend.services.customers.component.CustomerFilter;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,16 +18,12 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerService {
 
-  @Autowired
-  private CustomerFilter filter;
-
-  @Autowired
-  private CustomerRepository repository;
-
-  @Autowired
-  private CardService cardService;
+  private final CustomerFilter filter;
+  private final CustomerRepository repository;
+  private final CardService cardService;
 
   @Transactional
   public Customer initializeCustomer(String cardId) {

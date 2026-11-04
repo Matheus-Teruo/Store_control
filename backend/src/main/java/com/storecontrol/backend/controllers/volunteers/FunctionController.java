@@ -2,7 +2,8 @@ package com.storecontrol.backend.controllers.volunteers;
 
 import com.storecontrol.backend.models.volunteers.response.ResponseSummaryFunction;
 import com.storecontrol.backend.services.volunteers.FunctionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,10 +13,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("functions")
+@RequiredArgsConstructor
 public class FunctionController {
 
-  @Autowired
-  private FunctionService service;
+  private final FunctionService service;
 
   @GetMapping
   public ResponseEntity<List<ResponseSummaryFunction>> readVolunteers() {

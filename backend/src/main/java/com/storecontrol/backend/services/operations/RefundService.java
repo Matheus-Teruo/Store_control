@@ -10,7 +10,8 @@ import com.storecontrol.backend.services.customers.component.CustomerFinalizatio
 import com.storecontrol.backend.services.operations.validation.RefundValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,16 +20,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class RefundService {
 
-  @Autowired
-  private RefundValidation validation;
-
-  @Autowired
-  private RefundRepository repository;
-
-  @Autowired
-  private CustomerFinalizationValidation finalizationValidation;
+  private final RefundValidation validation;
+  private final RefundRepository repository;
+  private final CustomerFinalizationValidation finalizationValidation;
 
   @Transactional
   public void createRefund(RequestCustomerFinalization request,

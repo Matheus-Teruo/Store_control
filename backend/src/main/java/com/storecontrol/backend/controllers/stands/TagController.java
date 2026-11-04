@@ -5,7 +5,8 @@ import com.storecontrol.backend.models.stands.products.request.RequestUpdateTag;
 import com.storecontrol.backend.models.stands.products.response.ResponseTag;
 import com.storecontrol.backend.services.stands.TagService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("tags")
+@RequiredArgsConstructor
 public class TagController {
 
-  @Autowired
-  private TagService service;
+  private final TagService service;
 
   @PostMapping
   public ResponseEntity<ResponseTag> createTag(@RequestBody @Valid RequestCreateTag request) {

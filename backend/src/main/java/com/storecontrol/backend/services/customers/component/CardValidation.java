@@ -3,16 +3,18 @@ package com.storecontrol.backend.services.customers.component;
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseInsertionException;
 import com.storecontrol.backend.repositories.customers.CardRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class CardValidation {
 
-  @Autowired
-  private CardRepository repository;
+  private final CardRepository repository;
 
   public void checkNameDuplication(String cardId) {
     if (repository.existsById(cardId)) {

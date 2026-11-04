@@ -7,7 +7,8 @@ import com.storecontrol.backend.models.stands.products.request.RequestCreateProd
 import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.repositories.stands.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,10 +16,10 @@ import java.util.Map;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class ProductValidation {
 
-  @Autowired
-  private ProductRepository repository;
+  private final ProductRepository repository;
 
   public void checkNameDuplication(String productName) {
     if (repository.existsByProductName(productName)) {

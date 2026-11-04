@@ -1,11 +1,13 @@
 package com.storecontrol.backend.services.stands;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service
+@RequiredArgsConstructor
 public class S3Service {
 
   @Value("${aws.s3.bucket}")
@@ -25,8 +28,7 @@ public class S3Service {
   @Value("${aws.s3.url.suffix}")
   private String suffix;
 
-  @Autowired
-  S3Client s3Client;
+  private final S3Client s3Client;
 
   public File adjustNameFile(MultipartFile file) throws IOException {
     String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss"));

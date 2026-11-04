@@ -8,29 +8,22 @@ import com.storecontrol.backend.services.customers.component.CustomerFinalizatio
 import com.storecontrol.backend.services.operations.DonationService;
 import com.storecontrol.backend.services.operations.RefundService;
 import com.storecontrol.backend.services.registers.RegisterService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
 @Component
+@RequiredArgsConstructor
 public class CustomerFinalizationHandler {
 
-  @Autowired
-  private CustomerFinalizationValidation validation;
-
-  @Autowired
-  private CustomerService customerService;
-
-  @Autowired
-  private RegisterService registerService;
-
-  @Autowired
-  private RefundService refundService;
-
-  @Autowired
-  private DonationService donationService;
+  private final CustomerFinalizationValidation validation;
+  private final CustomerService customerService;
+  private final RegisterService registerService;
+  private final RefundService refundService;
+  private final DonationService donationService;
 
   public Customer finalizeCustomer(RequestCustomerFinalization request) {
     Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

@@ -10,7 +10,8 @@ import com.storecontrol.backend.services.stands.AssociationService;
 import com.storecontrol.backend.services.volunteers.validation.VoluntaryValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,24 +22,16 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class VoluntaryService {
 
   private static final String NEW_PASSWORD = "ChangeMe123";
 
-  @Autowired
-  private VoluntaryValidation validation;
-
-  @Autowired
-  private VoluntaryRepository repository;
-
-  @Autowired
-  private AssociationService associationService;
-
-  @Autowired
-  private FunctionService functionService;
-
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+  private final VoluntaryValidation validation;
+  private final VoluntaryRepository repository;
+  private final AssociationService associationService;
+  private final FunctionService functionService;
+  private final PasswordEncoder passwordEncoder;
 
   @Transactional
   public Voluntary createVoluntary(RequestSignupVoluntary request) {

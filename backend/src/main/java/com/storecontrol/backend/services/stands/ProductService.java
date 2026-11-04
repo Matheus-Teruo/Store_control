@@ -12,7 +12,8 @@ import com.storecontrol.backend.repositories.stands.ProductRepository;
 import com.storecontrol.backend.services.stands.validation.ProductValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,22 +25,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
-  @Autowired
-  private ProductValidation validation;
-
-  @Autowired
-  private ProductRepository repository;
-
-  @Autowired
-  private StandService standService;
-
-  @Autowired
-  private ProductComboService productComboService;
-
-  @Autowired
-  private TagService tagService;
+  private final ProductValidation validation;
+  private final ProductRepository repository;
+  private final StandService standService;
+  private final ProductComboService productComboService;
+  private final TagService tagService;
 
   @Transactional
   public Product createProduct(RequestCreateProduct request) {

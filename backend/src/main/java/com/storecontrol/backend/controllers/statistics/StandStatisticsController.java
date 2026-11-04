@@ -4,7 +4,8 @@ import com.storecontrol.backend.models.statistics.stands.response.ResponseStandC
 import com.storecontrol.backend.models.statistics.stands.response.ResponseStandProductTotal;
 import com.storecontrol.backend.models.statistics.stands.response.ResponseStandTotal;
 import com.storecontrol.backend.services.statistics.StatisticsService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,10 +18,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("statistics/stands")
+@RequiredArgsConstructor
 public class StandStatisticsController {
 
-  @Autowired
-  private StatisticsService service;
+  private final StatisticsService service;
 
   @GetMapping()
   public ResponseEntity<List<ResponseStandTotal>> readStandTotals(

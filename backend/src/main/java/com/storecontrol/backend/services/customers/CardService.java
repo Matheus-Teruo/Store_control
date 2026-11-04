@@ -8,19 +8,18 @@ import com.storecontrol.backend.repositories.customers.CardRepository;
 import com.storecontrol.backend.services.customers.component.CardValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class CardService {
 
-  @Autowired
-  private CardValidation validation;
-
-  @Autowired
-  private CardRepository repository;
+  private final CardValidation validation;
+  private final CardRepository repository;
 
   @Transactional
   public Card createCard(RequestCard request) {

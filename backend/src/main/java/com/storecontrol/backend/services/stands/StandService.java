@@ -9,7 +9,8 @@ import com.storecontrol.backend.repositories.stands.StandRepository;
 import com.storecontrol.backend.services.stands.validation.StandValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,16 +19,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class StandService {
 
-  @Autowired
-  private StandValidation validation;
-
-  @Autowired
-  private StandRepository repository;
-
-  @Autowired
-  private AssociationService associationService;
+  private final StandValidation validation;
+  private final StandRepository repository;
+  private final AssociationService associationService;
 
   @Transactional
   public Stand createStand(RequestCreateStand request) {

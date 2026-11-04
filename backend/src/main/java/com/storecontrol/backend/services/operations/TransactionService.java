@@ -10,7 +10,8 @@ import com.storecontrol.backend.services.operations.validation.TransactionValida
 import com.storecontrol.backend.services.registers.RegisterService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,16 +22,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class TransactionService {
 
-  @Autowired
-  private TransactionValidation validation;
-
-  @Autowired
-  private TransactionRepository repository;
-
-  @Autowired
-  private RegisterService registerService;
+  private final TransactionValidation validation;
+  private final TransactionRepository repository;
+  private final RegisterService registerService;
 
   @Transactional
   public Transaction createTransaction(RequestCreateTransaction request) {

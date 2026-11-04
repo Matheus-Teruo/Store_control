@@ -4,7 +4,8 @@ import com.storecontrol.backend.models.operations.finalization.response.Response
 import com.storecontrol.backend.models.operations.finalization.response.ResponseSummaryDonation;
 import com.storecontrol.backend.services.operations.DonationService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("donations")
+@RequiredArgsConstructor 
 public class DonationController {
 
-  @Autowired
-  private DonationService service;
+  private final DonationService service;
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseDonation> readDonation(@PathVariable @Valid UUID uuid) {

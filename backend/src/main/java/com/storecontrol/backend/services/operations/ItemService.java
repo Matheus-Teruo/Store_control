@@ -8,9 +8,9 @@ import com.storecontrol.backend.models.operations.purchases.request.RequestCreat
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.services.stands.ProductService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
+import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,13 +18,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ItemService {
 
-  @Autowired
-  private ProductService productService;
-
-  @Autowired
-  private PurchaseRepository repository;
+  private final ProductService productService;
+  private final PurchaseRepository repository;
 
   @Transactional
   public List<Item> createItems(RequestCreatePurchase request, Purchase purchase, UUID standUuid) {

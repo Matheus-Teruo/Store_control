@@ -7,7 +7,8 @@ import com.storecontrol.backend.models.stands.products.response.ResponseSummaryP
 import com.storecontrol.backend.services.stands.ProductService;
 import com.storecontrol.backend.services.stands.S3Service;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("products")
+@RequiredArgsConstructor
 public class ProductController {
 
-  @Autowired
-  private ProductService service;
-
-  @Autowired
-  S3Service s3Service;
+  private final ProductService service;
+  private final S3Service s3Service;
 
   @PostMapping
   public ResponseEntity<ResponseProduct> createProduct(

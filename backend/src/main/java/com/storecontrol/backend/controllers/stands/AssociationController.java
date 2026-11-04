@@ -6,7 +6,8 @@ import com.storecontrol.backend.models.stands.response.ResponseAssociation;
 import com.storecontrol.backend.models.stands.response.ResponseSummaryAssociation;
 import com.storecontrol.backend.services.stands.AssociationService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("associations")
+@RequiredArgsConstructor
 public class AssociationController {
 
-  @Autowired
-  private AssociationService service;
+  private final AssociationService service;
 
   @PostMapping
   public ResponseEntity<ResponseAssociation> createAssociation(@RequestBody @Valid RequestCreateAssociation request) {

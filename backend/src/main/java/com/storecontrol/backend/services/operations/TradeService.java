@@ -26,7 +26,8 @@ import com.storecontrol.backend.services.registers.RegisterService;
 import com.storecontrol.backend.services.stands.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,40 +41,20 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class TradeService {
 
-  @Autowired
-  private RechargeValidation rechargeValidation;
-
-  @Autowired
-  private PurchaseValidation purchaseValidation;
-
-  @Autowired
-  private TradeValidation validation;
-
-  @Autowired
-  private TradeRepository repository;
-
-  @Autowired
-  private TradeViewRepository repositoryView;
-
-  @Autowired
-  private RechargeRepository rechargeRepository;
-
-  @Autowired
-  private PurchaseRepository purchaseRepository;
-
-  @Autowired
-  private ProductService productService;
-
-  @Autowired
-  private CustomerService customerService;
-
-  @Autowired
-  private RegisterService registerService;
-
-  @Autowired
-  private ItemService itemService;
+  private final RechargeValidation rechargeValidation;
+  private final PurchaseValidation purchaseValidation;
+  private final TradeValidation validation;
+  private final TradeRepository repository;
+  private final TradeViewRepository repositoryView;
+  private final RechargeRepository rechargeRepository;
+  private final PurchaseRepository purchaseRepository;
+  private final ProductService productService;
+  private final CustomerService customerService;
+  private final RegisterService registerService;
+  private final ItemService itemService;
 
   @Value("${spring.flyway.placeholders.CARD_ID}")
   private String fixedCardId;
