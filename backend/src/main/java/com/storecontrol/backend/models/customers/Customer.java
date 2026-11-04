@@ -24,6 +24,9 @@ public class Customer {
     @Id @GeneratedValue(generator = "UUID")
     private UUID uuid;
 
+    @Column(name = "event_uuid", nullable = false)
+    private UUID eventUuid;
+
     @ManyToOne @JoinColumn(name = "card_id", nullable = false)
     private Card card;
 

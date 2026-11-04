@@ -20,6 +20,9 @@ public abstract class Function {
   @Id @GeneratedValue(generator = "UUID")
   private UUID uuid;
 
+  @Column(name = "event_uuid", nullable = false)
+  private UUID eventUuid;
+
   @Column(name = "function_name", nullable = false)
   private String functionName;
 

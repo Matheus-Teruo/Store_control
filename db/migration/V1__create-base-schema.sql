@@ -3,6 +3,7 @@
 -- Table for associations
 CREATE TABLE associations (
     uuid BINARY(16) PRIMARY KEY,
+    event_uuid BINARY(16) NOT NULL,
     association_name VARCHAR(255) UNIQUE NOT NULL,
     principal_name VARCHAR(255) NOT NULL,
     association_key VARCHAR(255) UNIQUE NOT NULL,
@@ -12,6 +13,7 @@ CREATE TABLE associations (
 -- Table for customers
 CREATE TABLE customers (
     uuid BINARY(16) PRIMARY KEY,
+    event_uuid BINARY(16) NOT NULL,
     card_id CHAR(15) NOT NULL,
     customer_start TIMESTAMP NOT NULL,
     customer_end TIMESTAMP,
@@ -30,9 +32,23 @@ CREATE TABLE donations (
     valid TINYINT NOT NULL
 );
 
+-- Table for events
+CREATE TABLE events (
+    uuid BINARY(16) PRIMARY KEY,
+    event_name VARCHAR(255) UNIQUE NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    description TEXT,
+    event_type ENUM('SIMPLE', 'ORDER', 'TOKEN') NOT NULL DEFAULT 'SIMPLE',
+    start_date DATETIME NOT NULL,
+    end_date DATETIME NOT NULL,
+    status ENUM('PLANNING', 'ACTIVE', 'FINISHED') NOT NULL DEFAULT 'PLANNING',
+    valid TINYINT NOT NULL
+);
+
 -- Table for functions
 CREATE TABLE functions (
     uuid BINARY(16) PRIMARY KEY,
+    event_uuid BINARY(16) NOT NULL,
     function_name VARCHAR(255) UNIQUE NOT NULL,
     valid TINYINT NOT NULL
 );
@@ -165,12 +181,20 @@ CREATE TABLE transactions (
     valid TINYINT NOT NULL
 );
 
--- Table for volunteers
-CREATE TABLE volunteers (
+-- Table for users
+CREATE TABLE users (
     uuid BINARY(16) PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     fullname VARCHAR(255) UNIQUE NOT NULL,
+    users_role ENUM('ROLE_USER', 'ROLE_MANAGEMENT', 'ROLE_ADMIN') NOT NULL,
+    valid TINYINT NOT NULL
+);
+
+-- Table for volunteers
+CREATE TABLE volunteers (
+    uuid BINARY(16) PRIMARY KEY,
+    event_uuid BINARY(16),
     function_uuid BINARY(16),
     related_association_uuid BINARY(16),
     voluntary_role ENUM('ROLE_VOLUNTARY', 'ROLE_MANAGEMENT', 'ROLE_ADMIN') NOT NULL,

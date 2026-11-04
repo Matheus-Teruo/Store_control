@@ -49,9 +49,12 @@ import java.util.UUID;
 
 public class TestDataFactory {
 
+  private static final UUID eventUuid = UUID.randomUUID();
+
   public static Customer createCustomerEntity(UUID uuid, Card card, boolean inUse) {
     return new Customer(
         uuid,
+        eventUuid,
         card,
         LocalDateTime.now(),
         null,
@@ -274,6 +277,7 @@ public class TestDataFactory {
   public static Register createRegisterEntity(UUID uuid) {
     return new Register(
         uuid,
+        eventUuid,
         nameOnlyLettersSpaceAndNumbers(),
         null,
         true
@@ -297,6 +301,7 @@ public class TestDataFactory {
   public static Association createAssociationEntity(UUID uuid) {
     return new Association(
         uuid,
+        eventUuid,
         nameOnlyLetters(),
         nameOnlyLettersAndSpace(),
         nameOnlyLettersAndNumbers(),
@@ -388,6 +393,7 @@ public class TestDataFactory {
   public static Stand createStandEntity(UUID uuid) {
     return new Stand(
         uuid,
+        eventUuid,
         nameOnlyLettersSpaceAndNumbers(),
         null,
         true,
@@ -438,6 +444,7 @@ public class TestDataFactory {
   public static Function createFunctionEntity(UUID uuid) {
     return new Function(
         uuid,
+        eventUuid,
         nameOnlyLettersSpaceAndNumbers(),
         null,
         true

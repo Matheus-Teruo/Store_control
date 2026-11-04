@@ -1,7 +1,14 @@
 -- V2__add-foreign-keys.sql
 
+-- Foreign keys for associations table
+ALTER TABLE associations
+ADD CONSTRAINT fk_associations_event_uuid
+FOREIGN KEY (event_uuid) REFERENCES events (uuid) ON DELETE CASCADE;
+
 -- Foreign keys for customers table
 ALTER TABLE customers
+ADD CONSTRAINT fk_customers_event_uuid
+FOREIGN KEY (event_uuid) REFERENCES events (uuid) ON DELETE CASCADE,
 ADD CONSTRAINT fk_customers_card_id
 FOREIGN KEY (card_id) REFERENCES cards (card_id);
 
@@ -13,6 +20,11 @@ ADD CONSTRAINT fk_donations_register_uuid
 FOREIGN KEY (register_uuid) REFERENCES registers (uuid),
 ADD CONSTRAINT fk_donations_voluntary_uuid
 FOREIGN KEY (voluntary_uuid) REFERENCES volunteers (uuid);
+
+-- Foreign keys for functions table
+ALTER TABLE functions
+ADD CONSTRAINT fk_functions_event_uuid
+FOREIGN KEY (event_uuid) REFERENCES events (uuid) ON DELETE CASCADE;
 
 -- Foreign keys for items table
 ALTER TABLE items
@@ -95,6 +107,8 @@ FOREIGN KEY (register_uuid) REFERENCES registers (uuid);
 
 -- Foreign key for volunteers table
 ALTER TABLE volunteers
+ADD CONSTRAINT fk_volunteers_event_uuid
+FOREIGN KEY (event_uuid) REFERENCES events (uuid) ON DELETE CASCADE,
 ADD CONSTRAINT fk_volunteers_function_uuid
 FOREIGN KEY (function_uuid) REFERENCES functions (uuid),
 ADD CONSTRAINT fk_volunteers_association_uuid

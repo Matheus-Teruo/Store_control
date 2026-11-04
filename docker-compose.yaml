@@ -95,6 +95,21 @@ services:
   #   volumes:
   #     - ./app:/app
   #   command: python main.py
+  migration:
+    container_name: store_control_migration
+    image: flyway/flyway:10
+    profiles: ["setup"]
+    depends_on:
+      - db
+    command:
+      - -url=jdbc:mysql://db:3306/${DATABASE_USER}
+      - -user=telco
+      - -password=telco_secret
+      - migrate
+    volumes:
+      - ./db/migration-app:/flyway/sql
+    networks:
+      - private
   proxy:
     container_name: store_control_proxy
     image: nginx:alpine

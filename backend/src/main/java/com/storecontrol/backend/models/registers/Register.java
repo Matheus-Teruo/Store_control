@@ -49,11 +49,14 @@ public class Register extends Function {
   @OneToMany(mappedBy = "register")
   private List<Refund> refunds;
 
-  public Register(UUID uuid,
-                  String functionName,
-                  List<Voluntary> volunteers,
-                  boolean valid) {
-    super(uuid, functionName, volunteers, valid);
+  public Register(
+    UUID uuid,
+    UUID eventUuid,
+    String functionName,
+    List<Voluntary> volunteers,
+    boolean valid
+  ) {
+    super(uuid, eventUuid, functionName, volunteers, valid);
     this.totalCash = BigDecimal.ZERO;
     this.totalCredit = BigDecimal.ZERO;
     this.totalDebit = BigDecimal.ZERO;

@@ -23,6 +23,9 @@ public class Association {
     @Id @GeneratedValue(generator = "UUID")
     private UUID uuid;
 
+    @Column(name = "event_uuid", nullable = false)
+    private UUID eventUuid;
+
     @Column(name = "association_name", nullable = false)
     private String associationName;
 
