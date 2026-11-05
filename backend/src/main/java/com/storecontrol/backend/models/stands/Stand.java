@@ -22,7 +22,8 @@ public class Stand extends Function {
     @Column(name = "association_uuid", insertable = false, updatable = false)
     private UUID associationUuid;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "association_uuid", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "association_uuid", nullable = false)
     private Association association;
 
     @OneToOne(mappedBy = "relatedStand")

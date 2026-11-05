@@ -55,9 +55,8 @@ public class PurchaseService {
 
     boolean onOrder = request.items().stream().anyMatch(
         item -> item.delivered() != null && !item.delivered().equals(item.quantity()));
-    UUID standUuid = productMap.get(request.items().getFirst().productUuid()).getStandUuid();
-    var purchase = new Purchase(onOrder, standUuid, customer, voluntary, false);
-    var items = itemService.createItems(request, purchase, standUuid);
+    var purchase = new Purchase(onOrder, request.standUuid(), customer, voluntary, false);
+    var items = itemService.createItems(request, purchase, productMap);
     purchase.setItems(items);
 
     updateItemsFromItemsChanged(purchase, productMap, false);

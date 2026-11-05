@@ -64,7 +64,7 @@ public class TradeService {
     Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     purchaseValidation.checkVoluntaryFunctionMatch(purchaseRequest.standUuid(), voluntary);
 
-    var productMap = productService.listProductsAsMap(purchaseRequest.standUuid());
+    Map<UUID, Product> productMap = productService.listProductsAsMap(purchaseRequest.standUuid());
     purchaseValidation.checkStandFromItems(voluntary, purchaseRequest.items(), productMap);
     purchaseValidation.checkItemPriceAndDiscountMatch(purchaseRequest, voluntary, productMap);
     purchaseValidation.checkPurchaseHaveItems(purchaseRequest);
@@ -85,7 +85,7 @@ public class TradeService {
     boolean hasReverseQuantity = purchaseRequest.items().stream()
         .anyMatch(item -> item.quantity() < 0);
     var purchase = new Purchase(onOrder, purchaseRequest.standUuid(), customer, voluntary, hasReverseQuantity);
-    var items = itemService.createItems(purchaseRequest, purchase, purchaseRequest.standUuid());
+    var items = itemService.createItems(purchaseRequest, purchase, productMap);
     purchase.setItems(items);
 
     updateItemsFromItemsChanged(purchase, productMap, false);
