@@ -23,6 +23,9 @@ public class ProductCombo {
   @Column(name = "product_included_uuid", insertable = false, updatable = false)
   private UUID productIncludedUuid;
 
+  @Column(name = "product_included_code")
+  private String productIncludeCode;
+
   @Setter
   @Column(nullable = false)
   private Integer quantity;

@@ -1,10 +1,12 @@
 package com.storecontrol.backend.services.operations;
 
+import com.storecontrol.backend.models.integration.response.ExternalOrderDTO.ItemDTO;
 import com.storecontrol.backend.models.operations.purchases.Item;
 import com.storecontrol.backend.models.operations.purchases.ItemId;
 import com.storecontrol.backend.models.operations.purchases.Purchase;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreatePurchase;
+import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.repositories.operations.PurchaseRepository;
 import com.storecontrol.backend.services.stands.ProductService;
 import jakarta.transaction.Transactional;
@@ -35,6 +37,21 @@ public class ItemService {
 
       var itemId = new ItemId(product, purchase);
       var item = new Item(requestCreateItem, itemId);
+      items.add(item);
+    }
+
+    return items;
+  }
+
+  @Transactional
+  public List<Item> createItems(List<ItemDTO> itemDTOs, Purchase purchase, Map<String, Product> productMapExternalKey) {
+    List<Item> items = new ArrayList<>();
+
+    for (ItemDTO itemDto : itemDTOs) {
+      var product = productMapExternalKey.get(itemDto.externalProductId());
+
+      var itemId = new ItemId(product, purchase);
+      var item = new Item(itemDto, itemId);
       items.add(item);
     }
 

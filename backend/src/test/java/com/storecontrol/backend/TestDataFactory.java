@@ -327,7 +327,7 @@ public class TestDataFactory {
     return new Product(
         uuid,
         nameOnlyLettersSpaceAndNumbers(),
-        generateRandomLength(0, 100000),
+        nameOnlyLetters(),
         nameOnlyLettersSpaceAndNumbers(),
         textOnlyLettersSpaceAndNumbers(),
         false,
@@ -372,7 +372,7 @@ public class TestDataFactory {
     return new RequestUpdateProduct(
         uuid,
         nameOnlyLettersSpaceAndNumbers(),
-        generateRandomLength(0, 100000),
+        nameOnlyLetters(),
         null,
         nameOnlyLettersSpaceAndNumbers(),
         textOnlyLettersSpaceAndNumbers(),

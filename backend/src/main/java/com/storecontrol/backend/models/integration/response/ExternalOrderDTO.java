@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-public record ExternalSaleDTO(
+public record ExternalOrderDTO(
     String id,
 
     @JsonProperty("reference_id")

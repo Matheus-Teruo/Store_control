@@ -1,5 +1,6 @@
 package com.storecontrol.backend.models.operations.purchases;
 
+import com.storecontrol.backend.models.integration.response.ExternalOrderDTO.ItemDTO;
 import com.storecontrol.backend.models.operations.purchases.request.RequestCreateItem;
 import com.storecontrol.backend.models.operations.purchases.request.RequestUpdateItem;
 import jakarta.persistence.*;
@@ -44,6 +45,15 @@ public class Item {
         this.delivered = request.delivered();
         this.unitPrice = request.unitPrice();
         this.discount = request.discount();
+        this.valid = true;
+    }
+
+    public Item(ItemDTO itemDTO, ItemId itemId) {
+        this.itemId = itemId;
+        this.quantity = itemDTO.quantity();
+        this.delivered = itemDTO.quantity();
+        this.unitPrice = itemDTO.unitAmount();
+        this.discount = BigDecimal.ZERO;
         this.valid = true;
     }
 

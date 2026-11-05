@@ -28,7 +28,7 @@ public class Product {
     private String productName;
 
     @Column(name = "product_code", nullable = false)
-    private Integer productCode;
+    private String productCode;
 
     @Column(name = "summary")
     private String summary;

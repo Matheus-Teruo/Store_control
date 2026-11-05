@@ -14,8 +14,7 @@ public record RequestCreateProduct(
     String productName,
 
     @NotNull(message = "{request.validation.createProduct.productCode.notNull}")
-    @Positive(message = "{request.validation.createProduct.productCode.positive}")
-    Integer productCode,
+    String productCode,
 
     Set<UUID> tagsUuid,
 

@@ -86,10 +86,10 @@ public class ProductService {
         .collect(Collectors.toMap(Product::getUuid, product -> product));
   }
 
-  public Map<UUID, Product> listAllProductsAsMap() {
-    List<Product> products = repository.findAllValid();
+  public Map<String, Product> listProductsAsMapWithExternalKey(UUID standUuid) {
+    List<Product> products = repository.findAllValidByStandUuid(standUuid);
     return products.stream()
-        .collect(Collectors.toMap(Product::getUuid, product -> product));
+        .collect(Collectors.toMap(Product::getProductCode, product -> product));
   }
 
   @Transactional

@@ -8,7 +8,7 @@ import java.util.UUID;
 public record ResponseSummaryProduct(
     UUID uuid,
     String productName,
-    Integer productCode,
+    String productCode,
     String summary,
     boolean description,
     boolean combo,

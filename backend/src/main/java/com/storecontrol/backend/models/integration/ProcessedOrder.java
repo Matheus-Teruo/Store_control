@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProcessedSale {
+public class ProcessedOrder {
 
     @Id 
     @GeneratedValue(generator = "UUID")
@@ -29,12 +29,15 @@ public class ProcessedSale {
     @Column(name = "external_sale_field", nullable = false, unique = true)
     private String externalSaleField;
 
+    private Boolean done;
+
     @Column(name = "processed_at", nullable = false)
     private LocalDateTime processedAt;
 
-    public ProcessedSale(String externalId, String externalField, LocalDateTime processedAt){
+    public ProcessedOrder(String externalId, String externalField, boolean done, LocalDateTime processedAt){
         this.externalSaleId = externalId;
         this.externalSaleField = externalField;
+        this.done = done;
         this.processedAt = processedAt;
     }
 }

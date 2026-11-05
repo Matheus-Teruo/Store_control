@@ -10,7 +10,7 @@ import java.util.UUID;
 public record ResponseProduct(
     UUID uuid,
     String productName,
-    Integer productCode,
+    String productCode,
     List<ResponseTag> tags,
     String summary,
     String description,

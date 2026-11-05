@@ -5,6 +5,7 @@ import com.storecontrol.backend.models.customers.Customer;
 import com.storecontrol.backend.models.registers.Register;
 import com.storecontrol.backend.models.volunteers.Voluntary;
 import com.storecontrol.backend.models.enumerate.PaymentType;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -59,6 +60,20 @@ public class Recharge {
                     Voluntary voluntary) {
         this.rechargeValue = request.rechargeValue();
         this.paymentTypeEnum = PaymentType.fromString(request.paymentTypeEnum());
+        this.rechargeTimestamp = LocalDateTime.now();
+        this.customer = customer;
+        this.register = register;
+        this.voluntary = voluntary;
+        this.valid = true;
+    }
+
+    public Recharge(BigDecimal value,
+                    PaymentType paymentType,
+                    Customer customer,
+                    Register register,
+                    Voluntary voluntary) {
+        this.rechargeValue = value;
+        this.paymentTypeEnum = paymentType;
         this.rechargeTimestamp = LocalDateTime.now();
         this.customer = customer;
         this.register = register;
