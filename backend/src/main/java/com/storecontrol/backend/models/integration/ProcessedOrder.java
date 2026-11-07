@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity 
 @Table(name = "tb_processed_sale")
@@ -29,15 +30,16 @@ public class ProcessedOrder {
     @Column(name = "external_sale_field", nullable = false, unique = true)
     private String externalSaleField;
 
+    @Setter 
     private Boolean done;
 
     @Column(name = "processed_at", nullable = false)
     private LocalDateTime processedAt;
 
-    public ProcessedOrder(String externalId, String externalField, boolean done, LocalDateTime processedAt){
+    public ProcessedOrder(String externalId, String externalField){
         this.externalSaleId = externalId;
         this.externalSaleField = externalField;
-        this.done = done;
-        this.processedAt = processedAt;
+        this.done = false;
+        this.processedAt = LocalDateTime.now();
     }
 }

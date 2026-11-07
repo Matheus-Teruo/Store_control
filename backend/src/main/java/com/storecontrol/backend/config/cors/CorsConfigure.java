@@ -1,4 +1,4 @@
-package com.storecontrol.backend.config;
+package com.storecontrol.backend.config.cors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

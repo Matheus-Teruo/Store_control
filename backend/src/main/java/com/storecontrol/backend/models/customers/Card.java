@@ -35,6 +35,12 @@ public class Card {
         this.active = false;
     }
 
+    public Card(String cardId) {
+        this.id = cardId;
+        this.debit = BigDecimal.ZERO;
+        this.active = false;
+    }
+
     public void updateActive(Boolean value) {
         this.active = value;
     }

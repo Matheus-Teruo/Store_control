@@ -2,6 +2,8 @@ package com.storecontrol.backend.models.integration;
 
 import java.util.UUID;
 
+import com.storecontrol.backend.models.integration.request.CreateSyncFeatureToggleRequest;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,9 +29,15 @@ public class SyncFeatureToggle {
     @Column(nullable = false)
     private String origin;
 
-    @Column(name = "event_linked", nullable = false)
-    private UUID eventLinked;
+    // @Column(name = "event_linked", nullable = false)
+    // private UUID eventLinked;
 
-    @Column(name = "enabled", nullable = false)
+    @Column(nullable = false)
     private Boolean enabled;
+
+    
+    public SyncFeatureToggle(CreateSyncFeatureToggleRequest request) {
+        this.featureName = request.featureName();
+        this.origin = request.origin();
+    }
 }

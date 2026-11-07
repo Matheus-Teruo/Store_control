@@ -30,7 +30,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor 
+@RequiredArgsConstructor
 public class OrdersTradeService {
 
   private final TradeRepository repository;
@@ -41,7 +41,7 @@ public class OrdersTradeService {
   private final ItemService itemService;
 
   @Transactional 
-  public TradeView createTradeFromBankApp(List<ItemDTO> itemsDTOs, Register register, UUID standUuid, String cardId) {
+  public TradeView createTradeFromExternal(List<ItemDTO> itemsDTOs, Register register, UUID standUuid, PaymentType paymentType, String cardId) {
     Voluntary voluntary = (Voluntary) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     Map<String, Product> productMapExternalKey = productService.listProductsAsMapWithExternalKey(standUuid);
@@ -53,7 +53,7 @@ public class OrdersTradeService {
                             .map(ItemDTO::unitAmount)
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-    var recharge = new Recharge(total, PaymentType.DEBIT, customer, register, voluntary);
+    var recharge = new Recharge(total, paymentType, customer, register, voluntary);
     handleCashTotal(recharge, recharge.getPaymentTypeEnum(), false);
 
     rechargeRepository.save(recharge);

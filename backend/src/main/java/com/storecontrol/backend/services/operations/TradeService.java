@@ -1,5 +1,6 @@
 package com.storecontrol.backend.services.operations;
 
+import com.storecontrol.backend.config.initializer.DataInitializerProperties;
 import com.storecontrol.backend.config.language.MessageResolver;
 import com.storecontrol.backend.infra.exceptions.InvalidDatabaseQueryException;
 import com.storecontrol.backend.models.customers.Customer;
@@ -28,7 +29,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -55,9 +55,7 @@ public class TradeService {
   private final CustomerService customerService;
   private final RegisterService registerService;
   private final ItemService itemService;
-
-  @Value("${spring.flyway.placeholders.CARD_ID}")
-  private String fixedCardId;
+  private final DataInitializerProperties props;
 
   @Transactional
   public TradeView createTrade(RequestCreateRecharge rechargeRequest, RequestCreatePurchase purchaseRequest) {
@@ -153,7 +151,7 @@ public class TradeService {
     Customer customer;
     Purchase purchase;
     Recharge recharge;
-    if (fixedCardId.equals(cardId)) {
+    if (props.cardId().equals(cardId)) {
       recharge = rechargeRepository.findByUuidValidTrue(trade.getRechargeUuid())
           .orElseThrow(() -> new InvalidDatabaseQueryException(
               MessageResolver.getInstance().getMessage("service.exception.recharge.get.validation.error"),
@@ -175,10 +173,10 @@ public class TradeService {
 
     var productMap = productService.listProductsAsMap(purchase.getStandUuid());
     validation.checkIfLastTrade(recharge, purchase, trade);
-    if (!fixedCardId.equals(cardId)) purchaseValidation.checkSomeItemWasDelivered(purchase);
+    if (!props.cardId().equals(cardId)) purchaseValidation.checkSomeItemWasDelivered(purchase);
     purchaseValidation.checkPurchaseBelongsToVoluntary(purchase, voluntary);
     rechargeValidation.checkRechargeBelongsToVoluntary(recharge, voluntary);
-    if (fixedCardId.equals(cardId)) {
+    if (props.cardId().equals(cardId)) {
       purchaseValidation.checkIfLastPurchaseOfVoluntary(purchase, voluntary);
       rechargeValidation.checkIfLastRechargeOfVoluntary(recharge, voluntary);
     }
