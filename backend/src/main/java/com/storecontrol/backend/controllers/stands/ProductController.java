@@ -1,11 +1,14 @@
 package com.storecontrol.backend.controllers.stands;
 
+import com.storecontrol.backend.models.stands.products.Product;
 import com.storecontrol.backend.models.stands.products.request.RequestCreateProduct;
 import com.storecontrol.backend.models.stands.products.request.RequestUpdateProduct;
 import com.storecontrol.backend.models.stands.products.response.ResponseProduct;
 import com.storecontrol.backend.models.stands.products.response.ResponseSummaryProduct;
+import com.storecontrol.backend.models.stands.products.response.UploadResponse;
 import com.storecontrol.backend.services.stands.ProductService;
-import com.storecontrol.backend.services.stands.S3Service;
+import com.storecontrol.backend.services.stands.StorageService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +22,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -28,7 +30,7 @@ import java.util.UUID;
 public class ProductController {
 
   private final ProductService service;
-  private final S3Service s3Service;
+  private final StorageService storageService;
 
   @PostMapping
   public ResponseEntity<ResponseProduct> createProduct(
@@ -41,12 +43,13 @@ public class ProductController {
         .buildAndExpand(product.getUuid())
         .toUri();
 
-    return ResponseEntity.created(location).body(new ResponseProduct(product));
+    return ResponseEntity.created(location).body(new ResponseProduct(product, storageService.generatePublicUrl(product.getProductImgKey())));
   }
 
   @GetMapping("/{uuid}")
   public ResponseEntity<ResponseProduct> readProduct(@PathVariable @Valid UUID uuid) {
-    var response = new ResponseProduct(service.takeProductByUuid(uuid));
+    Product product = service.takeProductByUuid(uuid);
+    var response = new ResponseProduct(product, storageService.generatePublicUrl(product.getProductImgKey()));
     return ResponseEntity.ok(response);
   }
 
@@ -58,7 +61,7 @@ public class ProductController {
       Pageable pageable) {
     var products = service.pageProducts(productName, tagUuid, standUuid, pageable);
 
-    var response = products.map(ResponseSummaryProduct::new);
+    var response = products.map(product -> new ResponseSummaryProduct(product, storageService.generatePublicUrl(product.getProductImgKey())));
     return ResponseEntity.ok(response);
   }
 
@@ -66,13 +69,14 @@ public class ProductController {
   public ResponseEntity<List<ResponseSummaryProduct>> readListProducts(@PathVariable @Valid UUID standUuid) {
     var products = service.listProducts(standUuid);
 
-    var response = products.stream().map(ResponseSummaryProduct::new).toList();
+    var response = products.stream().map(product -> new ResponseSummaryProduct(product, storageService.generatePublicUrl(product.getProductImgKey()))).toList();
     return ResponseEntity.ok(response);
   }
 
   @PutMapping
   public ResponseEntity<ResponseProduct> updateProduct(@RequestBody @Valid RequestUpdateProduct request) {
-    var response = new ResponseProduct(service.updateProduct(request));
+    Product product = service.updateProduct(request);
+    var response = new ResponseProduct(product, storageService.generatePublicUrl(product.getProductImgKey()));
 
     return ResponseEntity.ok(response);
   }
@@ -84,13 +88,11 @@ public class ProductController {
     return ResponseEntity.noContent().build();
   }
 
-  @PostMapping("/upload-image")
-  public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("image") MultipartFile image) throws IOException {
-    var tempFile = s3Service.adjustNameFile(image);
-    image.transferTo(tempFile);
-
-    String url = s3Service.uploadFile(tempFile, tempFile.getName());
-
-    return ResponseEntity.ok(Map.of("url", url));
+  @PostMapping("/upload-image/{uuid}")
+  public ResponseEntity<UploadResponse> uploadImage(
+    @RequestParam("image") MultipartFile image,
+    @PathVariable UUID uuid
+  ) throws IOException {
+    return ResponseEntity.ok(new UploadResponse(service.uploadImage(image, uuid)));
   }
 }

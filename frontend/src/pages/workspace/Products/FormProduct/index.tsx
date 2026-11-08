@@ -290,22 +290,25 @@ function FormProduct({ type, hide, uuid }: FormPurchaseProps) {
               showStatus={touched}
               message={messageError["summary"]}
             />
-            <div className={styles.imageUpload}>
-              <label className={styles.inputLabel}>
-                Upload de Imagem (opcional)
-              </label>
-              <ImageUpload
-                onChangeImage={(value) =>
-                  setImage({
-                    path: value,
-                    updated: true,
-                  })
-                }
-                onChange={(value) =>
-                  dispatch({ type: "SET_PRODUCT_IMG", payload: value })
-                }
-              />
-            </div>
+            {type === "update" && uuid &&
+              <div className={styles.imageUpload}>
+                <label className={styles.inputLabel}>
+                  Upload de Imagem (opcional)
+                </label>
+                <ImageUpload
+                  onChangeImage={(value) =>
+                    setImage({
+                      path: value,
+                      updated: true,
+                    })
+                  }
+                  onChange={(value) =>
+                    dispatch({ type: "SET_PRODUCT_IMG", payload: value })
+                  }
+                  productUuid={uuid}
+                />
+              </div>
+            }
             {isUserLogged(user) && isAdmin(user) && (
               <div className={styles.adminSection}>
                 <p>Modo administrador</p>

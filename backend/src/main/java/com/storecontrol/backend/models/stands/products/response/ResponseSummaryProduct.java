@@ -19,7 +19,7 @@ public record ResponseSummaryProduct(
     UUID standUuid
 ) {
 
-  public ResponseSummaryProduct(Product product) {
+  public ResponseSummaryProduct(Product product, String imageUrl) {
     this(product.getUuid(),
         product.getProductName(),
         product.getProductCode(),
@@ -29,7 +29,7 @@ public record ResponseSummaryProduct(
         product.getPrice(),
         product.getDiscount(),
         product.getStock(),
-        product.getProductImg(),
+        imageUrl,
         product.getStandUuid()
     );
   }

@@ -38,8 +38,6 @@ public record RequestCreateProduct(
     @PositiveOrZero(message = "{request.validation.createProduct.stock.positiveOrZero}")
     Integer stock,
 
-    String productImg,
-
     @NotNull(message = "{request.validation.createProduct.standUuid.notnull}")
     UUID standUuid
 ) {

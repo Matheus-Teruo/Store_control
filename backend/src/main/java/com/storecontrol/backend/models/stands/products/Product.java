@@ -62,8 +62,9 @@ public class Product {
     )
     private List<Tag> tags;
 
+    @Setter
     @Column(name = "product_img")
-    private String productImg;
+    private String productImgKey;
 
     @Column(name = "stand_uuid", insertable = false, updatable = false)
     private UUID standUuid;
@@ -92,9 +93,6 @@ public class Product {
         this.discount = BigDecimal.ZERO;
         this.stock = request.stock();
         this.tags = new ArrayList<>();
-        if (request.productImg() != null) {
-            this.productImg = request.productImg();
-        }
         this.stand = stand;
         this.valid = true;
     }
@@ -115,9 +113,6 @@ public class Product {
             this.discount = request.discount();
         }
         this.stock = request.stock();
-        if (request.productImg() != null) {
-            this.productImg = request.productImg();
-        }
     }
 
     public void createTags(List<Tag> tag) {

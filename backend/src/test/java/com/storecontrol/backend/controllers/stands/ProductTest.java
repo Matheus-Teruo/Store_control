@@ -9,7 +9,8 @@ import com.storecontrol.backend.models.stands.products.request.RequestUpdateProd
 import com.storecontrol.backend.models.stands.products.response.ResponseProduct;
 import com.storecontrol.backend.models.stands.products.response.ResponseSummaryProduct;
 import com.storecontrol.backend.services.stands.ProductService;
-import com.storecontrol.backend.services.stands.S3Service;
+import com.storecontrol.backend.services.stands.StorageService;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,7 @@ import java.util.UUID;
 import static com.storecontrol.backend.TestDataFactory.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -34,17 +36,19 @@ class ProductTest extends BaseTest {
   private ProductService service;
 
   @MockBean
-  private S3Service s3Service;
+  private StorageService storageService;
 
   @Test
   void testCreateProductSuccess() throws Exception {
     // Given
     Product mockProduct = createProductEntity(UUID.randomUUID());
+    String imageUrlMock = "ImageUrlTest";
     RequestCreateProduct requestProduct = createRequestCreateProduct(mockProduct);
     mockProduct.createTags(List.of(createTagEntity(UUID.randomUUID())));
-    ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
+    ResponseProduct expectedResponse = new ResponseProduct(mockProduct, imageUrlMock);
 
     when(service.createProduct(requestProduct)).thenReturn(mockProduct);
+    when(storageService.generatePublicUrl(mockProduct.getProductImgKey())).thenReturn(imageUrlMock);
 
     // When & Then
     mockMvc.perform(post("/products")
@@ -66,11 +70,13 @@ class ProductTest extends BaseTest {
     // Given
     UUID productUuid = UUID.randomUUID();
 
+    String imageUrlMock = "ImageUrlTest";
     Product mockProduct = createProductEntity(productUuid);
     mockProduct.createTags(List.of(createTagEntity(UUID.randomUUID())));
-    ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
+    ResponseProduct expectedResponse = new ResponseProduct(mockProduct, imageUrlMock);
 
     when(service.takeProductByUuid(productUuid)).thenReturn(mockProduct);
+    when(storageService.generatePublicUrl(mockProduct.getProductImgKey())).thenReturn(imageUrlMock);
 
     // When & Then
     mockMvc.perform(get("/products/{uuid}", productUuid)
@@ -90,11 +96,14 @@ class ProductTest extends BaseTest {
         createProductEntity(UUID.randomUUID()),
         createProductEntity(UUID.randomUUID())
     );
+    String imageUrlMock = "ImageUrlTest";
     Page<Product> mockPage = new PageImpl<>(mockProducts);
     Page<ResponseSummaryProduct> expectedResponse = mockPage
-        .map(ResponseSummaryProduct::new);
+        .map(product -> new ResponseSummaryProduct(product, imageUrlMock));
 
     when(service.pageProducts(any(String.class), any(UUID.class), any(UUID.class), any(Pageable.class))).thenReturn(mockPage);
+    when(storageService.generatePublicUrl(mockProducts.get(0).getProductImgKey())).thenReturn(imageUrlMock);
+    when(storageService.generatePublicUrl(mockProducts.get(1).getProductImgKey())).thenReturn(imageUrlMock);
 
     // When & Then
     mockMvc.perform(get("/products?productName=&tagUuid=550e8400-e29b-41d4-a716-446655440000&standUuid=550e8400-e29b-41d4-a716-446655440000")
@@ -115,12 +124,15 @@ class ProductTest extends BaseTest {
         createProductEntity(UUID.randomUUID()),
         createProductEntity(UUID.randomUUID())
     );
+    String imageUrlMock = "ImageUrlTest";
     List<ResponseSummaryProduct> expectedResponse = mockProducts.stream()
-        .map(ResponseSummaryProduct::new)
+        .map(product -> new ResponseSummaryProduct(product, imageUrlMock))
         .toList();
     UUID standUuid = UUID.randomUUID();
 
     when(service.listProducts(standUuid)).thenReturn(mockProducts);
+    when(storageService.generatePublicUrl(mockProducts.get(0).getProductImgKey())).thenReturn(imageUrlMock);
+    when(storageService.generatePublicUrl(mockProducts.get(1).getProductImgKey())).thenReturn(imageUrlMock);
 
     // When & Then
     mockMvc.perform(get("/products/list/{standUuid}", standUuid)
@@ -138,6 +150,7 @@ class ProductTest extends BaseTest {
   void testUpdateProductSuccess() throws Exception {
     // Given
     Product mockProduct = createProductEntity(UUID.randomUUID());
+    String imageUrlMock = "ImageUrlTest";
     Stand updatedMockStand = createStandEntity(UUID.randomUUID());
     RequestUpdateProduct updateRequest = createRequestUpdateProduct(mockProduct.getUuid(), updatedMockStand.getUuid());
 
@@ -152,9 +165,10 @@ class ProductTest extends BaseTest {
     mockProduct.updateTags(tagsUuid, tags);
     mockProduct.updateProduct(updateRequest);
     mockProduct.updateProduct(updatedMockStand);
-    ResponseProduct expectedResponse = new ResponseProduct(mockProduct);
+    ResponseProduct expectedResponse = new ResponseProduct(mockProduct, imageUrlMock);
 
     when(service.updateProduct(updateRequest)).thenReturn(mockProduct);
+    when(storageService.generatePublicUrl(mockProduct.getProductImgKey())).thenReturn(imageUrlMock);
 
     // When & Then
     mockMvc.perform(put("/products")
@@ -187,6 +201,6 @@ class ProductTest extends BaseTest {
 
   @Test
   void contextLoads() {
-    assertNotNull(s3Service, "S3Service should be mocked and not null.");
+    assertNotNull(storageService, "S3Service should be mocked and not null.");
   }
 }

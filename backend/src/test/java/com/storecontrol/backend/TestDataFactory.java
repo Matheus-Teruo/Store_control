@@ -368,7 +368,6 @@ public class TestDataFactory {
         requestCreateItems,
         product.getPrice(),
         product.getStock(),
-        product.getProductImg(),
         product.getStandUuid()
     );
   }
@@ -385,7 +384,6 @@ public class TestDataFactory {
         BigDecimal.TEN,
         BigDecimal.TWO,
         1000,
-        null,
         standUuid
     );
   }

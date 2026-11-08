@@ -23,7 +23,7 @@ public record ResponseProduct(
     ResponseStand stand
 ) {
 
-  public ResponseProduct(Product product) {
+  public ResponseProduct(Product product, String imageUrl) {
     this(product.getUuid(),
         product.getProductName(),
         product.getProductCode(),
@@ -37,7 +37,7 @@ public record ResponseProduct(
         product.getPrice(),
         product.getDiscount(),
         product.getStock(),
-        product.getProductImg(),
+        imageUrl,
         new ResponseStand(product.getStand())
     );
   }

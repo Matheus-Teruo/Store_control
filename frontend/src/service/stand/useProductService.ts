@@ -85,14 +85,14 @@ const useProductService = () => {
   );
 
   const uploadImage = useCallback(
-    async (imageData: File): Promise<ResponseImage> => {
+    async (imageData: File, productUuid: string): Promise<ResponseImage> => {
       const resizedFile = await resizeImage(imageData, 800);
       const formData = new FormData();
       formData.append("image", resizedFile, "cropped-image.png");
 
       return safeRequest(() =>
         api
-          .post<ResponseImage>("products/upload-image", formData, {
+          .post<ResponseImage>(`products/upload-image/${productUuid}`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
           })
           .then((res) => res.data),

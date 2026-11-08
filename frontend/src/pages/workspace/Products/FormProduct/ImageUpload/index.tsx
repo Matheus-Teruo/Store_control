@@ -8,9 +8,10 @@ import { CropSVG, ImageSVG, UploadSVG } from "@/assets/svg";
 interface StandSelectProps {
   onChangeImage: (url: string) => void;
   onChange: (event: string) => void;
+  productUuid: string;
 }
 
-function ImageUpload({ onChangeImage, onChange }: StandSelectProps) {
+function ImageUpload({ onChangeImage, onChange, productUuid }: StandSelectProps) {
   const [imageSrc, setImageSrc] = useState<string>("");
   const [imageData, setImageData] = useState<File | null>(null);
   const [showCrop, setShowCrop] = useState<boolean>(false);
@@ -21,7 +22,7 @@ function ImageUpload({ onChangeImage, onChange }: StandSelectProps) {
   const uploadCroppedImage = async () => {
     if (!imageData) return;
     setWaitingFetch(true);
-    const response = await uploadImage(imageData);
+    const response = await uploadImage(imageData, productUuid);
     if (response) {
       onChange(response?.url);
     }

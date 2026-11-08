@@ -1,20 +1,23 @@
-package com.storecontrol.backend.config;
+package com.storecontrol.backend.config.cors;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
+@EnableConfigurationProperties(CorsProperties.class)
+@RequiredArgsConstructor
 public class CorsConfigure implements WebMvcConfigurer {
 
-  @Value("${config.spring.cors.accepted.url}")
-  private String url;
+  private final CorsProperties props;
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**")
-        .allowedOrigins(url)
+        .allowedOrigins(props.acceptUrl())
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT")
         .allowedHeaders("Content-Type", "Accept", "Accept-Language")
         .allowCredentials(true);

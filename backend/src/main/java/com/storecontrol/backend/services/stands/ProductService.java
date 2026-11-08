@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ public class ProductService {
   private final StandService standService;
   private final ProductComboService productComboService;
   private final TagService tagService;
+  private final StorageService storageService;
 
   @Transactional
   public Product createProduct(RequestCreateProduct request) {
@@ -130,4 +132,20 @@ public class ProductService {
       product.updateProduct(stand);
     }
   }
+
+  @Transactional
+    public String uploadImage(MultipartFile file, UUID productUuid) {
+      Product product = safeTakeProductByUuid(productUuid);
+
+      String existingImage = product.getProductImgKey();
+      if (existingImage != null) {
+          storageService.deleteFile(existingImage);
+      }
+
+      String key = storageService.uploadImageFile(file, productUuid, "product-image");
+
+      product.setProductImgKey(key);
+
+      return key;
+    }
 }

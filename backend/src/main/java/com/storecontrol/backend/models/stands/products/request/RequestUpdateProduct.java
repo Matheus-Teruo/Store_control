@@ -42,8 +42,6 @@ public record RequestUpdateProduct(
     @PositiveOrZero(message = "{request.validation.updateProduct.stock.positiveOrZero}")
     Integer stock,
 
-    String productImg,
-
     @NotNull(message = "{request.validation.updateProduct.standUuid.notnull}")
     UUID standUuid
 ) {
