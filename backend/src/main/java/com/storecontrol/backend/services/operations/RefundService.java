@@ -28,10 +28,12 @@ public class RefundService {
   private final CustomerFinalizationValidation finalizationValidation;
 
   @Transactional
-  public void createRefund(RequestCustomerFinalization request,
-                           Customer customer,
-                           Register register,
-                           Voluntary voluntary) {
+  public void createRefund(
+    RequestCustomerFinalization request,
+    Customer customer,
+    Register register,
+    Voluntary voluntary
+  ) {
     var refundValue = request.refundValue();
 
     validation.checkVoluntaryFunctionMatch(voluntary);

@@ -23,7 +23,9 @@ public class CardController {
   private final CardService service;
 
   @PostMapping
-  public ResponseEntity<ResponseCard> createCard(@RequestBody @Valid RequestCard request) {
+  public ResponseEntity<ResponseCard> createCard(
+    @RequestBody @Valid RequestCard request
+  ) {
     var card = service.createCard(request);
 
     URI location = ServletUriComponentsBuilder
@@ -36,7 +38,9 @@ public class CardController {
   }
 
   @GetMapping("/{cardId}")
-  public ResponseEntity<ResponseCard> readCard(@PathVariable @Valid RequestCard cardId) {
+  public ResponseEntity<ResponseCard> readCard(
+    @PathVariable @Valid RequestCard cardId
+  ) {
     var response = new ResponseCard(service.takeCardById(cardId.cardId()));
 
     return ResponseEntity.ok(response);

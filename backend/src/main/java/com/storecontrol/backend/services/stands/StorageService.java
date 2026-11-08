@@ -5,15 +5,12 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.storecontrol.backend.config.storage.S3ClientProperties;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -23,7 +20,6 @@ import java.util.UUID;
 public class StorageService {
 
   private final S3Client s3Client;
-  private final S3Presigner presigner;
   private final S3ClientProperties props;
 
   public String uploadImageFile(MultipartFile file, UUID userUuid, String fileName) {
